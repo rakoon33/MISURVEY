@@ -280,6 +280,9 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# Angular cache
+.angular/cache/
+
 # Visual Studio 6 build log
 *.plg
 
@@ -441,3 +444,18 @@ xcuserdata/
 .vscode/
 
 package-lock.json
+
+# Tệp biên dịch của TypeScript
+*.ngfactory.ts
+*.ngstyle.ts
+*.ngsummary.json
+*.d.ts
+
+# Tệp lịch sử của những thay đổi ở cấp độ local
+.localhistory/
+
+# Tệp và thư mục được sinh ra bởi Angular CLI
+/dist/
+/out-tsc/
+/ngfactory/
+*.pack
