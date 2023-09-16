@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "survey-strike": {
+    "survey-strive": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/survey-strike",
+            "outputPath": "dist/survey-strive",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -61,10 +61,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "survey-strike:build:production"
+              "browserTarget": "survey-strive:build:production"
             },
             "development": {
-              "browserTarget": "survey-strike:build:development"
+              "browserTarget": "survey-strive:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -72,7 +72,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "survey-strike:build"
+            "browserTarget": "survey-strive:build"
           }
         },
         "test": {

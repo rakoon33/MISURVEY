@@ -281,7 +281,7 @@ FakesAssemblies/
 node_modules/
 
 # Angular cache
-survey-strike/.angular/cache/
+survey-strive/.angular/cache/
 
 # Visual Studio 6 build log
 *.plg
