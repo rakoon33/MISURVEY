@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 
 // Cấu hình thư mục public
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, './public')));
 
 // Middlewares
 app.use(cors());
