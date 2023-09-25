@@ -281,7 +281,7 @@ FakesAssemblies/
 node_modules/
 
 # Angular cache
-survey-strive/.angular/cache/
+MiSurvey/.angular/cache/
 
 # Visual Studio 6 build log
 *.plg
@@ -459,4 +459,4 @@ package-lock.json
 /out-tsc/
 /ngfactory/
 *.pack
-survey-strive/dist/
+MiSurvey/dist/
