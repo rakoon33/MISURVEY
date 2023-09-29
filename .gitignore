@@ -460,3 +460,4 @@ package-lock.json
 /ngfactory/
 *.pack
 MiSurvey/dist/
+.angular
