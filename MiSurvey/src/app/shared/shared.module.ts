@@ -5,6 +5,7 @@ import { HighlightDirective } from './directives/highlight.directive';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     MatToolbarModule,
-    MatIconModule
+    MatIconModule,
+    RouterModule,
   ],
   exports: [  // Xuất khẩu các thành phần, directives và pipes
     HeaderComponent,
