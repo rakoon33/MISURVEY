@@ -461,3 +461,6 @@ package-lock.json
 *.pack
 MiSurvey/dist/
 .angular
+
+# Tệp config
+.env
