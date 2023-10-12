@@ -15,6 +15,11 @@ import { AppComponent } from './app.component';
 // Import containers
 import { DefaultFooterComponent, DefaultHeaderComponent, DefaultLayoutComponent } from './shared';
 
+import { Page404Component } from './modules/auth/page404/page404.component';
+import { Page500Component } from './modules/auth/page500/page500.component';
+import { LoginComponent } from './modules/auth/login/login.component';
+import { RegisterComponent } from './modules/auth/register/register.component';
+
 import {
   AvatarModule,
   BadgeModule,
@@ -41,7 +46,11 @@ import { IconModule, IconSetService } from '@coreui/icons-angular';
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
-  DefaultLayoutComponent
+  DefaultLayoutComponent,
+  Page404Component,
+  Page500Component,
+  LoginComponent,
+  RegisterComponent
 ];
 
 @NgModule({

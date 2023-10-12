@@ -1,49 +1,39 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const cors = require('cors');
 const path = require('path');
-const db = require('./src/config/database');  // Import the database configuration
-
-//import test
-const test = require('./src/services/user.service');
-
-// Load environment variables from .env file
-dotenv.config();
-
+const routes = require('./src/routes');
+const { database } = require('./src/config');
 const app = express();
 
-// Cấu hình thư mục public
-app.use(express.static(path.join(__dirname, './public')));
+// routes
+const { authMiddleware } = require('./src/middlewares');
+const indexRoute = require('./src/routes');
+const authRoute = require('./src/routes/authentication.route');
 
-// Middlewares
-app.use(cors());
+// view engine setup
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Your routes and other middlewares go here
+// Use the consolidated routes
+app.use('*', authMiddleware.tokenVerification);
+app.use('/', indexRoute);
+app.use('/api/', authRoute);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
-
-// test functions
-(async () => {
-    try {
-      const user = await test.getUserByUsername('john_doe');
-      const email = user.dataValues.Email;
-      console.log(email);
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-})();
-
-// Test database connection and start the server
-db.sequelize.authenticate()
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+  database.sequelize.sync()
     .then(() => {
-        console.log('Database connection has been established successfully.');
-        const PORT = process.env.PORT || 3000;
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
+      console.log('Database synced');
     })
-    .catch(error => {
-        console.error('Unable to connect to the database:', error);
+    .catch(err => {
+      console.error('Database sync failed:', err);
     });
+});

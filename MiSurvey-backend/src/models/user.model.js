@@ -1,4 +1,3 @@
-// File: models/User.js
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
 
@@ -30,8 +29,8 @@ const User = db.sequelize.define('User', {
     allowNull: false,
   },
   Role: {
-    type: DataTypes.ENUM('Superadmin', 'Admin', 'User'),
-    defaultValue: 'User',
+    type: DataTypes.ENUM('Superadmin', 'Admin', 'Supervisor'),
+    defaultValue: 'Admin',
     allowNull: false,
   },
   CreatedAt: {

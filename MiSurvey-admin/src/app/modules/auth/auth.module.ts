@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { PagesRoutingModule } from './pages-routing.module';
+import { PagesRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { Page404Component } from './page404/page404.component';
@@ -27,5 +27,5 @@ import { IconModule } from '@coreui/icons-angular';
     FormModule
   ]
 })
-export class PagesModule {
+export class AuthModule {
 }
