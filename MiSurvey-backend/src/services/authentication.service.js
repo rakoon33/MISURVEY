@@ -14,7 +14,7 @@ const adminLogin = async (username, password) => {
   if (user.Role !== 'Superadmin') {
     throw new Error('Access denied');
   }
-  const token = jwt.sign({ id: user.UserID, role: user.Role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+  const token = jwt.sign({ id: user.UserID, username: user.Username, role: user.Role }, process.env.JWT_SECRET, { expiresIn: '1d' });
   return token;
 };
 
