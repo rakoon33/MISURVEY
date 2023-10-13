@@ -6,8 +6,8 @@ const adminLoginController = async (req, res) => {
     );
 
     try {
-      const token = await authService.adminLogin(req.body.username, req.body.password);
-      res.json({ token });
+      const result = await authService.adminLogin(req.body.username, req.body.password);
+      res.json(result);
     } catch (error) {
       res.status(400).json({ message: error.message });
     }

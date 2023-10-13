@@ -8,7 +8,8 @@ const app = express();
 // routes
 const { authMiddleware } = require('./src/middlewares');
 const indexRoute = require('./src/routes');
-const authRoute = require('./src/routes/authentication.route');
+const authRoute = require('./src/routes/auth.route');
+const companyRoute = require('./src/routes/company.route');
 
 // view engine setup
 app.use(bodyParser.json());
@@ -18,7 +19,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Use the consolidated routes
 app.use('*', authMiddleware.tokenVerification);
 app.use('/', indexRoute);
-app.use('/api/', authRoute);
+app.use('/api', authRoute);
+app.use('/api/company', companyRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

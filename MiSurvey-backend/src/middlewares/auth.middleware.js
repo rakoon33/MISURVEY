@@ -10,10 +10,12 @@ const tokenVerification = (req, res, next) => {
       return next();
     }
 
-    const token = req.headers['authorization'];
+    var token = req.headers['authorization'];
 
-    if (token) {
+    if (token && token.startsWith("Bearer ")) {
+      token = token.slice(7, token?.length);
       jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+
         if (err) {
           res.status(401).json({
             status: false,
@@ -24,7 +26,6 @@ const tokenVerification = (req, res, next) => {
           req.user = decoded;
           // Check if the user's role is "Superadmin"
           if (req.user.role === "Superadmin") {
-            console.log(user)
             next();
           } else {
             // Role is not "Superadmin," deny access
