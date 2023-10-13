@@ -10,6 +10,8 @@ const { authMiddleware } = require('./src/middlewares');
 const indexRoute = require('./src/routes');
 const authRoute = require('./src/routes/auth.route');
 const companyRoute = require('./src/routes/company.route');
+const superadminRoute = require('./src/routes/superadmin.route');
+
 
 // view engine setup
 app.use(bodyParser.json());
@@ -21,6 +23,7 @@ app.use('*', authMiddleware.tokenVerification);
 app.use('/', indexRoute);
 app.use('/api', authRoute);
 app.use('/api/company', companyRoute);
+app.use('/api/superadmin', superadminRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -39,3 +42,4 @@ app.listen(PORT, () => {
       console.error('Database sync failed:', err);
     });
 });
+

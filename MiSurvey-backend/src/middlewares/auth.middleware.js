@@ -25,7 +25,7 @@ const tokenVerification = (req, res, next) => {
         } else {
           req.user = decoded;
           // Check if the user's role is "Superadmin"
-          if (req.user.role === "Superadmin") {
+          if (req.user.role === "SuperAdmin") {
             next();
           } else {
             // Role is not "Superadmin," deny access

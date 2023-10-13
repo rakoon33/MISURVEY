@@ -11,10 +11,17 @@ const adminLogin = async (username, password) => {
     const user = await User.findOne({ where: { Username: username } });
 
     if (user) {
-      if (user.Role !== 'Superadmin') {
+      if (user.Role !== 'SuperAdmin') {
         throw new Error('Access denied');
       }
+
+      console.log("Entered password:", password.trim());
+      console.log("Stored hash:", user.Password);
+
       const isPasswordVerified = await bcrypt.compare(password.trim(), user.Password);
+
+      console.log("bcrypt.compare result:", isPasswordVerified);
+      
       if (isPasswordVerified) {
         const token = jwt.sign({ id: user.UserID, username: user.Username, role: user.Role }, process.env.JWT_SECRET, { expiresIn: '1d' });
         return {
