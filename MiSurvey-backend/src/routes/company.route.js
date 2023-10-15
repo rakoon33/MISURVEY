@@ -9,6 +9,5 @@ router.put('/admin/updateCompany/:CompanyID', companyController.adminUpdateCompa
 router.delete('/admin/deleteCompany/:CompanyID', companyController.adminDeleteCompanyController);
 
 // User routes
-//router.post('/user/addCompany', companyController.adminAddCompanyController); 
 
 module.exports = router;

@@ -107,7 +107,6 @@ const deleteCompany = async (CompanyID, AdminID) => {
     }
 
     if (user.Role !== "Superadmin") {
-      console.log("user.Role: ", user.Role)
       throw new Error("Access denied");
     }
 
