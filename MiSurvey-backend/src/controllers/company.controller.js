@@ -20,7 +20,9 @@ const adminUpdateCompanyController = async (req, res) => {
 
 const adminDeleteCompanyController = async (req, res) => {
   try {
-    const result = await companyService.deleteCompany(req.body.CompanyID); // Assuming the ID is passed in the body
+    const { CompanyID } = req.params; 
+    const { AdminID } = req.body;
+    const result = await companyService.deleteCompany(CompanyID, AdminID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

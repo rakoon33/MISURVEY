@@ -6,7 +6,7 @@ const addCompany = async (companyData) => {
     const adminID = companyData.AdminID;
     const user = await User.findOne({
       where: {
-        UserID: adminID
+        UserID: adminID,
       },
     });
 
@@ -14,8 +14,8 @@ const addCompany = async (companyData) => {
       throw new Error("AdminID does not exist in Users table");
     }
 
-    if (user.Role !== 'Superadmin') {
-      throw new Error('Access denied');
+    if (user.Role !== "SuperAdmin") {
+      throw new Error("Access denied");
     }
 
     // If AdminID is valid, create a new company record in the database
@@ -24,11 +24,9 @@ const addCompany = async (companyData) => {
     return {
       status: true,
       message: "Company updated successfully",
-      data: newCompany
+      data: newCompany,
     };
-
   } catch (error) {
-
     if (error.message === "AdminID does not exist in Users table") {
       return {
         status: false,
@@ -44,7 +42,7 @@ const addCompany = async (companyData) => {
     return {
       status: false,
       message: "Create company failed",
-      error: error?.toString()
+      error: error?.toString(),
     };
   }
 };
@@ -62,8 +60,8 @@ const updateCompany = async (CompanyID, updatedData) => {
       if (!user) {
         throw new Error("AdminID does not exist in Users table");
       }
-      if (user.Role !== 'Superadmin') {
-        throw new Error('Access denied');
+      if (user.Role !== "SuperAdmin") {
+        throw new Error("Access denied");
       }
     }
 
@@ -72,9 +70,8 @@ const updateCompany = async (CompanyID, updatedData) => {
     return {
       status: true,
       message: "Company updated successfully",
-      data: company
+      data: company,
     };
-
   } catch (error) {
     if (error.message === "AdminID does not exist in Users table") {
       return {
@@ -91,22 +88,26 @@ const updateCompany = async (CompanyID, updatedData) => {
     return {
       status: false,
       message: error.message || "Update company failed",
-      error: error?.toString()
+      error: error?.toString(),
     };
   }
 };
 
-const deleteCompany = async (CompanyID) => {
+const deleteCompany = async (CompanyID, AdminID) => {
   try {
     const company = await Company.findByPk(CompanyID);
     const user = await User.findOne({
       where: {
-        UserID: adminID
+        UserID: AdminID,
       },
     });
 
-    if (user.Role !== 'Superadmin') {
-      throw new Error('Access denied');
+    if (!user) {
+      throw new Error("AdminID does not exist in Users table");
+    }
+
+    if (user.Role !== "SuperAdmin") {
+      throw new Error("Access denied");
     }
 
     if (!company) {
@@ -119,13 +120,12 @@ const deleteCompany = async (CompanyID) => {
       status: true,
       message: "Company deleted successfully",
     };
-
   } catch (error) {
-      if (error.message === "Access denied") {
-        return {
-          status: false,
-          message: error.message,
-        };
+    if (error.message === "Access denied") {
+      return {
+        status: false,
+        message: error.message,
+      };
     }
 
     return {
@@ -139,5 +139,5 @@ const deleteCompany = async (CompanyID) => {
 module.exports = {
   addCompany,
   updateCompany,
-  deleteCompany
+  deleteCompany,
 };
