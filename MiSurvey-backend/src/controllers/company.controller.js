@@ -10,11 +10,14 @@ const adminAddCompanyController = async (req, res) => {
 };
 
 const adminUpdateCompanyController = async (req, res) => {
+  const { CompanyID } = req.params;
+  const updatedData = req.body;
+  
   try {
-    const result = await companyService.updateCompany(req.body);
-    res.json(result);
+      const result = await companyService.updateCompany(CompanyID, updatedData);
+      res.json(result);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+      res.status(400).json({ message: error.message });
   }
 };
 

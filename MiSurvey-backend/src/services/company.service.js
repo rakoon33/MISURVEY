@@ -14,7 +14,7 @@ const addCompany = async (companyData) => {
       throw new Error("AdminID does not exist in Users table");
     }
 
-    if (user.Role !== "SuperAdmin") {
+    if (user.Role !== "Superadmin") {
       throw new Error("Access denied");
     }
 
@@ -60,7 +60,7 @@ const updateCompany = async (CompanyID, updatedData) => {
       if (!user) {
         throw new Error("AdminID does not exist in Users table");
       }
-      if (user.Role !== "SuperAdmin") {
+      if (user.Role !== "Superadmin") {
         throw new Error("Access denied");
       }
     }
@@ -106,7 +106,8 @@ const deleteCompany = async (CompanyID, AdminID) => {
       throw new Error("AdminID does not exist in Users table");
     }
 
-    if (user.Role !== "SuperAdmin") {
+    if (user.Role !== "Superadmin") {
+      console.log("user.Role: ", user.Role)
       throw new Error("Access denied");
     }
 
