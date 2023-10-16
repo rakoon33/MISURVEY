@@ -3,9 +3,9 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');  
 
 
-const superAdminLogin = async (username, password) => {
+const loginBySuperAdmin = async (username, password) => {
   
-  console.log(`auth.service | superAdminLogin`);
+  console.log(`auth.service | loginBySuperAdmin`);
 
   try {
     const user = await User.findOne({ where: { Username: username } });
@@ -45,6 +45,6 @@ const superAdminLogin = async (username, password) => {
 };
 
 module.exports = {
-  superAdminLogin,
+  loginBySuperAdmin,
   // ...other exported functions
 };

@@ -1,31 +1,31 @@
 const { companyService } = require('../services'); 
 
-const adminAddCompanyController = async (req, res) => {
+const addCompanyBySuperAdminController = async (req, res) => {
   try {
-    const result = await companyService.addCompany(req.body);
+    const result = await companyService.addCompanyBySuperAdmin(req.body);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-const adminUpdateCompanyController = async (req, res) => {
+const updateCompanyBySuperAdminController = async (req, res) => {
   const { CompanyID } = req.params;
   const updatedData = req.body;
   
   try {
-      const result = await companyService.updateCompany(CompanyID, updatedData);
+      const result = await companyService.updateCompanyBySuperAdmin(CompanyID, updatedData);
       res.json(result);
   } catch (error) {
       res.status(400).json({ message: error.message });
   }
 };
 
-const adminDeleteCompanyController = async (req, res) => {
+const deleteCompanyBySuperAdminController = async (req, res) => {
   try {
     const { CompanyID } = req.params; 
     const { AdminID } = req.body;
-    const result = await companyService.deleteCompany(CompanyID, AdminID);
+    const result = await companyService.deleteCompanyBySuperAdmin(CompanyID, AdminID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -33,7 +33,7 @@ const adminDeleteCompanyController = async (req, res) => {
 };
 
 module.exports = {
-  adminAddCompanyController,
-  adminUpdateCompanyController,
-  adminDeleteCompanyController
+  addCompanyBySuperAdminController,
+  updateCompanyBySuperAdminController,
+  deleteCompanyBySuperAdminController
 };
