@@ -24,15 +24,15 @@ const tokenVerification = (req, res, next) => {
           });
         } else {
           req.user = decoded;
-          // Check if the user's role is "Superadmin"
+          // Check if the user's role is "SuperAdmin"
           if (req.user.role === "SuperAdmin") {
             next();
           } else {
-            // Role is not "Superadmin," deny access
+            // Role is not "SuperAdmin," deny access
             res.status(403).json({
               status: false,
-              message: "Access denied. Superadmin role required.",
-              error: "Access denied. Superadmin role required.",
+              message: "Access denied. SuperAdmin role required.",
+              error: "Access denied. SuperAdmin role required.",
             });
           }
         }

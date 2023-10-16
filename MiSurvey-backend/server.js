@@ -23,7 +23,7 @@ app.use('*', authMiddleware.tokenVerification);
 app.use('/', indexRoute);
 app.use('/api', authRoute);
 app.use('/api/company', companyRoute);
-app.use('/api/superadmin', userRoute);
+app.use('/api/user', userRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

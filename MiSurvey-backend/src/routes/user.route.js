@@ -1,11 +1,11 @@
 const express = require('express');
-const superadminController = require('../controllers/user.controller');
+const userController = require('../controllers/user.controller');
 
 const router = express.Router();
 
-// Routes for Superadmin CRUD operations
-router.post('/admin/create', superadminController.createSuperadminController);
-router.put('/admin/update/:id', superadminController.updateSuperadminController); 
-router.delete('/admin/delete/:id', superadminController.deleteSuperadminController); 
+// Routes for SuperAdmin CRUD operations
+router.post('/SuperAdmin/create', userController.superAdminCreateUserController);
+router.put('/SuperAdmin/update/:id', userController.superAdminUpdateUserController); 
+router.delete('/SuperAdmin/delete/:id', userController.superAdminDeleteUserController); 
 
 module.exports = router;

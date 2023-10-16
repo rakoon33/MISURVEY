@@ -1,46 +1,46 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 
-// Create Superadmin
-const createSuperadmin = async (userData) => {
+// Create user by SuperAdmin
+const superAdminCreateUser = async (userData) => {
     try {
-      userData.Password = await bcrypt.hash(userData.Password, 10); // Hash password before saving
+      userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); // Hash password before saving
       const newUser = await User.create(userData);
-      return newUser;
+      return { status: true, message: "User created successfully" , newUser: newUser };
     } catch (error) {
-      throw error;
+      return { status: false, message: error?.message };
     }
   };
 
-  // Update Superadmin
-  const updateSuperadmin = async (id, userData) => {
+  // Update user by SuperAdmin
+  const superAdminUpdateUser = async (id, userData) => {
     try {
-      if (userData.Password) {
-        userData.Password = await bcrypt.hash(userData.Password, 10); 
+      if (userData.UserPassword) {
+        userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); 
       }
       const [updatedRows] = await User.update(userData, { where: { UserID: id} });
       if (updatedRows === 0) {
-        throw new Error('No rows updated');
+        return { status: false, message: "No rows updated" };
     }
-      return { message: "User updated successfully" };
+      return { status: true, message: "User updated successfully" };
     } catch (error) {
-      throw error;
+      return { status: false, message: error?.message };
     }
   };
-  
-  // Delete Superadmin
-  const deleteSuperadmin = async (id) => {
+
+  // Delete user by SuperAdmin
+  const superAdminDeleteUser = async (id) => {
     try {
       await User.destroy({ where: { UserID: id } });
-      return { message: "User deleted successfully" };
+      return { status: true, message: "User deleted successfully"};
     } catch (error) {
-      throw error;
+      return { status: false, message: error?.message };
     }
   };
   
   module.exports = {
-    createSuperadmin,
-    updateSuperadmin,
-    deleteSuperadmin
+    superAdminCreateUser,
+    superAdminUpdateUser,
+    superAdminDeleteUser
   };
   

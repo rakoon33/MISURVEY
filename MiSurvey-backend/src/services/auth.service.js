@@ -3,27 +3,20 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');  
 
 
-const adminLogin = async (username, password) => {
+const superAdminLogin = async (username, password) => {
   
-  console.log(`auth.service | adminLogin`);
+  console.log(`auth.service | superAdminLogin`);
 
   try {
     const user = await User.findOne({ where: { Username: username } });
 
     if (user) {
-      if (user.Role !== 'SuperAdmin') {
-        throw new Error('Access denied');
+      if (user.UserRole !== 'SuperAdmin') {
+        throw new Error('Access denied - User is not a SuperAmin');
       }
-
-      console.log("Entered password:", password.trim());
-      console.log("Stored hash:", user.Password);
-
-      const isPasswordVerified = await bcrypt.compare(password.trim(), user.Password);
-
-      console.log("bcrypt.compare result:", isPasswordVerified);
-      
+      const isPasswordVerified = await bcrypt.compare(password.trim(), user.UserPassword);
       if (isPasswordVerified) {
-        const token = jwt.sign({ id: user.UserID, username: user.Username, role: user.Role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign({ id: user.UserID, username: user.Username, role: user.UserRole }, process.env.JWT_SECRET, { expiresIn: '1d' });
         return {
           status: true,
           message: "User login successful",
@@ -52,6 +45,6 @@ const adminLogin = async (username, password) => {
 };
 
 module.exports = {
-  adminLogin,
+  superAdminLogin,
   // ...other exported functions
 };
