@@ -85,7 +85,7 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
   }
 };
 
-const deleteCompanyBySuperAdmin = async (CompanyID, AdminID) => {
+const deleteCompanyBySuperAdmin = async (CompanyID) => {
   try {
     const company = await Company.findByPk(CompanyID);
 

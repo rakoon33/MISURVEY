@@ -24,8 +24,7 @@ const updateCompanyBySuperAdminController = async (req, res) => {
 const deleteCompanyBySuperAdminController = async (req, res) => {
   try {
     const { CompanyID } = req.params; 
-    const { AdminID } = req.body;
-    const result = await companyService.deleteCompanyBySuperAdmin(CompanyID, AdminID);
+    const result = await companyService.deleteCompanyBySuperAdmin(CompanyID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
