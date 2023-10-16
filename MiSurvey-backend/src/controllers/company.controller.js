@@ -1,21 +1,39 @@
 const { companyService } = require('../services'); 
 
-
 const adminAddCompanyController = async (req, res) => {
-    console.log(
-        `Company.controller | adminAddCompanyController | ${req?.originalUrl}`
-    );
+  try {
+    const result = await companyService.addCompany(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-    console.log(req.body);
-    try {
-      const result = await companyService.addCompany(req.body)
+const adminUpdateCompanyController = async (req, res) => {
+  const { CompanyID } = req.params;
+  const updatedData = req.body;
+  
+  try {
+      const result = await companyService.updateCompany(CompanyID, updatedData);
       res.json(result);
-    } catch (error) {
+  } catch (error) {
       res.status(400).json({ message: error.message });
-    }
-  };
+  }
+};
+
+const adminDeleteCompanyController = async (req, res) => {
+  try {
+    const { CompanyID } = req.params; 
+    const { AdminID } = req.body;
+    const result = await companyService.deleteCompany(CompanyID, AdminID);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
 module.exports = {
-    adminAddCompanyController,
-
+  adminAddCompanyController,
+  adminUpdateCompanyController,
+  adminDeleteCompanyController
 };
