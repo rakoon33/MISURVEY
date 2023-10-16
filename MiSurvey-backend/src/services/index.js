@@ -1,6 +1,6 @@
 const authService = require('./auth.service');
 const companyService = require('./company.service');
-const superadminService = require('./superadmin.service')
+const superadminService = require('./user.service')
 module.exports = {
     authService,
     companyService,

@@ -1,9 +1,9 @@
 const authController = require('./auth.controller');
 const companyController = require('./company.controller');
-const superadminController = require('./superadmin.controller')
+const userController = require('./user.controller')
 module.exports = {
     authController,
     companyController,
-    superadminController
+    userController
   // ...other models
 };

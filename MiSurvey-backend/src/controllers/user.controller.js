@@ -1,4 +1,4 @@
-const { createSuperadmin, updateSuperadmin, deleteSuperadmin } = require('../services/superadmin.service');
+const { createSuperadmin, updateSuperadmin, deleteSuperadmin } = require('../services/user.service');
 
 const createSuperadminController = async (req, res) => {
     console.log(`Superadmin.controller | createSuperadminController | ${req?.originalUrl}`);
