@@ -24,14 +24,17 @@ const User = db.sequelize.define('User', {
     type: DataTypes.STRING(100),
     allowNull: false,
   },
-  Password: {
+  UserPassword: {
     type: DataTypes.STRING(100),
-    allowNull: false,
+    allowNull: false
   },
-  Role: {
-    type: DataTypes.ENUM('Superadmin', 'Admin', 'Supervisor'),
-    defaultValue: 'Admin',
+  UserRole: {
+    type: DataTypes.STRING(50),
     allowNull: false,
+    defaultValue: 'Admin',
+    validate: {
+      isIn: [['SuperAdmin', 'Admin', 'Supervisor']]
+    }
   },
   CreatedAt: {
     type: DataTypes.DATE,
