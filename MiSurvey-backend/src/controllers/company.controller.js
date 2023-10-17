@@ -31,8 +31,20 @@ const deleteCompanyBySuperAdminController = async (req, res) => {
   }
 };
 
+const getAllCompaniesBySuperAdminController = async (req, res) => {
+  try {
+    const { numberOfCompanies } = req.body;
+    const { AdminID } = req.params;
+    const result = await companyService.getAllCompanies(AdminID, numberOfCompanies);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   addCompanyBySuperAdminController,
   updateCompanyBySuperAdminController,
-  deleteCompanyBySuperAdminController
+  deleteCompanyBySuperAdminController, 
+  getAllCompaniesBySuperAdminController,
 };
