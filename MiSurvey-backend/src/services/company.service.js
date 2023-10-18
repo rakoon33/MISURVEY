@@ -1,36 +1,109 @@
 const { Company, User } = require("../models");
 
-const addCompanyBySuperAdmin = async (companyData) => {
+
+// Super-Admin services
+const createCompanyBySuperAdmin = async (companyData) => {
   try {
-    // Check if AdminID exists in the Users table
     const adminID = companyData.AdminID;
     const user = await User.findOne({
       where: {
-        UserID: adminID,
-      },
+        UserID: adminID
+      }
     });
 
     if (!user) {
       return {
         status: false,
-        message: "AdminID does not exist in Users table",
+        message: "AdminID does not exist in Users table"
       };
     }
 
-    if (user.UserRole != "SuperAdmin" && user.UserRole != "Admin") {
+    if (user.UserRole !== "Admin") {
       return {
         status: false,
-        message: "Supervisor cannot be Admin of the company",
+        message: "Only Admin can own their company"
       };
     }
 
-    // If AdminID is valid, create a new company record in the database
+    const existingCompany = await Company.findOne({
+      where: {
+        AdminID: adminID
+      }
+    });
+
+    if (existingCompany) {
+      return {
+        status: false,
+        message: "This AdminID already has a company"
+      };
+    }
+
     const newCompany = await Company.create(companyData);
 
     return {
       status: true,
-      message: "Company created successfully",
-      data: newCompany,
+      message: "Company created successfully by SuperAdmin",
+      data: newCompany
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: "Create company failed",
+      error: error?.toString(),
+    };
+  }
+};
+
+// Admin services
+const createCompanyByAdmin = async (AdminID, companyData) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        UserID: AdminID
+      }
+    });
+
+    if (!user) {
+      return {
+        status: false,
+        message: "AdminID does not exist in Users table"
+      };
+    }
+
+    if (user.UserRole !== "Admin") {
+      return {
+        status: false,
+        message: "Only Admin can create a company for themselves"
+      };
+    }
+
+    const existingCompany = await Company.findOne({
+      where: {
+        AdminID: AdminID
+      }
+    });
+
+    if (existingCompany) {
+      return {
+        status: false,
+        message: "This AdminID already has a company"
+      };
+    }
+
+    if (companyData.AdminID !== AdminID) {
+      return {
+        status: false,
+        message: "You don't have permission to create company for another admin"
+      };
+    }
+
+    companyData.AdminID = AdminID;
+    const newCompany = await Company.create(companyData);
+
+    return {
+      status: true,
+      message: "Company created successfully by Admin",
+      data: newCompany
     };
   } catch (error) {
     return {
@@ -48,7 +121,7 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
     if (!company) {
       return {
         status: false,
-        message: "Company not found",
+        message: "Company not found"
       };
     }
 
@@ -57,14 +130,14 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
       if (!user) {
         return {
           status: false,
-          message: "AdminID does not exist in Users table",
+          message: "AdminID does not exist in Users table"
         };
       }
   
       if (user.UserRole != "SuperAdmin" && user.UserRole != "Admin") {
         return {
           status: false,
-          message: "Supervisor cannot be Admin of the company",
+          message: "Supervisor cannot be Admin of the company"
         };
       }
     }
@@ -74,13 +147,13 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
     return {
       status: true,
       message: "Company updated successfully",
-      data: company,
+      data: company
     };
   } catch (error) {
     return {
       status: false,
       message: error.message || "Update company failed",
-      error: error?.toString(),
+      error: error?.toString()
     };
   }
 };
@@ -120,8 +193,8 @@ const getAllCompanies = async (adminID, numberOfCompanies) => {
 
     const user = await User.findOne({
       where: {
-        UserID: adminID,
-      },
+        UserID: adminID
+      }
     });
 
     if (!user) {
@@ -134,7 +207,7 @@ const getAllCompanies = async (adminID, numberOfCompanies) => {
     if (user.UserRole !== "SuperAdmin" && user.UserRole !== "Admin") {
       return {
         status: false,
-        message: "You are restricted from viewing the company list",
+        message: "You are restricted from viewing the company list"
       };
     }
 
@@ -168,8 +241,10 @@ const getAllCompanies = async (adminID, numberOfCompanies) => {
 
 
 module.exports = {
-  addCompanyBySuperAdmin,
+  createCompanyBySuperAdmin,
   updateCompanyBySuperAdmin,
   deleteCompanyBySuperAdmin,
-  getAllCompanies
+  getAllCompanies,
+
+  createCompanyByAdmin,
 };

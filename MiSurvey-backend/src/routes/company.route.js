@@ -3,10 +3,13 @@ const { companyController } = require('../controllers');
 
 const router = express.Router();
 
-// SuperAdmin & Admin routes
-router.post('/SuperAdmin/addCompany', companyController.addCompanyBySuperAdminController); 
+// SuperAdmin routes
+router.post('/SuperAdmin/createCompany', companyController.createCompanyBySuperAdminController); 
 router.put('/SuperAdmin/updateCompany/:CompanyID', companyController.updateCompanyBySuperAdminController);
 router.delete('/SuperAdmin/deleteCompany/:CompanyID', companyController.deleteCompanyBySuperAdminController);
 router.post('/SuperAdmin/getAllCompanies/:AdminID', companyController.getAllCompaniesBySuperAdminController);
+
+// Admin routes
+router.post('/Admin/createCompany/:AdminID', companyController.createCompanyByAdminController); 
 
 module.exports = router;

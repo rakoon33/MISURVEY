@@ -1,8 +1,9 @@
 const { companyService } = require('../services'); 
 
-const addCompanyBySuperAdminController = async (req, res) => {
+// Super-Admin controller
+const createCompanyBySuperAdminController = async (req, res) => {
   try {
-    const result = await companyService.addCompanyBySuperAdmin(req.body);
+    const result = await companyService.createCompanyBySuperAdmin(req.body);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -42,9 +43,22 @@ const getAllCompaniesBySuperAdminController = async (req, res) => {
   }
 };
 
+// Admin controller
+const createCompanyByAdminController = async (req, res) => {
+  try {
+    const { AdminID } = req.params;
+    const result = await companyService.createCompanyByAdmin(AdminID, req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
-  addCompanyBySuperAdminController,
+  createCompanyBySuperAdminController,
   updateCompanyBySuperAdminController,
   deleteCompanyBySuperAdminController, 
   getAllCompaniesBySuperAdminController,
+
+  createCompanyByAdminController,
 };
