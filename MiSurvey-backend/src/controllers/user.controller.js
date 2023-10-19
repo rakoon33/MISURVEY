@@ -34,8 +34,30 @@ const deleteUserSuperAdminController = async (req, res) => {
     }
 };
 
+const getUserDetailsByIDSuperAdminController = async (req, res) => {
+    console.log(`SuperAdmin.controller | getUserDetailsByIDSuperAdminController | ${req?.originalUrl}`);
+    try {
+        const userDetails = await userService.getUserDetailsByID(req.params.id);
+        res.json(userDetails);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const getAllUsersSuperAdminController = async (req, res) => {
+    console.log(`SuperAdmin.controller | getAllUsersSuperAdminController | ${req?.originalUrl}`);
+    try {
+        const allUsers = await userService.getAllUsers();
+        res.json(allUsers);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createUserSuperAdminController,
     updateUserSuperAdminController,
-    deleteUserSuperAdminController
+    deleteUserSuperAdminController,
+    getUserDetailsByIDSuperAdminController,
+    getAllUsersSuperAdminController
 };
