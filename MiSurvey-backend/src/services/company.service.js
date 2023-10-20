@@ -54,6 +54,50 @@ const createCompanyBySuperAdmin = async (companyData) => {
   }
 };
 
+const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
+  try {
+    const company = await Company.findByPk(CompanyID);
+
+    if (!company) {
+      return {
+        status: false,
+        message: "Company not found"
+      };
+    }
+
+    if (updatedData.AdminID) {
+      const user = await User.findByPk(updatedData.AdminID);
+      if (!user) {
+        return {
+          status: false,
+          message: "AdminID does not exist in Users table"
+        };
+      }
+  
+      if (user.UserRole != "Admin") {
+        return {
+          status: false,
+          message: "SuperAdmin or Supervisor cannot be Admin of the company"
+        };
+      }
+    }
+
+    await company.update(updatedData);
+
+    return {
+      status: true,
+      message: "Company updated successfully",
+      data: company
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error.message || "Update company failed",
+      error: error?.toString()
+    };
+  }
+};
+
 // Admin services
 const createCompanyByAdmin = async (AdminID, companyData) => {
   try {
@@ -114,32 +158,22 @@ const createCompanyByAdmin = async (AdminID, companyData) => {
   }
 };
 
-const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
+const updateCompanyByAdmin = async (AdminID, updatedData) => {
   try {
-    const company = await Company.findByPk(CompanyID);
+    const admin = await User.findByPk(AdminID);
+    if (!admin || admin.UserRole !== "Admin") {
+      return {
+        status: false,
+        message: "Unauthorized"
+      };
+    }
 
+    const company = await Company.findByPk(admin.CompanyID);
     if (!company) {
       return {
         status: false,
         message: "Company not found"
       };
-    }
-
-    if (updatedData.AdminID) {
-      const user = await User.findByPk(updatedData.AdminID);
-      if (!user) {
-        return {
-          status: false,
-          message: "AdminID does not exist in Users table"
-        };
-      }
-  
-      if (user.UserRole != "SuperAdmin" && user.UserRole != "Admin") {
-        return {
-          status: false,
-          message: "Supervisor cannot be Admin of the company"
-        };
-      }
     }
 
     await company.update(updatedData);
@@ -247,4 +281,5 @@ module.exports = {
   getAllCompanies,
 
   createCompanyByAdmin,
+  updateCompanyByAdmin,
 };

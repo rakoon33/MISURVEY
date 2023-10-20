@@ -54,6 +54,18 @@ const createCompanyByAdminController = async (req, res) => {
   }
 };
 
+const updateCompanyByAdminController = async (req, res) => {
+  const { AdminID } = req.params;
+  const updatedData = req.body;
+  
+  try {
+      const result = await companyService.updateCompanyBySuperAdmin(AdminID, updatedData);
+      res.json(result);
+  } catch (error) {
+      res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createCompanyBySuperAdminController,
   updateCompanyBySuperAdminController,
@@ -61,4 +73,5 @@ module.exports = {
   getAllCompaniesBySuperAdminController,
 
   createCompanyByAdminController,
+  updateCompanyByAdminController
 };
