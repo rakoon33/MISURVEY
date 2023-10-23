@@ -1,5 +1,6 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
+const { Op } = require('sequelize');
 
 // Create user by SuperAdmin
 const createUserBySuperAdmin = async (userData) => {
@@ -83,7 +84,7 @@ const deleteUserBySuperAdmin = async (id) => {
 };
 
 // API to retrieve all details of a specific user based on the UserID
-const getUserDetailsByID = async (id) => {
+const getOneUserDetailBySuperAdmin = async (id) => {
   try {
     const user = await User.findOne({
       where: { UserID: id }
@@ -105,7 +106,7 @@ const getUserDetailsByID = async (id) => {
 };
 
 // API to retrieve a list of all users with their basic details
-const getAllUsers = async () => {
+const getAllUsersBySuperAdmin = async () => {
   try {
     const users = await User.findAll({
       attributes: ['UserID', 'UserAvatar', 'Username', 'FirstName', 'LastName', 'Email', 'UserRole', 'IsActive']
@@ -125,11 +126,73 @@ const getAllUsers = async () => {
   }
 };
 
+const searchUsersBySuperAdmin = async (column, searchTerm) => {
+    try {
+        const validColumns = ['Username', 'Email', 'PhoneNumber', 'UserRole', 'IsActive'];
+        if (!validColumns.includes(column) && column !== "Fullname") {
+            return {
+                status: false,
+                message: "Invalid search column"
+            };
+        }
+
+        let whereClause;
+        if (column === "Fullname") {
+            // Split names by spaces, hyphens, or capital letters
+            let names = searchTerm.split(/\s|-/).map(name => name.trim());
+            
+            // If it's a single string like "NancyMiller", split it further using capital letters
+            if (names.length === 1 && names[0].length > 1) {
+                names = searchTerm.split(/(?=[A-Z])/).map(name => name.trim());
+            }
+
+            if (names.length === 1) {
+                whereClause = {
+                    [Op.or]: [
+                        { FirstName: { [Op.like]: `%${names[0]}%` } },
+                        { LastName: { [Op.like]: `%${names[0]}%` } }
+                    ]
+                };
+            } else {
+                whereClause = {
+                    [Op.or]: [
+                        { [Op.and]: [{ FirstName: { [Op.like]: `%${names[0]}%` } }, { LastName: { [Op.like]: `%${names[1]}%` } }] },
+                        { [Op.and]: [{ FirstName: { [Op.like]: `%${names[1]}%` } }, { LastName: { [Op.like]: `%${names[0]}%` } }] }
+                    ]
+                };
+            }
+        } else {
+            whereClause = { [column]: { [Op.like]: `%${searchTerm}%` } };
+        }
+
+        const users = await User.findAll({ where: whereClause });
+
+        if (!users || users.length === 0) {
+            return {
+                status: false,
+                message: "No users found for the given search criteria"
+            };
+        }
+
+        return {
+            status: true,
+            users
+        };
+    } catch (error) {
+        return {
+            status: false,
+            message: error.message || "Failed to search users",
+            error: error?.toString()
+        };
+    }
+};
+
 
 module.exports = {
     createUserBySuperAdmin,
     updateUserBySuperAdmin,
     deleteUserBySuperAdmin,
-    getUserDetailsByID,
-    getAllUsers
+    getOneUserDetailBySuperAdmin,
+    getAllUsersBySuperAdmin,
+    searchUsersBySuperAdmin
 };
