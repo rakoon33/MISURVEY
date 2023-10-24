@@ -34,8 +34,50 @@ const deleteUserSuperAdminController = async (req, res) => {
     }
 };
 
+const getUserDetailsByIDSuperAdminController = async (req, res) => {
+    console.log(`SuperAdmin.controller | getUserDetailsByIDSuperAdminController | ${req?.originalUrl}`);
+    try {
+        const userDetails = await userService.getOneUserDetailBySuperAdmin(req.params.id);
+        res.json(userDetails);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const getAllUsersSuperAdminController = async (req, res) => {
+    console.log(`SuperAdmin.controller | getAllUsersSuperAdminController | ${req?.originalUrl}`);
+    try {
+        const allUsers = await userService.getAllUsersBySuperAdmin();
+        res.json(allUsers);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const searchUserSuperAdminController = async (req, res) => {
+    try {
+        const { column, searchTerm } = req.query;
+
+        if (!column || !searchTerm) {
+            return res.status(400).json({ message: 'Both column and searchTerm are required as query parameters.' });
+        }
+        const result = await userService.searchUsersBySuperAdmin(column, searchTerm);
+
+        if (result.status) {
+            res.json(result.users);
+        } else {
+            res.status(400).json({ message: result.message });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Failed to search users.' });
+    }
+};
+
 module.exports = {
     createUserSuperAdminController,
     updateUserSuperAdminController,
-    deleteUserSuperAdminController
+    deleteUserSuperAdminController,
+    getUserDetailsByIDSuperAdminController,
+    getAllUsersSuperAdminController,
+    searchUserSuperAdminController
 };

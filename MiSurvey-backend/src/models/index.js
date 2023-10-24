@@ -1,12 +1,11 @@
 // models/index.js
 const User = require('./user.model');
 const Company = require('./company.model');
-const CompanyUsers = require('./companyUsers.model')
-const CompanyRoles = require('./companyRoles.model')
-
+const Module = require('./module.model');
 module.exports = {
   User,
   Company,
+  Module,
   CompanyUsers,
   CompanyRoles,
   // ...other models

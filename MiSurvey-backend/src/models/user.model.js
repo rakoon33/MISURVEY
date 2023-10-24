@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes  } = require('sequelize');
 const db = require('../config/database');
 
 const User = db.sequelize.define('User', {
@@ -24,9 +24,15 @@ const User = db.sequelize.define('User', {
     type: DataTypes.STRING(100),
     allowNull: false,
   },
+  PhoneNumber: {
+    type: DataTypes.STRING(20),
+  },
+  UserAvatar: {
+    type: DataTypes.STRING(255),  // Assuming the avatar's path or URL will be stored here
+  },
   UserPassword: {
     type: DataTypes.STRING(100),
-    allowNull: false
+    allowNull: false,
   },
   UserRole: {
     type: DataTypes.STRING(50),
@@ -34,7 +40,7 @@ const User = db.sequelize.define('User', {
     defaultValue: 'Admin',
     validate: {
       isIn: [['SuperAdmin', 'Admin', 'Supervisor']]
-    }
+    },
   },
   CreatedAt: {
     type: DataTypes.DATE,
