@@ -1,4 +1,14 @@
-const { Company, User, CompanyUsers } = require("../models");
+const {
+  Company,
+  User,
+  CompanyUsers,
+  IndividualPermissions,
+  SurveyDetails,
+  Surveys,
+  SurveyPages,
+  SurveyQuestions,
+  SurveyResponses,
+} = require("../models");
 
 // Super-Admin services
 const createCompanyBySuperAdmin = async (companyData) => {
@@ -60,7 +70,7 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
     if (!company) {
       return {
         status: false,
-        message: "Company not found"
+        message: "Company not found",
       };
     }
 
@@ -69,14 +79,14 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
       if (!user) {
         return {
           status: false,
-          message: "AdminID does not exist in Users table"
+          message: "AdminID does not exist in Users table",
         };
       }
-  
+
       if (user.UserRole != "Admin") {
         return {
           status: false,
-          message: "SuperAdmin or Supervisor cannot be Admin of the company"
+          message: "SuperAdmin or Supervisor cannot be Admin of the company",
         };
       }
     }
@@ -108,30 +118,100 @@ const deleteCompanyBySuperAdmin = async (CompanyID) => {
       };
     }
 
-    // 1. Lấy danh sách tất cả CompanyUsers cho CompanyID đang cần xóa.
-    const companyUsers = await CompanyUsers.findAll({ where: { CompanyID } });
+    // 1. Delete related survey details first
+    await SurveyDetails.destroy({ where: { CompanyID } });
 
-    // 2. Với mỗi CompanyUser, xóa tất cả IndividualPermissions liên quan.
-    for (const user of companyUsers) {
-      await IndividualPermissions.destroy({ where: { CompanyUserID: user.CompanyUserID } });
+    // 2. Fetch all surveys related to the company
+    const relatedSurveys = await Surveys.findAll({ where: { CompanyID } });
+
+    // 3. For each survey, first fetch its associated survey pages
+    for (const survey of relatedSurveys) {
+      const surveyPages = await SurveyPages.findAll({
+        where: { SurveyID: survey.SurveyID },
+      });
+
+      // 3.1 For each survey page, delete associated survey questions first
+      for (const page of surveyPages) {
+
+        // 3.1.1 Fetch all questions for the current page
+        const questions = await SurveyQuestions.findAll({
+          where: { PageID: page.PageID },
+        });
+
+        // 3.1.2 For each question, delete its associated survey responses first
+        for (const question of questions) {
+          await SurveyResponses.destroy({
+            where: { QuestionID: question.QuestionID },
+          });
+        }
+
+        // 3.1.3 After deleting all associated responses, delete the question
+        await SurveyQuestions.destroy({ where: { PageID: page.PageID } });
+      }
+
+      // 3.2 Then delete the survey pages themselves
+      await SurveyPages.destroy({ where: { SurveyID: survey.SurveyID } });
     }
 
-    // 3. Sau khi tất cả IndividualPermissions đã được xóa, xóa tất cả CompanyUsers.
+    // 4. Delete related surveys
+    await Surveys.destroy({ where: { CompanyID } });
+
+    // 5. Fetch all CompanyUsers related to the company
+    const companyUsers = await CompanyUsers.findAll({ where: { CompanyID } });
+
+    // 6. For each CompanyUser, delete all related IndividualPermissions
+    for (const user of companyUsers) {
+      await IndividualPermissions.destroy({
+        where: { CompanyUserID: user.CompanyUserID }
+      });
+    }
+
+    // 7. After all IndividualPermissions are deleted, delete all CompanyUsers
     await CompanyUsers.destroy({ where: { CompanyID } });
 
-    // 4. Cuối cùng, xóa công ty.
+    // 8. Finally, delete the company itself
     await company.destroy();
 
     return {
       status: true,
       message: "Company deleted successfully",
     };
-
   } catch (error) {
     return {
       status: false,
       message: error.message || "Delete company failed",
       error: error?.toString(),
+    };
+  }
+};
+
+const getAllCompaniesBySuperAdmin = async (numberOfCompanies) => {
+  try {
+    if (isNaN(numberOfCompanies) || numberOfCompanies < 0) {
+      return { status: false, message: "Invalid number" };
+    }
+
+    const companies = await Company.findAll({
+      attributes: ["CompanyID", "CompanyName"],
+      limit: numberOfCompanies
+    });
+
+    if (companies.length === 0) {
+      return {
+        status: false,
+        message: "No companies found",
+      };
+    }
+
+    return {
+      status: true,
+      data: companies
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error.message || "Failed to fetch companies",
+      error: error?.toString()
     };
   }
 };
@@ -179,7 +259,6 @@ const createCompanyByAdmin = async (AdminID, companyData) => {
       };
     }
 
-    companyData.AdminID = AdminID;
     const newCompany = await Company.create(companyData);
 
     return {
@@ -242,18 +321,16 @@ const deleteCompanyByAdmin = async (CompanyID, CurrentAdminID) => {
     }
 
     // Check if the company's AdminID matches the ID of the current admin.
-    if (company.AdminID !== CurrentAdminID) {
+    if (company.AdminID !== Number(CurrentAdminID)) {
       return {
         status: false,
         message: "You can only delete your own company",
       };
-    }
+    }    
 
-    await company.destroy();
-    return {
-      status: true,
-      message: "Company deleted successfully",
-    };
+    const result = await deleteCompanyBySuperAdmin(CompanyID);
+    
+    return result;
 
   } catch (error) {
     return {
@@ -264,16 +341,12 @@ const deleteCompanyByAdmin = async (CompanyID, CurrentAdminID) => {
   }
 };
 
-const getAllCompanies = async (adminID, numberOfCompanies) => {
+const getCompanyByAdmin = async (AdminID) => {
   try {
-    if (isNaN(numberOfCompanies) || numberOfCompanies < 0) {
-      return { status: false, message: "Invalid number" };
-    }
-
     const user = await User.findOne({
       where: {
-        UserID: adminID
-      }
+        UserID: AdminID,
+      },
     });
 
     if (!user) {
@@ -283,32 +356,29 @@ const getAllCompanies = async (adminID, numberOfCompanies) => {
       };
     }
 
-    if (user.UserRole !== "SuperAdmin" && user.UserRole !== "Admin") {
+    if (user.UserRole !== "Admin") {
       return {
         status: false,
-        message: "You are restricted from viewing the company list"
+        message: "You are restricted from viewing the company list",
       };
     }
 
-    // Nếu Superadmin thì không cần điều kiện (thấy full list company)
-    // Nếu Admin thì cần điều kiện (chỉ xem đc company của admin đó)
-    let condition = user.UserRole === "SuperAdmin" ? {} : { AdminID: adminID };
-    
     const companies = await Company.findAll({
-      where: condition,
-      attributes: ['CompanyID', 'CompanyName'],  
-      limit: numberOfCompanies 
+      where: { AdminID: AdminID },
+      attributes: ["CompanyID", "CompanyName"]
     });
 
     if (companies.length === 0) {
-      return { status: false, message: user.UserRole === "SuperAdmin" ? "No companies found" : "No companies found for the given AdminID." };
+      return {
+        status: false,
+        message: "No companies found for the given AdminID.",
+      };
     }
 
     return {
       status: true,
       data: companies,
     };
-
   } catch (error) {
     return {
       status: false,
@@ -323,9 +393,10 @@ module.exports = {
   createCompanyBySuperAdmin,
   updateCompanyBySuperAdmin,
   deleteCompanyBySuperAdmin,
-  getAllCompanies,
+  getAllCompaniesBySuperAdmin,
 
   createCompanyByAdmin,
   updateCompanyByAdmin,
-  deleteCompanyByAdmin
+  deleteCompanyByAdmin,
+  getCompanyByAdmin,
 };

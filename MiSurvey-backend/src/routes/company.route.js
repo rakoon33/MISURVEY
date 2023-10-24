@@ -7,11 +7,12 @@ const router = express.Router();
 router.post('/SuperAdmin/createCompany', companyController.createCompanyBySuperAdminController); 
 router.put('/SuperAdmin/updateCompany/:CompanyID', companyController.updateCompanyBySuperAdminController);
 router.delete('/SuperAdmin/deleteCompany/:CompanyID', companyController.deleteCompanyBySuperAdminController);
-router.post('/SuperAdmin/getAllCompanies/:AdminID', companyController.getAllCompaniesBySuperAdminController);
+router.post('/SuperAdmin/getAllCompaniesBySuperAdmin', companyController.getAllCompaniesBySuperAdminController);
 
 // Admin routes
 router.post('/Admin/createCompany/:AdminID', companyController.createCompanyByAdminController); 
 router.put('/Admin/updateCompany/:AdminID', companyController.updateCompanyByAdminController);
-// router.delete('/SuperAdmin/deleteCompany/:CompanyID', companyController.deleteCompanyBySuperAdminController);
+router.delete('/Admin/deleteCompany/:CompanyID', companyController.deleteCompanyByAdminController);
+router.post('/Admin/getCompanyByAdmin/:AdminID', companyController.getCompanyByAdminController);
 
 module.exports = router;
