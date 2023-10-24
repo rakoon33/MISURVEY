@@ -11,5 +11,4 @@ router.delete('/SuperAdmin/deleteModule/:ModuleID', moduleController.deleteModul
 
 // User routes
 
-
 module.exports = router;

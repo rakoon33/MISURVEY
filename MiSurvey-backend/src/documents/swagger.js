@@ -7,9 +7,8 @@ const app = express();
 
 const path = require("path");
 
-// Construct the absolute path to your route files
+// Construct the absolute path to route files
 const routeFilesPath = path.join(__dirname, "../routes/*.js");
-
 
 const options = {
   definition: {
