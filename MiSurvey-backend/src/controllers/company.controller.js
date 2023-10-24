@@ -66,6 +66,18 @@ const updateCompanyByAdminController = async (req, res) => {
   }
 };
 
+const deleteCompanyByAdminController = async (req, res) => {
+  try {
+    const { CompanyID } = req.params;
+    const { AdminCompanyID } = req.body;
+    const result = await companyService.deleteCompanyByAdmin(CompanyID, AdminCompanyID);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   createCompanyBySuperAdminController,
   updateCompanyBySuperAdminController,

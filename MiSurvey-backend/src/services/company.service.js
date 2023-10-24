@@ -1,5 +1,4 @@
-const { Company, User } = require("../models");
-
+const { Company, User, CompanyUsers } = require("../models");
 
 // Super-Admin services
 const createCompanyBySuperAdmin = async (companyData) => {
@@ -98,6 +97,45 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
   }
 };
 
+const deleteCompanyBySuperAdmin = async (CompanyID) => {
+  try {
+    const company = await Company.findByPk(CompanyID);
+
+    if (!company) {
+      return {
+        status: false,
+        message: "Company not found",
+      };
+    }
+
+    // 1. Lấy danh sách tất cả CompanyUsers cho CompanyID đang cần xóa.
+    const companyUsers = await CompanyUsers.findAll({ where: { CompanyID } });
+
+    // 2. Với mỗi CompanyUser, xóa tất cả IndividualPermissions liên quan.
+    for (const user of companyUsers) {
+      await IndividualPermissions.destroy({ where: { CompanyUserID: user.CompanyUserID } });
+    }
+
+    // 3. Sau khi tất cả IndividualPermissions đã được xóa, xóa tất cả CompanyUsers.
+    await CompanyUsers.destroy({ where: { CompanyID } });
+
+    // 4. Cuối cùng, xóa công ty.
+    await company.destroy();
+
+    return {
+      status: true,
+      message: "Company deleted successfully",
+    };
+
+  } catch (error) {
+    return {
+      status: false,
+      message: error.message || "Delete company failed",
+      error: error?.toString(),
+    };
+  }
+};
+
 // Admin services
 const createCompanyByAdmin = async (AdminID, companyData) => {
   try {
@@ -192,14 +230,22 @@ const updateCompanyByAdmin = async (AdminID, updatedData) => {
   }
 };
 
-const deleteCompanyBySuperAdmin = async (CompanyID) => {
+const deleteCompanyByAdmin = async (CompanyID, CurrentAdminID) => {
   try {
     const company = await Company.findByPk(CompanyID);
 
     if (!company) {
-      return { 
-        status: false, 
-        message: "Company not found"
+      return {
+        status: false,
+        message: "Company not found",
+      };
+    }
+
+    // Check if the company's AdminID matches the ID of the current admin.
+    if (company.AdminID !== CurrentAdminID) {
+      return {
+        status: false,
+        message: "You can only delete your own company",
       };
     }
 
@@ -220,7 +266,6 @@ const deleteCompanyBySuperAdmin = async (CompanyID) => {
 
 const getAllCompanies = async (adminID, numberOfCompanies) => {
   try {
-    // Check if the number of companies is valid
     if (isNaN(numberOfCompanies) || numberOfCompanies < 0) {
       return { status: false, message: "Invalid number" };
     }
@@ -282,4 +327,5 @@ module.exports = {
 
   createCompanyByAdmin,
   updateCompanyByAdmin,
+  deleteCompanyByAdmin
 };
