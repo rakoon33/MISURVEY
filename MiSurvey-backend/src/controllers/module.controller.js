@@ -29,8 +29,39 @@ const deleteModuleBySuperAdminController = async (req, res) => {
     }
 };
 
+const searchModulesBySuperAdminController = async (req, res) => {
+    try {
+        const { name } = req.query;
+        const result = await moduleService.searchModules(name);
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const getOneModuleBySuperAdminController = async (req, res) => {
+    try {
+        const result = await moduleService.getOneModule(req.params.ModuleID);
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const getAllModulesBySuperAdminController = async (req, res) => {
+    try {
+        const result = await moduleService.getAllModules();
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createModuleBySuperAdminController,
     updateModuleBySuperAdminController,
-    deleteModuleBySuperAdminController
+    deleteModuleBySuperAdminController,
+    getAllModulesBySuperAdminController,
+    getOneModuleBySuperAdminController,
+    searchModulesBySuperAdminController
 };

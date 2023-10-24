@@ -8,7 +8,9 @@ const router = express.Router();
 router.post('/SuperAdmin/createModule', moduleController.createModuleBySuperAdminController); 
 router.put('/SuperAdmin/updateModule/:ModuleID', moduleController.updateModuleBySuperAdminController); 
 router.delete('/SuperAdmin/deleteModule/:ModuleID', moduleController.deleteModuleBySuperAdminController); 
-
+router.get('/SuperAdmin/searchModules', moduleController.searchModulesBySuperAdminController);
+router.get('/SuperAdmin/getOneModuleDetail/:ModuleID', moduleController.getOneModuleBySuperAdminController);
+router.get('/SuperAdmin/getAllModules', moduleController.getAllModulesBySuperAdminController);
 // User routes
 
 

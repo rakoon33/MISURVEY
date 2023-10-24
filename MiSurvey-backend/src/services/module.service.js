@@ -1,4 +1,5 @@
 const { Module } = require('../models');
+const { Op } = require('sequelize');
 
 const createModuleBySuperAdmin = async (moduleData) => {
   try {
@@ -30,8 +31,55 @@ const deleteModuleBySuperAdmin = async (id) => {
   }
 };
 
+const getAllModules = async () => {
+  try {
+    const modules = await Module.findAll();
+    return { status: true, message: "Modules fetched successfully", modules };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+
+const getOneModule = async (id) => {
+  try {
+    const module = await Module.findByPk(id);
+    if (!module) {
+      return { status: false, message: "Module not found" };
+    }
+    return { status: true, message: "Module fetched successfully", module };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+const searchModules = async (query) => {
+  try {
+    console.log("Searching modules');", query);
+    const modules = await Module.findAll({
+      where: {
+        ModuleName: {
+          [Op.like]: '%' + query + '%'
+        }
+      }
+    });
+
+    if (modules.length === 0) {
+      return { status: false, message: "No modules found" };
+    }
+
+    return { status: true, message: "Modules fetched successfully", modules };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+
 module.exports = {
   createModuleBySuperAdmin,
   updateModuleBySuperAdmin,
-  deleteModuleBySuperAdmin
+  deleteModuleBySuperAdmin,
+  getAllModules,
+  getOneModule,
+  searchModules
 };
