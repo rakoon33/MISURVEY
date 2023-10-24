@@ -6,6 +6,7 @@ const CompanyRole = require('./companyrole.model');
 module.exports = {
   User,
   Company,
-  CompanyRole
+  CompanyRole,
+  Module
   // ...other models
 };
