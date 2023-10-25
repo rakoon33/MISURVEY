@@ -27,12 +27,12 @@ const createCompanyBySuperAdmin = async (companyData) => {
       };
     }
 
-    if (user.UserRole !== "Admin") {
-      return {
-        status: false,
-        message: "Only Admin can own their company"
-      };
-    }
+    // if (user.UserRole !== "Admin") {
+    //   return {
+    //     status: false,
+    //     message: "Only Admin can own their company"
+    //   };
+    // }
 
     const existingCompany = await Company.findOne({
       where: {
@@ -285,7 +285,19 @@ const updateCompanyByAdmin = async (AdminID, updatedData) => {
       };
     }
 
-    const company = await Company.findByPk(admin.CompanyID);
+    if (updatedData.AdminID !== AdminID) {
+      return {
+        status: false,
+        message: "You don't have permission to update company for another admin"
+      };
+    }
+
+    const company =  await Company.findOne({
+      where: {
+        AdminID: AdminID
+      }
+    });
+    
     if (!company) {
       return {
         status: false,

@@ -51,7 +51,8 @@ const Surveys = db.sequelize.define('Surveys', {
     },
     CreatedAt: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
     },
     ResponseRate: {
         type: DataTypes.FLOAT

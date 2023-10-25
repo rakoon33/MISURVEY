@@ -49,7 +49,8 @@ const IndividualPermissions = db.sequelize.define('IndividualPermissions', {
     },
     CreatedAt: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
     },
     CreatedBy: {
         type: DataTypes.INTEGER,
