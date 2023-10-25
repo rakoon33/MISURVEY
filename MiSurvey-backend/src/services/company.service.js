@@ -10,6 +10,7 @@ const {
   SurveyResponse,
 } = require("../models");
 
+
 // Super-Admin services
 const createCompanyBySuperAdmin = async (companyData) => {
   try {
@@ -216,6 +217,45 @@ const getAllCompaniesBySuperAdmin = async (numberOfCompanies) => {
   }
 };
 
+const searchCompaniesBySuperAdmin = async (query) => {
+  try {
+    let whereConditions = {};
+
+    if (query.CompanyName) {
+      whereConditions.CompanyName = {
+        [db.Sequelize.Op.like]: `%${query.CompanyName}%`,
+      };
+    }
+    if (query.CompanyDomain) {
+      whereConditions.CompanyDomain = {
+        [db.Sequelize.Op.like]: `%${query.CompanyDomain}%`,
+      };
+    }
+
+    const companies = await Company.findAll({
+      where: whereConditions
+    });
+
+    if (companies.length === 0) {
+      return {
+        status: false,
+        message: "No companies found based on search criteria"
+      };
+    }
+    return {
+      status: true,
+      data: companies,
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error.message || "Failed to search for companies",
+      error: error?.toString()
+    };
+  }
+};
+
+
 // Admin services
 const createCompanyByAdmin = async (AdminID, companyData) => {
   try {
@@ -401,12 +441,37 @@ const getCompanyByAdmin = async (AdminID) => {
 };
 
 
+// Admin & SuperAdmin services
+const getOneCompany = async (CompanyID) => {
+  try {
+    const company = await Company.findByPk(CompanyID);
+    if (!company) {
+      return {
+        status: false,
+        message: "Company not found",
+      };
+    }
+    return {
+      status: true,
+      data: company,
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error.message || "Failed to fetch company",
+      error: error?.toString(),
+    };
+  }
+};
+
+
 module.exports = {
   createCompanyBySuperAdmin,
   updateCompanyBySuperAdmin,
   deleteCompanyBySuperAdmin,
   getAllCompaniesBySuperAdmin,
-
+  searchCompaniesBySuperAdmin,
+  getOneCompany,
   createCompanyByAdmin,
   updateCompanyByAdmin,
   deleteCompanyByAdmin,

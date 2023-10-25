@@ -42,6 +42,16 @@ const getAllCompaniesBySuperAdminController = async (req, res) => {
   }
 };
 
+const searchCompanyBySuperAdminController = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const result = await companyService.searchCompaniesBySuperAdmin(query);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 // Admin controller
 const createCompanyByAdminController = async (req, res) => {
   try {
@@ -85,13 +95,25 @@ const getCompanyByAdminController = async (req, res) => {
   }
 };
 
+// Admin & SuperAdmin controller
+const getOneCompanyController = async (req, res) => {
+  try {
+    const { CompanyID } = req.params;
+    const result = await companyService.getOneCompany(CompanyID);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
 module.exports = {
   createCompanyBySuperAdminController,
   updateCompanyBySuperAdminController,
   deleteCompanyBySuperAdminController, 
   getAllCompaniesBySuperAdminController,
-
+  searchCompanyBySuperAdminController,
+  getOneCompanyController,
   createCompanyByAdminController,
   updateCompanyByAdminController,
   deleteCompanyByAdminController,
