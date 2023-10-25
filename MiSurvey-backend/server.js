@@ -29,7 +29,7 @@ app.use('/api', authRoute);
 app.use('/api/company', companyRoute);
 app.use('/api/user', userRoute);
 app.use('/api/companyrole', companyroleRoute);
-
+app.use('/api/module', moduleRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
