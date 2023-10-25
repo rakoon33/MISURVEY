@@ -16,7 +16,9 @@ const Module = db.sequelize.define('Module', {
     type: DataTypes.TEXT
   },
   CreatedAt: {
-    type: DataTypes.DATE
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
   CreatedBy: {
     type: DataTypes.INTEGER
