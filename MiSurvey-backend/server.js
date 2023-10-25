@@ -5,6 +5,9 @@ const routes = require('./src/routes');
 const { database } = require('./src/config');
 const app = express();
 
+const swaggerDocs = require('./src/documents/swagger.js');
+
+
 // routes
 const { authMiddleware } = require('./src/middlewares');
 const indexRoute = require('./src/routes');
@@ -26,7 +29,7 @@ app.use('/api', authRoute);
 app.use('/api/company', companyRoute);
 app.use('/api/user', userRoute);
 app.use('/api/companyrole', companyroleRoute);
-
+app.use('/api/module', moduleRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -37,6 +40,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+  swaggerDocs(app, process.env.PORT);
   database.sequelize.sync()
     .then(() => {
       console.log('Database synced');

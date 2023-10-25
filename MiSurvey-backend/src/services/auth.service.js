@@ -20,7 +20,7 @@ const loginBySuperAdmin = async (username, password) => {
         return {
           status: true,
           message: "User login successful",
-          data: token
+          token: token
         };
       } else {
           return {
