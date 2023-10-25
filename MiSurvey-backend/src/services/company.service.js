@@ -1,13 +1,13 @@
 const {
   Company,
   User,
-  CompanyUsers,
-  IndividualPermissions,
-  SurveyDetails,
-  Surveys,
-  SurveyPages,
-  SurveyQuestions,
-  SurveyResponses,
+  CompanyUser,
+  IndividualPermission,
+  SurveyDetail,
+  Survey,
+  SurveyPage,
+  SurveyQuestion,
+  SurveyResponse,
 } = require("../models");
 
 // Super-Admin services
@@ -27,12 +27,12 @@ const createCompanyBySuperAdmin = async (companyData) => {
       };
     }
 
-    // if (user.UserRole !== "Admin") {
-    //   return {
-    //     status: false,
-    //     message: "Only Admin can own their company"
-    //   };
-    // }
+    if (user.UserRole !== "Admin") {
+      return {
+        status: false,
+        message: "Only Admin can own their company"
+      };
+    }
 
     const existingCompany = await Company.findOne({
       where: {
@@ -119,14 +119,14 @@ const deleteCompanyBySuperAdmin = async (CompanyID) => {
     }
 
     // 1. Delete related survey details first
-    await SurveyDetails.destroy({ where: { CompanyID } });
+    await SurveyDetail.destroy({ where: { CompanyID } });
 
     // 2. Fetch all surveys related to the company
-    const relatedSurveys = await Surveys.findAll({ where: { CompanyID } });
+    const relatedSurveys = await Survey.findAll({ where: { CompanyID } });
 
     // 3. For each survey, first fetch its associated survey pages
     for (const survey of relatedSurveys) {
-      const surveyPages = await SurveyPages.findAll({
+      const surveyPages = await SurveyPage.findAll({
         where: { SurveyID: survey.SurveyID },
       });
 
@@ -134,40 +134,40 @@ const deleteCompanyBySuperAdmin = async (CompanyID) => {
       for (const page of surveyPages) {
 
         // 3.1.1 Fetch all questions for the current page
-        const questions = await SurveyQuestions.findAll({
+        const questions = await SurveyQuestion.findAll({
           where: { PageID: page.PageID },
         });
 
         // 3.1.2 For each question, delete its associated survey responses first
         for (const question of questions) {
-          await SurveyResponses.destroy({
+          await SurveyResponse.destroy({
             where: { QuestionID: question.QuestionID },
           });
         }
 
         // 3.1.3 After deleting all associated responses, delete the question
-        await SurveyQuestions.destroy({ where: { PageID: page.PageID } });
+        await SurveyQuestion.destroy({ where: { PageID: page.PageID } });
       }
 
       // 3.2 Then delete the survey pages themselves
-      await SurveyPages.destroy({ where: { SurveyID: survey.SurveyID } });
+      await SurveyPage.destroy({ where: { SurveyID: survey.SurveyID } });
     }
 
     // 4. Delete related surveys
-    await Surveys.destroy({ where: { CompanyID } });
+    await Survey.destroy({ where: { CompanyID } });
 
     // 5. Fetch all CompanyUsers related to the company
-    const companyUsers = await CompanyUsers.findAll({ where: { CompanyID } });
+    const companyUsers = await CompanyUser.findAll({ where: { CompanyID } });
 
     // 6. For each CompanyUser, delete all related IndividualPermissions
     for (const user of companyUsers) {
-      await IndividualPermissions.destroy({
+      await IndividualPermission.destroy({
         where: { CompanyUserID: user.CompanyUserID }
       });
     }
 
     // 7. After all IndividualPermissions are deleted, delete all CompanyUsers
-    await CompanyUsers.destroy({ where: { CompanyID } });
+    await CompanyUser.destroy({ where: { CompanyID } });
 
     // 8. Finally, delete the company itself
     await company.destroy();

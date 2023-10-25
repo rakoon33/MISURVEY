@@ -1,29 +1,27 @@
 // models/index.js
 const User = require('./user.model');
 const Company = require('./company.model');
-const CompanyRole = require('./companyrole.model');
 const Module = require('./module.model');
-const CompanyUsers = require('./companyUsers.model');
-const CompanyRoles = require('./companyRoles.model');
-const IndividualPermissions = require('./individualPermissions.model');
-const SurveyDetails = require('./surveyDetails.model');
-const Surveys = require('./surveys.model');
-const SurveyPages = require('./surveyPages.model');
-const SurveyQuestions = require('./surveyQuestions.model');
-const SurveyResponses = require('./surveyResponses.model');
+const CompanyUser = require('./companyUser.model');
+const IndividualPermission = require('./individualPermission.model');
+const SurveyDetail = require('./surveyDetail.model');
+const Survey = require('./survey.model');
+const SurveyPage = require('./surveyPage.model');
+const SurveyQuestion = require('./surveyQuestion.model');
+const SurveyResponse = require('./surveyResponse.model');
+const CompanyRole = require('./companyRole.model');
 
 module.exports = {
   User,
   Company,
   CompanyRole,
   Module,
-  CompanyUsers,
-  CompanyRoles,
-  IndividualPermissions,
-  SurveyDetails,
-  Surveys,
-  SurveyPages,
-  SurveyQuestions,
-  SurveyResponses,
+  CompanyUser,
+  IndividualPermission,
+  SurveyDetail,
+  Survey,
+  SurveyPage,
+  SurveyQuestion,
+  SurveyResponse,
   // ...other models
 };
