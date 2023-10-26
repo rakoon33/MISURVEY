@@ -44,8 +44,8 @@ const getAllCompaniesBySuperAdminController = async (req, res) => {
 
 const searchCompanyBySuperAdminController = async (req, res) => {
   try {
-    const { query } = req.query;
-    const result = await companyService.searchCompaniesBySuperAdmin(query);
+    const { companyName, adminID } = req.query;
+    const result = await companyService.searchCompaniesBySuperAdmin(companyName, adminID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

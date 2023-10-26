@@ -9,6 +9,7 @@ const {
   SurveyQuestion,
   SurveyResponse,
 } = require("../models");
+const { Op } = require('sequelize');
 
 
 // Super-Admin services
@@ -217,41 +218,31 @@ const getAllCompaniesBySuperAdmin = async (numberOfCompanies) => {
   }
 };
 
-const searchCompaniesBySuperAdmin = async (query) => {
+const searchCompaniesBySuperAdmin = async (companyName, adminID) => {
   try {
-    let whereConditions = {};
+    const whereConditions = {};
 
-    if (query.CompanyName) {
+    if (companyName) {
       whereConditions.CompanyName = {
-        [db.Sequelize.Op.like]: `%${query.CompanyName}%`,
+        [Op.like]: `%${companyName}%`
       };
     }
-    if (query.CompanyDomain) {
-      whereConditions.CompanyDomain = {
-        [db.Sequelize.Op.like]: `%${query.CompanyDomain}%`,
-      };
-    }
+
+    if (adminID) {
+      whereConditions.AdminID = adminID;
+    }    
 
     const companies = await Company.findAll({
       where: whereConditions
     });
 
     if (companies.length === 0) {
-      return {
-        status: false,
-        message: "No companies found based on search criteria"
-      };
+      return { status: false, message: "No companies found" };
     }
-    return {
-      status: true,
-      data: companies,
-    };
+
+    return { status: true, message: "Companies fetched successfully", companies };
   } catch (error) {
-    return {
-      status: false,
-      message: error.message || "Failed to search for companies",
-      error: error?.toString()
-    };
+    return { status: false, message: error.message, error: error.toString() };
   }
 };
 

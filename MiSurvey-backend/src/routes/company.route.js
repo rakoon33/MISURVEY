@@ -17,6 +17,6 @@ router.delete('/Admin/deleteCompany/:CompanyID', companyController.deleteCompany
 router.post('/Admin/getCompanyByAdmin/:AdminID', companyController.getCompanyByAdminController);
 
 // Admin & SuperAdmin routes
-router.get('/SuperAdmin/getOneCompany/:CompanyID', companyController.getOneCompanyController);
+router.get('/getOneCompany/:CompanyID', companyController.getOneCompanyController);
 
 module.exports = router;
