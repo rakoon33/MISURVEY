@@ -9,6 +9,8 @@ const {
   SurveyQuestion,
   SurveyResponse,
 } = require("../models");
+const { Op } = require('sequelize');
+
 
 // Super-Admin services
 const createCompanyBySuperAdmin = async (companyData) => {
@@ -216,6 +218,35 @@ const getAllCompaniesBySuperAdmin = async (numberOfCompanies) => {
   }
 };
 
+const searchCompaniesBySuperAdmin = async (companyName, adminID) => {
+  try {
+    const whereConditions = {};
+
+    if (companyName) {
+      whereConditions.CompanyName = {
+        [Op.like]: `%${companyName}%`
+      };
+    }
+
+    if (adminID) {
+      whereConditions.AdminID = adminID;
+    }    
+
+    const companies = await Company.findAll({
+      where: whereConditions
+    });
+
+    if (companies.length === 0) {
+      return { status: false, message: "No companies found" };
+    }
+
+    return { status: true, message: "Companies fetched successfully", companies };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+
 // Admin services
 const createCompanyByAdmin = async (AdminID, companyData) => {
   try {
@@ -401,12 +432,37 @@ const getCompanyByAdmin = async (AdminID) => {
 };
 
 
+// Admin & SuperAdmin services
+const getOneCompany = async (CompanyID) => {
+  try {
+    const company = await Company.findByPk(CompanyID);
+    if (!company) {
+      return {
+        status: false,
+        message: "Company not found",
+      };
+    }
+    return {
+      status: true,
+      data: company,
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error.message || "Failed to fetch company",
+      error: error?.toString(),
+    };
+  }
+};
+
+
 module.exports = {
   createCompanyBySuperAdmin,
   updateCompanyBySuperAdmin,
   deleteCompanyBySuperAdmin,
   getAllCompaniesBySuperAdmin,
-
+  searchCompaniesBySuperAdmin,
+  getOneCompany,
   createCompanyByAdmin,
   updateCompanyByAdmin,
   deleteCompanyByAdmin,
