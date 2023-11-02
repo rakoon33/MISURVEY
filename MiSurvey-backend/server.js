@@ -1,12 +1,26 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const routes = require('./src/routes');
 const { database } = require('./src/config');
+const cors = require('cors')
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const app = express();
+
+// Use the CORS middleware before your routes
+app.use(cors());
 
 const swaggerDocs = require('./src/documents/swagger.js');
 
+
+// Add CORS configuration 
+app.use(cors({
+  origin: 'http://localhost:8082', // Allow only this domain
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 // routes
 const { authMiddleware } = require('./src/middlewares');
@@ -40,7 +54,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  swaggerDocs(app, process.env.PORT);
+  swaggerDocs(app, PORT);
   database.sequelize.sync()
     .then(() => {
       console.log('Database synced');

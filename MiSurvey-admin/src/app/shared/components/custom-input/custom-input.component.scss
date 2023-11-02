@@ -1,0 +1,22 @@
+.custom-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.custom-input i {
+    margin-right: 10px;
+}
+
+.custom-input input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+}
+
+.eye, .eye-off {
+    cursor: pointer;
+}

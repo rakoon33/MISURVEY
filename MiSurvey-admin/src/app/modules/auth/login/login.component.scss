@@ -1,0 +1,105 @@
+@import "../../../../scss/colors.scss";
+
+/* Global Styles */
+.bg-light {
+    background-color: #f8f9fa;  /* Slight shade to the light background for a softer look */
+}
+
+/* Login Card Styles */
+.login-card {
+    background-color: #ffffff;
+    border-radius: 15px 0 0 15px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.05);  /* Gentle shadow for depth */
+    padding: 30px 40px;  /* Increased padding for better spacing */
+}
+
+.login-logo {
+    width: 240px;  /* Slight reduction in size */
+    height: 140px;
+    margin-bottom: 20px;
+    transition: all 0.3s;  /* Smooth hover transition */
+}
+
+.login-logo:hover {
+    transform: scale(1.05);  /* Gentle zoom on hover for logo */
+}
+
+/* Inputs and Button Styles */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.btn-login-color {
+    background-color: $main_color_1;
+    border-radius: 5px;  /* Rounded corners for the button */
+    transition: all 0.3s;  /* Smooth hover transition */
+}
+
+.btn-login-color:hover {
+    background-color: darken($main_color_1, 10%);  /* Darkens the button slightly on hover */
+}
+
+/* Graphic Card Styles */
+.graphic-card {
+    background-color: transparent;
+    border: none;
+    border-radius: 0 15px 15px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.graphic-card img.img-fluid {
+    position: absolute;
+    top: 50%;@import "../../../../scss/colors.scss";
+
+    .login-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 2rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+    }
+    
+    .login-logo {
+        width: 100px;
+        height: auto;
+        margin-bottom: 1rem;
+    }
+    
+    .input-group-text {
+        background-color: transparent;
+        border: none;
+        color: $main_color_1;
+    }
+    
+    .input-group .form-control {
+        border: 1px solid $main_color_1;
+        border-radius: 0;
+    }
+    
+    .btn-login-color {
+        background-color: $main_color_1;
+        border: none;
+        border-radius: 5px;
+        padding: 12px 20px;
+        transition: background-color 0.3s ease;
+    
+        &:hover {
+            background-color: darken($main_color_1, 10%);
+        }
+    }
+    
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-height: 100%;
+    min-width: 140%;
+    width: auto;
+    height: auto;
+    transition: all 0.3s;  /* Smooth hover transition */
+}
+
+.graphic-card:hover img.img-fluid {
+    transform: translate(-50%, -50%) scale(1.05);  /* Gentle zoom on hover for illustration */
+}
