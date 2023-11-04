@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { SharedModule } from '../../shared/share.module'; // replace 'path-to-your-shared-module' with the actual path
 import { PagesRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { Page404Component } from './page404/page404.component';
-import { Page500Component } from './page500/page500.component';
 import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
 
@@ -14,8 +13,6 @@ import { IconModule } from '@coreui/icons-angular';
   declarations: [
     LoginComponent,
     RegisterComponent,
-    Page404Component,
-    Page500Component
   ],
   imports: [
     CommonModule,
@@ -24,7 +21,8 @@ import { IconModule } from '@coreui/icons-angular';
     ButtonModule,
     GridModule,
     IconModule,
-    FormModule
+    FormModule,
+    SharedModule
   ]
 })
 export class AuthModule {

@@ -1,0 +1,7 @@
+<div class="custom-input">
+    <i *ngIf="icon" class="{{icon}}"></i>
+    <input [type]="type" [placeholder]="placeholder" [(ngModel)]="value" (ngModelChange)="onChange(value)" (blur)="onTouched()" />
+    <i *ngIf="type === 'password' && value" (click)="toggleVisibility()" 
+       class="{{ showPassword ? 'eye' : 'eye-off' }}"></i>
+</div>
+  

@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { DefaultLayoutComponent } from './shared';
-import { Page404Component } from './modules/auth/page404/page404.component';
-import { Page500Component } from './modules/auth/page500/page500.component';
+import { Page404Component } from './shared/page404/page404.component';
+import { Page500Component } from './shared/page500/page500.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
 
@@ -95,7 +95,7 @@ const routes: Routes = [
       title: 'Register Page'
     }
   },
-  {path: '**', redirectTo: 'login'}
+  {path: '**', redirectTo: '404'}
 ];
 
 @NgModule({

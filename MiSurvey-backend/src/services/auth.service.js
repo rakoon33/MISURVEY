@@ -12,7 +12,7 @@ const loginBySuperAdmin = async (username, password) => {
 
     if (user) {
       if (user.UserRole !== 'SuperAdmin') {
-        throw new Error('Access denied - User is not a SuperAmin');
+        throw new Error('Access denied');
       }
       const isPasswordVerified = await bcrypt.compare(password.trim(), user.UserPassword);
       if (isPasswordVerified) {
