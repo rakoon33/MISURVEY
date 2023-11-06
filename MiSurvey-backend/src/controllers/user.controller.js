@@ -1,67 +1,69 @@
 const { userService } = require('../services');
 
-const createUserSuperAdminController = async (req, res) => {
-    console.log(`SuperAdmin.controller | createUserSuperAdminController | ${req?.originalUrl}`);
-    console.log(req.body)
+const createUserController = async (req, res) => {
     try {
-        const newUser = await userService.createUserBySuperAdmin(req.body);
+        const newUser = await userService.createUser(req.body);
         res.json(newUser);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const updateUserSuperAdminController = async (req, res) => {
-    console.log(`SuperAdmin.controller | updateUserSuperAdminController | ${req?.originalUrl}`);
-    console.log(req.body);
-    console.log("ID:", req.params.id);
-
+const updateUserController = async (req, res) => {
     try {
-        const result = await userService.updateUserBySuperAdmin(req.params.id, req.body);  
+        const result = await userService.updateUser(req.params.UserID, req.body);  
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const deleteUserSuperAdminController = async (req, res) => {
-    console.log(`SuperAdmin.controller | deleteUserSuperAdminController | ${req?.originalUrl}`);
+const deleteUserController = async (req, res) => {
     try {
-        const result = await userService.deleteUserBySuperAdmin(req.params.id);  
+        const result = await userService.deleteUser(req.params.UserID);  
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const getUserDetailsByIDSuperAdminController = async (req, res) => {
-    console.log(`SuperAdmin.controller | getUserDetailsByIDSuperAdminController | ${req?.originalUrl}`);
+const getOneUserController = async (req, res) => {
     try {
-        const userDetails = await userService.getOneUserDetailBySuperAdmin(req.params.id);
+        const userDetails = await userService.getOneUser(req.params.UserID);
         res.json(userDetails);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const getAllUsersSuperAdminController = async (req, res) => {
+const getUserProfileController = async (req, res) => {
+    try {
+        const userDetails = await userService.getOneUser(req.user.dataValues.UserID);
+        res.json(userDetails);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+
+const getAllUsersController = async (req, res) => {
     console.log(`SuperAdmin.controller | getAllUsersSuperAdminController | ${req?.originalUrl}`);
     try {
-        const allUsers = await userService.getAllUsersBySuperAdmin();
+        const allUsers = await userService.getAllUsers();
         res.json(allUsers);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const searchUserSuperAdminController = async (req, res) => {
+const searchUserController = async (req, res) => {
     try {
         const { column, searchTerm } = req.query;
 
         if (!column || !searchTerm) {
             return res.status(400).json({ message: 'Both column and searchTerm are required as query parameters.' });
         }
-        const result = await userService.searchUsersBySuperAdmin(column, searchTerm);
+        const result = await userService.searchUsers(column, searchTerm);
 
         if (result.status) {
             res.json(result.users);
@@ -74,10 +76,11 @@ const searchUserSuperAdminController = async (req, res) => {
 };
 
 module.exports = {
-    createUserSuperAdminController,
-    updateUserSuperAdminController,
-    deleteUserSuperAdminController,
-    getUserDetailsByIDSuperAdminController,
-    getAllUsersSuperAdminController,
-    searchUserSuperAdminController
+    createUserController,
+    updateUserController,
+    deleteUserController,
+    getOneUserController,
+    getAllUsersController,
+    searchUserController,
+    getUserProfileController
 };

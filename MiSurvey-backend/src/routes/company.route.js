@@ -1,22 +1,27 @@
 const express = require('express');
 const { companyController } = require('../controllers');
-
+const { authMiddleware } = require('../middlewares');
 const router = express.Router();
 
-// SuperAdmin routes
-router.post('/SuperAdmin/createCompany', companyController.createCompanyBySuperAdminController); 
-router.put('/SuperAdmin/updateCompany/:CompanyID', companyController.updateCompanyBySuperAdminController);
-router.delete('/SuperAdmin/deleteCompany/:CompanyID', companyController.deleteCompanyBySuperAdminController);
-router.post('/SuperAdmin/getAllCompaniesBySuperAdmin', companyController.getAllCompaniesBySuperAdminController);
-router.get('/SuperAdmin/searchCompany', companyController.searchCompanyBySuperAdminController);
 
-// Admin routes
-router.post('/Admin/createCompany/:AdminID', companyController.createCompanyByAdminController); 
-router.put('/Admin/updateCompany/:AdminID', companyController.updateCompanyByAdminController);
-router.delete('/Admin/deleteCompany/:CompanyID', companyController.deleteCompanyByAdminController);
-router.post('/Admin/getCompanyByAdmin/:AdminID', companyController.getCompanyByAdminController);
+router
+    .route('/companyProfile')
+    .get(authMiddleware.tokenVerification, companyController.getCompanyProfileController)
+    .put(authMiddleware.tokenVerification, companyController.updateCompanyController);
 
-// Admin & SuperAdmin routes
-router.get('/getOneCompany/:CompanyID', companyController.getOneCompanyController);
+router
+    .route('/searchCompanies')
+    .get(authMiddleware.tokenVerification, companyController.searchCompanyController);
+
+
+router.route('/')
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.getAllCompaniesController)
+    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.createCompanyController);
+
+router
+    .route('/:CompanyID')
+    .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.deleteCompanyController)
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.getOneCompanyController)
+    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.updateCompanyController);
 
 module.exports = router;

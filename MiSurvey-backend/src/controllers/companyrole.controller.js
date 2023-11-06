@@ -1,33 +1,30 @@
 const { companyRoleService } = require('../services');
 
-const createCompanyRoleSuperAdminController = async (req, res) => {
-    console.log(`SuperAdmin.controller | createCompanyRoleSuperAdminController | ${req?.originalUrl}`);
+const createCompanyRoleController = async (req, res) => {
     console.log(req.body);
     try {
-        const newRole = await companyRoleService.createCompanyRoleBySuperAdmin(req.body);
+        const newRole = await companyRoleService.createCompanyRole(req.body);
         res.json(newRole);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const updateCompanyRoleSuperAdminController = async (req, res) => {
-    console.log(`SuperAdmin.controller | updateCompanyRoleSuperAdminController | ${req?.originalUrl}`);
+const updateCompanyRoleController = async (req, res) => {
     console.log(req.body);
-    console.log("RoleID:", req.params.id);
+    console.log("RoleID:", req.params.CompanyRoleID);
 
     try {
-        const result = await companyRoleService.updateCompanyRoleBySuperAdmin(req.params.id, req.body);
+        const result = await companyRoleService.updateCompanyRole(req.params.CompanyRoleID, req.body);
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const deleteCompanyRoleSuperAdminController = async (req, res) => {
-    console.log(`SuperAdmin.controller | deleteCompanyRoleSuperAdminController | ${req?.originalUrl}`);
+const deleteCompanyRoleController = async (req, res) => {
     try {
-        const result = await companyRoleService.deleteCompanyRoleBySuperAdmin(req.params.id);
+        const result = await companyRoleService.deleteCompanyRole(req.params.CompanyRoleID);
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -35,7 +32,7 @@ const deleteCompanyRoleSuperAdminController = async (req, res) => {
 };
 
 module.exports = {
-    createCompanyRoleSuperAdminController,
-    updateCompanyRoleSuperAdminController,
-    deleteCompanyRoleSuperAdminController
+    createCompanyRoleController,
+    updateCompanyRoleController,
+    deleteCompanyRoleController
 };

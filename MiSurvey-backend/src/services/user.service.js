@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 
 // Create user by SuperAdmin
-const createUserBySuperAdmin = async (userData) => {
+const createUser = async (userData) => {
     try {
         userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); // Hash password before saving
         const newUser = await User.create(userData);
@@ -24,18 +24,18 @@ const createUserBySuperAdmin = async (userData) => {
 };
 
 // Update user by SuperAdmin
-const updateUserBySuperAdmin = async (id, userData) => {
+const updateUser = async (UserID, userData) => {
     try {
         if (userData.UserPassword) {
             userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10);
         }
-        const [updatedRows] = await User.update(userData, { where: { UserID: id } });
+        const [updatedRows] = await User.update(userData, { where: { UserID: UserID } });
         if (updatedRows === 0) {
             return { status: false, message: "No rows updated" };
         }
         
         // Fetch the updated user
-        const updatedUser = await User.findOne({ where: { UserID: id } });
+        const updatedUser = await User.findOne({ where: { UserID: UserID } });
 
         return {
             status: true,
@@ -54,9 +54,9 @@ const updateUserBySuperAdmin = async (id, userData) => {
 };
 
 // Delete user by SuperAdmin
-const deleteUserBySuperAdmin = async (id) => {
+const deleteUser = async (UserID) => {
     try {
-        const deletedUser = await User.findOne({ where: { UserID: id } });
+        const deletedUser = await User.findOne({ where: { UserID: UserID } });
 
         if (!deletedUser) {
             return {
@@ -65,7 +65,7 @@ const deleteUserBySuperAdmin = async (id) => {
             };
         }
 
-        await User.destroy({ where: { UserID: id } });
+        await User.destroy({ where: { UserID: UserID } });
 
         return {
             status: true,
@@ -84,10 +84,10 @@ const deleteUserBySuperAdmin = async (id) => {
 };
 
 // API to retrieve all details of a specific user based on the UserID
-const getOneUserDetailBySuperAdmin = async (id) => {
+const getOneUser = async (UserID) => {
   try {
     const user = await User.findOne({
-      where: { UserID: id }
+      where: { UserID: UserID }
       // All attributes will be fetched by default
     });
 
@@ -106,7 +106,7 @@ const getOneUserDetailBySuperAdmin = async (id) => {
 };
 
 // API to retrieve a list of all users with their basic details
-const getAllUsersBySuperAdmin = async () => {
+const getAllUsers = async () => {
   try {
     const users = await User.findAll({
       attributes: ['UserID', 'UserAvatar', 'Username', 'FirstName', 'LastName', 'Email', 'UserRole', 'IsActive']
@@ -126,8 +126,9 @@ const getAllUsersBySuperAdmin = async () => {
   }
 };
 
-const searchUsersBySuperAdmin = async (column, searchTerm) => {
+const searchUsers = async (column, searchTerm) => {
     try {
+        
         const validColumns = ['Username', 'Email', 'PhoneNumber', 'UserRole', 'IsActive'];
         if (!validColumns.includes(column) && column !== "Fullname") {
             return {
@@ -189,10 +190,10 @@ const searchUsersBySuperAdmin = async (column, searchTerm) => {
 
 
 module.exports = {
-    createUserBySuperAdmin,
-    updateUserBySuperAdmin,
-    deleteUserBySuperAdmin,
-    getOneUserDetailBySuperAdmin,
-    getAllUsersBySuperAdmin,
-    searchUsersBySuperAdmin
+    createUser,
+    updateUser,
+    deleteUser,
+    getOneUser,
+    getAllUsers,
+    searchUsers
 };

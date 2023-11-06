@@ -1,11 +1,17 @@
 const express = require('express');
-const companyRoleController = require('../controllers/companyrole.controller');
+const { companyRoleController } = require('../controllers');
+const { authMiddleware } = require('../middlewares');
 
 const router = express.Router();
 
-// Routes for SuperAdmin CRUD operations for Company Roles
-router.post('/SuperAdmin/createCompanyRole', companyRoleController.createCompanyRoleSuperAdminController);
-router.put('/SuperAdmin/updateCompanyRole/:id', companyRoleController.updateCompanyRoleSuperAdminController); 
-router.delete('/SuperAdmin/deleteCompanyRole/:id', companyRoleController.deleteCompanyRoleSuperAdminController); 
+router
+    .route('/')
+    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyRoleController.createCompanyRoleController)
+
+
+router
+    .route('/:CompanyRoleID')
+    .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyRoleController.deleteCompanyRoleController)
+    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyRoleController.updateCompanyRoleController);
 
 module.exports = router;

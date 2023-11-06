@@ -1,101 +1,58 @@
 const { companyService } = require('../services'); 
 
 // Super-Admin controller
-const createCompanyBySuperAdminController = async (req, res) => {
+const createCompanyController = async (req, res) => {
   try {
-    const result = await companyService.createCompanyBySuperAdmin(req.body);
+    const result = await companyService.createCompany(req.body);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-const updateCompanyBySuperAdminController = async (req, res) => {
+const updateCompanyController = async (req, res) => {
   const { CompanyID } = req.params;
   const updatedData = req.body;
   
   try {
-      const result = await companyService.updateCompanyBySuperAdmin(CompanyID, updatedData);
+      const result = await companyService.updateCompany(CompanyID, updatedData);
       res.json(result);
   } catch (error) {
       res.status(400).json({ message: error.message });
   }
 };
 
-const deleteCompanyBySuperAdminController = async (req, res) => {
+const deleteCompanyController = async (req, res) => {
   try {
     const { CompanyID } = req.params; 
-    const result = await companyService.deleteCompanyBySuperAdmin(CompanyID);
+    const result = await companyService.deleteCompany(CompanyID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-const getAllCompaniesBySuperAdminController = async (req, res) => {
+const getAllCompaniesController = async (req, res) => {
   try {
     const { numberOfCompanies } = req.body;
-    const result = await companyService.getAllCompaniesBySuperAdmin(numberOfCompanies);
+    const result = await companyService.getAllCompanies();
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-const searchCompanyBySuperAdminController = async (req, res) => {
+const searchCompanyController = async (req, res) => {
   try {
     const { companyName, adminID } = req.query;
-    const result = await companyService.searchCompaniesBySuperAdmin(companyName, adminID);
+    const result = await companyService.searchCompanies(companyName, adminID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// Admin controller
-const createCompanyByAdminController = async (req, res) => {
-  try {
-    const { AdminID } = req.params;
-    const result = await companyService.createCompanyByAdmin(AdminID, req.body);
-    res.json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
 
-const updateCompanyByAdminController = async (req, res) => {
-  try {
-    const { AdminID } = req.params;
-    const updatedData = req.body;
-    const result = await companyService.updateCompanyByAdmin(AdminID, updatedData);
-    res.json(result);
-  } catch (error) {
-      res.status(400).json({ message: error.message });
-  }
-};
-
-const deleteCompanyByAdminController = async (req, res) => {
-  try {
-    const { CompanyID } = req.params;
-    const { CurrentAdminID } = req.body;
-    const result = await companyService.deleteCompanyByAdmin(CompanyID, CurrentAdminID);
-    res.json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-const getCompanyByAdminController = async (req, res) => {
-  try {
-    const { AdminID } = req.params;
-    const result = await companyService.getCompanyByAdmin(AdminID);
-    res.json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Admin & SuperAdmin controller
 const getOneCompanyController = async (req, res) => {
   try {
     const { CompanyID } = req.params;
@@ -106,16 +63,22 @@ const getOneCompanyController = async (req, res) => {
   }
 };
 
+const getCompanyProfileController = async (req, res) => {
+  try {
+    const result = await companyService.getOneCompany(req.user.dataValues.CompanyID);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
 module.exports = {
-  createCompanyBySuperAdminController,
-  updateCompanyBySuperAdminController,
-  deleteCompanyBySuperAdminController, 
-  getAllCompaniesBySuperAdminController,
-  searchCompanyBySuperAdminController,
+  createCompanyController,
+  updateCompanyController,
+  deleteCompanyController, 
+  getAllCompaniesController,
+  searchCompanyController,
   getOneCompanyController,
-  createCompanyByAdminController,
-  updateCompanyByAdminController,
-  deleteCompanyByAdminController,
-  getCompanyByAdminController,
+  getCompanyProfileController
 };

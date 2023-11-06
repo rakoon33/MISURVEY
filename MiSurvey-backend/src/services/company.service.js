@@ -12,8 +12,7 @@ const {
 const { Op } = require('sequelize');
 
 
-// Super-Admin services
-const createCompanyBySuperAdmin = async (companyData) => {
+const createCompany = async (companyData) => {
   try {
     const adminID = companyData.AdminID;
     const user = await User.findOne({
@@ -65,7 +64,7 @@ const createCompanyBySuperAdmin = async (companyData) => {
   }
 };
 
-const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
+const updateCompany = async (CompanyID, updatedData) => {
   try {
     const company = await Company.findByPk(CompanyID);
 
@@ -109,7 +108,7 @@ const updateCompanyBySuperAdmin = async (CompanyID, updatedData) => {
   }
 };
 
-const deleteCompanyBySuperAdmin = async (CompanyID) => {
+const deleteCompany = async (CompanyID) => {
   try {
     const company = await Company.findByPk(CompanyID);
 
@@ -187,15 +186,10 @@ const deleteCompanyBySuperAdmin = async (CompanyID) => {
   }
 };
 
-const getAllCompaniesBySuperAdmin = async (numberOfCompanies) => {
+const getAllCompanies = async () => {
   try {
-    if (isNaN(numberOfCompanies) || numberOfCompanies < 0) {
-      return { status: false, message: "Invalid number" };
-    }
-
     const companies = await Company.findAll({
-      attributes: ["CompanyID", "CompanyName"],
-      limit: numberOfCompanies
+      attributes: ["CompanyID", "CompanyName"]
     });
 
     if (companies.length === 0) {
@@ -204,7 +198,6 @@ const getAllCompaniesBySuperAdmin = async (numberOfCompanies) => {
         message: "No companies found",
       };
     }
-
     return {
       status: true,
       data: companies
@@ -218,7 +211,7 @@ const getAllCompaniesBySuperAdmin = async (numberOfCompanies) => {
   }
 };
 
-const searchCompaniesBySuperAdmin = async (companyName, adminID) => {
+const searchCompanies = async (companyName, adminID) => {
   try {
     const whereConditions = {};
 
@@ -306,135 +299,9 @@ const createCompanyByAdmin = async (AdminID, companyData) => {
   }
 };
 
-const updateCompanyByAdmin = async (AdminID, updatedData) => {
-  try {
-    const admin = await User.findByPk(AdminID);
-    if (!admin || admin.UserRole !== "Admin") {
-      return {
-        status: false,
-        message: "Unauthorized"
-      };
-    }
-
-    if (updatedData.AdminID !== AdminID) {
-      return {
-        status: false,
-        message: "You don't have permission to update company for another admin"
-      };
-    }
-
-    const company =  await Company.findOne({
-      where: {
-        AdminID: AdminID
-      }
-    });
-    
-    if (!company) {
-      return {
-        status: false,
-        message: "Company not found"
-      };
-    }
-
-    await company.update(updatedData);
-
-    return {
-      status: true,
-      message: "Company updated successfully",
-      data: company
-    };
-  } catch (error) {
-    return {
-      status: false,
-      message: error.message || "Update company failed",
-      error: error?.toString()
-    };
-  }
-};
-
-const deleteCompanyByAdmin = async (CompanyID, CurrentAdminID) => {
-  try {
-    const company = await Company.findByPk(CompanyID);
-
-    if (!company) {
-      return {
-        status: false,
-        message: "Company not found",
-      };
-    }
-
-    // Check if the company's AdminID matches the ID of the current admin.
-    if (company.AdminID !== Number(CurrentAdminID)) {
-      return {
-        status: false,
-        message: "You can only delete your own company",
-      };
-    }    
-
-    const result = await deleteCompanyBySuperAdmin(CompanyID);
-    
-    return result;
-
-  } catch (error) {
-    return {
-      status: false,
-      message: error.message || "Delete company failed",
-      error: error?.toString(),
-    };
-  }
-};
-
-const getCompanyByAdmin = async (AdminID) => {
-  try {
-    const user = await User.findOne({
-      where: {
-        UserID: AdminID,
-      },
-    });
-
-    if (!user) {
-      return {
-        status: false,
-        message: "AdminID does not exist in Users table",
-      };
-    }
-
-    if (user.UserRole !== "Admin") {
-      return {
-        status: false,
-        message: "You are restricted from viewing the company list",
-      };
-    }
-
-    const companies = await Company.findAll({
-      where: { AdminID: AdminID },
-      attributes: ["CompanyID", "CompanyName"]
-    });
-
-    if (companies.length === 0) {
-      return {
-        status: false,
-        message: "No companies found for the given AdminID.",
-      };
-    }
-
-    return {
-      status: true,
-      data: companies,
-    };
-  } catch (error) {
-    return {
-      status: false,
-      message: error.message || "Failed to fetch companies",
-      error: error?.toString(),
-    };
-  }
-};
-
-
-// Admin & SuperAdmin services
 const getOneCompany = async (CompanyID) => {
   try {
+    console.log(CompanyID);
     const company = await Company.findByPk(CompanyID);
     if (!company) {
       return {
@@ -457,14 +324,11 @@ const getOneCompany = async (CompanyID) => {
 
 
 module.exports = {
-  createCompanyBySuperAdmin,
-  updateCompanyBySuperAdmin,
-  deleteCompanyBySuperAdmin,
-  getAllCompaniesBySuperAdmin,
-  searchCompaniesBySuperAdmin,
+  createCompany,
+  updateCompany,
+  deleteCompany,
+  getAllCompanies,
+  searchCompanies,
   getOneCompany,
   createCompanyByAdmin,
-  updateCompanyByAdmin,
-  deleteCompanyByAdmin,
-  getCompanyByAdmin,
 };

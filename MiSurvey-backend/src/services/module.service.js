@@ -1,7 +1,7 @@
 const { Module } = require('../models');
 const { Op } = require('sequelize');
 
-const createModuleBySuperAdmin = async (moduleData) => {
+const createModule = async (moduleData) => {
   try {
     const module = await Module.create(moduleData);
     return { status: true, message: "Module created successfully", module };
@@ -10,7 +10,7 @@ const createModuleBySuperAdmin = async (moduleData) => {
   }
 };
 
-const updateModuleBySuperAdmin = async (id, moduleData) => {
+const updateModule = async (id, moduleData) => {
   try {
     const [updatedRows] = await Module.update(moduleData, { where: { ModuleID: id } });
     if (updatedRows === 0) {
@@ -22,7 +22,7 @@ const updateModuleBySuperAdmin = async (id, moduleData) => {
   }
 };
 
-const deleteModuleBySuperAdmin = async (id) => {
+const deleteModule = async (id) => {
   try {
     await Module.destroy({ where: { ModuleID: id } });
     return { status: true, message: "Module deleted successfully" };
@@ -76,9 +76,9 @@ const searchModules = async (query) => {
 
 
 module.exports = {
-  createModuleBySuperAdmin,
-  updateModuleBySuperAdmin,
-  deleteModuleBySuperAdmin,
+  createModule,
+  updateModule,
+  deleteModule,
   getAllModules,
   getOneModule,
   searchModules
