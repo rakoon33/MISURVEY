@@ -1,16 +1,20 @@
 const express = require('express');
 const { moduleController } = require('../controllers');
+const { authMiddleware } = require('../middlewares');
 const router = express.Router();
 
+router
+    .route('/searchModules')
+    .get(authMiddleware.tokenVerification, moduleController.searchModulesController);
 
-// SuperAdmin routes
+router.route('/')
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, moduleController.getAllModulesController)
+    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, moduleController.createModuleController);
 
-router.post('/SuperAdmin/createModule', moduleController.createModuleBySuperAdminController); 
-router.put('/SuperAdmin/updateModule/:ModuleID', moduleController.updateModuleBySuperAdminController); 
-router.delete('/SuperAdmin/deleteModule/:ModuleID', moduleController.deleteModuleBySuperAdminController); 
-router.get('/SuperAdmin/searchModules', moduleController.searchModulesBySuperAdminController);
-router.get('/SuperAdmin/getOneModuleDetail/:ModuleID', moduleController.getOneModuleBySuperAdminController);
-router.get('/SuperAdmin/getAllModules', moduleController.getAllModulesBySuperAdminController);
-// User routes
+router
+    .route('/:ModuleID')
+    .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, moduleController.deleteModuleController)
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, moduleController.getOneModuleController)
+    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, moduleController.updateModuleController);
 
 module.exports = router;

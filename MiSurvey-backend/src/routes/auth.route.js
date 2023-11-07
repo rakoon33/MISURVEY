@@ -7,7 +7,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/SuperAdmin/login:
+ * /api/login:
  *   post:
  *     summary: Login for SuperAdmin
  *     tags:
@@ -60,10 +60,9 @@ const router = express.Router();
  *                   type: string
  *                   description: Error message regarding the login operation
  */
-router.post('/SuperAdmin/login', authController.loginBySuperAdminController);
-
-// User routes
-//router.post('/Admin/login', authController.loginByAdminController);
+router.post('/login', authController.loginController);
+// router.route('/register').post(registerUser);
+// router.post('/logout', logoutUser);
 
 module.exports = router;
 

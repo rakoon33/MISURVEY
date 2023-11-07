@@ -1,7 +1,7 @@
 const { CompanyRole } = require('../models');
 
 // Create CompanyRole by SuperAdmin
-const createCompanyRoleBySuperAdmin = async (roleData) => {
+const createCompanyRole = async (roleData) => {
     try {
         const newRole = await CompanyRole.create(roleData);
         return {
@@ -21,7 +21,7 @@ const createCompanyRoleBySuperAdmin = async (roleData) => {
 };
 
 // Update CompanyRole by SuperAdmin
-const updateCompanyRoleBySuperAdmin = async (id, roleData) => {
+const updateCompanyRole = async (id, roleData) => {
     try {
         const [updatedRows] = await CompanyRole.update(roleData, { where: { CompanyRoleID: id } });
         if (updatedRows === 0) {
@@ -48,7 +48,7 @@ const updateCompanyRoleBySuperAdmin = async (id, roleData) => {
 };
 
 // Delete CompanyRole by SuperAdmin
-const deleteCompanyRoleBySuperAdmin = async (id) => {
+const deleteCompanyRole = async (id) => {
     try {
         const deletedRole = await CompanyRole.findOne({ where: { CompanyRoleID: id } });
 
@@ -78,7 +78,7 @@ const deleteCompanyRoleBySuperAdmin = async (id) => {
 };
 
 module.exports = {
-    createCompanyRoleBySuperAdmin,
-    updateCompanyRoleBySuperAdmin,
-    deleteCompanyRoleBySuperAdmin
+    createCompanyRole,
+    updateCompanyRole,
+    deleteCompanyRole
 };

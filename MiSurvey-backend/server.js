@@ -4,16 +4,17 @@ const path = require('path');
 const { database } = require('./src/config');
 const cors = require('cors')
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser')
 
 dotenv.config();
 
 const app = express();
+app.use(cookieParser());
 
 // Use the CORS middleware before your routes
 app.use(cors());
 
 const swaggerDocs = require('./src/documents/swagger.js');
-
 
 // Add CORS configuration 
 app.use(cors({
@@ -23,12 +24,11 @@ app.use(cors({
 }));
 
 // routes
-const { authMiddleware } = require('./src/middlewares');
-const indexRoute = require('./src/routes');
+const indexRoute = require('./src/routes/index.js');
 const authRoute = require('./src/routes/auth.route');
 const companyRoute = require('./src/routes/company.route');
 const userRoute = require('./src/routes/user.route');
-const companyroleRoute = require('./src/routes/companyrole.route');
+const companyRoleRoute = require('./src/routes/companyrole.route');
 const moduleRoute = require('./src/routes/module.route');
 
 // view engine setup
@@ -37,13 +37,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Use the consolidated routes
-app.use('*', authMiddleware.tokenVerification);
 app.use('/', indexRoute);
 app.use('/api', authRoute);
-app.use('/api/company', companyRoute);
-app.use('/api/user', userRoute);
-app.use('/api/companyrole', companyroleRoute);
-app.use('/api/module', moduleRoute);
+app.use('/api/companies', companyRoute);
+app.use('/api/users', userRoute);
+app.use('/api/companyRoles', companyRoleRoute);
+app.use('/api/modules', moduleRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

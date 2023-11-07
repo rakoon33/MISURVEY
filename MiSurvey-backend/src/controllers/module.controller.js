@@ -1,35 +1,35 @@
 const { moduleService } = require('../services');
 
-const createModuleBySuperAdminController = async (req, res) => {
+const createModuleController = async (req, res) => {
     console.log(req.body)
     try {
-        const newUser = await moduleService.createModuleBySuperAdmin(req.body);
+        const newUser = await moduleService.createModule(req.body);
         res.json(newUser);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const updateModuleBySuperAdminController = async (req, res) => {
+const updateModuleController = async (req, res) => {
 
     try {
-        const result = await moduleService.updateModuleBySuperAdmin(req.params.ModuleID, req.body);  
+        const result = await moduleService.updateModule(req.params.ModuleID, req.body);  
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const deleteModuleBySuperAdminController = async (req, res) => {
+const deleteModuleController = async (req, res) => {
     try {
-        const result = await moduleService.deleteModuleBySuperAdmin(req.params.ModuleID);  
+        const result = await moduleService.deleteModule(req.params.ModuleID);  
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-const searchModulesBySuperAdminController = async (req, res) => {
+const searchModulesController = async (req, res) => {
     try {
         const { name } = req.query;
         const result = await moduleService.searchModules(name);
@@ -39,7 +39,7 @@ const searchModulesBySuperAdminController = async (req, res) => {
     }
 };
 
-const getOneModuleBySuperAdminController = async (req, res) => {
+const getOneModuleController = async (req, res) => {
     try {
         const result = await moduleService.getOneModule(req.params.ModuleID);
         res.json(result);
@@ -48,7 +48,7 @@ const getOneModuleBySuperAdminController = async (req, res) => {
     }
 };
 
-const getAllModulesBySuperAdminController = async (req, res) => {
+const getAllModulesController = async (req, res) => {
     try {
         const result = await moduleService.getAllModules();
         res.json(result);
@@ -58,10 +58,10 @@ const getAllModulesBySuperAdminController = async (req, res) => {
 };
 
 module.exports = {
-    createModuleBySuperAdminController,
-    updateModuleBySuperAdminController,
-    deleteModuleBySuperAdminController,
-    getAllModulesBySuperAdminController,
-    getOneModuleBySuperAdminController,
-    searchModulesBySuperAdminController
+    createModuleController,
+    updateModuleController,
+    deleteModuleController,
+    getAllModulesController,
+    getOneModuleController,
+    searchModulesController
 };

@@ -1,14 +1,27 @@
 const express = require('express');
 const userController = require('../controllers/user.controller');
-
+const { authMiddleware } = require('../middlewares');
 const router = express.Router();
 
-// Routes for SuperAdmin CRUD operations
-router.post('/SuperAdmin/createUser', userController.createUserSuperAdminController);
-router.put('/SuperAdmin/updateUser/:id', userController.updateUserSuperAdminController); 
-router.delete('/SuperAdmin/deleteUser/:id', userController.deleteUserSuperAdminController); 
-router.get('/SuperAdmin/getOneUserDetail/:id', userController.getUserDetailsByIDSuperAdminController);
-router.get('/SuperAdmin/getAllUsers', userController.getAllUsersSuperAdminController);
-router.get('/SuperAdmin/searchUsers', userController.searchUserSuperAdminController)
+
+router
+    .route('/profile')
+    .get(authMiddleware.tokenVerification, userController.getUserProfileController)
+    .put(authMiddleware.tokenVerification, userController.updateUserController);
+
+router
+    .route('/searchUsers')
+    .get(authMiddleware.tokenVerification, userController.searchUserController);
+
+router.route('/')
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.getAllUsersController)
+    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.createUserController);
+
+router
+    .route('/:UserID')
+    .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.deleteUserController)
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.getOneUserController)
+    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.updateUserController);
+
 
 module.exports = router;
