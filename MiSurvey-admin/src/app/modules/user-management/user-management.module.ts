@@ -9,9 +9,14 @@ import { IconModule } from '@coreui/icons-angular';
 import { UserManagementComponent } from './user-management.component';
 import { UserManagementRoutingModule } from './user-management-routing.module';
 
+import { DropdownModule } from '@coreui/angular';
+import { ModalModule } from '@coreui/angular';
+import { ButtonGroupModule } from '@coreui/angular';
+
 @NgModule({
   imports: [
-    
+    DropdownModule,
+    UserManagementRoutingModule,
     CommonModule,
     UserManagementRoutingModule,
     CardModule,
@@ -21,7 +26,8 @@ import { UserManagementRoutingModule } from './user-management-routing.module';
     NavModule,
     TabsModule,
     FormsModule,
-    
+    ModalModule,
+    ButtonGroupModule
   ],
   declarations: [
     UserManagementComponent,
