@@ -1,4 +1,5 @@
 const { CompanyRole } = require('../models');
+const { Op } = require('sequelize');
 
 // Create CompanyRole by SuperAdmin
 const createCompanyRole = async (roleData) => {
@@ -77,8 +78,76 @@ const deleteCompanyRole = async (id) => {
     }
 };
 
+const getAllCompanyRoles = async () => {
+    try {
+        const roles = await CompanyRole.findAll();
+        return {
+            status: true,
+            message: "Company Roles fetched successfully",
+            data: {
+                roles: roles
+            }
+        };
+    } catch (error) {
+        return {
+            status: false,
+            message: error.message || "Failed to fetch company roles",
+            error: error?.toString()
+        };
+    }
+};
+
+const getOneCompanyRole = async (id) => {
+    try {
+        const role = await CompanyRole.findByPk(id);
+        if (!role) {
+            return {
+                status: false,
+                message: "Company Role not found"
+            };
+        }
+        return {
+            status: true,
+            message: "Company Role fetched successfully",
+            data: {
+                role: role
+            }
+        };
+    } catch (error) {
+        return {
+            status: false,
+            message: error.message || "Failed to fetch company role",
+            error: error?.toString()
+        };
+    }
+};
+
+const searchCompanyRoles = async (query) => {
+    try {
+      console.log("Searching company roles');", query);
+      const companyroles = await CompanyRole.findAll({
+        where: {
+          CompanyRoleName: {
+            [Op.like]: '%' + query + '%'
+          }
+        }
+      });
+  
+      if (companyroles.length === 0) {
+        return { status: false, message: "No company role found" };
+      }
+  
+      return { status: true, message: "Company role fetched successfully", companyroles };
+    } catch (error) {
+      return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
 module.exports = {
     createCompanyRole,
     updateCompanyRole,
-    deleteCompanyRole
+    deleteCompanyRole,
+    getAllCompanyRoles,
+    getOneCompanyRole,
+    searchCompanyRoles
 };
