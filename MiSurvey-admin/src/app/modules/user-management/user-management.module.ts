@@ -18,7 +18,6 @@ import { ButtonGroupModule } from '@coreui/angular';
     DropdownModule,
     UserManagementRoutingModule,
     CommonModule,
-    UserManagementRoutingModule,
     CardModule,
     GridModule,
     UtilitiesModule,

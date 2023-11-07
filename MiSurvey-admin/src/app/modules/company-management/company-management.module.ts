@@ -9,9 +9,12 @@ import { IconModule } from '@coreui/icons-angular';
 import { CompanyManagementComponent } from './company-management.component';
 import { CompanyManagementRoutingModule } from './company-management-routing.module';
 
+import { DropdownModule } from '@coreui/angular';
+import { ModalModule } from '@coreui/angular';
+import { ButtonGroupModule } from '@coreui/angular';
+
 @NgModule({
-  imports: [
-    
+  imports: [  
     CommonModule,
     CompanyManagementRoutingModule,
     CardModule,
@@ -21,7 +24,9 @@ import { CompanyManagementRoutingModule } from './company-management-routing.mod
     NavModule,
     TabsModule,
     FormsModule,
-    
+    DropdownModule,
+    ModalModule,
+    ButtonGroupModule,
   ],
   declarations: [
     CompanyManagementComponent,
