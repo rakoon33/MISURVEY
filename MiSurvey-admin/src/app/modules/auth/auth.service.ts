@@ -8,25 +8,27 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class AuthService {
 
-  private readonly apiUrl = 'http://localhost:3000/api/SuperAdmin';
+  private readonly apiUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) {}
 
 
   login(username: string, password: string): Observable<any> {
     const loginUrl = `${this.apiUrl}/login`;
-    return this.http.post(loginUrl, { username, password })
+    return this.http.post(loginUrl, { username, password }, { withCredentials: true })
       .pipe(
         map((response: any) => {
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            return response; // Return the whole response
+          // Instead of looking for a token in the response,
+          // look for the status property to check if the login was successful.
+          if (response && response.status) {
+            // Handle successful login, maybe update UI or redirect
+            return response.message; // Return the login success message
           }
           return null; // Return null if login failed
         }),
         catchError(error => {
           console.error('Error during login:', error);
-          return of(false);
+          return of(false); // Indicate failure to the caller
         })
       );
   }
