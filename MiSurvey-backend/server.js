@@ -11,14 +11,12 @@ dotenv.config();
 const app = express();
 app.use(cookieParser());
 
-// Use the CORS middleware before your routes
-app.use(cors());
-
 const swaggerDocs = require('./src/documents/swagger.js');
 
 // Add CORS configuration 
 app.use(cors({
   origin: 'http://localhost:8082', // Allow only this domain
+  credentials: true, // This is important for sending cookies with CORS
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
