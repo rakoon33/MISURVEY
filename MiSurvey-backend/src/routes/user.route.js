@@ -18,7 +18,7 @@ router.route('/')
     .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.createUserController);
 
 router
-    .route('/:UserId')
+    .route('/:UserID')
     .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.deleteUserController)
     .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.getOneUserController)
     .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.updateUserController);
