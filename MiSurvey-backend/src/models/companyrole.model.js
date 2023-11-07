@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
 
-const CompanyRoles = db.sequelize.define('CompanyRole', {
+const CompanyRole = db.sequelize.define('CompanyRole', {
     CompanyRoleID: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -37,4 +37,4 @@ const CompanyRoles = db.sequelize.define('CompanyRole', {
     timestamps: false,
 });
 
-module.exports = CompanyRoles;
+module.exports = CompanyRole;

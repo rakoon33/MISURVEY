@@ -10,7 +10,19 @@ const SurveyPage = require('./surveyPage.model');
 const SurveyQuestion = require('./surveyQuestion.model');
 const SurveyResponse = require('./surveyResponse.model');
 const CompanyRole = require('./companyRole.model');
-const RolePermissions = require('./rolePermission.model');
+const RolePermission = require('./rolePermission.model');
+
+// Set up the association
+RolePermission.belongsTo(CompanyRole, {
+  foreignKey: 'CompanyRoleID',
+  as: 'companyRole'
+});
+
+CompanyRole.hasOne(RolePermission, {
+  foreignKey: 'CompanyRoleID',
+  as: 'permissions'
+});
+
 
 module.exports = {
   User,
@@ -24,6 +36,6 @@ module.exports = {
   SurveyPage,
   SurveyQuestion,
   SurveyResponse,
-  RolePermissions
+  RolePermission
   // ...other models
 };
