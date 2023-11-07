@@ -1,18 +1,34 @@
-const { CompanyRole } = require('../models');
+const { CompanyRole, RolePermission } = require('../models');
+const { sequelize } = require('../config/database');
 const { Op } = require('sequelize');
 
 // Create CompanyRole by SuperAdmin
-const createCompanyRole = async (roleData) => {
+const createCompanyRole = async (roleData, permissionsData) => {
+    const transaction = await sequelize.transaction(); // Begin a transaction
+
     try {
-        const newRole = await CompanyRole.create(roleData);
+        // Create the company role
+        const newRole = await CompanyRole.create(roleData, { transaction });
+
+        // Attach the CompanyRoleID to the permissions object
+        permissionsData.CompanyRoleID = newRole.CompanyRoleID;
+
+        // Create the role permissions
+        const newPermission = await RolePermission.create(permissionsData, { transaction });
+
+        await transaction.commit(); // Commit the transaction if all goes well.
+
         return {
             status: true,
-            message: "Company Role created successfully",
+            message: "Company Role and Role Permissions created successfully",
             data: {
-                role: newRole
+                role: newRole,
+                permissions: newPermission // Send back the created permissions object.
             }
         };
     } catch (error) {
+        await transaction.rollback(); // Rollback the transaction on error.
+
         return {
             status: false,
             message: error.message || "Company Role creation failed",
@@ -22,24 +38,49 @@ const createCompanyRole = async (roleData) => {
 };
 
 // Update CompanyRole by SuperAdmin
-const updateCompanyRole = async (id, roleData) => {
+const updateCompanyRole = async (id, roleData, permissionsData) => {
+    const transaction = await sequelize.transaction(); // Begin a transaction
+
     try {
-        const [updatedRows] = await CompanyRole.update(roleData, { where: { CompanyRoleID: id } });
-        if (updatedRows === 0) {
-            return { status: false, message: "No rows updated" };
+        // Update the company role
+        const [updatedRoleRows] = await CompanyRole.update(roleData, { 
+            where: { CompanyRoleID: id },
+            transaction
+        });
+
+        if (updatedRoleRows === 0) {
+            await transaction.rollback(); // If no role updated, rollback the transaction
+            return { status: false, message: "Company Role not found or data unchanged" };
         }
 
-        // Fetch the updated role
-        const updatedRole = await CompanyRole.findOne({ where: { CompanyRoleID: id } });
+        // Update the role permissions
+        const [updatedPermissionsRows] = await RolePermission.update(permissionsData, {
+            where: { CompanyRoleID: id },
+            transaction
+        });
+
+        // If there were no permissions to update, rollback
+        if (updatedPermissionsRows === 0) {
+            await transaction.rollback();
+            return { status: false, message: "Role Permissions not found or data unchanged" };
+        }
+
+        await transaction.commit(); // Commit the transaction if all goes well
+
+        // Fetch the updated role and its permissions
+        const updatedRole = await CompanyRole.findByPk(id);
+        const updatedPermissions = await RolePermission.findOne({ where: { CompanyRoleID: id } });
 
         return {
             status: true,
-            message: "Company Role updated successfully",
+            message: "Company Role and Permissions updated successfully",
             data: {
-                role: updatedRole
+                role: updatedRole,
+                permissions: updatedPermissions
             }
         };
     } catch (error) {
+        await transaction.rollback(); // Rollback the transaction on error
         return {
             status: false,
             message: error.message || "Company Role update failed",
@@ -50,26 +91,39 @@ const updateCompanyRole = async (id, roleData) => {
 
 // Delete CompanyRole by SuperAdmin
 const deleteCompanyRole = async (id) => {
-    try {
-        const deletedRole = await CompanyRole.findOne({ where: { CompanyRoleID: id } });
+    const transaction = await sequelize.transaction(); // Begin a transaction
 
-        if (!deletedRole) {
+    try {
+        // Check if the role exists
+        const role = await CompanyRole.findByPk(id, { transaction });
+        if (!role) {
+            await transaction.rollback(); // If no role, rollback the transaction
             return {
                 status: false,
                 message: "Company Role not found"
             };
         }
 
-        await CompanyRole.destroy({ where: { CompanyRoleID: id } });
+        // Delete associated role permissions first
+        await RolePermission.destroy({
+            where: { CompanyRoleID: id },
+            transaction
+        });
+
+        // Delete the company role
+        await CompanyRole.destroy({
+            where: { CompanyRoleID: id },
+            transaction
+        });
+
+        await transaction.commit(); // Commit the transaction if all goes well
 
         return {
             status: true,
-            message: "Company Role deleted successfully",
-            data: {
-                role: deletedRole
-            }
+            message: "Company Role and its permissions deleted successfully"
         };
     } catch (error) {
+        await transaction.rollback(); // Rollback the transaction on error
         return {
             status: false,
             message: error.message || "Company Role deletion failed",
@@ -99,19 +153,24 @@ const getAllCompanyRoles = async () => {
 
 const getOneCompanyRole = async (id) => {
     try {
-        const role = await CompanyRole.findByPk(id);
-        if (!role) {
+        const roleWithPermissions = await CompanyRole.findByPk(id, {
+            include: [{
+                model: RolePermission, // This should be the name of the model that holds the permissions
+                as: 'permissions' // This is the alias that Sequelize will use to join the tables
+            }]
+        });
+
+        if (!roleWithPermissions) {
             return {
                 status: false,
                 message: "Company Role not found"
             };
         }
+
         return {
             status: true,
-            message: "Company Role fetched successfully",
-            data: {
-                role: role
-            }
+            message: "Company Role and its permissions fetched successfully",
+            data: roleWithPermissions // This will now include the role data and its associated permissions
         };
     } catch (error) {
         return {
@@ -121,6 +180,7 @@ const getOneCompanyRole = async (id) => {
         };
     }
 };
+
 
 const searchCompanyRoles = async (query) => {
     try {
