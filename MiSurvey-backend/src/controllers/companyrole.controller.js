@@ -1,12 +1,23 @@
 const { companyRoleService } = require('../services');
 
 const createCompanyRoleController = async (req, res) => {
-    console.log(req.body);
+    const { roleData, permissionData } = req.body; // Use permissionData (singular) here if changing the code
+
+    if (!roleData || !permissionData) { // Check for permissionData (singular) if changing the code
+        return res.status(400).json({
+            status: false,
+            message: "roleData and permissionData are required."
+        });
+    }
+
     try {
-        const newRole = await companyRoleService.createCompanyRole(req.body);
-        res.json(newRole);
+        const result = await companyRoleService.createCompanyRole(roleData, permissionData); // Use permissionData (singular) here if changing the code
+        res.json(result);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({
+            status: false,
+            message: error.message
+        });
     }
 };
 

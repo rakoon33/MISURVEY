@@ -1,18 +1,34 @@
-const { CompanyRole } = require('../models');
+const { CompanyRole, RolePermissions } = require('../models');
+const { sequelize } = require('../config/database');
 const { Op } = require('sequelize');
 
 // Create CompanyRole by SuperAdmin
-const createCompanyRole = async (roleData) => {
+const createCompanyRole = async (roleData, permissionsData) => {
+    const transaction = await sequelize.transaction(); // Begin a transaction
+
     try {
-        const newRole = await CompanyRole.create(roleData);
+        // Create the company role
+        const newRole = await CompanyRole.create(roleData, { transaction });
+
+        // Attach the CompanyRoleID to the permissions object
+        permissionsData.CompanyRoleID = newRole.CompanyRoleID;
+
+        // Create the role permissions
+        const newPermission = await RolePermissions.create(permissionsData, { transaction });
+
+        await transaction.commit(); // Commit the transaction if all goes well.
+
         return {
             status: true,
-            message: "Company Role created successfully",
+            message: "Company Role and Role Permissions created successfully",
             data: {
-                role: newRole
+                role: newRole,
+                permissions: newPermission // Send back the created permissions object.
             }
         };
     } catch (error) {
+        await transaction.rollback(); // Rollback the transaction on error.
+
         return {
             status: false,
             message: error.message || "Company Role creation failed",
@@ -50,26 +66,39 @@ const updateCompanyRole = async (id, roleData) => {
 
 // Delete CompanyRole by SuperAdmin
 const deleteCompanyRole = async (id) => {
-    try {
-        const deletedRole = await CompanyRole.findOne({ where: { CompanyRoleID: id } });
+    const transaction = await sequelize.transaction(); // Begin a transaction
 
-        if (!deletedRole) {
+    try {
+        // Check if the role exists
+        const role = await CompanyRole.findByPk(id, { transaction });
+        if (!role) {
+            await transaction.rollback(); // If no role, rollback the transaction
             return {
                 status: false,
                 message: "Company Role not found"
             };
         }
 
-        await CompanyRole.destroy({ where: { CompanyRoleID: id } });
+        // Delete associated role permissions first
+        await RolePermissions.destroy({
+            where: { CompanyRoleID: id },
+            transaction
+        });
+
+        // Delete the company role
+        await CompanyRole.destroy({
+            where: { CompanyRoleID: id },
+            transaction
+        });
+
+        await transaction.commit(); // Commit the transaction if all goes well
 
         return {
             status: true,
-            message: "Company Role deleted successfully",
-            data: {
-                role: deletedRole
-            }
+            message: "Company Role and its permissions deleted successfully"
         };
     } catch (error) {
+        await transaction.rollback(); // Rollback the transaction on error
         return {
             status: false,
             message: error.message || "Company Role deletion failed",

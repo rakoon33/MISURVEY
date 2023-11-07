@@ -10,6 +10,7 @@ const SurveyPage = require('./surveyPage.model');
 const SurveyQuestion = require('./surveyQuestion.model');
 const SurveyResponse = require('./surveyResponse.model');
 const CompanyRole = require('./companyRole.model');
+const RolePermissions = require('./rolePermission.model');
 
 module.exports = {
   User,
@@ -23,5 +24,6 @@ module.exports = {
   SurveyPage,
   SurveyQuestion,
   SurveyResponse,
+  RolePermissions
   // ...other models
 };
