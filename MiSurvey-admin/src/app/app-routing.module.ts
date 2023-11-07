@@ -26,9 +26,14 @@ const routes: Routes = [
           import('./modules/dashboard/dashboard.module').then((m) => m.DashboardModule)
       },
       {
-        path: 'theme',
+        path: 'user-management',
         loadChildren: () =>
-          import('./modules/theme/theme.module').then((m) => m.ThemeModule)
+          import('./modules/user-management/user-management.module').then((m) => m.UserManagementModule)
+      },
+      {
+        path: 'company-management',
+        loadChildren: () =>
+          import('./modules/company-management/company-management.module').then((m) => m.CompanyManagementModule)
       },
       {
         path: 'base',

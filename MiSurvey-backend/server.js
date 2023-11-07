@@ -26,7 +26,7 @@ const indexRoute = require('./src/routes/index.js');
 const authRoute = require('./src/routes/auth.route');
 const companyRoute = require('./src/routes/company.route');
 const userRoute = require('./src/routes/user.route');
-const companyRoleRoute = require('./src/routes/companyrole.route');
+const companyRoleRoute = require('./src/routes/companyRole.route.js');
 const moduleRoute = require('./src/routes/module.route');
 
 // view engine setup

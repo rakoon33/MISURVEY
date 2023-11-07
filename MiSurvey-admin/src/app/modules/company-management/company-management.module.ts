@@ -1,31 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
+import { FormsModule } from '@angular/forms'; 
+
 import { CardModule, GridModule, NavModule, UtilitiesModule, TabsModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
 
-import { ColorsComponent, ThemeColorComponent } from './colors.component';
-import { TypographyComponent } from './typography.component';
-
-// Theme Routing
-import { ThemeRoutingModule } from './theme-routing.module';
+import { CompanyManagementComponent } from './company-management.component';
+import { CompanyManagementRoutingModule } from './company-management-routing.module';
 
 @NgModule({
   imports: [
+    
     CommonModule,
-    ThemeRoutingModule,
+    CompanyManagementRoutingModule,
     CardModule,
     GridModule,
     UtilitiesModule,
     IconModule,
     NavModule,
-    TabsModule
+    TabsModule,
+    FormsModule,
+    
   ],
   declarations: [
-    ColorsComponent,
-    ThemeColorComponent,
-    TypographyComponent,
+    CompanyManagementComponent,
   ]
 })
-export class ThemeModule {
+export class CompanyManagementModule {
 }
