@@ -31,8 +31,39 @@ const deleteCompanyRoleController = async (req, res) => {
     }
 };
 
+const getAllCompanyRolesController = async (req, res) => {
+    try {
+        const result = await companyRoleService.getAllCompanyRoles();
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const getOneCompanyRoleController = async (req, res) => {
+    try {
+        const result = await companyRoleService.getOneCompanyRole(req.params.CompanyRoleID);
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const searchCompanyRolesController = async (req, res) => {
+    try {
+        const { name } = req.query;
+        const result = await companyRoleService.searchCompanyRoles(name);
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createCompanyRoleController,
     updateCompanyRoleController,
-    deleteCompanyRoleController
+    deleteCompanyRoleController,
+    getAllCompanyRolesController,
+    getOneCompanyRoleController,
+    searchCompanyRolesController
 };
