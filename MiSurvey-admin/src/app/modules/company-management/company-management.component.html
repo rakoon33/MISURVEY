@@ -27,6 +27,7 @@
     <thead>
       <tr>
         <th scope="col">ID</th>
+        <th scope="col">Logo</th>
         <th scope="col">Name</th>
         <th scope="col">Domain</th>
         <th scope="col">Created At</th>
@@ -35,8 +36,10 @@
       </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let company of companies">
+        <tr *ngFor="let company of companies; let i = index">
             <td>{{ company.CompanyID }}</td>
+            <!-- <td scope="row">{{ i + 1 }}</td> -->
+            <td><img [src]="company.CompanyLogo || './assets/img/avt_default.png'" alt="CompanyLogo" class="img-fluid rounded-circle" style="width: 30px; height: 30px;"></td>
             <td>{{ company.CompanyName }}</td>
             <td>{{ company.CompanyDomain }}</td>
             <td>{{ company.CreatedAt }}</td>

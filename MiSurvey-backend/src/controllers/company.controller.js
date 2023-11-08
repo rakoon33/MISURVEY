@@ -32,9 +32,8 @@ const deleteCompanyController = async (req, res) => {
   }
 };
 
-const getAllCompaniesController = async (req, res) => {
+const getAllCompaniesController = async (res) => {
   try {
-    const { numberOfCompanies } = req.body;
     const result = await companyService.getAllCompanies();
     res.json(result);
   } catch (error) {
