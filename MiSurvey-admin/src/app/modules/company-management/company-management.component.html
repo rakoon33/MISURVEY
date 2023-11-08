@@ -35,62 +35,12 @@
       </tr>
     </thead>
     <tbody>
-        <tr>
-            <td scope="row">1</td>
-            <td>Company1</td>
-            <td>domain1</td>
-            <td>2023-10-24 16:11:01 </td>
-            <td>1</td>
-            <td>
-                <c-dropdown class="d-flex justify-content-center">
-                    <span class="action-management" cButton cDropdownToggle>
-                    </span>
-                    <ul cDropdownMenu>
-                        <li>
-                            <button cDropdownItem [cModalToggle]="addUserModal.id">Add</button>
-                        </li>
-                        <li>
-                        <button cDropdownItem [cModalToggle]="editUserModal.id">Edit</button>
-                        </li>
-                        <li>
-                        <button cDropdownItem [cModalToggle]="deleteUserModal.id">Delete</button>
-                        </li>
-                    </ul>
-                </c-dropdown>
-            </td>
-        </tr>
-        
-        <tr>
-            <td scope="row">1</td>
-            <td>Company1</td>
-            <td>domain1</td>
-            <td>2023-10-24 16:11:01</td>
-            <td>1</td>
-            <td>
-                <c-dropdown class="d-flex justify-content-center">
-                    <span class="action-management" cButton cDropdownToggle>
-                    </span>
-                    <ul cDropdownMenu>
-                        <li>
-                            <button cDropdownItem [cModalToggle]="addUserModal.id">Add</button>
-                        </li>
-                        <li>
-                        <button cDropdownItem [cModalToggle]="editUserModal.id">Edit</button>
-                        </li>
-                        <li>
-                        <button cDropdownItem [cModalToggle]="deleteUserModal.id">Delete</button>
-                        </li>
-                    </ul>
-                </c-dropdown>
-            </td>
-        </tr>
-
-        <tr>
-            <td scope="row">1</td>
-            <td>Company1</td>
-            <td>domain1</td>
-            <td>2023-10-24 16:11:01 </td>
-            <td>1</td>
+        <tr *ngFor="let company of companies">
+            <td>{{ company.CompanyID }}</td>
+            <td>{{ company.CompanyName }}</td>
+            <td>{{ company.CompanyDomain }}</td>
+            <td>{{ company.CreatedAt }}</td>
+            <td>{{ company.AdminID }}</td>
             <td>
                 <c-dropdown class="d-flex justify-content-center">
                     <span class="action-management" cButton cDropdownToggle>
@@ -160,19 +110,18 @@
           <label for="userName" class="form-label">Username</label>
           <input type="text" class="form-control" id="userName" placeholder="Username">
         </div>
+
         <div class="mb-3">
           <label for="firstName" class="form-label">First Name</label>
           <input type="text" class="form-control" id="firstName" placeholder="First Name">
         </div>
-        <!-- Add more fields as necessary for user details -->
-        <!-- ... -->
+
         <div class="mb-3">
           <label for="userRole" class="form-label">Role</label>
           <select class="form-select" id="userRole">
             <option selected>Select Role</option>
             <option value="admin">Admin</option>
             <option value="superadmin">SuperAdmin</option>
-            <!-- Add more roles as necessary -->
           </select>
         </div>
       </form>
