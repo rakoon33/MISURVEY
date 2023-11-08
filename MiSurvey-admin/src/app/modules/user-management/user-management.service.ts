@@ -1,34 +1,67 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BACKEND_API } from '../../constants/apiConstants';
+import { User } from 'src/app/models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserManagementService {
 
+  private apiUrl = `${BACKEND_API.BASE_API_URL}${BACKEND_API.USER}`;
+
   constructor(private http: HttpClient) {}
 
+  getUsers(): Observable<User[]> {
+    return this.http.get<{status: boolean; users: User[]}>(this.apiUrl, { withCredentials: true })
+      .pipe(
+        map(response => {
+          // Kiểm tra nếu phản hồi có trạng thái là true và có mảng users
+          if (response.status) {
+            return response.users;
+          } else {
+            // Nếu trạng thái không phải là true, trả về một mảng rỗng
+            return [];
+          }
+        }),
+        catchError(this.handleError) // Xử lý lỗi một cách tập trung
+      );
+  }
 
-//   createUser(username: string, password: string): Observable<any> {
-//     const loginUrl = `${BACKEND_API.BASE_API_URL}/${BACKEND_API.USER}`;
-//     return this.http.post(loginUrl, { username, password })
-//       .pipe(
-//         map((response: any) => {
-//           if (response && response.status) {
-//             // Handle successful login
-//             return response; // Return the login success message
-//           }
-//           return response; // Return null if login failed
-//         }),
-//         catchError(error => {
-//           console.error('Error during login:', error);
-//           return of(false); // Indicate failure to the caller
-//         })
-//       );
-//   }
+  getUserById(userId: string): Observable<User | null> {
+    console.log(`${this.apiUrl}/${userId}`);
+    return this.http.get<{status: boolean; user: User}>(`${this.apiUrl}/${userId}`, { withCredentials: true })
+      .pipe(
+        map(response => {
+          // Check if the response has a status of true and a user object
+          if (response.status) {
+            return response.user;
+          } else {
+            // If the status is not true, return null to indicate no user was found
+            return null;
+          }
+        }),
+        catchError(this.handleError) // Handle errors in a centralized way
+      );
+  }
+  
 
-
+  // Hàm xử lý lỗi tập trung
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // Một lỗi client-side hoặc lỗi mạng xảy ra. Xử lý nó theo cách phù hợp.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // Server trả về một mã phản hồi không thành công.
+      // Phản ứng lại dựa trên mã phản hồi và dữ liệu phản hồi.
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
+    }
+    // Trả về một Observable với thông điệp lỗi người dùng thân thiện
+    return throwError(
+      'Something bad happened; please try again later.');
+  }
 }

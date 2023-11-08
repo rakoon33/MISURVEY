@@ -13,7 +13,6 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-
   login(username: string, password: string): Observable<any> {
     const loginUrl = `${BACKEND_API.BASE_API_URL}${BACKEND_API.LOGIN}`;
     return this.http.post(loginUrl, { username, password })
