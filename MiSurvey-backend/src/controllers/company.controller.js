@@ -32,7 +32,7 @@ const deleteCompanyController = async (req, res) => {
   }
 };
 
-const getAllCompaniesController = async (res) => {
+const getAllCompaniesController = async (req, res) => {
   try {
     const result = await companyService.getAllCompanies();
     res.json(result);

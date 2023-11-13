@@ -1,136 +1,217 @@
 <div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <c-dropdown>
-        <button class="btn-management" cButton cDropdownToggle>Filter</button>
-        <ul cDropdownMenu>
-            <li>
-                <button cDropdownItem>Name</button>
-            </li>
-            <li>
-            <button cDropdownItem>Role</button>
-            </li>
-            <li>
-            <button cDropdownItem>Active</button>
-            </li>
-        </ul>
+  <div class="input-group-prepend">
+    <c-dropdown>
+      <button class="btn-management" cButton cDropdownToggle>Filter</button>
+      <ul cDropdownMenu>
+        <li>
+          <button cDropdownItem>Name</button>
+        </li>
+        <li>
+          <button cDropdownItem>Role</button>
+        </li>
+        <li>
+          <button cDropdownItem>Active</button>
+        </li>
+      </ul>
     </c-dropdown>
-    </div>
-    <input type="text" class="form-control" placeholder="Search keyword...">
-
-    <c-button-group role="group">
-        <button cButton>Search</button>
-        <button cButton>Refresh</button>
-    </c-button-group>
   </div>
+  <input type="text" class="form-control" placeholder="Search keyword..." />
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Logo</th>
-        <th scope="col">Name</th>
-        <th scope="col">Domain</th>
-        <th scope="col">Created At</th>
-        <th scope="col">Admin ID</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let company of companies; let i = index">
-            <td>{{ company.CompanyID }}</td>
-            <!-- <td scope="row">{{ i + 1 }}</td> -->
-            <td><img [src]="company.CompanyLogo || './assets/img/avt_default.png'" alt="CompanyLogo" class="img-fluid rounded-circle" style="width: 30px; height: 30px;"></td>
-            <td>{{ company.CompanyName }}</td>
-            <td>{{ company.CompanyDomain }}</td>
-            <td>{{ company.CreatedAt }}</td>
-            <td>{{ company.AdminID }}</td>
-            <td>
-                <c-dropdown class="d-flex justify-content-center">
-                    <span class="action-management" cButton cDropdownToggle>
-                    </span>
-                    <ul cDropdownMenu>
-                        <li>
-                            <button cDropdownItem [cModalToggle]="addUserModal.id">Add</button>
-                        </li>
-                        <li>
-                        <button cDropdownItem [cModalToggle]="editUserModal.id">Edit</button>
-                        </li>
-                        <li>
-                        <button cDropdownItem [cModalToggle]="deleteUserModal.id">Delete</button>
-                        </li>
-                    </ul>
-                </c-dropdown>
-            </td>
-        </tr>
-    </tbody>
-  </table>
+  <c-button-group role="group">
+    <button cButton>Search</button>
+    <button cButton>Refresh</button>
+  </c-button-group>
+</div>
 
-  <!-- Modal -->
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Logo</th>
+      <th scope="col">Name</th>
+      <th scope="col">Domain</th>
+      <th scope="col">Created At</th>
+      <th scope="col">Admin ID</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let company of companies">
+      <td>{{ company.CompanyID }}</td>
+      <td>
+        <img
+          [src]="company.CompanyLogo || './assets/img/logo/company_logo_default.png'"
+          alt="logo"
+          class="img-fluid rounded-circle"
+          style="width: 30px; height: 30px"
+        />
+      </td>
+      <td>{{ company.CompanyName }}</td>
+      <td>{{ company.CompanyDomain }}</td>
+      <td>{{ company.CreatedAt | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+      <td>{{ company.AdminID }}</td>
+      <td>
+        <c-dropdown class="d-flex justify-content-center">
+          <span class="action-management" cButton cDropdownToggle> </span>
+          <ul cDropdownMenu>
+            <li>
+              <button cDropdownItem [cModalToggle]="addUserModal.id">
+                Add
+              </button>
+            </li>
+            <li>
+                <button cDropdownItem (click)="editCompany(company.CompanyID!.toString())">Edit</button>
+            </li>
+            <li>
+              <button cDropdownItem [cModalToggle]="deleteUserModal.id">
+                Delete
+              </button>
+            </li>
+          </ul>
+        </c-dropdown>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-<!-- Edit User Modal -->
-<c-modal #editUserModal id="editUserModal" scrollable>
-    <c-modal-header>
-      <h5 cModalTitle>Edit User Details</h5>
-      <button [cModalToggle]="editUserModal.id" cButtonClose></button>
-    </c-modal-header>
-    <c-modal-body>
-      <!-- Form for editing user -->
-      <form>
-        <!-- Form inputs here -->
-        <!-- ... -->
-      </form>
-    </c-modal-body>
-    <c-modal-footer>
-      <button [cModalToggle]="editUserModal.id" cButton color="secondary">Cancel</button>
-      <button cButton color="primary">Save Changes</button>
-    </c-modal-footer>
-  </c-modal>
-  
-  <!-- Delete User Modal -->
-  <c-modal #deleteUserModal id="deleteUserModal" scrollable>
-    <c-modal-header>
-      <h5 cModalTitle>Confirm User Deletion</h5>
-      <button [cModalToggle]="deleteUserModal.id" cButtonClose></button>
-    </c-modal-header>
-    <c-modal-body>
-      Are you sure you want to delete this user? This action cannot be undone.
-    </c-modal-body>
-    <c-modal-footer>
-      <button [cModalToggle]="deleteUserModal.id" cButton color="secondary">Cancel</button>
-      <button cButton color="danger">Delete</button>
-    </c-modal-footer>
-  </c-modal>
+<!-- Modal -->
 
+<!-- Edit Company Modal -->
+<c-modal #editCompanyModal id="editCompanyModal" scrollable>
+  <c-modal-header>
+    <h5 cModalTitle>Edit Company Details</h5>
+    <button [cModalToggle]="editCompanyModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form>
+      <div class="mb-3">
+        <label for="editCompanyName" class="form-label">Company Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="editCompanyName"
+          placeholder="Company Name"
+          name="Company Name"
+          [(ngModel)]="currentCompany!.CompanyName"
+        />
+      </div>
 
-  <c-modal #addUserModal id="addUserModal">
-    <c-modal-header>
-      <h5 cModalTitle>Add New User</h5>
-      <button type="button" cButtonClose [cModalToggle]="addUserModal.id"></button>
-    </c-modal-header>
-    <c-modal-body>
-      <form>
-        <div class="mb-3">
-          <label for="userName" class="form-label">Username</label>
-          <input type="text" class="form-control" id="userName" placeholder="Username">
-        </div>
+      <div class="mb-3">
+        <label for="editCompanyDomain" class="form-label">Company Domain</label>
+        <input
+          type="text"
+          class="form-control"
+          id="editCompanyDomain"
+          name="companyDomain"
+          [(ngModel)]="currentCompany!.CompanyDomain"
+          placeholder="Company Domain"
+        />
+      </div>
+      
+      <div class="mb-3">
+        <label for="editDateCreated" class="form-label">Date Created</label>
+        <!-- <input
+          type="text"
+          class="form-control"
+          id="editDateCreated"
+          name="CreatedAt"
+          [(ngModel)]="currentCompany!.CreatedAt"
+          placeholder="Date Created"
+        /> -->
+        <mat-form-field appearance="fill">
+          <mat-label>Date Created</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="currentCompany.CreatedAt">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      
+      <div class="mb-3">
+        <label for="editAdminID" class="form-label">AdminID</label>
+        <input
+          type="text"
+          class="form-control"
+          id="editAdminID"
+          name="AdminID"
+          [(ngModel)]="currentCompany!.AdminID"
+          placeholder="Admin ID"
+        />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="editCompanyModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary">Save Changes</button>
+  </c-modal-footer>
+</c-modal>
 
-        <div class="mb-3">
-          <label for="firstName" class="form-label">First Name</label>
-          <input type="text" class="form-control" id="firstName" placeholder="First Name">
-        </div>
+<!-- Delete Company Modal -->
+<c-modal #deleteUserModal id="deleteUserModal" scrollable>
+  <c-modal-header>
+    <h5 cModalTitle>Confirm User Deletion</h5>
+    <button [cModalToggle]="deleteUserModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    Are you sure you want to delete this user? This action cannot be undone.
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="deleteUserModal.id" cButton color="secondary">
+      Cancel
+    </button>
+    <button cButton color="danger">Delete</button>
+  </c-modal-footer>
+</c-modal>
 
-        <div class="mb-3">
-          <label for="userRole" class="form-label">Role</label>
-          <select class="form-select" id="userRole">
-            <option selected>Select Role</option>
-            <option value="admin">Admin</option>
-            <option value="superadmin">SuperAdmin</option>
-          </select>
-        </div>
-      </form>
-    </c-modal-body>
-    <c-modal-footer>
-      <button type="button" cButton color="secondary" [cModalToggle]="addUserModal.id">Close</button>
-      <button type="button" cButton color="primary">Save User</button>
-    </c-modal-footer>
-  </c-modal>    
+<c-modal #addUserModal id="addUserModal">
+  <c-modal-header>
+    <h5 cModalTitle>Add New User</h5>
+    <button
+      type="button"
+      cButtonClose
+      [cModalToggle]="addUserModal.id"
+    ></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form>
+      <div class="mb-3">
+        <label for="userName" class="form-label">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          id="userName"
+          placeholder="Username"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="firstName" class="form-label">First Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="firstName"
+          placeholder="First Name"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="userRole" class="form-label">Role</label>
+        <select class="form-select" id="userRole">
+          <option selected>Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="superadmin">SuperAdmin</option>
+        </select>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button
+      type="button"
+      cButton
+      color="secondary"
+      [cModalToggle]="addUserModal.id"
+    >
+      Close
+    </button>
+    <button type="button" cButton color="primary">Save User</button>
+  </c-modal-footer>
+</c-modal>

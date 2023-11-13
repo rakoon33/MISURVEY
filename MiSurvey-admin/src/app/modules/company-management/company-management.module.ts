@@ -13,6 +13,11 @@ import { DropdownModule } from '@coreui/angular';
 import { ModalModule } from '@coreui/angular';
 import { ButtonGroupModule } from '@coreui/angular';
 
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+
 @NgModule({
   imports: [  
     CommonModule,
@@ -27,10 +32,14 @@ import { ButtonGroupModule } from '@coreui/angular';
     DropdownModule,
     ModalModule,
     ButtonGroupModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatNativeDateModule,
   ],
   declarations: [
     CompanyManagementComponent,
-  ]
+  ],
 })
 export class CompanyManagementModule {
 }
