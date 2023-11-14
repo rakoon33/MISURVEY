@@ -22,8 +22,7 @@ export const navItems: INavData[] = [
   {
     name: 'Company Management',
     url: '/company-management',
-    // linkProps: { fragment: 'someAnchor' },
-    iconComponent: { name: 'cil-puzzle' }
+    iconComponent: { name: 'cil-building' }
   },
   {
     name: 'Components',

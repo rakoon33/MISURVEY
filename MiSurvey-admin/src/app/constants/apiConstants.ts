@@ -6,4 +6,5 @@ export const BACKEND_API = {
     LOGIN: '/login',
     USER: '/users',
     LOGOUT: '/logout',
+    COMPANY: '/companies',
 };
