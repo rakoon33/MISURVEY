@@ -23,8 +23,15 @@
     </c-button-group>
   </div>
 
-  <table class="table">
-    <thead>
+  <table 
+    class="table"
+    [hover]="true"
+    [responsive]="true"
+    [striped]="true"
+    cTable
+    class="mb-0 border"
+  >
+    <thead cTableColor="light">
       <tr>
         <th scope="col">NO</th>
         <th scope="col">Avatar</th>
@@ -39,7 +46,12 @@
         <!-- Loop through the users array using the *ngFor directive -->
         <tr *ngFor="let user of users; let i = index">
             <td scope="row">{{ i + 1 }}</td>
-            <td><img [src]="user.UserAvatar || './assets/img/avt_default.png'" alt="User Avatar" class="img-fluid rounded-circle" style="width: 30px; height: 30px;"></td>
+            <td>
+              <c-avatar
+              size="md"
+              [src]="user.UserAvatar || './assets/img/avt_default.png'"
+              status="success"
+            ></c-avatar>
             <td>{{ user.FirstName }} {{ user.LastName }}</td>
             <td>{{ user.Email }}</td>
             <td>{{ user.UserRole }}</td>

@@ -3,15 +3,28 @@ import { NgModule } from '@angular/core';
 
 import { FormsModule } from '@angular/forms'; 
 
-import { CardModule, GridModule, NavModule, UtilitiesModule, TabsModule } from '@coreui/angular';
+
+import {
+  AvatarModule,
+  ButtonGroupModule,
+  ButtonModule,
+  DropdownModule,
+  FormModule,
+  ModalModule,
+  ProgressModule,
+  TableModule,
+  CardModule,
+  GridModule,
+  NavModule,
+  UtilitiesModule,
+  TabsModule
+} from '@coreui/angular';
+
 import { IconModule } from '@coreui/icons-angular';
 
 import { UserManagementComponent } from './user-management.component';
 import { UserManagementRoutingModule } from './user-management-routing.module';
 
-import { DropdownModule } from '@coreui/angular';
-import { ModalModule } from '@coreui/angular';
-import { ButtonGroupModule } from '@coreui/angular';
 
 @NgModule({
   imports: [
@@ -26,7 +39,9 @@ import { ButtonGroupModule } from '@coreui/angular';
     TabsModule,
     FormsModule,
     ModalModule,
-    ButtonGroupModule
+    ButtonGroupModule,
+    TableModule, 
+    AvatarModule,
   ],
   declarations: [
     UserManagementComponent,
