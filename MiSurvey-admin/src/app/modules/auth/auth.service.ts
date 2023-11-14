@@ -15,7 +15,7 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     const loginUrl = `${BACKEND_API.BASE_API_URL}${BACKEND_API.LOGIN}`;
-    return this.http.post(loginUrl, { username, password })
+    return this.http.post(loginUrl, { username, password }, { withCredentials: true })
       .pipe(
         map((response: any) => {
           if (response && response.status) {

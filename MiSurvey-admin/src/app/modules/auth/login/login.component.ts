@@ -26,7 +26,6 @@ export class LoginComponent {
       this.authService.login(username, password).subscribe(response => {
         if (response && response.status) {
           console.log('Login successful!');
-          localStorage.setItem('token', response.token); // Store token to localStorage
           this.router.navigate(['/dashboard']); // Redirect to dashboard
         } else {
           console.log('Login failed.');
