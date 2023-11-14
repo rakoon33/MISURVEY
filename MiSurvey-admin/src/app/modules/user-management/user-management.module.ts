@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 
 import { FormsModule } from '@angular/forms'; 
 
-
 import {
   AvatarModule,
   ButtonGroupModule,
@@ -42,6 +41,7 @@ import { UserManagementRoutingModule } from './user-management-routing.module';
     ButtonGroupModule,
     TableModule, 
     AvatarModule,
+    
   ],
   declarations: [
     UserManagementComponent,

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service'; 
-import { Router } from '@angular/router'; // nhập Router từ @angular/router để thực hiện việc chuyển hướng:
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',

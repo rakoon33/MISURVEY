@@ -21,6 +21,12 @@ const User = db.sequelize.define('User', {
     type: DataTypes.STRING(100),
     allowNull: false,
   },
+  Gender: {
+    type: DataTypes.STRING(50),
+    validate: {
+      isIn: [['Male', 'Female', 'Other', 'Prefer not to say']]
+    },
+  },
   Email: {
     type: DataTypes.STRING(100),
     allowNull: false,

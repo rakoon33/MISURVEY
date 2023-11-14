@@ -4,14 +4,14 @@ import { User } from '../../models/user.model';
 import { ToastrService } from 'ngx-toastr'; // Giả sử bạn sử dụng Toastr cho thông báo
 import { ModalService } from '@coreui/angular';
 import { IModalAction } from '@coreui/angular/lib/modal/modal.service';
-
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
- 
+  
   currentUser: User = {
     Username: '',
     FirstName: '',
