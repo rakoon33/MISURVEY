@@ -18,7 +18,7 @@ RolePermission.belongsTo(CompanyRole, {
   as: 'companyRole'
 });
 
-CompanyRole.hasOne(RolePermission, {
+CompanyRole.hasMany(RolePermission, {
   foreignKey: 'CompanyRoleID',
   as: 'permissions'
 });
