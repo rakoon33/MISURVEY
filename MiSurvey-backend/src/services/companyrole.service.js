@@ -3,18 +3,17 @@ const { sequelize } = require('../config/database');
 const { Op } = require('sequelize');
 
 // Create CompanyRole by SuperAdmin
+
 const createCompanyRole = async (roleData, permissionsData) => {
     const transaction = await sequelize.transaction(); // Begin a transaction
 
     try {
-        // Create the company role
         const newRole = await CompanyRole.create(roleData, { transaction });
-
-        // Attach the CompanyRoleID to the permissions object
-        permissionsData.CompanyRoleID = newRole.CompanyRoleID;
-
-        // Create the role permissions
-        const newPermission = await RolePermission.create(permissionsData, { transaction });
+        // Assuming permissionsData is an array of permissions to be created for the new role.
+        for (const permission of permissionsData) {
+            permission.CompanyRoleID = newRole.CompanyRoleID; // Set the CompanyRoleID for each permission.
+            await RolePermission.create(permission, { transaction });
+        }
 
         await transaction.commit(); // Commit the transaction if all goes well.
 
@@ -23,7 +22,7 @@ const createCompanyRole = async (roleData, permissionsData) => {
             message: "Company Role and Role Permissions created successfully",
             data: {
                 role: newRole,
-                permissions: newPermission // Send back the created permissions object.
+                permissions: permissionsData // Send back the permissions as they were intended to be created.
             }
         };
     } catch (error) {
@@ -39,7 +38,7 @@ const createCompanyRole = async (roleData, permissionsData) => {
 
 // Update CompanyRole by SuperAdmin
 const updateCompanyRole = async (id, roleData, permissionsData) => {
-    const transaction = await sequelize.transaction(); // Begin a transaction
+    const transaction = await sequelize.transaction();
 
     try {
         // Update the company role
@@ -49,38 +48,40 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
         });
 
         if (updatedRoleRows === 0) {
-            await transaction.rollback(); // If no role updated, rollback the transaction
+            await transaction.rollback();
             return { status: false, message: "Company Role not found or data unchanged" };
         }
 
-        // Update the role permissions
-        const [updatedPermissionsRows] = await RolePermission.update(permissionsData, {
-            where: { CompanyRoleID: id },
-            transaction
-        });
-
-        // If there were no permissions to update, rollback
-        if (updatedPermissionsRows === 0) {
-            await transaction.rollback();
-            return { status: false, message: "Role Permissions not found or data unchanged" };
+        // Update each permission in permissionsData
+        for (const permission of permissionsData) {
+            await RolePermission.update(permission, {
+                where: { 
+                    CompanyRoleID: id,
+                    ModuleID: permission.ModuleID
+                },
+                transaction
+            });
         }
 
-        await transaction.commit(); // Commit the transaction if all goes well
+        await transaction.commit();
 
         // Fetch the updated role and its permissions
-        const updatedRole = await CompanyRole.findByPk(id);
-        const updatedPermissions = await RolePermission.findOne({ where: { CompanyRoleID: id } });
+        const updatedRole = await CompanyRole.findByPk(id, {
+            include: {
+                model: RolePermission,
+                as: 'permissions'
+            }
+        });
 
         return {
             status: true,
             message: "Company Role and Permissions updated successfully",
             data: {
-                role: updatedRole,
-                permissions: updatedPermissions
+                role: updatedRole
             }
         };
     } catch (error) {
-        await transaction.rollback(); // Rollback the transaction on error
+        await transaction.rollback();
         return {
             status: false,
             message: error.message || "Company Role update failed",
@@ -88,6 +89,8 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
         };
     }
 };
+
+
 
 // Delete CompanyRole by SuperAdmin
 const deleteCompanyRole = async (id) => {

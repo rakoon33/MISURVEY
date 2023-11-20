@@ -74,9 +74,45 @@ const getOneIndividualPermission = async (companyUserId, moduleId) => {
   }
 };
 
+const getAllIndividualPermissions = async () => {
+  try {
+    const permissions = await IndividualPermission.findAll();
+    if (permissions.length === 0) {
+      return { status: false, message: "No individual permissions found" };
+    }
+    return { status: true, message: "Individual Permissions fetched successfully", permissions };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+const searchIndividualPermissions = async (companyUserId) => {
+  try {
+    // Construct the search condition
+    const condition = {};
+    if (companyUserId) condition.CompanyUserID = companyUserId;
+
+    const permissions = await IndividualPermission.findAll({
+      where: condition
+    });
+
+    if (permissions.length === 0) {
+      return { status: false, message: "No matching individual permissions found" };
+    }
+
+    return { status: true, message: "Individual Permissions found", permissions };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+
+
 module.exports = {
   createIndividualPermission,
   updateIndividualPermission,
   deleteIndividualPermission,
-  getOneIndividualPermission
+  getOneIndividualPermission,
+  getAllIndividualPermissions,
+  searchIndividualPermissions
 };
