@@ -1,38 +1,26 @@
 const { companyRoleService } = require('../services');
 
 const createCompanyRoleController = async (req, res) => {
-    const { roleData, permissionData } = req.body; // Use permissionData (singular) here if changing the code
-
-    if (!roleData || !permissionData) { // Check for permissionData (singular) if changing the code
-        return res.status(400).json({
-            status: false,
-            message: "roleData and permissionData are required."
-        });
-    }
-
+    const { roleData, permissionsData } = req.body; // Assuming the request body will have roleData and permissionsData properties.
+    
     try {
-        const result = await companyRoleService.createCompanyRole(roleData, permissionData); // Use permissionData (singular) here if changing the code
-        res.json(result);
+        const newRole = await companyRoleService.createCompanyRole(roleData, permissionsData);
+        res.json(newRole);
     } catch (error) {
-        res.status(500).json({
-            status: false,
-            message: error.message
-        });
+        res.status(400).json({ message: error.message });
     }
 };
 
 const updateCompanyRoleController = async (req, res) => {
-    const { roleData, permissionData } = req.body; // Extract roleData and permissionData from the request body
+    const { roleData, permissionsData } = req.body; // Extract roleData and permissionsData from the request body
 
-    // Validate the presence of roleData and permissionData
-    if (!roleData || !permissionData) {
+    if (!roleData || !permissionsData) {
         return res.status(400).json({
             status: false,
-            message: "roleData and permissionData are required."
+            message: "roleData and permissionsData are required."
         });
     }
 
-    // Extract the CompanyRoleID from the request parameters
     const { CompanyRoleID } = req.params;
 
     if (!CompanyRoleID) {
@@ -43,8 +31,7 @@ const updateCompanyRoleController = async (req, res) => {
     }
 
     try {
-        // Call the service function to update the company role and permissions
-        const result = await companyRoleService.updateCompanyRole(CompanyRoleID, roleData, permissionData);
+        const result = await companyRoleService.updateCompanyRole(CompanyRoleID, roleData, permissionsData);
         res.json(result);
     } catch (error) {
         res.status(500).json({
@@ -53,7 +40,6 @@ const updateCompanyRoleController = async (req, res) => {
         });
     }
 };
-
 
 
 const deleteCompanyRoleController = async (req, res) => {

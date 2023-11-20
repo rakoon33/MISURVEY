@@ -44,10 +44,32 @@ const getOneIndividualPermissionController = async (req, res) => {
     }
 };
 
+const getAllIndividualPermissionsController = async (req, res) => {
+    try {
+      const result = await individualPermissionService.getAllIndividualPermissions();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+const searchIndividualPermissionsController = async (req, res) => {
+  const { companyUserId } = req.params; // Extracting companyUserId from route parameters
+
+  try {
+    const result = await individualPermissionService.searchIndividualPermissions(companyUserId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 module.exports = {
     createIndividualPermissionController,
     updateIndividualPermissionController,
     deleteIndividualPermissionController,
-    getOneIndividualPermissionController
+    getOneIndividualPermissionController,
+    getAllIndividualPermissionsController,
+    searchIndividualPermissionsController
 };
