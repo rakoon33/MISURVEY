@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
 
-const CompanyUsers = db.sequelize.define('CompanyUsers', {
+const CompanyUser = db.sequelize.define('CompanyUser', {
     CompanyUserID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -26,7 +26,7 @@ const CompanyUsers = db.sequelize.define('CompanyUsers', {
     CompanyRoleID: {
         type: DataTypes.INTEGER,
         references: {
-            model: 'CompanyRoles',
+            model: 'CompanyRole',
             key: 'CompanyRoleID'
         }
     },
@@ -40,4 +40,4 @@ const CompanyUsers = db.sequelize.define('CompanyUsers', {
     timestamps: false,
 });
 
-module.exports = CompanyUsers;
+module.exports = CompanyUser;

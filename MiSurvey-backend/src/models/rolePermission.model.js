@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
 
-const RolePermission = db.sequelize.define('RolePermissions', {
+const RolePermission = db.sequelize.define('RolePermission', {
     RolePermissionID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -11,7 +11,7 @@ const RolePermission = db.sequelize.define('RolePermissions', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'CompanyRoles',
+            model: 'CompanyRole',
             key: 'CompanyRoleID'
         }
     },
@@ -19,7 +19,7 @@ const RolePermission = db.sequelize.define('RolePermissions', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Modules',
+            model: 'Module',
             key: 'ModuleID'
         }
     },

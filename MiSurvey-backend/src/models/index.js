@@ -9,7 +9,7 @@ const Survey = require('./survey.model');
 const SurveyPage = require('./surveyPage.model');
 const SurveyQuestion = require('./surveyQuestion.model');
 const SurveyResponse = require('./surveyResponse.model');
-const CompanyRole = require('./companyRole.model');
+const CompanyRole = require('./companyrole.model');
 const RolePermission = require('./rolePermission.model');
 
 // Set up the association
