@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
+const {Survey, SurveyResponse} = require('./index');
 
 const Ticket = db.sequelize.define('Ticket', {
     TicketID: {
@@ -29,7 +30,7 @@ const Ticket = db.sequelize.define('Ticket', {
     SurveyID: {
         type: DataTypes.INTEGER,
         references: {
-            model: 'Survey',
+            model: Survey,
             key: 'SurveyID'
         },
         allowNull: true
@@ -37,7 +38,7 @@ const Ticket = db.sequelize.define('Ticket', {
     ResponseID: {
         type: DataTypes.INTEGER,
         references: {
-            model: 'SurveyResponse',
+            model: SurveyResponse,
             key: 'ResponseID'
         },
         allowNull: true

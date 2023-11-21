@@ -3,6 +3,7 @@ const db = require('../config/database');
 const User = require('./user.model'); // Ensure this model is defined and exported correctly
 const Survey = require('./survey.model'); // Ensure this model is defined and exported correctly
 const SurveyDetail = require('./surveyDetail.model'); // Ensure this model is defined and exported correctly
+const Company = require('./company.model');
 
 const SurveyReport = db.sequelize.define('SurveyReport', {
     ReportID: {
@@ -58,7 +59,7 @@ const SurveyReport = db.sequelize.define('SurveyReport', {
     CompanyID: {
         type: DataTypes.INTEGER,
         references: {
-            model: 'Company',
+            model: Company,
             key: 'CompanyID'
         }
     },
