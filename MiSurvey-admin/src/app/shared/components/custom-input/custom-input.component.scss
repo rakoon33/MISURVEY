@@ -19,10 +19,11 @@
     outline: 0;
     transition: all .3s ease-in-out;
     border: 2px solid black;
-
+    text-indent: 100px; 
     &::-webkit-input-placeholder {
       color: $main_color_1;
       font-weight: 300; 
+      visibility: hidden;
     }
   
     + label {
@@ -38,10 +39,7 @@
         border-radius: 3px;
         background: rgba(122,184,147,0);
         position: absolute;
-        visibility: hidden;
-        z-index: -1;
-        transform: translate(0%, -70%);
-    
+        transform: translate(0%, 43%);
 
       &:after {
         position: absolute;
@@ -61,21 +59,22 @@
   .balloon:focus,
   .balloon:active {
     color: $main_color_2;
-    
+    text-indent: 0px; 
     &::-webkit-input-placeholder {
       color: #aaa;
+      visibility: visible;
+
     }
     + label {
       color: #fff;
-      z-index: 9999;
       text-shadow: 0 1px 0 rgba(19,74,70,.4);
       background: $main_color_1;
       transform: translateY(-40px);
       visibility: visible;
- 
       
       &:after {
         border-top: 4px solid $main_color_2;
       }
     }
   }
+

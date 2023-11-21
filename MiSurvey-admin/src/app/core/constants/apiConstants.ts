@@ -1,6 +1,6 @@
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
-export const BACKEND_API = {
+const BACKEND_API = {
     BASE_API_URL: `${environment.BACKEND_BASE_URL}/api`,
     REGISTER: '/register',
     LOGIN: '/login',
@@ -8,3 +8,5 @@ export const BACKEND_API = {
     LOGOUT: '/logout',
     COMPANY: '/companies',
 };
+
+export default {BACKEND_API};

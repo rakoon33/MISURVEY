@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { BACKEND_API } from '../../constants/apiConstants';
-import { Company } from '../../models/company.model'; 
+import { apiConstants } from '../constants';
+import { Company } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ import { Company } from '../../models/company.model';
 
 export class CompanyManagementService {
 
-    private apiUrl = `${BACKEND_API.BASE_API_URL}${BACKEND_API.COMPANY}`;
+    private apiUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.COMPANY}`;
 
     constructor(private http: HttpClient) {}
 

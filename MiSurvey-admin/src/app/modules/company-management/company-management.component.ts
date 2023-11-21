@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Company } from '../../models/company.model';
-import { CompanyManagementService } from './company-management.service';
+import { Company } from '../../core/models';
+import { CompanyManagementService } from '../../core/services/company-management.service';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { IModalAction } from '@coreui/angular/lib/modal/modal.service';

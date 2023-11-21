@@ -55,4 +55,5 @@ export class CustomInputComponent implements ControlValueAccessor {
     this.showPassword = !this.showPassword;
     this.type = this.showPassword ? 'text' : 'password';
   }
+  
 }

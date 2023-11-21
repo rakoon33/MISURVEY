@@ -24,6 +24,11 @@ $enable-rtl: true;
 // If you want to add something do it here
 @import "custom";
 
+@import '../../node_modules/ngx-toastr/toastr.css';
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+
+

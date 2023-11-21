@@ -1,4 +1,4 @@
-export interface Company {
+export default interface Company {
   CompanyID?: number;
   CompanyLogo?: string;
   CompanyName: string;

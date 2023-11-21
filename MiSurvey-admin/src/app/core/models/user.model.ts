@@ -1,4 +1,4 @@
-export interface User {
+export default interface User {
   UserID?: number; // Optional because it's auto-incremented
   UserAvatar?: string; // Optional because it may not be set by the user
   Username: string;

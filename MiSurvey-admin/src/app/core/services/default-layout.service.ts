@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError} from 'rxjs/operators';
-import { BACKEND_API } from '../../constants/apiConstants';
+import { apiConstants } from '../constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DefaultLayoutService {
 
-  private apiUrl = `${BACKEND_API.BASE_API_URL}${BACKEND_API.LOGOUT}`;
+  private apiUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.LOGOUT}`;
 
   constructor(private http: HttpClient) {}
 

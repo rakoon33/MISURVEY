@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UserManagementService } from './user-management.service';
-import { User } from '../../models/user.model'; 
+import { UserManagementService } from '../../core/services/user-management.service';
+import { User } from '../../core/models'; 
 import { ToastrService } from 'ngx-toastr'; // Giả sử bạn sử dụng Toastr cho thông báo
 import { ModalService } from '@coreui/angular';
 import { IModalAction } from '@coreui/angular/lib/modal/modal.service';
@@ -11,7 +11,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
-  
+
   currentUser: User = {
     Username: '',
     FirstName: '',
@@ -70,7 +70,22 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
-
+  viewUser(userId: string): void {
+    this.userManagementService.getUserById(userId).subscribe(user => {
+      if (user) {
+        this.currentUser = user;
+        console.log(this.currentUser);
+        // Here you can now open the modal and use currentUser to populate the form
+        const action: IModalAction = {
+          show: true,
+          id: 'viewUserModal' // Make sure this ID matches the ID of your modal
+        };
+        this.modalService.toggle(action); 
+      } else {
+        this.toastr.error('Error fetching user with id ' + userId);
+      }
+    });
+  }
 
   // // This function can be called when the Save Changes button is clicked
   // saveUserChanges(): void {

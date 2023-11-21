@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { BACKEND_API } from '../../constants/apiConstants';
-import { User } from 'src/app/models/user.model';
+import { apiConstants } from '../constants';
+import { User } from '../models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserManagementService {
 
-  private apiUrl = `${BACKEND_API.BASE_API_URL}${BACKEND_API.USER}`;
+  private apiUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.USER}`;
 
   constructor(private http: HttpClient) {}
 
