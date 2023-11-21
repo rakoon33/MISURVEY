@@ -13,6 +13,37 @@ const CompanyRole = require('./companyrole.model');
 const RolePermission = require('./rolePermission.model');
 
 // Set up the association
+// User and Company
+User.hasOne(Company, {
+  foreignKey: 'AdminID',
+  as: 'AdminOfCompany' // Ensure this alias is unique
+});
+Company.belongsTo(User, {
+  foreignKey: 'AdminID',
+  as: 'Admin' // Different alias for the inverse relationship
+});
+
+// User and CompanyUser associations
+User.hasMany(CompanyUser, {
+  foreignKey: 'UserID',
+  as: 'CompanyUsers'
+});
+CompanyUser.belongsTo(User, {
+  foreignKey: 'UserID',
+  as: 'User'
+});
+
+// Company and CompanyUser associations
+Company.hasMany(CompanyUser, {
+  foreignKey: 'CompanyID',
+  as: 'CompanyUsers'
+});
+CompanyUser.belongsTo(Company, {
+  foreignKey: 'CompanyID',
+  as: 'Company'
+});
+
+
 RolePermission.belongsTo(CompanyRole, {
   foreignKey: 'CompanyRoleID',
   as: 'companyRole'
