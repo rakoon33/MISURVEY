@@ -22,7 +22,9 @@ const  tokenVerification = asyncHandler(async (req, res, next) => {
           });
         }
         
-        req.user = decoded.user;
+        req.user = await User.findByPk(decoded.id, {
+          attributes: { exclude: ['password'] }
+        });
         
         next();
       });
