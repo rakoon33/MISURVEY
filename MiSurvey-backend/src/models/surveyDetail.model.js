@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database'); 
 
-const SurveyDetails = db.sequelize.define('SurveyDetails', {
+const SurveyDetail = db.sequelize.define('SurveyDetail', {
     SurveyDetailID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -11,7 +11,7 @@ const SurveyDetails = db.sequelize.define('SurveyDetails', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Surveys',
+            model: 'Survey',
             key: 'SurveyID'
         }
     },
@@ -19,7 +19,7 @@ const SurveyDetails = db.sequelize.define('SurveyDetails', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Users',
+            model: 'User',
             key: 'UserID'
         }
     },
@@ -38,7 +38,7 @@ const SurveyDetails = db.sequelize.define('SurveyDetails', {
     CompanyID: {
         type: DataTypes.INTEGER,
         references: {
-            model: 'Companies',
+            model: 'Company',
             key: 'CompanyID'
         }
     }
@@ -47,4 +47,4 @@ const SurveyDetails = db.sequelize.define('SurveyDetails', {
     timestamps: false, 
 });
 
-module.exports = SurveyDetails;
+module.exports = SurveyDetail;

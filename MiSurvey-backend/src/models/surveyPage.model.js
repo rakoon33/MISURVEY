@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database'); 
 
-const SurveyPages = db.sequelize.define('SurveyPages', {
+const SurveyPage = db.sequelize.define('SurveyPage', {
     PageID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -11,7 +11,7 @@ const SurveyPages = db.sequelize.define('SurveyPages', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Surveys',
+            model: 'Survey',
             key: 'SurveyID'
         }
     },
@@ -28,4 +28,4 @@ const SurveyPages = db.sequelize.define('SurveyPages', {
     timestamps: false, 
 });
 
-module.exports = SurveyPages;
+module.exports = SurveyPage;

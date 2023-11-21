@@ -1,22 +1,80 @@
-.custom-input {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
+@import "../../../../scss/colors.scss";
+
+.row {
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+
+.balloon {
+    display: inline-block;
     width: 100%;
-}
+    padding: 15px 10px;
+    font-weight: 400;
+    font-size: 16px !important;
+    color: $main_color_2;
+    border-radius: 3px;
+    outline: 0;
+    transition: all .3s ease-in-out;
+    border: 2px solid black;
+    text-indent: 100px; 
+    &::-webkit-input-placeholder {
+      color: $main_color_1;
+      font-weight: 300; 
+      visibility: hidden;
+    }
+  
+    + label {
+        width: auto;
+        display: inline-block;
+        padding: 5px 15px;
+        color: $main_color_1;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-shadow: 0 1px 0 rgba(19,74,70,0);
+        transition: all 0.3s ease-in;
+        border-radius: 3px;
+        background: rgba(122,184,147,0);
+        position: absolute;
+        transform: translate(0%, 43%);
 
-.custom-input i {
-    margin-right: 10px;
-}
+      &:after {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        top: 100%;
+        left: 50%;
+        margin-left: -3px;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-top: 3px solid rgba(122,184,147,0);
+        transition: all .3s ease-in-out;
+      }
+    }
+  }
+  .balloon:focus,
+  .balloon:active {
+    color: $main_color_2;
+    text-indent: 0px; 
+    &::-webkit-input-placeholder {
+      color: #aaa;
+      visibility: visible;
 
-.custom-input input {
-    flex-grow: 1;
-    border: none;
-    outline: none;
-}
+    }
+    + label {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(19,74,70,.4);
+      background: $main_color_1;
+      transform: translateY(-40px);
+      visibility: visible;
+      
+      &:after {
+        border-top: 4px solid $main_color_2;
+      }
+    }
+  }
 
-.eye, .eye-off {
-    cursor: pointer;
-}

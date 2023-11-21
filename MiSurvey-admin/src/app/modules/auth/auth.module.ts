@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { SharedModule } from '../../shared/share.module'; // replace 'path-to-your-shared-module' with the actual path
 // import { PagesRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
-
 
 @NgModule({
   declarations: [
@@ -22,7 +20,8 @@ import { IconModule } from '@coreui/icons-angular';
     GridModule,
     IconModule,
     FormModule,
-    SharedModule
+    SharedModule,
+
   ]
 })
 export class AuthModule {

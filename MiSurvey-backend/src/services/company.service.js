@@ -189,7 +189,7 @@ const deleteCompany = async (CompanyID) => {
 const getAllCompanies = async () => {
   try {
     const companies = await Company.findAll({
-      attributes: ["CompanyID", "CompanyName"]
+      attributes: ["CompanyID", "CompanyLogo", "CompanyName", "CompanyDomain", "CreatedAt", "AdminID"]
     });
 
     if (companies.length === 0) {

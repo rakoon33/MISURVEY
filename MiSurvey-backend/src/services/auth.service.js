@@ -13,7 +13,18 @@ const loginUser = async (res, username, password) => {
       const isPasswordVerified = await bcrypt.compare(password.trim(), user.UserPassword);
       if (isPasswordVerified) {
         
-          const token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole);
+          const company = await Company.findOne({
+            where: {
+              AdminID: user.UserID
+            },
+            attributes: ['CompanyID']
+          });
+          let token;
+          if (company) {
+            token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole, company.CompanyID);
+          } else {
+            token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole);
+          }
 
           // Set JWT as an HTTP-Only cookie
           res.cookie('jwt', token, {
@@ -139,19 +150,21 @@ const registerUser = async (userData) => {
 //   }
 // });
 
-// @desc    Logout user / clear cookie
-// @route   POST /api/users/logout
-// @access  Public
-// const logoutUser = (req, res) => {
-//   res.cookie('jwt', '', {
-//     httpOnly: true,
-//     expires: new Date(0),
-//   });
-//   res.status(200).json({ message: 'Logged out successfully' });
-// };
+const logoutUser = (res) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+
+  return {
+    status: true,
+    message: 'Logged out successfully',
+  };
+};
 
 module.exports = {
   loginUser,
+  logoutUser,
   registerUser
   // ...other exported functions
 };

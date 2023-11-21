@@ -12,18 +12,17 @@
               </div>
               <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                 <div class="input-group mb-3">
-                  <custom-input-forms formControlName="username" class="w-100" icon="fa-envelope" placeholder="Enter your username" type="text"></custom-input-forms>
+                  <custom-input-forms [label]="'Username'" formControlName="username" class="w-100" icon="fa-envelope" placeholder="Enter your username" type="text"></custom-input-forms>
                 </div>
                 <div class="input-group">
-                  <custom-input-forms formControlName="password" class="w-100" icon="fa-lock" placeholder="Password" type="password"></custom-input-forms>
+                  <custom-input-forms [label]="'Password'" formControlName="password" class="w-100" icon="fa-lock" placeholder="Password" type="password"></custom-input-forms>
                 </div>
                 <button type="submit" class="btn btn-login-color btn-block mt-4 w-100 text-light">Login</button>
               </form>
             </div>
           </div>
           <div class="card graphic-card">
-            <!-- Your illustration here -->
-            <img src="../../../../assets/images/Login_Decorated.png" alt="Illustration" class="img-fluid">
+            <img src="../../../../assets/images/login_decoration.jpg" alt="Illustration" class="img-fluid">
           </div>
         </div>
       </div>

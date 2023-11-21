@@ -17,7 +17,8 @@ export class CustomInputComponent implements ControlValueAccessor {
   @Input() icon: string | null = null;
   @Input() type: string = 'text';  // Default type is 'text'
   @Input() placeholder: string = '';  // Placeholder for the input
-
+  @Input() label: string = '';
+  
   showPassword: boolean = false;  // For toggling password visibility
   
   // Internal value representation
@@ -54,4 +55,5 @@ export class CustomInputComponent implements ControlValueAccessor {
     this.showPassword = !this.showPassword;
     this.type = this.showPassword ? 'text' : 'password';
   }
+  
 }

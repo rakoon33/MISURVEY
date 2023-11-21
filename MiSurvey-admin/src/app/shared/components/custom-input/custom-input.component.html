@@ -1,7 +1,9 @@
-<div class="custom-input">
+<div class="row">
     <i *ngIf="icon" class="{{icon}}"></i>
-    <input [type]="type" [placeholder]="placeholder" [(ngModel)]="value" (ngModelChange)="onChange(value)" (blur)="onTouched()" />
+    <input class="balloon" id="state" [type]="type" [placeholder]="placeholder" [(ngModel)]="value" (ngModelChange)="onChange(value)" (blur)="onTouched()"/>
+    <label for="state">{{label}}</label>
     <i *ngIf="type === 'password' && value" (click)="toggleVisibility()" 
        class="{{ showPassword ? 'eye' : 'eye-off' }}"></i>
 </div>
   
+

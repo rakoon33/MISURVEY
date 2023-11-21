@@ -9,6 +9,15 @@ const loginController = async (req, res) => {
     }
 };
 
+const logoutController = async (req, res) => {
+  try {
+    const result = await authService.logoutUser(res);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 const registerUserController = async (req, res) => {
   try {
       const userData = req.body; // Get the entire request body as userData
@@ -22,5 +31,6 @@ const registerUserController = async (req, res) => {
 
 module.exports = {
   loginController,
+  logoutController,
   registerUserController
 };

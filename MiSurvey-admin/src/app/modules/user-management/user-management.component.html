@@ -1,0 +1,280 @@
+<div class="d-flex justify-content-start">
+  <button class="btn-action me-2">Create a new user</button>
+  <button class="btn-action">Export Data</button>
+</div>
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <c-dropdown>
+      <button class="btn-management" cButton cDropdownToggle>Filter</button>
+      <ul cDropdownMenu>
+        <li>
+          <button cDropdownItem>Name</button>
+        </li>
+        <li>
+          <button cDropdownItem>Role</button>
+        </li>
+        <li>
+          <button cDropdownItem>Active</button>
+        </li>
+      </ul>
+    </c-dropdown>
+  </div>
+
+  <form
+    class="form-search-management"
+    onsubmit="event.preventDefault();"
+    role="search"
+  >
+    <input
+      class="input-search-management"
+      id="search"
+      type="search"
+      placeholder="Search..."
+      autofocus
+      required
+    />
+  </form>
+
+  <c-button-group class="group-button-management" role="group">
+    <button cButton>Search</button>
+    <button class="btn-border-right btn-borderStyle-left" cButton>
+      Refresh
+    </button>
+  </c-button-group>
+</div>
+
+<table
+  class="table"
+  [hover]="true"
+  [responsive]="true"
+  [striped]="true"
+  cTable
+  class="mb-0 border"
+>
+  <thead cTableColor="default">
+    <tr>
+      <th scope="col">NO</th>
+      <th scope="col">Avatar</th>
+      <th scope="col">Full Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Role</th>
+      <th scope="col">Active</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Loop through the users array using the *ngFor directive -->
+    <tr *ngFor="let user of users; let i = index">
+      <td scope="row">{{ i + 1 }}</td>
+      <td>
+        <c-avatar
+          size="md"
+          [src]="user.UserAvatar || './assets/img/avt_default.png'"
+          status="success"
+        ></c-avatar>
+      </td>
+
+      <td>{{ user.FirstName }} {{ user.LastName }}</td>
+      <td>{{ user.Email }}</td>
+      <td>{{ user.UserRole }}</td>
+      <td>{{ user.IsActive ? "Active" : "Inactive" }}</td>
+      <td>
+        <c-dropdown class="d-flex justify-content-center">
+          <span class="action-management" cButton cDropdownToggle> </span>
+          <ul cDropdownMenu>
+            <li>
+              <button cDropdownItem (click)="viewUser(user.UserID!.toString())">
+                View
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem [cModalToggle]="addUserModal.id">
+                Add
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem (click)="editUser(user.UserID!.toString())">
+                Edit
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem [cModalToggle]="deleteUserModal.id">
+                Delete
+              </button>
+            </li>
+          </ul>
+        </c-dropdown>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Modal -->
+
+<!-- View User Modal -->
+<c-modal
+  size="lg"
+  [scrollable]="true"
+  alignment="center"
+  #viewUserModal
+  id="viewUserModal"
+  scrollable
+>
+  <c-modal-header>
+    <h5 cModalTitle>View User Details</h5>
+    <button class="btn-close" [cModalToggle]="viewUserModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <!-- Display user details here -->
+    <p>Username: {{ currentUser.Username }}</p>
+    <p>First Name: {{ currentUser.FirstName }}</p>
+    <p>Last Name: {{ currentUser.LastName }}</p>
+    <p>Email: {{ currentUser.Email }}</p>
+    <p>Role: {{ currentUser.UserRole }}</p>
+    <!-- Add more fields as necessary... -->
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="viewUserModal.id" cButton>Close</button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- Edit User Modal -->
+<c-modal
+  size="lg"
+  [scrollable]="true"
+  alignment="center"
+  #editUserModal
+  id="editUserModal"
+  scrollable
+>
+  <c-modal-header>
+    <h5 cModalTitle>Edit User Details</h5>
+    <button class="btn-close" [cModalToggle]="editUserModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form>
+      <!-- Assume you have a 'selectedUser' property in your component -->
+      <div class="mb-3">
+        <label for="editUserName" class="form-label">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          placeholder="Username"
+          name="username"
+          [(ngModel)]="currentUser!.Username"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="editFirstName" class="form-label">First Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="editFirstName"
+          name="firstName"
+          [(ngModel)]="currentUser!.FirstName"
+          placeholder="First Name"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="editLastName" class="form-label">Last Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="editLastName"
+          name="LastName"
+          [(ngModel)]="currentUser!.LastName"
+          placeholder="Last Name"
+        />
+      </div>
+      <!-- Add additional fields as necessary... -->
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="editUserModal.id" cButton color="secondary">
+      Cancel
+    </button>
+    <button cButton color="primary">Save Changes</button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- Delete User Modal -->
+<c-modal
+  size="lg"
+  [scrollable]="true"
+  alignment="center"
+  #deleteUserModal
+  id="deleteUserModal"
+  scrollable
+>
+  <c-modal-header>
+    <h5 cModalTitle>Confirm User Deletion</h5>
+    <button class="btn-close" [cModalToggle]="deleteUserModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    Are you sure you want to delete this user? This action cannot be undone.
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="deleteUserModal.id" cButton color="secondary">
+      Cancel
+    </button>
+    <button cButton color="danger">Delete</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  size="lg"
+  [scrollable]="true"
+  alignment="center"
+  #addUserModal
+  id="addUserModal"
+>
+  <c-modal-header>
+    <h5 cModalTitle>Add New User</h5>
+    <button
+      class="btn-close" 
+      type="button"
+      cButtonClose
+      [cModalToggle]="addUserModal.id"
+    ></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form>
+      <div class="mb-3">
+        <label for="userName" class="form-label">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          id="userName"
+          placeholder="Username"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="firstName" class="form-label">First Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="firstName"
+          placeholder="First Name"
+        />
+      </div>
+      <!-- Add more fields as necessary for user details -->
+      <!-- ... -->
+      <div class="mb-3">
+        <label for="userRole" class="form-label">Role</label>
+        <select class="form-select" id="userRole">
+          <option selected>Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="superadmin">SuperAdmin</option>
+          <!-- Add more roles as necessary -->
+        </select>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button type="button" cButton [cModalToggle]="addUserModal.id">
+      Close
+    </button>
+    <button type="button" cButton>Save User</button>
+  </c-modal-footer>
+</c-modal>

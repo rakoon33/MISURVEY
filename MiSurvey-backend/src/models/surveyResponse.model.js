@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
 
-const SurveyResponses = db.sequelize.define('SurveyResponses', {
+const SurveyResponse = db.sequelize.define('SurveyResponse', {
     ResponseID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -11,7 +11,7 @@ const SurveyResponses = db.sequelize.define('SurveyResponses', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Customers',
+            model: 'Customer',
             key: 'CustomerID'
         }
     },
@@ -19,7 +19,7 @@ const SurveyResponses = db.sequelize.define('SurveyResponses', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Surveys',
+            model: 'Survey',
             key: 'SurveyID'
         }
     },
@@ -27,7 +27,7 @@ const SurveyResponses = db.sequelize.define('SurveyResponses', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'SurveyQuestions',
+            model: 'SurveyQuestion',
             key: 'QuestionID'
         }
     },
@@ -50,4 +50,4 @@ const SurveyResponses = db.sequelize.define('SurveyResponses', {
     timestamps: false, // This will prevent Sequelize from automatically adding createdAt and updatedAt timestamps
 });
 
-module.exports = SurveyResponses;
+module.exports = SurveyResponse;
