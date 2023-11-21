@@ -1,9 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const User = require('./user.model'); // Ensure this model is defined and exported correctly
-const Survey = require('./survey.model'); // Ensure this model is defined and exported correctly
-const SurveyDetail = require('./surveyDetail.model'); // Ensure this model is defined and exported correctly
-const Company = require('./company.model');
 
 const SurveyReport = db.sequelize.define('SurveyReport', {
     ReportID: {
@@ -15,7 +11,7 @@ const SurveyReport = db.sequelize.define('SurveyReport', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     },
@@ -23,7 +19,7 @@ const SurveyReport = db.sequelize.define('SurveyReport', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Survey,
+            model: 'Survey',
             key: 'SurveyID'
         }
     },
@@ -52,21 +48,21 @@ const SurveyReport = db.sequelize.define('SurveyReport', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: SurveyDetail,
+            model: 'SurveyDetail',
             key: 'SurveyDetailID'
         }
     },
     CompanyID: {
         type: DataTypes.INTEGER,
         references: {
-            model: Company,
+            model: 'Company',
             key: 'CompanyID'
         }
     },
     CreatedBy: {
         type: DataTypes.INTEGER,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     },
@@ -76,7 +72,7 @@ const SurveyReport = db.sequelize.define('SurveyReport', {
     UpdatedBy: {
         type: DataTypes.INTEGER,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     }

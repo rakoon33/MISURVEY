@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const User = require('./user.model');
 
 const Company = db.sequelize.define('Company', {
   CompanyID: {
@@ -25,7 +24,7 @@ const Company = db.sequelize.define('Company', {
   AdminID: {
     type: DataTypes.INTEGER,
     references: {
-      model: User,  // Tham chiếu đến model User
+      model: 'User',  // Tham chiếu đến model User
       key: 'UserID'
     }
   },

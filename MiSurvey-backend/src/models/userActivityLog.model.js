@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const {User, Company} = require('./index')
 
 const UserActivityLog = db.sequelize.define('UserActivityLog', {
     LogID: {
@@ -12,7 +11,7 @@ const UserActivityLog = db.sequelize.define('UserActivityLog', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     },
@@ -43,7 +42,7 @@ const UserActivityLog = db.sequelize.define('UserActivityLog', {
     CompanyID: {
         type: DataTypes.INTEGER,
         references: {
-            model: Company,
+            model: 'Company',
             key: 'CompanyID'
         }
     },

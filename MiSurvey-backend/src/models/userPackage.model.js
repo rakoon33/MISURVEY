@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const {User, ServicePackage, Company} = require('./index');
 
 const UserPackage = db.sequelize.define('UserPackage', {
     UserPackageID: {
@@ -12,7 +11,7 @@ const UserPackage = db.sequelize.define('UserPackage', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     },
@@ -20,7 +19,7 @@ const UserPackage = db.sequelize.define('UserPackage', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: ServicePackage,
+            model: 'ServicePackage',
             key: 'PackageID'
         }
     },
@@ -35,7 +34,7 @@ const UserPackage = db.sequelize.define('UserPackage', {
     CompanyID: {
         type: DataTypes.INTEGER,
         references: {
-            model: Company,
+            model: 'Company',
             key: 'CompanyID'
         }
     },

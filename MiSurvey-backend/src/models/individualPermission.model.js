@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const CompanyUser = require('./companyUser.model');
-const Module = require('./module.model');
 
 const IndividualPermission = db.sequelize.define('IndividualPermission', {
     IndividualPermissionID: {
@@ -13,7 +11,7 @@ const IndividualPermission = db.sequelize.define('IndividualPermission', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: CompanyUser, 
+            model: 'CompanyUser', 
             key: 'CompanyUserID'
         }
     },
@@ -21,7 +19,7 @@ const IndividualPermission = db.sequelize.define('IndividualPermission', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Module,
+            model: 'Module',
             key: 'ModuleID'
         }
     },

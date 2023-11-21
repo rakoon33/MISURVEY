@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database'); // Make sure this path points to your database configuration
-const SurveyPage = require('./surveyPage.model');
-const SurveyType = require('./surveyType.model');
 
 const SurveyQuestion = db.sequelize.define('SurveyQuestion', {
     QuestionID: {
@@ -13,7 +11,7 @@ const SurveyQuestion = db.sequelize.define('SurveyQuestion', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: SurveyPage,
+            model: 'SurveyPage',
             key: 'PageID'
         }
     },
@@ -25,7 +23,7 @@ const SurveyQuestion = db.sequelize.define('SurveyQuestion', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: SurveyType,
+            model: 'SurveyType',
             key: 'SurveyTypeID'
         }
     },

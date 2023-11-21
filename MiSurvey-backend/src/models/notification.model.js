@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const User = require('./user.model'); // Ensure User model is defined and exported correctly
-const Company = require('./company.model');
 
 const Notification = db.sequelize.define('Notification', {
     NotificationID: {
@@ -13,7 +11,7 @@ const Notification = db.sequelize.define('Notification', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     },
@@ -43,7 +41,7 @@ const Notification = db.sequelize.define('Notification', {
     CompanyID: {
         type: DataTypes.INTEGER,
         references: {
-            model: Company,
+            model: 'Company',
             key: 'CompanyID'
         }
     }

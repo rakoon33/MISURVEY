@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
-const User = require('./user.model');
 
 const ServicePackage = db.sequelize.define('ServicePackage', {
     PackageID: {
@@ -37,7 +36,7 @@ const ServicePackage = db.sequelize.define('ServicePackage', {
     CreatedBy: {
         type: DataTypes.INTEGER,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     },
@@ -47,7 +46,7 @@ const ServicePackage = db.sequelize.define('ServicePackage', {
     UpdatedBy: {
         type: DataTypes.INTEGER,
         references: {
-            model: User,
+            model: 'User',
             key: 'UserID'
         }
     }
