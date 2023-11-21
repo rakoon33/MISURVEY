@@ -63,8 +63,6 @@ const router = express.Router();
 router.post('/login', authController.loginController);
 router.post('/logout', authController.logoutController);
 router.post('/register', authController.registerUserController);
-// router.post('/logout', logoutUser);
-
 
 module.exports = router;
 
