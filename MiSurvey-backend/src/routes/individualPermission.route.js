@@ -1,7 +1,6 @@
 const express = require('express');
 const { individualPermissionController } = require('../controllers');
 const { authMiddleware } = require('../middlewares');
-const { isSuperAdmin } = require('../middlewares/auth.middleware');
 const router = express.Router();
 
 router.route('/')

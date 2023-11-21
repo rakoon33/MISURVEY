@@ -1,5 +1,8 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
+const User = require('./user.model');
+const Company = require('./company.model');
+const CompanyRole = require('./companyrole.model');
 
 const CompanyUser = db.sequelize.define('CompanyUser', {
     CompanyUserID: {
@@ -11,7 +14,7 @@ const CompanyUser = db.sequelize.define('CompanyUser', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'User',
+            model: User,
             key: 'UserID'
         }
     },
@@ -19,14 +22,14 @@ const CompanyUser = db.sequelize.define('CompanyUser', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Company',
+            model: Company,
             key: 'CompanyID'
         }
     },
     CompanyRoleID: {
         type: DataTypes.INTEGER,
         references: {
-            model: 'CompanyRole',
+            model: CompanyRole,
             key: 'CompanyRoleID'
         }
     },
