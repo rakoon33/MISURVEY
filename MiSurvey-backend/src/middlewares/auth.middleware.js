@@ -22,21 +22,8 @@ const  tokenVerification = asyncHandler(async (req, res, next) => {
           });
         }
         
-        req.user = await User.findByPk(decoded.id, {
-          attributes: { exclude: ['password'] }
-        });
+        req.user = decoded.user;
         
-        const company = await Company.findOne({
-          where: {
-            AdminID: req.user.UserID
-          },
-          attributes: ['CompanyID']
-        });
-        
-        if (company) {
-          req.user.dataValues.CompanyID = company.CompanyID;
-        }
-
         next();
       });
     } else {

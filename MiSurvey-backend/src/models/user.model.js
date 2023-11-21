@@ -1,6 +1,5 @@
 const { DataTypes  } = require('sequelize');
 const db = require('../config/database');
-const Company = require('./company.model');
 
 const User = db.sequelize.define('User', {
   UserID: {
@@ -26,6 +25,7 @@ const User = db.sequelize.define('User', {
     validate: {
       isIn: [['Male', 'Female', 'Other', 'Prefer not to say']]
     },
+    allowNull: true,
   },
   Email: {
     type: DataTypes.STRING(100),
@@ -75,7 +75,5 @@ const User = db.sequelize.define('User', {
   tableName: 'Users',
   timestamps: false,
 });
-
-User.hasOne(Company, { as: 'AdminOfCompany', foreignKey: 'AdminID' });  // Thiết lập mối quan hệ với Company
 
 module.exports = User;

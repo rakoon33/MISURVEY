@@ -61,8 +61,10 @@ const router = express.Router();
  *                   description: Error message regarding the login operation
  */
 router.post('/login', authController.loginController);
-// router.route('/register').post(registerUser);
 router.post('/logout', authController.logoutController);
+router.post('/register', authController.registerUserController);
+// router.post('/logout', logoutUser);
+
 
 module.exports = router;
 

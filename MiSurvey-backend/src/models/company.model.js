@@ -14,8 +14,8 @@ const Company = db.sequelize.define('Company', {
   },
   CompanyDomain: {
     type: DataTypes.STRING(255),
-    allowNull: false,
-    unique: true,
+    allowNull: true,
+    unique: true
   },
   CreatedAt: {
     type: DataTypes.DATE,
