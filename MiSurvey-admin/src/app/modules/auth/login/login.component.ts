@@ -48,6 +48,7 @@ export class LoginComponent implements OnDestroy {
   onSubmit() {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
+      this.toastr.success("Login successfully");
       this.store.dispatch(authActions.loginRequest({ username, password }));
     } else {
       this.toastr.error('Please make sure all fields are filled out correctly.');

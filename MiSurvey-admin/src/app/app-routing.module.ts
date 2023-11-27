@@ -6,7 +6,7 @@ import { Page404Component } from './shared/page404/page404.component';
 import { Page500Component } from './shared/page500/page500.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
-
+import { ApiDocumentationsComponent } from '@docs-components/api-documentations/api-documentations.component';
 const routes: Routes = [
   {
     path: '',
@@ -100,6 +100,7 @@ const routes: Routes = [
       title: 'Register Page'
     }
   },
+  { path: 'api-docs', component: ApiDocumentationsComponent },
   {path: '**', redirectTo: '404'}
 ];
 

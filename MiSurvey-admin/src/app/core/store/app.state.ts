@@ -1,7 +1,6 @@
-import { UserState } from "./states";
-import { AuthState } from "./states"; 
+import { AuthState, UserState } from "./states";
 
 export interface AppState {
   feature_user: UserState;
-  feature_auth: AuthState; 
+  feature_auth: AuthState;
 }

@@ -47,14 +47,19 @@ import {
 import { IconModule, IconSetService } from '@coreui/icons-angular';
 import { CustomInputComponent } from './shared/components/custom-input/custom-input.component';
 
-
+// store
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { environment } from 'src/environments/environment';
 
-import { CoreModule } from './core/core.module';
+import { reducers, metaReducers } from './core/store/storage-sync.reducer';
+import { AuthEffects, UserEffects} from './core/store/effects';
+
+// api
+
+import { ApiDocumentationsComponent } from '@docs-components/api-documentations/api-documentations.component';
 
 const APP_CONTAINERS = [
   DefaultFooterComponent,
@@ -63,7 +68,8 @@ const APP_CONTAINERS = [
   Page404Component,
   Page500Component,
   LoginComponent,
-  RegisterComponent
+  RegisterComponent,
+  ApiDocumentationsComponent
 ];
 
 @NgModule({
@@ -102,10 +108,9 @@ const APP_CONTAINERS = [
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
-    StoreModule.forRoot({}, {}),
-    EffectsModule.forRoot([]),
+    StoreModule.forRoot(reducers, { metaReducers }),
+    EffectsModule.forRoot([AuthEffects,UserEffects ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    CoreModule
   ],
   providers: [
     {
