@@ -64,7 +64,7 @@ const getOneCompanyController = async (req, res) => {
 
 const getCompanyProfileController = async (req, res) => {
   try {
-    const result = await companyService.getOneCompany(req.user.dataValues.CompanyID);
+    const result = await companyService.getOneCompany(req.user.companyID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

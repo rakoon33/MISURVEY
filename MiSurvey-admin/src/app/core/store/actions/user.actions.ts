@@ -1,33 +1,17 @@
-import { createAction, props, ActionType } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 import { User } from '../../models';
 
-enum UserActionTypes {
-  LOGIN_REQUEST = '@User/Login',
-  LOGIN_SUCCESS = '@User/LoginSuccess',
-  LOGIN_FAILURE = '@User/LoginFailed',
-  LOGOUT_REQUEST = '@User/Logout',
-}
-
-export const loginRequest = createAction(
-  UserActionTypes.LOGIN_REQUEST,
-  props<{ username: string; password: string }>()
+export const getUserDataRequest = createAction(
+  '[User] Get User Data Request',
+  props<{ username: string }>()
 );
 
-export const loginSuccess = createAction(
-  UserActionTypes.LOGIN_SUCCESS,
+export const getUserDataSuccess = createAction(
+  '[User] Get User Data Success',
   props<{ user: User }>()
 );
 
-export const loginFailure = createAction(
-  UserActionTypes.LOGIN_FAILURE,
-  props<{ error: any }>()
+export const getUserDataFailure = createAction(
+  '[User] Get User Data Failure',
+  props<{ error: string }>()
 );
-
-export const logoutRequest = createAction(UserActionTypes.LOGOUT_REQUEST);
-
-export type userActionsType =
-  | ActionType<typeof loginRequest>
-  | ActionType<typeof loginSuccess>
-  | ActionType<typeof loginFailure>
-  | ActionType<typeof logoutRequest>
-  

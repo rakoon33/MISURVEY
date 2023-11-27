@@ -1,4 +1,4 @@
-import userSelector from './user.selectors';
+import userSelector from './auth.selectors';
 
 
 export {userSelector};

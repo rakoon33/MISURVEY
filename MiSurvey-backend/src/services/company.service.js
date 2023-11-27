@@ -301,7 +301,6 @@ const createCompanyByAdmin = async (AdminID, companyData) => {
 
 const getOneCompany = async (CompanyID) => {
   try {
-    console.log(CompanyID);
     const company = await Company.findByPk(CompanyID);
     if (!company) {
       return {

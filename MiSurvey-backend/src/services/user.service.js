@@ -2,6 +2,33 @@ const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 
+const getUserData = async (username) => {
+    try {
+      const user = await User.findOne({
+        where: { username: username }
+      });
+  
+      if (user) {
+        return {
+          status: true,
+          message: "User found successfully",
+          data: user,
+        };
+      } else {
+        return {
+          status: false,
+          message: "No user found",
+        };
+      }
+    } catch (error) {
+      return {
+        status: false,
+        message: "User finding failed",
+        error: `User finding failed: ${error?.message}`,
+      };
+    }
+  };
+
 // Create user by SuperAdmin
 const createUser = async (userData) => {
     try {
@@ -10,9 +37,6 @@ const createUser = async (userData) => {
         return {
             status: true,
             message: "User created successfully",
-            data: {
-                user: newUser
-            }
         };
     } catch (error) {
         return {
@@ -95,7 +119,7 @@ const getOneUser = async (UserID) => {
       return { status: false, message: "User not found" };
     }
 
-    return { status: true, user };
+    return { status: true, data: user };
   } catch (error) {
     return {
       status: false,
@@ -116,7 +140,7 @@ const getAllUsers = async () => {
       return { status: false, message: "No users found" };
     }
 
-    return { status: true, users };
+    return { status: true, data: users };
   } catch (error) {
     return {
       status: false,
@@ -177,7 +201,7 @@ const searchUsers = async (column, searchTerm) => {
 
         return {
             status: true,
-            users
+            data: users
         };
     } catch (error) {
         return {
@@ -195,5 +219,6 @@ module.exports = {
     deleteUser,
     getOneUser,
     getAllUsers,
-    searchUsers
+    searchUsers,
+    getUserData
 };

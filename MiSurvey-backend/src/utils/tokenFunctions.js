@@ -11,4 +11,3 @@ const generateToken = (id, username, role) => {
 module.exports = {
     generateToken
 };
-  
