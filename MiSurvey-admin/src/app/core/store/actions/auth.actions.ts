@@ -1,11 +1,11 @@
 import { createAction, props, ActionType } from '@ngrx/store';
-import { User } from '../../models';
 
 enum AuthActionTypes {
-  LOGIN_REQUEST = '@Auth/Login',
-  LOGIN_SUCCESS = '@Auth/LoginSuccess',
-  LOGIN_FAILURE = '@Auth/LoginFailed',
-  LOGOUT_REQUEST = '@Auth/Logout',
+  LOGIN_REQUEST = '@Auth/Login Request',
+  LOGIN_SUCCESS = '@Auth/Login Success',
+  LOGIN_FAILURE = '@Auth/Login Failure',
+  LOGOUT_REQUEST = '@Auth/Logout Request',
+  LOGOUT_SUCCESS = '@Auth/Logout Success'
 }
 
 export const loginRequest = createAction(
@@ -23,11 +23,17 @@ export const loginFailure = createAction(
   props<{ error: string }>()
 );
 
-export const logoutRequest = createAction(AuthActionTypes.LOGOUT_REQUEST);
+export const logoutRequest = createAction(
+  AuthActionTypes.LOGOUT_REQUEST
+);
 
-export type userActionsType =
+export const logoutSuccess = createAction(
+  AuthActionTypes.LOGOUT_SUCCESS
+);
+
+export type AuthActions =
   | ActionType<typeof loginRequest>
   | ActionType<typeof loginSuccess>
   | ActionType<typeof loginFailure>
   | ActionType<typeof logoutRequest>
-  
+  | ActionType<typeof logoutSuccess>;

@@ -1,32 +1,29 @@
+import { UserState } from './../states';
 import { createReducer, on } from '@ngrx/store';
-import { User } from '../../models';
-import * as UserActions from './user.actions';
+import  {userActions } from './../actions';
 
-export interface UserState {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-}
 
 export const initialState: UserState = {
   user: null,
   loading: false,
-  error: null
+  error: null,
+  message: '',
 };
 
 export const userReducer = createReducer(
   initialState,
-  on(UserActions.getUserDataRequest, state => ({
+  on(userActions.getUserDataRequest, state => ({
     ...state,
     loading: true,
     error: null
   })),
-  on(UserActions.getUserDataSuccess, (state, { user }) => ({
+  on(userActions.getUserDataSuccess, (state, { message, user }) => ({
     ...state,
     user,
-    loading: false
+    loading: false,
+    message: message
   })),
-  on(UserActions.getUserDataFailure, (state, { error }) => ({
+  on(userActions.getUserDataFailure, (state, { error }) => ({
     ...state,
     error,
     loading: false

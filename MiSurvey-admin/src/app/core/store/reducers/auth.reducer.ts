@@ -4,29 +4,26 @@ import { authActions } from '../actions';
 import { AuthState } from '../states';
 
 export const initialAuthState: AuthState = {
-  status: 'init', 
+  isAuthenticated: false,
+  error: null,
   loading: false,
-  error: undefined,
+  message: '',
 };
 
 export const authReducer = createReducer(
   initialAuthState,
-  on(authActions.loginRequest, (state) => ({
-    ...state,
-    status: 'init',
-    error: undefined,
-  })),
+  on(authActions.loginRequest, (state) => ({ ...state, loading: true })),
   on(authActions.loginSuccess, (state, { message }) => ({
     ...state,
-    status: 'authenticated', 
+    isAuthenticated: true,
+    loading: false,
     message: message,
-    loading: true,
   })),
   on(authActions.loginFailure, (state, { error }) => ({
     ...state,
-    status: 'unauthenticated', 
-    error: error,
-    loading: true,
+    error,
+    loading: false,
   })),
-  
+  on(authActions.logoutRequest, (state) => ({ ...state, loading: true })),
+  on(authActions.logoutSuccess, state => ({ ...initialAuthState }))
 );

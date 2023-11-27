@@ -1,5 +1,6 @@
 export default interface AuthState {
-    status: 'init' | 'authenticated' | 'unauthenticated';
-    error?: string;
-    loading: boolean;
-  }
+  isAuthenticated: boolean,
+  error?: any;
+  loading: boolean;
+  message?: string;
+}

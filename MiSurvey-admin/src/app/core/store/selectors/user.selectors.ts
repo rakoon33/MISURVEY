@@ -1,21 +1,28 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { UserState } from './user.reducer';
+import { UserState } from './../states';
 
+// Simple selectors
+export const selectUser = (state: UserState) => state.user;
+export const selectUserLoading = (state: UserState) => state.loading;
+export const selectUserError = (state: UserState) => state.error;
+
+// Feature selector
 export const selectUserState = createFeatureSelector<UserState>('user');
 
+// Complex selectors using createSelector
 const selectCurrentUser = createSelector(
   selectUserState,
-  (state: UserState) => state.user
+  selectUser
 );
 
-const selectUserLoading = createSelector(
+const selectIsUserLoading = createSelector(
   selectUserState,
-  (state: UserState) => state.loading
+  selectUserLoading
 );
 
-const selectUserError = createSelector(
+const selectIsUserError = createSelector(
   selectUserState,
-  (state: UserState) => state.error
+  selectUserError
 );
 
-export default {selectCurrentUser, selectUserLoading, selectUserError };
+export default { selectCurrentUser, selectIsUserLoading, selectIsUserError };

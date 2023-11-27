@@ -7,15 +7,18 @@ import { userActions } from '../actions';
 
 @Injectable()
 export class UserEffects {
-  getUserData$ = createEffect(() => this.actions$.pipe(
-    ofType(userActions.getUserDataRequest),
-    switchMap((action) =>
-      this.userService.getUserData(action.username).pipe(
-        map(user => userActions.getUserDataSuccess({ user })),
-        catchError(error => of(userActions.getUserDataFailure({ error: error.message })))
+
+    getUserData$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(userActions.getUserDataRequest),
+      switchMap(() => 
+        this.userService.getUserData().pipe(
+          map(response => response.status ? userActions.getUserDataSuccess({ message: response.message, user: response.data }) : userActions.getUserDataFailure({ error: response.message })),
+          catchError(error => of(userActions.getUserDataFailure({ error: error.message })))
+        )
       )
     )
-  ));
+  );
 
   constructor(
     private actions$: Actions,
