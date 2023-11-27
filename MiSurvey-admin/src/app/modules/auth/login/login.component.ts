@@ -31,6 +31,7 @@ export class LoginComponent implements OnDestroy {
     this.subscription.add(
       this.store.select(authSelectors.selectCurrentAuth).subscribe(isAuthenticated => {
         if (isAuthenticated) {
+          this.toastr.success("Login successfully");
           this.router.navigate(['/dashboard']); // Điều hướng sau khi đăng nhập thành công
         }
       })
@@ -48,8 +49,7 @@ export class LoginComponent implements OnDestroy {
   onSubmit() {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      this.toastr.success("Login successfully");
-      this.store.dispatch(authActions.loginRequest({ username, password }));
+      this.store.dispatch(authActions.loginRequest({ username, password })); 
     } else {
       this.toastr.error('Please make sure all fields are filled out correctly.');
     }

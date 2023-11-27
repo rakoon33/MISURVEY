@@ -4,7 +4,7 @@ import { UserState } from './../states';
 // Simple selectors
 export const selectUser = (state: UserState) => state.user;
 export const selectUserLoading = (state: UserState) => state.loading;
-export const selectUserError = (state: UserState) => state.error;
+export const selectUserError = (state: UserState) => state.message;
 
 // Feature selector
 export const selectUserState = createFeatureSelector<UserState>('feature_user');

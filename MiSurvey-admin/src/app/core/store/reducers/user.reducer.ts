@@ -7,7 +7,7 @@ export const initialState: UserState = {
   user: null,
   loading: false,
   error: null,
-  message: '',
+  message: ''
 };
 
 export const userReducer = createReducer(

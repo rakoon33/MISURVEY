@@ -8,32 +8,44 @@ import { userActions } from '../actions';
 
 @Injectable()
 export class AuthEffects {
-
   login$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(authActions.loginRequest),
-    switchMap((action) =>
-      this.authService.login(action.username, action.password).pipe(
-        concatMap((response) => {
-          if (response.status) {
-            // Return an array of actions
-            return [
-              authActions.loginSuccess({ message: response.message }),
-              userActions.getUserDataRequest()
-            ];
-          } else {
-            // Return an array with a single failure action
-            return [authActions.loginFailure({ error: response.message })];
-          }
-        }),
-        catchError((error) => {
-          // Handle errors and return an array with a single error action
-          return [authActions.loginFailure({ error: error.toString() })];
-        })
+    this.actions$.pipe(
+      ofType(authActions.loginRequest),
+      switchMap((action) =>
+        this.authService.login(action.username, action.password).pipe(
+          concatMap((response) => {
+            if (response.status) {
+              // Return an array of actions
+              return [
+                authActions.loginSuccess({ message: response.message }),
+                userActions.getUserDataRequest(),
+              ];
+            } else {
+              // Return an array with a single failure action
+              return [authActions.loginFailure({ error: response.message })];
+            }
+          }),
+          catchError((error) => {
+            // Handle errors and return an array with a single error action
+            return [authActions.loginFailure({ error: error.toString() })];
+          })
+        )
       )
     )
-  )
-);
-
+  );
+  
+  logout$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(authActions.logoutRequest),
+      switchMap(() =>
+        this.authService.logout().pipe(
+          map(() => authActions.logoutSuccess()),
+          catchError((error) =>
+            of(authActions.logoutFailure({ error: error.message }))
+          )
+        )
+      )
+    )
+  );
   constructor(private actions$: Actions, private authService: AuthService) {}
 }

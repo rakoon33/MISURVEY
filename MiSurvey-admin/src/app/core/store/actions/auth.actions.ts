@@ -5,6 +5,7 @@ enum AuthActionTypes {
   LOGIN_SUCCESS = '@Auth/Login Success',
   LOGIN_FAILURE = '@Auth/Login Failure',
   LOGOUT_REQUEST = '@Auth/Logout Request',
+  LOGOUT_FAILURE = '@Auth/Logout Failure',
   LOGOUT_SUCCESS = '@Auth/Logout Success'
 }
 
@@ -25,6 +26,11 @@ export const loginFailure = createAction(
 
 export const logoutRequest = createAction(
   AuthActionTypes.LOGOUT_REQUEST
+);
+
+export const logoutFailure = createAction(
+  AuthActionTypes.LOGOUT_FAILURE,
+  props<{ error: string }>()
 );
 
 export const logoutSuccess = createAction(
