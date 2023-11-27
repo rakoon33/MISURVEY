@@ -13,7 +13,6 @@ router
     .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyRoleController.createCompanyRoleController)
     .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyRoleController.getAllCompanyRolesController);
 
-
 router
     .route('/:CompanyRoleID')
     .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyRoleController.deleteCompanyRoleController)

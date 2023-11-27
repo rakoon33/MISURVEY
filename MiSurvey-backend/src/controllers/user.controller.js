@@ -1,5 +1,25 @@
 const { userService } = require('../services');
 
+const getUserDataController = async (req, res) => {
+    try {
+        const username = req.user.username;
+
+        if (!username) {
+            return res.status(400).json({ message: 'Username is required as a query parameter.' });
+        }
+
+        const result = await userService.getUserData(username);
+
+        if (result.status) {
+            res.json(result);
+        } else {
+            res.status(404).json({ message: result.message }); // 404 for not found
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Failed to retrieve user data.' });
+    }
+};
+
 const createUserController = async (req, res) => {
     try {
         const newUser = await userService.createUser(req.body);
@@ -38,7 +58,8 @@ const getOneUserController = async (req, res) => {
 
 const getUserProfileController = async (req, res) => {
     try {
-        const userDetails = await userService.getOneUser(req.user.dataValues.UserID);
+        console.log(req.user.userID);
+        const userDetails = await userService.getOneUser(req.user.userID);
         res.json(userDetails);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -82,5 +103,6 @@ module.exports = {
     getOneUserController,
     getAllUsersController,
     searchUserController,
-    getUserProfileController
+    getUserProfileController,
+    getUserDataController
 };

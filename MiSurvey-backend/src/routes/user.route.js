@@ -3,6 +3,9 @@ const userController = require('../controllers/user.controller');
 const { authMiddleware } = require('../middlewares');
 const router = express.Router();
 
+router.get('/getUserData', 
+    authMiddleware.tokenVerification, 
+    userController.getUserDataController);
 
 router
     .route('/profile')

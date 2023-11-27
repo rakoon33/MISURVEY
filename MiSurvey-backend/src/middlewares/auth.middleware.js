@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { asyncHandler } = require('./asyncHandler');
 const {User, Company, CompanyUser, CompanyRole, Module} = require('../models');
 
-const  tokenVerification = asyncHandler(async (req, res, next) => {
+const  tokenVerification = async (req, res, next) => {
   console.log(
     `authentication.middleware | tokenVerification | ${req?.originalUrl}`
   );
@@ -13,7 +13,7 @@ const  tokenVerification = asyncHandler(async (req, res, next) => {
     token = req.cookies.jwt;
 
     if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
           return res.status(401).json({
             status: false,
@@ -22,8 +22,7 @@ const  tokenVerification = asyncHandler(async (req, res, next) => {
           });
         }
         
-        req.user = decoded.user;
-        
+        req.user = decoded;
         next();
       });
     } else {
@@ -40,11 +39,10 @@ const  tokenVerification = asyncHandler(async (req, res, next) => {
       error: `Authentication failed | ${error?.message}`,
     });
   }
-});
-
+};
 
 const isSuperAdmin = (req, res, next) => {
-  if (req.user && req.user.UserRole == 'SuperAdmin') {
+  if (req.user && req.user.role == 'SuperAdmin') {
     next()
   } else {
     res.status(401)

@@ -1,3 +1,3 @@
 import UserState from './user.state';
-
-export {UserState};
+import AuthState from './auth.state';
+export {UserState, AuthState};
