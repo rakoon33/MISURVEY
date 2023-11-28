@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Subscription, delay, retryWhen, startWith } from 'rxjs';
 
 import { authActions } from './../../../core/store/actions';
 import { AppState } from './../../../core/store/app.state';
@@ -40,7 +40,7 @@ export class LoginComponent implements OnDestroy {
     this.subscription.add(
       this.store.select(authSelector.selectIsAuthError).subscribe(error => {
         if (error) {
-          this.toastr.error(error);
+          this.toastr.error(error.message);
         }
       })
     );

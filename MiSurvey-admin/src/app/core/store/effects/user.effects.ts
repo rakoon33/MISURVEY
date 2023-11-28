@@ -13,7 +13,7 @@ export class UserEffects {
       ofType(userActions.getUserDataRequest),
       switchMap(() => 
         this.userService.getUserData().pipe(
-          map(response => response.status ? userActions.getUserDataSuccess({ message: response.message, user: response.data }) : userActions.getUserDataFailure({ error: response.message })),
+          map(response => response.status ? userActions.getUserDataSuccess({ user: response.data }) : userActions.getUserDataFailure({ error: response.message })),
           catchError(error => of(userActions.getUserDataFailure({ error: error.message })))
         )
       )

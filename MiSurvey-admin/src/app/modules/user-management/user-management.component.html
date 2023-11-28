@@ -125,13 +125,15 @@
     <button class="btn-close" [cModalToggle]="viewUserModal.id" cButtonClose></button>
   </c-modal-header>
   <c-modal-body>
-    <!-- Display user details here -->
-    <p>Username: {{ currentUser.Username }}</p>
-    <p>First Name: {{ currentUser.FirstName }}</p>
-    <p>Last Name: {{ currentUser.LastName }}</p>
-    <p>Email: {{ currentUser.Email }}</p>
-    <p>Role: {{ currentUser.UserRole }}</p>
-    <!-- Add more fields as necessary... -->
+    <!-- Sử dụng async pipe để lấy dữ liệu từ selectedUser$ -->
+    <ng-container *ngIf="selectedUser$ | async as selectedUser">
+      <p>Username: {{ selectedUser.Username }}</p>
+      <p>First Name: {{ selectedUser.FirstName }}</p>
+      <p>Last Name: {{ selectedUser.LastName }}</p>
+      <p>Email: {{ selectedUser.Email }}</p>
+      <p>Role: {{ selectedUser.UserRole }}</p>
+      <!-- Add more fields as necessary... -->
+    </ng-container>
   </c-modal-body>
   <c-modal-footer>
     <button [cModalToggle]="viewUserModal.id" cButton>Close</button>

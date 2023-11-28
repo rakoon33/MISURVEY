@@ -25,13 +25,12 @@ export class AuthService {
       }),
       catchError(error => {
         console.error('Error during login:', error);
-        return throwError(() => error);// Use throwError for better error handling
+        return throwError(() => error);
       })
     );
   }
 
   logout(): Observable<any> {
-    console.log('logout mè');
     const logoutUrl = `${apiConstants.BACKEND_API.BASE_API_URL}/logout`;
     return this.http.post<any>(logoutUrl, {}, { withCredentials: true }).pipe(
       catchError(error => throwError(() => error))

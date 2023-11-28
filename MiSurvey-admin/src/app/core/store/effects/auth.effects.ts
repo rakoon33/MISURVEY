@@ -17,7 +17,7 @@ export class AuthEffects {
             if (response.status) {
               // Return an array of actions
               return [
-                authActions.loginSuccess({ message: response.message }),
+                authActions.loginSuccess(),
                 userActions.getUserDataRequest(),
               ];
             } else {

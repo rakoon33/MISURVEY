@@ -13,7 +13,7 @@ export const getUserDataRequest = createAction(
 
 export const getUserDataSuccess = createAction(
   UserActionTypes.GET_USER_DATA_SUCCESS,
-  props<{ message: string, user: User }>()
+  props<{ user: User }>()
 );
 
 export const getUserDataFailure = createAction(

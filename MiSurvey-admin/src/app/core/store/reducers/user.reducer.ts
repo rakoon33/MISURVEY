@@ -6,8 +6,7 @@ import  {userActions } from './../actions';
 export const initialState: UserState = {
   user: null,
   loading: false,
-  error: null,
-  message: ''
+  error: null
 };
 
 export const userReducer = createReducer(
@@ -15,17 +14,15 @@ export const userReducer = createReducer(
   on(userActions.getUserDataRequest, state => ({
     ...state,
     loading: true,
-    error: null
   })),
-  on(userActions.getUserDataSuccess, (state, { message, user }) => ({
+  on(userActions.getUserDataSuccess, (state, { user }) => ({
     ...state,
     user,
     loading: false,
-    message: message
   })),
   on(userActions.getUserDataFailure, (state, { error }) => ({
     ...state,
-    error,
+    error: { message: error, timestamp: new Date() },
     loading: false
   }))
 );

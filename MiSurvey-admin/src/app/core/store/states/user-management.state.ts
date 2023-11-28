@@ -4,5 +4,5 @@ export default interface UserManagementState {
   users: User[];
   loading: boolean;
   error: any;
-  status: boolean;
+  selectedUser: User | null; 
 }

@@ -1,28 +1,37 @@
 import { ActionType, createAction, props } from '@ngrx/store';
 import { User } from '../../models';
 
-export const loadUsersRequest = createAction('[User Management] Load Users');
+enum UserManagementActionTypes {
+  LOAD_USERS_REQUEST = '[User Management] Load Users',
+  LOAD_USERS_SUCCESS = '[User Management] Load Users Success',
+  LOAD_USERS_FAILURE = '[User Management] Load Users Failure',
+  LOAD_USER_BY_ID_REQUEST = '[User Management] Load User By ID Request',
+  LOAD_USER_BY_ID_SUCCESS = '[User Management] Load User By ID Success',
+  LOAD_USER_BY_ID_FAILURE = '[User Management] Load User By ID Failure'
+}
+
+export const loadUsersRequest = createAction(UserManagementActionTypes.LOAD_USERS_REQUEST);
 export const loadUsersSuccess = createAction(
-  '[User Management] Load Users Success', 
-  props<{ response: { status: boolean; data: User[] } }>()
+  UserManagementActionTypes.LOAD_USERS_SUCCESS,
+  props<{ users: User[] }>()
 );
 export const loadUsersFailure = createAction(
-  '[User Management] Load Users Failure',
+  UserManagementActionTypes.LOAD_USERS_FAILURE,
   props<{ error: any }>()
 );
 
 export const loadUserByIdRequest = createAction(
-  '[User Management] Load User By ID Request',
+  UserManagementActionTypes.LOAD_USER_BY_ID_REQUEST,
   props<{ userId: string }>()
 );
 
 export const loadUserByIdSuccess = createAction(
-  '[User Management] Load User By ID Success',
-  props<{ user: User }>()
+  UserManagementActionTypes.LOAD_USER_BY_ID_SUCCESS,
+  props<{ user: User }>() 
 );
 
 export const loadUserByIdFailure = createAction(
-  '[User Management] Load User By ID Failure',
+  UserManagementActionTypes.LOAD_USER_BY_ID_FAILURE,
   props<{ error: any }>()
 );
 
