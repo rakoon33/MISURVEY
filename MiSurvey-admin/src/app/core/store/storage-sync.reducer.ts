@@ -6,7 +6,7 @@ import { AppState } from './app.state';
 export const reducers: ActionReducerMap<AppState> = {
     feature_user: featureReducer.userReducer,
     feature_auth: featureReducer.authReducer,
-
+    feature_user_management: featureReducer.userManagementReducer,
 };
 
   

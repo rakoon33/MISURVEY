@@ -14,19 +14,17 @@ export class UserManagementService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<{status: boolean; users: User[]}>(this.apiUrl, { withCredentials: true })
+  getUsers(): Observable<{ status: boolean; data: User[] }> {
+    return this.http.get<{ status: boolean; data: User[] }>(this.apiUrl, { withCredentials: true })
       .pipe(
         map(response => {
-          // Kiểm tra nếu phản hồi có trạng thái là true và có mảng users
-          if (response.status) {
-            return response.users;
-          } else {
-            // Nếu trạng thái không phải là true, trả về một mảng rỗng
-            return [];
-          }
+          // Directly returning the entire response object
+          return response;
         }),
-        catchError(this.handleError) // Xử lý lỗi một cách tập trung
+        catchError(error => {
+          console.error('Error during fetching users data:', error);
+          return throwError(() => new Error('Error fetching users data'));
+        })
       );
   }
 
@@ -43,25 +41,11 @@ export class UserManagementService {
             return null;
           }
         }),
-        catchError(this.handleError) // Handle errors in a centralized way
+        catchError(error => {
+          console.error('Error during fetching user data:', error);
+          return throwError(() => new Error('Error fetching user data'));
+        })// Handle errors in a centralized way
       );
   }
   
-
-  // Hàm xử lý lỗi tập trung
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      // Một lỗi client-side hoặc lỗi mạng xảy ra. Xử lý nó theo cách phù hợp.
-      console.error('An error occurred:', error.error.message);
-    } else {
-      // Server trả về một mã phản hồi không thành công.
-      // Phản ứng lại dựa trên mã phản hồi và dữ liệu phản hồi.
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        `body was: ${error.error}`);
-    }
-    // Trả về một Observable với thông điệp lỗi người dùng thân thiện
-    return throwError(
-      'Something bad happened; please try again later.');
-  }
 }

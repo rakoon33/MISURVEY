@@ -64,7 +64,7 @@
   </thead>
   <tbody>
     <!-- Loop through the users array using the *ngFor directive -->
-    <tr *ngFor="let user of users; let i = index">
+    <tr *ngFor="let user of users$ | async; let i = index">
       <td scope="row">{{ i + 1 }}</td>
       <td>
         <c-avatar

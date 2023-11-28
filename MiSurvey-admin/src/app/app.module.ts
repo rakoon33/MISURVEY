@@ -55,7 +55,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 
 import { reducers, metaReducers } from './core/store/storage-sync.reducer';
-import { AuthEffects, UserEffects} from './core/store/effects';
+import { AuthEffects, UserEffects, UserManagementEffects} from './core/store/effects';
 
 // api
 
@@ -109,7 +109,7 @@ const APP_CONTAINERS = [
       preventDuplicates: true,
     }),
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([AuthEffects,UserEffects ]),
+    EffectsModule.forRoot([AuthEffects,UserEffects, UserManagementEffects ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
   ],
   providers: [

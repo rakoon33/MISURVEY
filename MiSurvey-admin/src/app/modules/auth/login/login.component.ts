@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 
 import { authActions } from './../../../core/store/actions';
 import { AppState } from './../../../core/store/app.state';
-import authSelectors from './../../../core/store/selectors/auth.selectors';
+import {authSelector} from './../../../core/store/selectors';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +29,7 @@ export class LoginComponent implements OnDestroy {
     });
 
     this.subscription.add(
-      this.store.select(authSelectors.selectCurrentAuth).subscribe(isAuthenticated => {
+      this.store.select(authSelector.selectCurrentAuth).subscribe(isAuthenticated => {
         if (isAuthenticated) {
           this.toastr.success("Login successfully");
           this.router.navigate(['/dashboard']); // Điều hướng sau khi đăng nhập thành công
@@ -38,7 +38,7 @@ export class LoginComponent implements OnDestroy {
     );
 
     this.subscription.add(
-      this.store.select(authSelectors.selectIsAuthError).subscribe(error => {
+      this.store.select(authSelector.selectIsAuthError).subscribe(error => {
         if (error) {
           this.toastr.error(error);
         }

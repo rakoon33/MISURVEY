@@ -1,7 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { UserState } from './../states';
 
-// Simple selectors
 export const selectUser = (state: UserState) => state.user;
 export const selectUserLoading = (state: UserState) => state.loading;
 export const selectUserError = (state: UserState) => state.message;

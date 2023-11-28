@@ -1,3 +1,4 @@
 import { authReducer } from './auth.reducer';
 import { userReducer } from './user.reducer';
-export { authReducer, userReducer };
+import { userManagementReducer } from './user-management.reducer';
+export { authReducer, userReducer, userManagementReducer };
