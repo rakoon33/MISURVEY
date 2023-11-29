@@ -17,20 +17,6 @@ const options = {
       title: "REST API Docs",
       version,
     },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
   },
   apis: [routeFilesPath],// sử dụng ký tự đại diện * để chỉ định tất cả các file có phần mở rộng là .route.js trong thư mục routes
 };

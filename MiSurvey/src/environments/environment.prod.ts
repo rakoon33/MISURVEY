@@ -1,4 +1,5 @@
 export const environment = {
     production: true,
-    // Thêm các cấu hình khác ở đây nếu cần
-  };
+    // Add any other properties you need
+    BACKEND_BASE_URL: 'https://your-backend-url.com'
+};

@@ -5,9 +5,10 @@ const { Op } = require('sequelize');
 const getUserData = async (username) => {
     try {
       const user = await User.findOne({
-        where: { username: username }
-      });
-  
+        where: { username: username },
+        attributes: ['UserID', 'Username', 'FirstName', 'LastName', 'Gender', 'Email', 'PhoneNumber', 'UserAvatar', 'UserRole']
+    });
+    
       if (user) {
         return {
           status: true,
