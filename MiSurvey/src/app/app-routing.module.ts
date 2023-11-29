@@ -1,24 +1,119 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { DefaultLayoutComponent } from './shared';
+import { Page404Component } from './shared/page404/page404.component';
+import { Page500Component } from './shared/page500/page500.component';
+import { LoginComponent } from './modules/auth/login/login.component';
+import { RegisterComponent } from './modules/auth/register/register.component';
+import { ApiDocumentationsComponent } from '@docs-components/api-documentations/api-documentations.component';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'homepage',
-    pathMatch: 'full',
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
   {
-    path: 'homepage',
-    loadChildren: () => import('./modules/homepage/homepage.module').then(m => m.HomePageModule)
+    path: '',
+    component: DefaultLayoutComponent,
+    data: {
+      title: 'Home'
+    },
+    children: [
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./modules/dashboard/dashboard.module').then((m) => m.DashboardModule)
+      },
+      {
+        path: 'user-management',
+        loadChildren: () =>
+          import('./modules/user-management/user-management.module').then((m) => m.UserManagementModule)
+      },
+      {
+        path: 'company-management',
+        loadChildren: () =>
+          import('./modules/company-management/company-management.module').then((m) => m.CompanyManagementModule)
+      },
+      {
+        path: 'base',
+        loadChildren: () =>
+          import('./modules/base/base.module').then((m) => m.BaseModule)
+      },
+      {
+        path: 'buttons',
+        loadChildren: () =>
+          import('./modules/buttons/buttons.module').then((m) => m.ButtonsModule)
+      },
+      {
+        path: 'forms',
+        loadChildren: () =>
+          import('./modules/forms/forms.module').then((m) => m.CoreUIFormsModule)
+      },
+      {
+        path: 'charts',
+        loadChildren: () =>
+          import('./modules/charts/charts.module').then((m) => m.ChartsModule)
+      },
+      {
+        path: 'icons',
+        loadChildren: () =>
+          import('./modules/icons/icons.module').then((m) => m.IconsModule)
+      },
+      {
+        path: 'notifications',
+        loadChildren: () =>
+          import('./modules/notifications/notifications.module').then((m) => m.NotificationsModule)
+      },
+      {
+        path: 'widgets',
+        loadChildren: () =>
+          import('./modules/widgets/widgets.module').then((m) => m.WidgetsModule)
+      }
+    ]
+  },
+  {
+    path: '404',
+    component: Page404Component,
+    data: {
+      title: 'Page 404'
+    }
+  },
+  {
+    path: '500',
+    component: Page500Component,
+    data: {
+      title: 'Page 500'
+    }
   },
   {
     path: 'login',
-    loadChildren: () => import('./modules/auth/login/login.module').then(m => m.LoginModule)
-  }
+    component: LoginComponent,
+    data: {
+      title: 'Login Page'
+    }
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
+    data: {
+      title: 'Register Page'
+    }
+  },
+  { path: 'api-docs', component: ApiDocumentationsComponent },
+  {path: '**', redirectTo: '404'}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      scrollPositionRestoration: 'top',
+      anchorScrolling: 'enabled',
+      initialNavigation: 'enabledBlocking'
+      // relativeLinkResolution: 'legacy'
+    })
+  ],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

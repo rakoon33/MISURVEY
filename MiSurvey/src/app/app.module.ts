@@ -1,50 +1,126 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { SharedModule } from './shared/shared.module';
-
-import { MatSidenavModule } from '@angular/material/sidenav'; 
-import { MatGridListModule } from '@angular/material/grid-list' 
-import { MatMenuModule } from '@angular/material/menu'; 
-import { MatButtonModule } from '@angular/material/button'; 
-import { MatCardModule } from '@angular/material/card'; 
-import { MatIconModule } from '@angular/material/icon';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatToolbarModule } from '@angular/material/toolbar' 
-import { MatTableModule } from '@angular/material/table'; 
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatSnackBarModule} from '@angular/material/snack-bar' 
-import { MatListModule} from '@angular/material/list';
-import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { ToastrModule } from 'ngx-toastr';
+
+// Import routing module
+import { AppRoutingModule } from './app-routing.module';
+
+// Import app component
+import { AppComponent } from './app.component';
+
+// Import containers
+import { DefaultFooterComponent, DefaultHeaderComponent, DefaultLayoutComponent } from './shared';
+
+import { Page404Component } from './shared/page404/page404.component';
+import { Page500Component } from './shared/page500/page500.component';
+import { LoginComponent } from './modules/auth/login/login.component';
+import { RegisterComponent } from './modules/auth/register/register.component';
+import { FormsModule } from '@angular/forms';
+
+import {
+  AvatarModule,
+  BadgeModule,
+  BreadcrumbModule,
+  ButtonGroupModule,
+  ButtonModule,
+  CardModule,
+  DropdownModule,
+  FooterModule,
+  FormModule,
+  GridModule,
+  HeaderModule,
+  ListGroupModule,
+  NavModule,
+  ProgressModule,
+  SharedModule,
+  SidebarModule,
+  TabsModule,
+  UtilitiesModule,
+
+} from '@coreui/angular';
+
+import { IconModule, IconSetService } from '@coreui/icons-angular';
+import { CustomInputComponent } from './shared/components/custom-input/custom-input.component';
+
+// store
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
+import { environment } from 'src/environments/environment';
+
+import { reducers, metaReducers } from './core/store/storage-sync.reducer';
+import { AuthEffects, UserEffects, UserManagementEffects} from './core/store/effects';
+
+// api
+
+import { ApiDocumentationsComponent } from '@docs-components/api-documentations/api-documentations.component';
+
+const APP_CONTAINERS = [
+  DefaultFooterComponent,
+  DefaultHeaderComponent,
+  DefaultLayoutComponent,
+  Page404Component,
+  Page500Component,
+  LoginComponent,
+  RegisterComponent,
+  ApiDocumentationsComponent
+];
+
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
+  declarations: [AppComponent, ...APP_CONTAINERS, CustomInputComponent],
   imports: [
-    HttpClientModule,
-    RouterModule,
-    SharedModule,
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
-    MatSidenavModule, 
-    MatGridListModule, 
-    MatMenuModule, 
-    MatButtonModule, 
-    MatCardModule, 
-    MatIconModule, 
-    MatExpansionModule, 
-    MatListModule, 
-    MatToolbarModule, 
-    MatTableModule, 
-    MatBadgeModule, 
-    MatSnackBarModule,
+    AppRoutingModule,
+    AvatarModule,
+    BreadcrumbModule,
+    FooterModule,
+    DropdownModule,
+    GridModule,
+    HeaderModule,
+    SidebarModule,
+    IconModule,
+    NavModule,
+    ButtonModule,
+    FormModule,
+    UtilitiesModule,
+    ButtonGroupModule,
+    ReactiveFormsModule,
+    FormsModule,
+    SidebarModule,
+    SharedModule,
+    TabsModule,
+    ListGroupModule,
+    ProgressModule,
+    BadgeModule,
+    ListGroupModule,
+    CardModule,
+    NgScrollbarModule,
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
+    StoreModule.forRoot(reducers, { metaReducers }),
+    EffectsModule.forRoot([AuthEffects,UserEffects, UserManagementEffects ]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: LocationStrategy,
+      useClass: HashLocationStrategy
+    },
+    IconSetService,
+    Title
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
