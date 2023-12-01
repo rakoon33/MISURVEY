@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { User, CompanyUser, Company } = require("../models");
+const { User, CompanyUser, Company, IndividualPermission, RolePermission, Module } = require("../models");
 const { tokenFunctions } = require("../utils");
 const db = require("../config/database");
 
@@ -158,9 +158,68 @@ const logoutUser = (res) => {
   };
 };
 
+const checkUserPermissions = async (userId) => {
+  try {
+    const userDetails = await User.findByPk(userId);
+    if (!userDetails) {
+      throw new Error('User not found');
+    }
+
+    // Destructure to separate the UserPassword and the rest of the userDetails
+    const { UserPassword, ...userDetailsWithoutPassword } = userDetails.dataValues;
+
+    const companyUser = await CompanyUser.findOne({ where: { UserID: userId } });
+    if (!companyUser) {
+      throw new Error('Company user not found');
+    }
+
+    let permissionsMap = {};
+
+    if (companyUser.CompanyUserID) {
+      const individualPermissions = await IndividualPermission.findAll({
+        where: { CompanyUserID: companyUser.CompanyUserID },
+        include: [{ model: Module, as: 'module', required: true }]
+      });
+
+      permissionsMap = individualPermissions.reduce((acc, permission) => {
+        if (permission.module) {
+          acc[permission.module.ModuleName] = permission;
+        }
+        return acc;
+      }, {});
+    }
+
+    if (companyUser.CompanyRoleID) {
+      const rolePermissions = await RolePermission.findAll({
+        where: { CompanyRoleID: companyUser.CompanyRoleID },
+        include: [{ model: Module, as: 'module1', required: true }]
+      });
+
+      rolePermissions.forEach(permission => {
+        if (permission.module1 && !permissionsMap.hasOwnProperty(permission.module1.ModuleName)) {
+          permissionsMap[permission.module1.ModuleName] = permission;
+        }
+      });
+    }
+
+    const mergedPermissions = Object.values(permissionsMap);
+
+    return {
+      userDetails: userDetailsWithoutPassword,
+      permissions: mergedPermissions
+    };
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch permissions");
+  }
+};
+
+
+
+
 module.exports = {
   loginUser,
   logoutUser,
   registerUser,
+  checkUserPermissions
   // ...other exported functions
 };
