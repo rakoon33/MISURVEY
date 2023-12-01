@@ -28,9 +28,24 @@ const registerUserController = async (req, res) => {
   }
 };
 
+const checkPermissionsController = async (req, res) => {
+  const userId = req.params.userId; // Extracting UserID from URL parameter
+
+  if (!userId) {
+    return res.status(400).json({ message: "UserID is required" });
+  }
+
+  try {
+    const result = await authService.checkUserPermissions(userId);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
 module.exports = {
   loginController,
   logoutController,
-  registerUserController
+  registerUserController,
+  checkPermissionsController
 };

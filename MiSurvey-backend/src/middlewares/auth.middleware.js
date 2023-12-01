@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { asyncHandler } = require('./asyncHandler');
-const {User, Company, CompanyUser, CompanyRole, Module} = require('../models');
+const {User, Company, CompanyUser, CompanyRole, Module, IndividualPermission, RolePermission } = require('../models');
 
 const  tokenVerification = async (req, res, next) => {
   console.log(

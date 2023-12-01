@@ -21,6 +21,21 @@ const SurveyReport = require('./surveyReport.model');
 const SurveyType = require('./surveyType.model');
 
 // Set up the association
+
+Module.hasMany(IndividualPermission, { foreignKey: 'ModuleID', as: 'permissions1' });
+IndividualPermission.belongsTo(Module, { foreignKey: 'ModuleID', as: 'module' });
+
+RolePermission.belongsTo(Module, {
+  foreignKey: 'ModuleID', // Adjust as per your column name in RolePermission
+  as: 'module1' // Alias for this association
+});
+
+// Optional: Reverse association from Module to RolePermission
+Module.hasMany(RolePermission, {
+  foreignKey: 'ModuleID', // Adjust as per your column name in RolePermission
+  as: 'rolePermissions' // Alias for this association
+});
+
 // User and Company
 User.hasOne(Company, {
   foreignKey: 'AdminID',
