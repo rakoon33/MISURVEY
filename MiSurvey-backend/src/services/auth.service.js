@@ -46,6 +46,7 @@ const loginUser = async (res, username, password) => {
         } 
   }
 };
+
 const registerUser = async (userData) => {
   console.log("Received userData:", userData);
 
@@ -212,9 +213,6 @@ const checkUserPermissions = async (userId) => {
     throw new Error(error.message || "Failed to fetch permissions");
   }
 };
-
-
-
 
 module.exports = {
   loginUser,
