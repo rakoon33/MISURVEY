@@ -1,9 +1,6 @@
-const express = require("express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const { version } = require("../../package.json");
-
-const app = express();
 
 const path = require("path");
 

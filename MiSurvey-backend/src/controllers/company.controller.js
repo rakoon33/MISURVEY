@@ -51,7 +51,6 @@ const searchCompanyController = async (req, res) => {
   }
 };
 
-
 const getOneCompanyController = async (req, res) => {
   try {
     const { CompanyID } = req.params;

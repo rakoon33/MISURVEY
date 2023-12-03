@@ -1,6 +1,5 @@
 const express = require('express');
 const { authController } = require('../controllers');
-
 const router = express.Router();
 
 /**
@@ -56,7 +55,7 @@ const router = express.Router();
  *               properties:
  *                 status:
  *                   type: boolean
- *                   description: Status of the login operation
+ *                   example: false
  *                 message:
  *                   type: string
  *                   description: Error message regarding the login operation
@@ -88,7 +87,7 @@ router.post('/login', authController.loginController);
  *               properties:
  *                 status:
  *                   type: boolean
- *                   description: Status of the logout operation
+ *                   example: false
  *                 message:
  *                   type: string
  *                   description: Error message regarding the logout operation
@@ -166,7 +165,7 @@ router.post('/logout', authController.logoutController);
  *               properties:
  *                 status:
  *                   type: boolean
- *                   description: Status of the registration operation
+ *                   example: false
  *                 message:
  *                   type: string
  *                   description: Error message explaining why the registration failed
@@ -219,7 +218,7 @@ router.post('/register', authController.registerUserController);
  *   get:
  *     summary: Check permissions for a specific user
  *     tags:
- *       - Users
+ *       - User
  *     parameters:
  *       - in: path
  *         name: userId
