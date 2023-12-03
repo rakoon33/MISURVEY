@@ -27,7 +27,7 @@ IndividualPermission.belongsTo(Module, { foreignKey: 'ModuleID', as: 'module' })
 
 RolePermission.belongsTo(Module, {
   foreignKey: 'ModuleID', // Adjust as per your column name in RolePermission
-  as: 'module1' // Alias for this association
+  as: 'module' // Alias for this association
 });
 
 // Optional: Reverse association from Module to RolePermission

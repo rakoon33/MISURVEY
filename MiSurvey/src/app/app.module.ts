@@ -47,6 +47,10 @@ import {
 import { IconModule, IconSetService } from '@coreui/icons-angular';
 import { CustomInputComponent } from './shared/components/custom-input/custom-input.component';
 
+// date time
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 // store
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -103,10 +107,17 @@ const APP_CONTAINERS = [
     CardModule,
     NgScrollbarModule,
     HttpClientModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     ToastrModule.forRoot({
-      timeOut: 10000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
+      timeOut: 3000,
+      closeButton: true,
+      newestOnTop: true,
+      progressBar: true,
+      progressAnimation: 'increasing',
+      tapToDismiss: true,
     }),
     StoreModule.forRoot(reducers, { metaReducers }),
     EffectsModule.forRoot([AuthEffects,UserEffects, UserManagementEffects ]),

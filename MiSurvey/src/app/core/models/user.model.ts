@@ -10,8 +10,9 @@ export default interface User {
   UserRole: string;
   CreatedAt: Date | string; // Depending on how you handle dates, you may need to adjust this
   LastLogin?: Date | string; // Optional and also depending on date handling
-  IsActive: boolean;
+  IsActive: number;
   CreatedBy?: number; // Optional as this may not always be provided
   UpdatedAt?: Date | string; // Optional and depending on date handling
   UpdatedBy?: number; // Optional as this may not always be provided
+  Gender?: string; // Optional gender field
 }

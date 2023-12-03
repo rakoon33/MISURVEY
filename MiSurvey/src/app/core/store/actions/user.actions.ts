@@ -1,5 +1,5 @@
 import { createAction, props, ActionType } from '@ngrx/store';
-import { User } from '../../models';
+import { User, Permission } from '../../models';
 
 enum UserActionTypes {
   GET_USER_DATA_REQUEST = '[User] Get User Data Request',
@@ -13,7 +13,7 @@ export const getUserDataRequest = createAction(
 
 export const getUserDataSuccess = createAction(
   UserActionTypes.GET_USER_DATA_SUCCESS,
-  props<{ user: User }>()
+  props<{ user: User, permissions: Permission[] }>()
 );
 
 export const getUserDataFailure = createAction(

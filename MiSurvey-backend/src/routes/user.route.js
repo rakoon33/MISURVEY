@@ -199,14 +199,14 @@ router
     .get(authMiddleware.tokenVerification, userController.searchUserController);
 
 router.route('/')
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.getAllUsersController)
-    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.createUserController);
+    .get(authMiddleware.tokenVerification, userController.getAllUsersController)
+    .post(authMiddleware.tokenVerification, userController.createUserController);
 
 router
     .route('/:UserID')
-    .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.deleteUserController)
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.getOneUserController)
-    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, userController.updateUserController);
+    .delete(authMiddleware.tokenVerification, userController.deleteUserController)
+    .get(authMiddleware.tokenVerification,userController.getOneUserController)
+    .put(authMiddleware.tokenVerification, userController.updateUserController);
 
 
 module.exports = router;

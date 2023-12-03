@@ -6,19 +6,18 @@ import { apiConstants } from '../constants';
 import { User } from '../models';
 
 @Injectable({
-    providedIn: 'root'
-  })
-  export class UserService {
-  
-    constructor(private http: HttpClient) {}
-  
-    getUserData(): Observable<{ status: boolean; message: string; data: User }> {
-      const userDataUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.USER}/getUserData`;
-      return this.http.get<{ status: boolean; message: string; data: User }>(userDataUrl, { withCredentials: true }).pipe(
-        catchError(error => {
-          console.error('Error during fetching user data:', error);
-          return throwError(() => new Error('Error fetching user data'));
-        })
-      );
-    }
+  providedIn: 'root',
+})
+export class UserService {
+  constructor(private http: HttpClient) {}
+
+  getUserData(): Observable<any> {
+    const userDataUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.USER}/getUserData`;
+    return this.http.get<any>(userDataUrl, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
+}

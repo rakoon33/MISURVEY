@@ -21,7 +21,7 @@ const tokenVerification = async (req, res, next) => {
             error: `Invalid token | ${err?.message}`,
           });
         }
-        
+        console.log(decoded);
         req.user = decoded;
         next();
       });
@@ -45,11 +45,10 @@ const isSuperAdmin = (req, res, next) => {
   if (req.user && req.user.role == 'SuperAdmin') {
     next()
   } else {
-    res.status(401)
-    return {
+    res.status(401).json({
       status: false,
       message: "Access denied"
-    };
+    });
   }      
 }
 const checkPermission = async (req, res, next, action) => {

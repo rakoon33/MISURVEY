@@ -14,13 +14,12 @@ export class UserManagementEffects {
         this.userManagementService.getUsers().pipe(
           map((response) => {
             if (response.status) {
-              // Trích xuất và gửi chỉ mảng users nếu status là true
               return userManagementActions.loadUsersSuccess({
                 users: response.data,
               });
             } else {
               return userManagementActions.loadUsersFailure({
-                error: 'Failed to load users',
+                error: response.message,
               });
             }
           }),
@@ -35,20 +34,68 @@ export class UserManagementEffects {
     this.actions$.pipe(
       ofType(userManagementActions.loadUserByIdRequest),
       switchMap((action) =>
-        this.userManagementService.getUserById(action.userId).pipe(
+        this.userManagementService.getUserById(action.UserID).pipe(
           map((response) => {
             if (response.status) {
               return userManagementActions.loadUserByIdSuccess({
-                user: response.user,
+                user: response.data,
               });
             } else {
               return userManagementActions.loadUserByIdFailure({
-                error: 'User not found or request failed',
+                error: response.message,
               });
             }
           }),
           catchError((error) =>
             of(userManagementActions.loadUserByIdFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  updateUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(userManagementActions.updateUserRequest),
+      switchMap((action) =>
+        this.userManagementService
+          .updateUser(action.UserID, action.userData)
+          .pipe(
+            map((response) => {
+              if (response.status) {
+                return userManagementActions.updateUserSuccess({
+                  user: response.data,
+                });
+              } else {
+                return userManagementActions.updateUserFailure({
+                  error: response.message,
+                });
+              }
+            }),
+            catchError((error) =>
+              of(userManagementActions.updateUserFailure({ error }))
+            )
+          )
+      )
+    )
+  );
+
+  createUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(userManagementActions.createUserRequest),
+      switchMap((action) =>
+        this.userManagementService.createUser(action.userData).pipe(
+          map((response) =>
+            response.status
+              ? userManagementActions.createUserSuccess()
+              : userManagementActions.createUserFailure({
+                  error: response.message,
+                })
+          ),
+          catchError((error) =>
+            of(
+              userManagementActions.createUserFailure({ error })
+            )
           )
         )
       )

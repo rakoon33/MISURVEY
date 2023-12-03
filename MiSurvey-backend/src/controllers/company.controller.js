@@ -1,4 +1,4 @@
-const { companyService } = require('../services'); 
+const { companyService } = require("../services");
 
 // Super-Admin controller
 const createCompanyController = async (req, res) => {
@@ -13,18 +13,18 @@ const createCompanyController = async (req, res) => {
 const updateCompanyController = async (req, res) => {
   const { CompanyID } = req.params;
   const updatedData = req.body;
-  
+
   try {
-      const result = await companyService.updateCompany(CompanyID, updatedData);
-      res.json(result);
+    const result = await companyService.updateCompany(CompanyID, updatedData);
+    res.json(result);
   } catch (error) {
-      res.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
 const deleteCompanyController = async (req, res) => {
   try {
-    const { CompanyID } = req.params; 
+    const { CompanyID } = req.params;
     const result = await companyService.deleteCompany(CompanyID);
     res.json(result);
   } catch (error) {
@@ -63,6 +63,7 @@ const getOneCompanyController = async (req, res) => {
 
 const getCompanyProfileController = async (req, res) => {
   try {
+    console.log(req.user.companyID);
     const result = await companyService.getOneCompany(req.user.companyID);
     res.json(result);
   } catch (error) {
@@ -70,13 +71,12 @@ const getCompanyProfileController = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createCompanyController,
   updateCompanyController,
-  deleteCompanyController, 
+  deleteCompanyController,
   getAllCompaniesController,
   searchCompanyController,
   getOneCompanyController,
-  getCompanyProfileController
+  getCompanyProfileController,
 };
