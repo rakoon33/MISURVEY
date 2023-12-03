@@ -13,36 +13,52 @@ export class UserManagementService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(): Observable<{ status: boolean; data: User[] }> {
+  getUsers(): Observable<any> {
     return this.http
-      .get<{ status: boolean; data: User[] }>(this.apiUrl, {
+      .get<any>(this.apiUrl, {
         withCredentials: true,
       })
       .pipe(
-        map((response) => {
-          // Directly returning the entire response object
-          return response;
-        }),
+        map((response) => response),
         catchError((error) => {
-          console.error('Error during fetching users data:', error);
-          return throwError(() => new Error('Error fetching users data'));
+          return throwError(() => error);
         })
       );
   }
 
-  getUserById(userId: string): Observable<{ status: boolean; user: User }> {
+  getUserById(userId: number): Observable<any> {
     return this.http
-      .get<{ status: boolean; data: User }>(`${this.apiUrl}/${userId}`, {
+      .get<any>(`${this.apiUrl}/${userId}`, {
         withCredentials: true,
       })
       .pipe(
         map((response) => {
-          return { status: response.status, user: response.data };
+          return response;
         }),
         catchError((error) => {
-          console.error('Error during fetching user data:', error);
-          return throwError(() => new Error('Error fetching user data'));
+          return throwError(() => error);
         })
       );
+  }
+
+  updateUser(UserID: number, userData: User): Observable<any> {
+    return this.http
+      .put<any>(`${this.apiUrl}/${UserID}`, userData, { withCredentials: true })
+      .pipe(
+        map((response) => response),
+        catchError((error) => {
+          return throwError(() => error);
+        })
+      );
+  }
+
+  createUser(userData: User): Observable<any> {
+    const url = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.USER}`;
+    return this.http.post<any>(url, userData, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
   }
 }

@@ -26,9 +26,11 @@ $enable-rtl: true;
 
 @import '../../node_modules/ngx-toastr/toastr.css';
 
+.toast-container {
+    z-index: 99999!important; /* Set this to a value lower than your modal's z-index */
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-
 
 

@@ -4,24 +4,21 @@ const path = require('path');
 const { database } = require('./src/config');
 const cors = require('cors')
 const dotenv = require('dotenv');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const swaggerDocs = require('./src/documents/swagger.js');
+const PORT = process.env.PORT || 3000;
+const app = express();
 
 dotenv.config();
 
-const app = express();
 app.use(cookieParser());
-
-const swaggerDocs = require('./src/documents/swagger.js');
-
-// Add CORS configuration 
 app.use(cors({
-  origin: 'http://localhost:8082', // Allow only this domain
-  credentials: true, // This is important for sending cookies with CORS
+  origin: 'http://localhost:8082',
+  credentials: true, 
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// routes
 const indexRoute = require('./src/routes/index.js');
 const authRoute = require('./src/routes/auth.route');
 const companyRoute = require('./src/routes/company.route');
@@ -30,12 +27,10 @@ const companyRoleRoute = require('./src/routes/companyrole.route.js');
 const moduleRoute = require('./src/routes/module.route');
 const individualPermissionRoute = require('./src/routes/individualPermission.route.js')
 
-// view engine setup
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Use the consolidated routes
 app.use('/', indexRoute);
 app.use('/api', authRoute);
 app.use('/api/companies', companyRoute);
@@ -50,10 +45,12 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT || 3000;
+// Set up Swagger documentation
+swaggerDocs(app, PORT);
+
+// Start the server and sync database
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  swaggerDocs(app, PORT);
   database.sequelize.sync()
     .then(() => {
       console.log('Database synced');

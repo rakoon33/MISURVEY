@@ -7,12 +7,21 @@ const loginUser = async (res, username, password) => {
   try {
     
     const user = await User.findOne({ where: { Username: username } });
-
+    let token;
     if (user) {
       const isPasswordVerified = await bcrypt.compare(password.trim(), user.UserPassword);
       if (isPasswordVerified) {
-        
-          const token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole);
+          
+
+          const companyUser = await CompanyUser.findOne({
+            where: { UserID: user.UserID },
+          });
+
+          if(companyUser) {
+            token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole, companyUser.dataValues.CompanyID);
+          } else {
+            token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole);
+          }
 
           // Set JWT as an HTTP-Only cookie
           res.cookie('jwt', token, {
@@ -46,6 +55,7 @@ const loginUser = async (res, username, password) => {
         } 
   }
 };
+
 const registerUser = async (userData) => {
   console.log("Received userData:", userData);
 
@@ -115,37 +125,6 @@ const registerUser = async (userData) => {
   }
 };
 
-// const registerUser = asyncHandler(async (req, res) => {
-//   const { name, email, password } = req.body;
-
-//   const userExists = await User.findOne({ email });
-
-//   if (userExists) {
-//     res.status(400);
-//     throw new Error('User already exists');
-//   }
-
-//   const user = await User.create({
-//     name,
-//     email,
-//     password,
-//   });
-
-//   if (user) {
-//     generateToken(res, user._id);
-
-//     res.status(201).json({
-//       _id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       isAdmin: user.isAdmin,
-//     });
-//   } else {
-//     res.status(400);
-//     throw new Error('Invalid user data');
-//   }
-// });
-
 const logoutUser = (res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
@@ -192,12 +171,12 @@ const checkUserPermissions = async (userId) => {
     if (companyUser.CompanyRoleID) {
       const rolePermissions = await RolePermission.findAll({
         where: { CompanyRoleID: companyUser.CompanyRoleID },
-        include: [{ model: Module, as: 'module1', required: true }]
+        include: [{ model: Module, as: 'module', required: true }]
       });
 
       rolePermissions.forEach(permission => {
-        if (permission.module1 && !permissionsMap.hasOwnProperty(permission.module1.ModuleName)) {
-          permissionsMap[permission.module1.ModuleName] = permission;
+        if (permission.module && !permissionsMap.hasOwnProperty(permission.module.ModuleName)) {
+          permissionsMap[permission.module.ModuleName] = permission;
         }
       });
     }
@@ -205,16 +184,12 @@ const checkUserPermissions = async (userId) => {
     const mergedPermissions = Object.values(permissionsMap);
 
     return {
-      userDetails: userDetailsWithoutPassword,
       permissions: mergedPermissions
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch permissions");
   }
 };
-
-
-
 
 module.exports = {
   loginUser,

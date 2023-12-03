@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngrx/store';
-import { Subscription, delay, retryWhen, startWith } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { authActions } from './../../../core/store/actions';
 import { AppState } from './../../../core/store/app.state';

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
 
 import {
   AvatarModule,
@@ -16,13 +16,17 @@ import {
   GridModule,
   NavModule,
   UtilitiesModule,
-  TabsModule
+  TabsModule,
 } from '@coreui/angular';
 
 import { IconModule } from '@coreui/icons-angular';
 
 import { UserManagementComponent } from './user-management.component';
 import { UserManagementRoutingModule } from './user-management-routing.module';
+
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
@@ -41,10 +45,14 @@ import { UserManagementRoutingModule } from './user-management-routing.module';
     ButtonGroupModule,
     TableModule, 
     AvatarModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
     
   ],
   declarations: [
-    UserManagementComponent,
+    UserManagementComponent,  
   ]
 })
 export class UserManagementModule {

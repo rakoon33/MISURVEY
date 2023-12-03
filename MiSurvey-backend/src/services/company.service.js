@@ -11,7 +11,6 @@ const {
 } = require("../models");
 const { Op } = require('sequelize');
 
-
 const createCompany = async (companyData) => {
   try {
     const adminID = companyData.AdminID;
@@ -320,7 +319,6 @@ const getOneCompany = async (CompanyID) => {
     };
   }
 };
-
 
 module.exports = {
   createCompany,

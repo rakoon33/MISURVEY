@@ -3,6 +3,7 @@ const { individualPermissionController } = require('../controllers');
 const { authMiddleware } = require('../middlewares');
 const router = express.Router();
 
+
 router.route('/')
     .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, individualPermissionController.createIndividualPermissionController)
     .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, individualPermissionController.getAllIndividualPermissionsController);
