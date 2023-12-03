@@ -21,7 +21,7 @@ const  tokenVerification = async (req, res, next) => {
             error: `Invalid token | ${err?.message}`,
           });
         }
-        
+        console.log(decoded);
         req.user = decoded;
         next();
       });

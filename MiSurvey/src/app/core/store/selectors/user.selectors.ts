@@ -8,7 +8,6 @@ export const selectUserError = (state: UserState) => state.error;
 // Feature selector
 export const selectUserState = createFeatureSelector<UserState>('feature_user');
 
-// Complex selectors using createSelector
 const selectCurrentUser = createSelector(
   selectUserState,
   selectUser

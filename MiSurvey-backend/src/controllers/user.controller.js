@@ -22,6 +22,7 @@ const getUserDataController = async (req, res) => {
 
 const createUserController = async (req, res) => {
     try {
+        console.log(req.body);
         const newUser = await userService.createUser(req.body);
         res.json(newUser);
     } catch (error) {
@@ -30,9 +31,14 @@ const createUserController = async (req, res) => {
 };
 
 const updateUserController = async (req, res) => {
+    console.log('Updating user');   
     try {
+        console.log(req.params.UserID);
+        console.log(req.body);
         const result = await userService.updateUser(req.params.UserID, req.body);  
+        console.log(result);
         res.json(result);
+
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

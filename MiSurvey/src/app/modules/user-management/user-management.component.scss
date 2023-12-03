@@ -249,6 +249,7 @@ button:active {
 .modal {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2000 !important;
 }
 
 /* Modal header styling */
@@ -316,4 +317,29 @@ button:active {
 
 .modal-footer button:hover {
   background-color: #0056b3;
+}
+
+
+/* Modal content grid */
+.modal-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.date-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+}
+
+::ng-deep .cdk-overlay-container {
+  z-index: 2000 !important;
 }
