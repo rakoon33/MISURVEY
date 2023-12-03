@@ -13,7 +13,7 @@ const getUserDataController = async (req, res) => {
         if (result.status) {
             res.json(result);
         } else {
-            res.status(404).json({ message: result.message }); // 404 for not found
+            res.status(404).json({ message: result.message });
         }
     } catch (error) {
         res.status(500).json({ message: error.message || 'Failed to retrieve user data.' });
@@ -58,7 +58,6 @@ const getOneUserController = async (req, res) => {
 
 const getUserProfileController = async (req, res) => {
     try {
-        console.log(req.user.userID);
         const userDetails = await userService.getOneUser(req.user.userID);
         res.json(userDetails);
     } catch (error) {

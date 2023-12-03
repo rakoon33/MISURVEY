@@ -172,43 +172,6 @@ router.post('/logout', authController.logoutController);
  *                 error:
  *                   type: string
  *                   description: Detailed error message
- *
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         UserID:
- *           type: integer
- *           description: Unique identifier for the user
- *         Username:
- *           type: string
- *           description: Username for the user account
- *         FirstName:
- *           type: string
- *           description: First name of the user
- *         LastName:
- *           type: string
- *           description: Last name of the user
- *         Email:
- *           type: string
- *           format: email
- *           description: Email address of the user
- *         UserRole:
- *           type: string
- *           description: Role of the user in the system
- *     Company:
- *       type: object
- *       properties:
- *         CompanyID:
- *           type: integer
- *           description: Unique identifier for the company
- *         CompanyName:
- *           type: string
- *           description: Name of the company
- *         AdminID:
- *           type: integer
- *           description: Identifier for the admin user of the company
  */
 router.post('/register', authController.registerUserController);
 
