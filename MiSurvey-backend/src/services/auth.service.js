@@ -12,14 +12,13 @@ const loginUser = async (res, username, password) => {
       const isPasswordVerified = await bcrypt.compare(password.trim(), user.UserPassword);
       if (isPasswordVerified) {
           
-          const company = await Company.findOne({
-            where: { AdminID: user.UserID },
-            attributes: ['CompanyID']
+
+          const companyUser = await CompanyUser.findOne({
+            where: { UserID: user.UserID },
           });
 
-          console.log(company);
-          if(company) {
-            token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole, company.dataValues.CompanyID);
+          if(companyUser) {
+            token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole, companyUser.dataValues.CompanyID);
           } else {
             token = await tokenFunctions.generateToken(user.UserID, user.Username, user.UserRole);
           }
@@ -171,12 +170,12 @@ const checkUserPermissions = async (userId) => {
     if (companyUser.CompanyRoleID) {
       const rolePermissions = await RolePermission.findAll({
         where: { CompanyRoleID: companyUser.CompanyRoleID },
-        include: [{ model: Module, as: 'module1', required: true }]
+        include: [{ model: Module, as: 'module', required: true }]
       });
 
       rolePermissions.forEach(permission => {
-        if (permission.module1 && !permissionsMap.hasOwnProperty(permission.module1.ModuleName)) {
-          permissionsMap[permission.module1.ModuleName] = permission;
+        if (permission.module && !permissionsMap.hasOwnProperty(permission.module.ModuleName)) {
+          permissionsMap[permission.module.ModuleName] = permission;
         }
       });
     }
@@ -184,7 +183,6 @@ const checkUserPermissions = async (userId) => {
     const mergedPermissions = Object.values(permissionsMap);
 
     return {
-      userDetails: userDetailsWithoutPassword,
       permissions: mergedPermissions
     };
   } catch (error) {
