@@ -17,7 +17,7 @@ import {authSelector} from './../../../core/store/selectors';
 export class LoginComponent implements OnDestroy {
   loginForm: FormGroup;
   private subscription = new Subscription();
-
+  isLoading: boolean = false;
   constructor(
     private router: Router, 
     private toastr: ToastrService,
@@ -38,12 +38,11 @@ export class LoginComponent implements OnDestroy {
     );
 
     this.subscription.add(
-      this.store.select(authSelector.selectIsAuthError).subscribe(error => {
-        if (error) {
-          this.toastr.error(error.message);
-        }
+      this.store.select(authSelector.selectIsAuthLoading).subscribe(loading => {
+        this.isLoading = loading; // Set the isLoading state
       })
     );
+
   }
 
   onSubmit() {

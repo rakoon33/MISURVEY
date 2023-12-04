@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '../../shared/share.module'; // replace 'path-to-your-shared-module' with the actual path
+
 // import { PagesRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -20,7 +20,6 @@ import { IconModule } from '@coreui/icons-angular';
     GridModule,
     IconModule,
     FormModule,
-    SharedModule,
 
   ]
 })

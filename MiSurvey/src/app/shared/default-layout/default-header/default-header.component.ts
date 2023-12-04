@@ -34,19 +34,7 @@ export class DefaultHeaderComponent
         .subscribe((isAuthenticated) => {
           if (!isAuthenticated) {
             this.clearLocalStorage();
-            this.toastr.success('Logged out successfully');
             this.router.navigate(['/login']);
-          }
-        })
-    );
-
-    this.subscription.add(
-      this.store
-        .select(authSelector.selectIsAuthError)
-        .pipe(skip(1)) // Bỏ qua giá trị đầu tiên
-        .subscribe((error) => {
-          if (error) {
-            this.toastr.error('Failed to log out');
           }
         })
     );

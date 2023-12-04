@@ -6,7 +6,6 @@ import  {userActions } from './../actions';
 export const initialState: UserState = {
   user: null,
   loading: false,
-  error: null,
   permissions: [],
 };
 
@@ -16,15 +15,14 @@ export const userReducer = createReducer(
     ...state,
     loading: true,
   })),
-  on(userActions.getUserDataSuccess, (state, { user, permissions }) => ({
+  on(userActions.getUserDataSuccess, (state, { user, permissions = [] }) => ({
     ...state,
     user,
     loading: false,
     permissions: permissions
   })),
-  on(userActions.getUserDataFailure, (state, { error }) => ({
+  on(userActions.getUserDataFailure, (state) => ({
     ...state,
-    error: { message: error, timestamp: new Date() },
     loading: false
   })),
   

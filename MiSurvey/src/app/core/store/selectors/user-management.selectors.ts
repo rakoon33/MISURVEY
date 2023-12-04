@@ -4,7 +4,6 @@ import { UserManagementState } from '../states';
 export const selectAllUsers = (state: UserManagementState) => state.users;
 export const selectUserManagementLoading = (state: UserManagementState) => state.loading;
 export const selectSelectedUser = (state: UserManagementState) => state.selectedUser;
-export const selectUseManagementError = (state: UserManagementState) => state.error;
 
 export const selectUserManagementState = createFeatureSelector<UserManagementState>('feature_user_management');
 
@@ -23,10 +22,5 @@ const selectCurrentUser = createSelector(
   selectSelectedUser
 );
 
-const selectCurrentUseManagementError = createSelector(
-  selectUserManagementState,
-  selectUseManagementError
-);
 
-
-export default { selectCurrentUsers, selectIsUserManagementLoading, selectCurrentUser, selectCurrentUseManagementError };
+export default { selectCurrentUsers, selectIsUserManagementLoading, selectCurrentUser };

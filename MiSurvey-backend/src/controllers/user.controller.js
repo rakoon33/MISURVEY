@@ -10,7 +10,7 @@ const getUserDataController = async (req, res) => {
         .json({ message: "userID is required as a query parameter." });
     }
 
-    const result = await userService.getUserData(userID);
+    const result = await userService.getUserData(userID, req.user.role);
 
     res.json(result);
   } catch (error) {
