@@ -105,6 +105,8 @@ const createUser = async (userData) => {
 // Update user by SuperAdmin
 const updateUser = async (UserID, userData) => {
   try {
+    console.log(UserID);
+    console.log(userData);
     if (userData.UserPassword) {
       userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10);
     }
@@ -187,8 +189,11 @@ const getOneUser = async (UserID) => {
 };
 
 // API to retrieve a list of all users with their basic details
-const getAllUsers = async (requestingUserRole, requestingUserCompanyId) => {
+const getAllUsers = async (requestingUserRole, requestingUserCompanyId, page, pageSize) => {
   try {
+    const offset = (page - 1) * pageSize;
+    const limit = pageSize;
+
     let queryOptions = {
       attributes: [
         "UserID",
@@ -200,32 +205,31 @@ const getAllUsers = async (requestingUserRole, requestingUserCompanyId) => {
         "UserRole",
         "IsActive",
       ],
+      offset,
+      limit,
     };
 
-    // Áp dụng lọc người dùng dựa trên CompanyID chỉ khi người dùng không phải là SuperAdmin
+    // Apply filtering based on CompanyID only when the user is not a SuperAdmin
     if (requestingUserRole !== "SuperAdmin") {
       queryOptions.include = [
         {
           model: CompanyUser,
-          as: "CompanyUsers", // Sử dụng bí danh 'CompanyUsers'
+          as: "CompanyUsers",
           attributes: [],
           where: { CompanyID: requestingUserCompanyId },
         },
       ];
     }
 
-    const users = await User.findAll(queryOptions);
+    const { count, rows: users } = await User.findAndCountAll(queryOptions);
 
-    if (!users || users.length === 0) {
-      return { status: false, message: "No users found" };
-    }
-
-    return { status: true, data: users };
+    return { status: true, data: users, total: count };
   } catch (error) {
+    console.error("Error in getAllUsers service: ", error);
     return {
       status: false,
       message: error.message || "Failed to retrieve users",
-      error: error?.toString(),
+      error: error.toString(),
     };
   }
 };

@@ -71,35 +71,36 @@ const getUserProfileController = async (req, res) => {
 };
 
 const getAllUsersController = async (req, res) => {
-    try {
-      const requestingUserRole = req.user.role;
-      let requestingUserCompanyId = null;
-  
-      // Chỉ thiết lập CompanyID nếu người dùng không phải là SuperAdmin
-      if (requestingUserRole !== 'SuperAdmin') {
-        requestingUserCompanyId = req.user.companyID;
-      }
-  
-      console.log(requestingUserRole);
-      console.log(requestingUserCompanyId);
-      const allUsers = await userService.getAllUsers(requestingUserRole, requestingUserCompanyId);
-      res.json(allUsers);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
+  try {
+    const requestingUserRole = req.user.role;
+    let requestingUserCompanyId = null;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    // Chỉ thiết lập CompanyID nếu người dùng không phải là SuperAdmin
+    if (requestingUserRole !== "SuperAdmin") {
+      requestingUserCompanyId = req.user.companyID;
     }
+
+    const allUsers = await userService.getAllUsers(
+      requestingUserRole,
+      requestingUserCompanyId,
+      page, pageSize
+    );
+    res.json(allUsers);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
-  
+
 const searchUserController = async (req, res) => {
   try {
     const { column, searchTerm } = req.query;
 
     if (!column || !searchTerm) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Both column and searchTerm are required as query parameters.",
-        });
+      return res.status(400).json({
+        message: "Both column and searchTerm are required as query parameters.",
+      });
     }
     const result = await userService.searchUsers(column, searchTerm);
 

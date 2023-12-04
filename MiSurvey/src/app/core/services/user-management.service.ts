@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { apiConstants } from '../constants';
@@ -13,17 +13,12 @@ export class UserManagementService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(): Observable<any> {
-    return this.http
-      .get<any>(this.apiUrl, {
-        withCredentials: true,
-      })
-      .pipe(
-        map((response) => response),
-        catchError((error) => {
-          return throwError(() => error);
-        })
-      );
+  getUsers(page: number, pageSize: number): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<any>(this.apiUrl, { params, withCredentials: true });
   }
 
   getUserById(userId: number): Observable<any> {

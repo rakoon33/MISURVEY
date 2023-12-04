@@ -110,14 +110,6 @@
       
       <div class="mb-3">
         <label for="editDateCreated" class="form-label">Date Created</label>
-        <!-- <input
-          type="text"
-          class="form-control"
-          id="editDateCreated"
-          name="CreatedAt"
-          [(ngModel)]="currentCompany!.CreatedAt"
-          placeholder="Date Created"
-        /> -->
         <mat-form-field appearance="fill">
           <mat-label>Date Created</mat-label>
           <input matInput [matDatepicker]="picker" [(ngModel)]="currentCompany.CreatedAt">

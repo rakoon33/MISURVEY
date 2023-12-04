@@ -1,8 +1,16 @@
 <app-loading *ngIf="isLoading$ | async"></app-loading>
 <div *ngIf="userPermissions$ | async as permissions">
   <div class="d-flex justify-content-start">
-    <button *ngIf="permissions.CanAdd" class="btn-action me-2" [cModalToggle]="addUserModal.id">Create a new user</button>
-    <button *ngIf="permissions.CanExport" class="btn-action">Export Data</button>
+    <button
+      *ngIf="permissions.CanAdd"
+      class="btn-action me-2"
+      [cModalToggle]="addUserModal.id"
+    >
+      Create a new user
+    </button>
+    <button *ngIf="permissions.CanExport" class="btn-action">
+      Export Data
+    </button>
   </div>
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>
@@ -38,7 +46,7 @@
         required
       />
     </form>
-  
+
     <c-button-group class="group-button-management" role="group">
       <button cButton>Search</button>
       <button class="btn-border-right btn-borderStyle-left" cButton>
@@ -46,7 +54,7 @@
       </button>
     </c-button-group>
   </div>
-  
+
   <table
     class="table"
     [hover]="true"
@@ -78,7 +86,7 @@
             status="success"
           ></c-avatar>
         </td>
-  
+
         <td>{{ user.FirstName }} {{ user.LastName }}</td>
         <td>{{ user.Email }}</td>
         <td>{{ user.UserRole }}</td>
@@ -88,17 +96,29 @@
             <span class="action-management" cButton cDropdownToggle> </span>
             <ul cDropdownMenu>
               <li>
-                <button *ngIf="user.UserID !== undefined && permissions.CanViewData" cDropdownItem (click)="viewUser(user.UserID)">
+                <button
+                  *ngIf="user.UserID !== undefined && permissions.CanViewData"
+                  cDropdownItem
+                  (click)="viewUser(user.UserID)"
+                >
                   View
                 </button>
               </li>
               <li>
-                <button *ngIf="user.UserID !== undefined && permissions.CanUpdate" cDropdownItem (click)="editUser(user.UserID)">
+                <button
+                  *ngIf="user.UserID !== undefined && permissions.CanUpdate"
+                  cDropdownItem
+                  (click)="editUser(user.UserID)"
+                >
                   Edit
                 </button>
               </li>
               <li>
-                <button *ngIf="permissions.CanDelete" cDropdownItem [cModalToggle]="deleteUserModal.id">
+                <button
+                  *ngIf="permissions.CanDelete"
+                  cDropdownItem
+                  [cModalToggle]="deleteUserModal.id"
+                >
                   Delete
                 </button>
               </li>
@@ -108,17 +128,54 @@
       </tr>
     </tbody>
   </table>
-  
+
+  <div class="pagination">
+    <button
+      class="pagination-button"
+      (click)="onPageChangePrevious()"
+      [disabled]="currentPage === '1'"
+    >
+      << Previous
+    </button>
+    <div *ngFor="let page of getPaginationRange(currentPage, totalPages); let i = index" class="page-item">
+      <button *ngIf="page !== '...'" (click)="onPageChange(page)" [class.active]="currentPage === page.toString()">
+        {{ page }}
+      </button>
+      <span *ngIf="page === '...'">{{ page }}</span>
+    </div>
+    <button
+      class="pagination-button"
+      (click)="onPageChangeNext()"
+      [disabled]="currentPage === totalPages.toString()"
+    >
+      Next >>
+    </button>
+  </div>
+
   <!-- Modal -->
-  
+
   <!-- View User Modal -->
-  <c-modal size="lg" [scrollable]="true" alignment="center" #viewUserModal id="viewUserModal" scrollable>
+  <c-modal
+    size="lg"
+    [scrollable]="true"
+    alignment="center"
+    #viewUserModal
+    id="viewUserModal"
+    scrollable
+  >
     <c-modal-header>
       <h5 cModalTitle>View User Details</h5>
-      <button class="btn-close" [cModalToggle]="viewUserModal.id" cButtonClose></button>
+      <button
+        class="btn-close"
+        [cModalToggle]="viewUserModal.id"
+        cButtonClose
+      ></button>
     </c-modal-header>
     <c-modal-body>
-      <div class="modal-content-grid" *ngIf="selectedUser$ | async as selectedUser">
+      <div
+        class="modal-content-grid"
+        *ngIf="selectedUser$ | async as selectedUser"
+      >
         <div class="user-details">
           <ng-container>
             <p>Username: {{ selectedUser.Username }}</p>
@@ -132,109 +189,212 @@
           </ng-container>
         </div>
         <div class="date-details">
-          <p>Created By: {{ selectedUser.CreatedBy || 'N/A' }}</p>
-          <p>Updated By: {{ selectedUser.UpdatedBy || 'N/A' }}</p>
+          <p>Created By: {{ selectedUser.CreatedBy || "N/A" }}</p>
+          <p>Updated By: {{ selectedUser.UpdatedBy || "N/A" }}</p>
           <mat-form-field appearance="fill">
             <mat-label>Created At</mat-label>
-            <input matInput [matDatepicker]="createdAtPicker" [value]="selectedUser.CreatedAt | date:'yyyy-MM-dd'" disabled>
-            <mat-datepicker-toggle matSuffix [for]="createdAtPicker"></mat-datepicker-toggle>
+            <input
+              matInput
+              [matDatepicker]="createdAtPicker"
+              [value]="selectedUser.CreatedAt | date : 'yyyy-MM-dd'"
+              disabled
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="createdAtPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #createdAtPicker disabled></mat-datepicker>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>Last Login</mat-label>
-            <input matInput [matDatepicker]="lastLoginPicker" [value]="selectedUser.LastLogin | date:'yyyy-MM-dd'" disabled>
-            <mat-datepicker-toggle matSuffix [for]="lastLoginPicker"></mat-datepicker-toggle>
+            <input
+              matInput
+              [matDatepicker]="lastLoginPicker"
+              [value]="selectedUser.LastLogin | date : 'yyyy-MM-dd'"
+              disabled
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="lastLoginPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #lastLoginPicker disabled></mat-datepicker>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>Updated At</mat-label>
-            <input matInput [matDatepicker]="updatedAtPicker" [value]="selectedUser.UpdatedAt | date:'yyyy-MM-dd'" disabled>
-            <mat-datepicker-toggle matSuffix [for]="updatedAtPicker"></mat-datepicker-toggle>
+            <input
+              matInput
+              [matDatepicker]="updatedAtPicker"
+              [value]="selectedUser.UpdatedAt | date : 'yyyy-MM-dd'"
+              disabled
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="updatedAtPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #updatedAtPicker disabled></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
     </c-modal-body>
   </c-modal>
-  
+
   <!-- Edit User Modal -->
-  <c-modal size="lg" [scrollable]="true" alignment="center" #editUserModal id="editUserModal" scrollable>
+  <c-modal
+    size="lg"
+    [scrollable]="true"
+    alignment="center"
+    #editUserModal
+    id="editUserModal"
+    scrollable
+  >
     <c-modal-header>
       <h5 cModalTitle>Edit User Details</h5>
-      <button class="btn-close" [cModalToggle]="editUserModal.id" cButtonClose></button>
+      <button
+        class="btn-close"
+        [cModalToggle]="editUserModal.id"
+        cButtonClose
+      ></button>
     </c-modal-header>
     <c-modal-body>
-    <form [formGroup]="editUserFormGroup">
+      <form [formGroup]="editUserFormGroup">
         <div class="mb-3">
           <label for="editUsername" class="form-label">Username</label>
-          <input type="text" class="form-control" id="editUsername" formControlName="Username" placeholder="Username">
+          <input
+            type="text"
+            class="form-control"
+            id="editUsername"
+            formControlName="Username"
+            placeholder="Username"
+          />
         </div>
         <div class="mb-3">
           <label for="editFirstName" class="form-label">First Name</label>
-          <input type="text" class="form-control" id="editFirstName" formControlName="FirstName" placeholder="First Name">
+          <input
+            type="text"
+            class="form-control"
+            id="editFirstName"
+            formControlName="FirstName"
+            placeholder="First Name"
+          />
         </div>
         <div class="mb-3">
           <label for="editLastName" class="form-label">Last Name</label>
-          <input type="text" class="form-control" id="editLastName" formControlName="LastName" placeholder="Last Name">
+          <input
+            type="text"
+            class="form-control"
+            id="editLastName"
+            formControlName="LastName"
+            placeholder="Last Name"
+          />
         </div>
         <div class="mb-3">
           <label for="editEmail" class="form-label">Email</label>
-          <input type="email" class="form-control" id="editEmail" formControlName="Email" placeholder="Email">
+          <input
+            type="email"
+            class="form-control"
+            id="editEmail"
+            formControlName="Email"
+            placeholder="Email"
+          />
         </div>
         <div class="mb-3">
           <label for="editGender" class="form-label">Gender</label>
-          <input type="text" class="form-control" id="editGender" formControlName="Gender" placeholder="Gender">
+          <input
+            type="text"
+            class="form-control"
+            id="editGender"
+            formControlName="Gender"
+            placeholder="Gender"
+          />
         </div>
         <div class="mb-3">
           <label for="editPhoneNumber" class="form-label">Phone Number</label>
-          <input type="tel" class="form-control" id="editPhoneNumber" formControlName="PhoneNumber" placeholder="Phone Number">
+          <input
+            type="tel"
+            class="form-control"
+            id="editPhoneNumber"
+            formControlName="PhoneNumber"
+            placeholder="Phone Number"
+          />
         </div>
         <div class="mb-3">
           <label for="editRole" class="form-label">Role</label>
-          <input type="text" class="form-control" id="editRole" formControlName="UserRole" placeholder="Role">
+          <select class="form-select" id="editRole" formControlName="UserRole">
+            <option selected>Select Role</option>
+            <option value="SuperAdmin">SuperAdmin</option>
+            <option value="Admin">Admin</option>
+          </select>
         </div>
         <div class="mb-3">
           <label for="editActive" class="form-label">Active</label>
-          <select class="form-control" id="editActive" formControlName="IsActive">
+          <select
+            class="form-control"
+            id="editActive"
+            formControlName="IsActive"
+          >
             <option [ngValue]="1">Yes</option>
             <option [ngValue]="0">No</option>
           </select>
         </div>
-  
+
         <!-- Date Fields -->
         <div class="mb-3">
           <mat-form-field appearance="fill">
             <mat-label>Created At</mat-label>
-            <input matInput [matDatepicker]="editCreatedAtPicker" formControlName="CreatedAt">
-            <mat-datepicker-toggle matSuffix [for]="editCreatedAtPicker"></mat-datepicker-toggle>
+            <input
+              matInput
+              [matDatepicker]="editCreatedAtPicker"
+              formControlName="CreatedAt"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="editCreatedAtPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #editCreatedAtPicker></mat-datepicker>
           </mat-form-field>
         </div>
         <div class="mb-3">
           <mat-form-field appearance="fill">
             <mat-label>Last Login</mat-label>
-            <input matInput [matDatepicker]="editLastLoginPicker" formControlName="LastLogin">
-            <mat-datepicker-toggle matSuffix [for]="editLastLoginPicker"></mat-datepicker-toggle>
+            <input
+              matInput
+              [matDatepicker]="editLastLoginPicker"
+              formControlName="LastLogin"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="editLastLoginPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #editLastLoginPicker></mat-datepicker>
           </mat-form-field>
         </div>
         <div class="mb-3">
           <mat-form-field appearance="fill">
             <mat-label>Updated At</mat-label>
-            <input matInput [matDatepicker]="editUpdatedAtPicker" formControlName="UpdatedAt">
-            <mat-datepicker-toggle matSuffix [for]="editUpdatedAtPicker"></mat-datepicker-toggle>
+            <input
+              matInput
+              [matDatepicker]="editUpdatedAtPicker"
+              formControlName="UpdatedAt"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="editUpdatedAtPicker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #editUpdatedAtPicker></mat-datepicker>
           </mat-form-field>
         </div>
       </form>
     </c-modal-body>
     <c-modal-footer>
-      <button [cModalToggle]="editUserModal.id" cButton color="secondary">Cancel</button>
-      <button cButton color="primary" (click)="saveChanges()">Save Changes</button>
+      <button [cModalToggle]="editUserModal.id" cButton color="secondary">
+        Cancel
+      </button>
+      <button cButton color="primary" (click)="saveChanges()">
+        Save Changes
+      </button>
     </c-modal-footer>
   </c-modal>
-  
-  
+
   <!-- Delete User Modal -->
   <c-modal
     size="lg"
@@ -246,7 +406,11 @@
   >
     <c-modal-header>
       <h5 cModalTitle>Confirm User Deletion</h5>
-      <button class="btn-close" [cModalToggle]="deleteUserModal.id" cButtonClose></button>
+      <button
+        class="btn-close"
+        [cModalToggle]="deleteUserModal.id"
+        cButtonClose
+      ></button>
     </c-modal-header>
     <c-modal-body>
       Are you sure you want to delete this user? This action cannot be undone.
@@ -258,45 +422,93 @@
       <button cButton color="danger">Delete</button>
     </c-modal-footer>
   </c-modal>
-  
-  <c-modal size="lg" [scrollable]="true" alignment="center" #addUserModal id="addUserModal">
+
+  <c-modal
+    size="lg"
+    [scrollable]="true"
+    alignment="center"
+    #addUserModal
+    id="addUserModal"
+  >
     <c-modal-header>
       <h5 cModalTitle>Add New User</h5>
-      <button class="btn-close" type="button" cButtonClose [cModalToggle]="addUserModal.id"></button>
+      <button
+        class="btn-close"
+        type="button"
+        cButtonClose
+        [cModalToggle]="addUserModal.id"
+      ></button>
     </c-modal-header>
     <c-modal-body>
       <form [formGroup]="addUserForm">
         <div class="mb-3">
           <label for="userName" class="form-label">Username</label>
-          <input type="text" class="form-control" id="userName" formControlName="Username" placeholder="Username">
+          <input
+            type="text"
+            class="form-control"
+            id="userName"
+            formControlName="Username"
+            placeholder="Username"
+          />
         </div>
         <div class="mb-3">
           <label for="userPassword" class="form-label">Password</label>
-          <input type="password" class="form-control" id="userPassword" formControlName="UserPassword" placeholder="Password">
+          <input
+            type="password"
+            class="form-control"
+            id="userPassword"
+            formControlName="UserPassword"
+            placeholder="Password"
+          />
         </div>
         <div class="mb-3">
           <label for="firstName" class="form-label">First Name</label>
-          <input type="text" class="form-control" id="firstName" formControlName="FirstName" placeholder="First Name">
+          <input
+            type="text"
+            class="form-control"
+            id="firstName"
+            formControlName="FirstName"
+            placeholder="First Name"
+          />
         </div>
         <div class="mb-3">
           <label for="lastName" class="form-label">Last Name</label>
-          <input type="text" class="form-control" id="lastName" formControlName="LastName" placeholder="Last Name">
+          <input
+            type="text"
+            class="form-control"
+            id="lastName"
+            formControlName="LastName"
+            placeholder="Last Name"
+          />
         </div>
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="email" formControlName="Email" placeholder="Email">
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            formControlName="Email"
+            placeholder="Email"
+          />
         </div>
         <div class="mb-3">
-          <label for="phoneNumber" class="form-label">Phone Number (Optional)</label>
-          <input type="tel" class="form-control" id="phoneNumber" formControlName="PhoneNumber" placeholder="Phone Number">
+          <label for="phoneNumber" class="form-label"
+            >Phone Number (Optional)</label
+          >
+          <input
+            type="tel"
+            class="form-control"
+            id="phoneNumber"
+            formControlName="PhoneNumber"
+            placeholder="Phone Number"
+          />
         </div>
         <div class="mb-3">
           <label for="userRole" class="form-label">Role</label>
           <select class="form-select" id="userRole" formControlName="UserRole">
             <option selected>Select Role</option>
-            <option value="Admin">Admin</option>
             <option value="SuperAdmin">SuperAdmin</option>
-            <option value="Supervisor">Supervisor</option>
+            <option value="Admin">Admin</option>
           </select>
         </div>
         <div class="mb-3">
@@ -317,9 +529,10 @@
       </form>
     </c-modal-body>
     <c-modal-footer>
-      <button type="button" cButton [cModalToggle]="addUserModal.id">Close</button>
+      <button type="button" cButton [cModalToggle]="addUserModal.id">
+        Close
+      </button>
       <button type="button" cButton (click)="createUser()">Save User</button>
     </c-modal-footer>
   </c-modal>
 </div>
-
