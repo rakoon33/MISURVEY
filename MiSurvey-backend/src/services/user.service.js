@@ -90,12 +90,14 @@ const createUser = async (userData) => {
     return {
       status: true,
       message: "User created successfully",
+      userID: newUser.UserID
     };
   } catch (error) {
+    console.error("Error details:", error);
     return {
       status: false,
       message: error.message || "User creation failed",
-      error: error?.toString(),
+      error: error.errors ? error.errors.map(e => e.message).join(", ") : error.toString(),
     };
   }
 };
