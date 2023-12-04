@@ -20,11 +20,12 @@ enum UserManagementActionTypes {
 }
 
 export const loadUsersRequest = createAction(
-  UserManagementActionTypes.LOAD_USERS_REQUEST
+  UserManagementActionTypes.LOAD_USERS_REQUEST,
+  props<{ page: number, pageSize: number }>()
 );
 export const loadUsersSuccess = createAction(
   UserManagementActionTypes.LOAD_USERS_SUCCESS,
-  props<{ users: User[] }>()
+  props<{ users: User[], totalUsers: number }>()
 );
 export const loadUsersFailure = createAction(
   UserManagementActionTypes.LOAD_USERS_FAILURE,

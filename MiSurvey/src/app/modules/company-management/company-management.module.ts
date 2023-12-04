@@ -16,11 +16,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {
   AvatarModule,
   ButtonGroupModule,
-  ButtonModule,
   DropdownModule,
-  FormModule,
   ModalModule,
-  ProgressModule,
   TableModule,
   CardModule,
   GridModule,

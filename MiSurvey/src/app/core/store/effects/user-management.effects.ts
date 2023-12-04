@@ -9,28 +9,29 @@ import { UserManagementService } from '../../services';
 @Injectable()
 export class UserManagementEffects {
   loadUsers$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(userManagementActions.loadUsersRequest),
-      switchMap(() =>
-        this.userManagementService.getUsers().pipe(
-          map((response) => {
-            if (response.status) {
-              return userManagementActions.loadUsersSuccess({
-                users: response.data,
-              });
-            } else {
-              this.toastrService.error('Failed to load users');
-              return userManagementActions.loadUsersFailure();
-            }
-          }),
-          catchError((error) => {
-            this.toastrService.error('An error occurred while loading users');
-            return of(userManagementActions.loadUsersFailure());
-          })
-        )
+  this.actions$.pipe(
+    ofType(userManagementActions.loadUsersRequest),
+    switchMap((action) =>
+      this.userManagementService.getUsers(action.page, action.pageSize).pipe(
+        map((response) => {
+          if (response.status) {
+            return userManagementActions.loadUsersSuccess({
+              users: response.data,
+              totalUsers: response.total,
+            });
+          } else {
+            this.toastrService.error('Failed to load users');
+            return userManagementActions.loadUsersFailure();
+          }
+        }),
+        catchError((error) => {
+          this.toastrService.error('An error occurred while loading users');
+          return of(userManagementActions.loadUsersFailure());
+        })
       )
     )
-  );
+  )
+);
 
   loadUserById$ = createEffect(() =>
     this.actions$.pipe(

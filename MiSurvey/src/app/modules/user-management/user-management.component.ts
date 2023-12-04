@@ -2,14 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { User, Permission } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
-import {
-  Observable,
-  Subscription,
-  combineLatest,
-  filter,
-  map,
-  take,
-} from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
 import { userManagementActions } from 'src/app/core/store/actions';
 import {
   userManagementSelector,
@@ -18,6 +11,8 @@ import {
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
+import { ActivatedRoute, Router } from '@angular/router';
+
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
@@ -25,6 +20,11 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class UserManagementComponent implements OnInit {
   private subscription = new Subscription();
+  
+  totalPages: number = 1;
+  totalUsers: number = 1;
+  pageSize: number = 1;
+  currentPage: string = '1';
 
   currentAction: 'view' | 'edit' | null = null;
   currentSelectedUserId: number | undefined;
@@ -47,7 +47,9 @@ export class UserManagementComponent implements OnInit {
   constructor(
     private store: Store,
     private toastr: ToastrService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     // Initialize the FormGroup and set up form controls
     this.editUserFormGroup = new FormGroup({
@@ -123,11 +125,90 @@ export class UserManagementComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.dispatch(userManagementActions.loadUsersRequest());
+    this.route.queryParams.subscribe((params) => {
+      this.currentPage = params['page'] || 1;
+      this.pageSize = params['pageSize'] || 2;
+      this.loadUsers();
+    });
+    this.totalPages = Math.ceil(this.totalUsers / this.pageSize);
     this.store
-      .select(userSelector.selectCurrentUser)
+      .select(userManagementSelector.selectCurrentUser)
       .subscribe((id) => (this.currentUserId = id?.UserID));
   }
+
+  getPaginationRange(currentPageStr: string, totalPages: number, siblingCount = 1): Array<number|string> {
+    const currentPage = parseInt(currentPageStr, 10);
+    const range = [];
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+  
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
+  
+    // Always include the first page
+    range.push(1);
+  
+    if (shouldShowLeftDots) {
+      range.push('...');
+    }
+  
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+      if (i !== 1 && i !== totalPages) {
+        range.push(i);
+      }
+    }
+  
+    if (shouldShowRightDots) {
+      range.push('...');
+    }
+  
+    // Always include the last page
+    if (totalPages !== 1) {
+      range.push(totalPages);
+    }
+  
+    return range;
+  }
+  
+
+  loadUsers() {
+    this.store.dispatch(
+      userManagementActions.loadUsersRequest({
+        page: Number(this.currentPage),
+        pageSize: this.pageSize,
+      })
+    );
+
+    this.store.select(userManagementSelector.selectCurrentTotalUsers).subscribe(
+      (totalUsers) => {
+        this.totalUsers = totalUsers;
+        this.totalPages = Math.ceil(this.totalUsers / this.pageSize);
+      }
+    );
+  }
+  onPageChange(page:  number | string) {
+    const pageNumber = typeof page === 'string' ? parseInt(page, 10) : page
+    this.router.navigate(['/user-management'], {
+      queryParams: { page: pageNumber, pageSize: this.pageSize },
+    });
+    this.loadUsers();
+  }
+
+  
+  onPageChangeNext() {
+    this.router.navigate(['/user-management'], {
+      queryParams: { page: Number(this.currentPage) + 1, pageSize: this.pageSize },
+    });
+    this.loadUsers();
+  }
+
+  onPageChangePrevious() {
+    this.router.navigate(['/user-management'], {
+      queryParams: { page: Number(this.currentPage) - 1, pageSize: this.pageSize },
+    });
+    this.loadUsers();
+  }
+  
 
   private loadUserDataIntoForm(user: User) {
     if (this.currentAction === 'edit') {
@@ -159,8 +240,8 @@ export class UserManagementComponent implements OnInit {
   }
 
   createUser() {
-    console.log(this.addUserForm.valid)
-    console.log(this.currentUserId)
+    console.log(this.addUserForm.valid);
+    console.log(this.currentUserId);
     if (this.addUserForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addUserForm.value,
@@ -170,6 +251,7 @@ export class UserManagementComponent implements OnInit {
       this.store.dispatch(
         userManagementActions.createUserRequest({ userData: formData })
       );
+      this.loadUsers();
     } else {
       this.toastr.error('Form is not valid or user ID is not available');
     }
@@ -190,12 +272,12 @@ export class UserManagementComponent implements OnInit {
           userData: formValue,
         })
       );
-      this.store.dispatch(userManagementActions.loadUsersRequest());
       this.store.dispatch(
         userManagementActions.loadUserByIdRequest({
           UserID: this.currentUserId,
         })
       );
+      this.loadUsers();
     } else {
       // Handle form invalid or user ID not set
       this.toastr.error('Form is invalid or user ID is not set');

@@ -31,7 +31,6 @@ export class LoginComponent implements OnDestroy {
     this.subscription.add(
       this.store.select(authSelector.selectCurrentAuth).subscribe(isAuthenticated => {
         if (isAuthenticated) {
-          this.toastr.success("Login successfully");
           this.router.navigate(['/dashboard']); // Điều hướng sau khi đăng nhập thành công
         }
       })

@@ -74,6 +74,8 @@ export function playerFactory() {
   return import('lottie-web');
 }
 
+// pagination
+
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
