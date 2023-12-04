@@ -11,8 +11,6 @@ const router = express.Router();
  *   get:
  *     summary: Retrieve the company profile
  *     tags: [Company]
- *     security:
- *       - jwt: []
  *     responses:
  *       200:
  *         description: Company profile retrieved successfully.
@@ -51,14 +49,20 @@ const router = express.Router();
  *         CompanyName:
  *           type: string
  *           description: Name of the company.
- * 
+ */
+router
+    .route('/companyProfile')
+    .get(authMiddleware.tokenVerification, companyController.getCompanyProfileController)
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Company
  * /api/companies/companyProfile/{CompanyID}:
  *   put:
  *     summary: Update a specific company's profile
  *     tags:
  *       - Company
- *     security:
- *       - jwt: []
  *     parameters:
  *       - in: path
  *         name: CompanyID
@@ -117,9 +121,8 @@ const router = express.Router();
  *                   example: "Invalid input parameters or malformed syntax."
  */
 router
-    .route('/companyProfile')
-    .get(authMiddleware.tokenVerification, companyController.getCompanyProfileController)
-    .put(authMiddleware.tokenVerification, companyController.updateCompanyController);
+    .route('/companyProfile/:CompanyID')
+    .put(authMiddleware.tokenVerification, companyController.updateCompanyController); // chưa xài
 
 /**
  * @swagger
@@ -127,8 +130,6 @@ router
  *   get:
  *     summary: Search for companies
  *     tags: [Company]
- *     security:
- *       - jwt: []
  *     parameters:
  *       - in: query
  *         name: companyName
@@ -188,8 +189,6 @@ router
  *   get:
  *     summary: Get a list of all companies
  *     tags: [Company]
- *     security:
- *       - jwt: []
  *     responses:
  *       200:
  *         description: A list of companies
@@ -216,8 +215,6 @@ router
  *   post:
  *     summary: Create a new company
  *     tags: [Company]
- *     security:
- *       - jwt: []
  *     requestBody:
  *       required: true
  *       content:
@@ -318,8 +315,6 @@ router.route('/')
  *     summary: Delete a specific company
  *     tags:
  *       - Company
- *     security:
- *       - jwt: []
  *     parameters:
  *       - in: path
  *         name: CompanyID
@@ -359,8 +354,6 @@ router.route('/')
  *     summary: Retrieve a specific company's profile
  *     tags:
  *       - Company
- *     security:
- *       - jwt: []
  *     parameters:
  *       - in: path
  *         name: CompanyID
@@ -399,8 +392,6 @@ router.route('/')
  *     summary: Update the details of an existing company
  *     tags:
  *       - Company
- *     security:
- *       - jwt: []
  *     parameters:
  *       - in: path
  *         name: CompanyID
