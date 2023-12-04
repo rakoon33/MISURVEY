@@ -98,16 +98,6 @@ export class UserManagementComponent implements OnInit {
         })
     );
 
-    this.subscription.add(
-      this.store
-        .select(userManagementSelector.selectCurrentUseManagementError)
-        .subscribe((error) => {
-          if (error) {
-            this.toastr.error(error.message);
-          }
-        })
-    );
-
     this.userPermissions$ = combineLatest([
       this.store.select(userSelector.selectCurrentUser),
       this.store.select(
@@ -169,6 +159,8 @@ export class UserManagementComponent implements OnInit {
   }
 
   createUser() {
+    console.log(this.addUserForm.valid)
+    console.log(this.currentUserId)
     if (this.addUserForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addUserForm.value,

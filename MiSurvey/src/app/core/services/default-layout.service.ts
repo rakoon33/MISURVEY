@@ -16,23 +16,19 @@ export class DefaultLayoutService {
   logout(): Observable<any> {
     return this.http.post<{message: string}>(`${this.apiUrl}`, {}, { withCredentials: true })
       .pipe(
-        catchError(this.handleError) // Use your existing error handling
+        catchError(this.handleError) 
       );
   }
   
   // Hàm xử lý lỗi tập trung
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
-      // Một lỗi client-side hoặc lỗi mạng xảy ra. Xử lý nó theo cách phù hợp.
       console.error('An error occurred:', error.error.message);
     } else {
-      // Server trả về một mã phản hồi không thành công.
-      // Phản ứng lại dựa trên mã phản hồi và dữ liệu phản hồi.
       console.error(
         `Backend returned code ${error.status}, ` +
         `body was: ${error.error}`);
     }
-    // Trả về một Observable với thông điệp lỗi người dùng thân thiện
     return throwError(
       'Something bad happened; please try again later.');
   }

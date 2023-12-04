@@ -28,6 +28,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+import { ShareModule } from 'src/app/shared/share.module';
 
 @NgModule({
   imports: [
@@ -49,7 +50,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    
+    ShareModule
   ],
   declarations: [
     UserManagementComponent,  

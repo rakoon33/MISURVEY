@@ -20,7 +20,6 @@ export const loginSuccess = createAction(
 
 export const loginFailure = createAction(
   AuthActionTypes.LOGIN_FAILURE,
-  props<{ error: string }>()
 );
 
 export const logoutRequest = createAction(
@@ -29,7 +28,6 @@ export const logoutRequest = createAction(
 
 export const logoutFailure = createAction(
   AuthActionTypes.LOGOUT_FAILURE,
-  props<{ error: string }>()
 );
 
 export const logoutSuccess = createAction(

@@ -1,20 +1,32 @@
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
-const { User, CompanyUser, Company, IndividualPermission, RolePermission, Module } = require("../models");
+const {
+  User,
+  CompanyUser,
+  Company,
+  IndividualPermission,
+  RolePermission,
+  Module,
+} = require("../models");
 
-const getUserData = async (userId) => {
+const getUserData = async (userId, userRole) => {
   try {
     const userDetails = await User.findByPk(userId);
     if (!userDetails) {
       return {
         status: false,
         message: "User not found",
-      }
+      };
     }
-
-    // Destructure to separate the UserPassword and the rest of the userDetails
     const { UserPassword, ...userDetailsWithoutPassword } =
       userDetails.dataValues;
+
+    if (userRole === "SuperAdmin" || userRole === "Admin") {
+      return {
+        status: true,
+        userDetails: userDetailsWithoutPassword,
+      };
+    }
 
     const companyUser = await CompanyUser.findOne({
       where: { UserID: userId },
@@ -23,7 +35,7 @@ const getUserData = async (userId) => {
       return {
         status: false,
         message: "Company not found",
-      }
+      };
     }
 
     let permissionsMap = {};
@@ -78,12 +90,14 @@ const createUser = async (userData) => {
     return {
       status: true,
       message: "User created successfully",
+      userID: newUser.UserID
     };
   } catch (error) {
+    console.error("Error details:", error);
     return {
       status: false,
       message: error.message || "User creation failed",
-      error: error?.toString(),
+      error: error.errors ? error.errors.map(e => e.message).join(", ") : error.toString(),
     };
   }
 };
@@ -189,13 +203,15 @@ const getAllUsers = async (requestingUserRole, requestingUserCompanyId) => {
     };
 
     // Áp dụng lọc người dùng dựa trên CompanyID chỉ khi người dùng không phải là SuperAdmin
-    if (requestingUserRole !== 'SuperAdmin') {
-      queryOptions.include = [{
-        model: CompanyUser,
-        as: 'CompanyUsers', // Sử dụng bí danh 'CompanyUsers'
-        attributes: [],
-        where: { CompanyID: requestingUserCompanyId },
-      }];
+    if (requestingUserRole !== "SuperAdmin") {
+      queryOptions.include = [
+        {
+          model: CompanyUser,
+          as: "CompanyUsers", // Sử dụng bí danh 'CompanyUsers'
+          attributes: [],
+          where: { CompanyID: requestingUserCompanyId },
+        },
+      ];
     }
 
     const users = await User.findAll(queryOptions);
