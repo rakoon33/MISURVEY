@@ -3,7 +3,8 @@ const companyController = require('./company.controller');
 const companyRoleController = require('./companyrole.controller');
 const userController = require('./user.controller')
 const moduleController = require('./module.controller');
-const individualPermissionController = require('./individualPermission.controller')
+const individualPermissionController = require('./individualPermission.controller');
+const companyUserController = require('./companyUser.controller');
 
 module.exports = {
     authController,
@@ -11,6 +12,7 @@ module.exports = {
     userController,
     companyRoleController,
     moduleController,
-    individualPermissionController
+    individualPermissionController,
+    companyUserController
   // ...other models
 };

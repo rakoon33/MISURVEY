@@ -59,11 +59,21 @@ CompanyUser.belongsTo(User, {
 // Company and CompanyUser associations
 Company.hasMany(CompanyUser, {
   foreignKey: 'CompanyID',
-  as: 'CompanyUsers'
+  as: 'CompanyUsers1'
 });
 CompanyUser.belongsTo(Company, {
   foreignKey: 'CompanyID',
   as: 'Company'
+});
+
+//CompanyUser vs CompanyRole
+CompanyUser.belongsTo(CompanyRole, {
+  foreignKey: 'CompanyRoleID',
+  as: 'CompanyRole1'
+});
+CompanyRole.hasMany(CompanyUser, {
+  foreignKey: 'CompanyRoleID',
+  as: 'CompanyUsers2'
 });
 
 // CompanyRole and RolePermission
