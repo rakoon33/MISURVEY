@@ -5,7 +5,6 @@ import { UserManagementState } from '../states';
 export const initialState: UserManagementState = {
   users: [],
   loading: false,
-  error: null,
   selectedUser: null,
 };
 
@@ -14,47 +13,44 @@ export const userManagementReducer = createReducer(
   on(userManagementActions.loadUsersRequest, (state) => ({
     ...state,
     loading: true,
-    error: null, // Reset the error on new request
   })),
   on(userManagementActions.loadUsersSuccess, (state, { users }) => ({
     ...state,
     users: users,
     loading: false,
-    error: null,
   })),
-  on(userManagementActions.loadUsersFailure, (state, { error }) => ({
+  on(userManagementActions.loadUsersFailure, (state) => ({
     ...state,
     loading: false,
-    error: { message: error, timestamp: new Date() },
+  })),
+  on(userManagementActions.loadUserByIdRequest, (state) => ({
+    ...state,
+    loading: true,
   })),
   on(userManagementActions.loadUserByIdSuccess, (state, { user }) => ({
     ...state,
     selectedUser: user,
-    error: null,
+    loading: false,
   })),
-  on(userManagementActions.loadUserByIdFailure, (state, { error }) => ({
+  on(userManagementActions.loadUserByIdFailure, (state) => ({
     ...state,
-    error: { message: error, timestamp: new Date() },
     selectedUser: null,
+    loading: false,
   })),
   on(userManagementActions.updateUserRequest, (state) => ({
     ...state,
     loading: true,
-    error: null, // Reset the error on new request
   })),
-
   on(userManagementActions.updateUserSuccess, (state, { user }) => ({
     ...state,
     users: state.users.map((u) => (u.UserID === user.UserID ? user : u)),
     loading: false,
     selectedUser: user, 
-    error: null,
   })),
 
-  on(userManagementActions.updateUserFailure, (state, { error }) => ({
+  on(userManagementActions.updateUserFailure, (state) => ({
     ...state,
     loading: false,
-    error: error, // Capture error information
   })),
   on(userManagementActions.createUserRequest, (state) => ({
     ...state,
@@ -63,11 +59,9 @@ export const userManagementReducer = createReducer(
   on(userManagementActions.createUserSuccess, (state) => ({
     ...state,
     loading: false,
-    error: null,
   })),
-  on(userManagementActions.createUserFailure, (state, { error }) => ({
+  on(userManagementActions.createUserFailure, (state) => ({
     ...state,
     loading: false,
-    error: error,
   }))
 );

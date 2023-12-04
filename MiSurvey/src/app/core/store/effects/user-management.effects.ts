@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { userManagementActions } from '../actions';
 import { UserManagementService } from '../../services';
 
@@ -18,18 +19,19 @@ export class UserManagementEffects {
                 users: response.data,
               });
             } else {
-              return userManagementActions.loadUsersFailure({
-                error: response.message,
-              });
+              this.toastrService.error('Failed to load users');
+              return userManagementActions.loadUsersFailure();
             }
           }),
-          catchError((error) =>
-            of(userManagementActions.loadUsersFailure({ error }))
-          )
+          catchError((error) => {
+            this.toastrService.error('An error occurred while loading users');
+            return of(userManagementActions.loadUsersFailure());
+          })
         )
       )
     )
   );
+
   loadUserById$ = createEffect(() =>
     this.actions$.pipe(
       ofType(userManagementActions.loadUserByIdRequest),
@@ -41,14 +43,16 @@ export class UserManagementEffects {
                 user: response.data,
               });
             } else {
-              return userManagementActions.loadUserByIdFailure({
-                error: response.message,
-              });
+              this.toastrService.error('Failed to load user details');
+              return userManagementActions.loadUserByIdFailure();
             }
           }),
-          catchError((error) =>
-            of(userManagementActions.loadUserByIdFailure({ error }))
-          )
+          catchError((error) => {
+            this.toastrService.error(
+              'An error occurred while loading user details'
+            );
+            return of(userManagementActions.loadUserByIdFailure());
+          })
         )
       )
     )
@@ -63,18 +67,19 @@ export class UserManagementEffects {
           .pipe(
             map((response) => {
               if (response.status) {
+                this.toastrService.success('User updated successfully');
                 return userManagementActions.updateUserSuccess({
                   user: response.data,
                 });
               } else {
-                return userManagementActions.updateUserFailure({
-                  error: response.message,
-                });
+                this.toastrService.error(response.message || 'Update failed');
+                return userManagementActions.updateUserFailure();
               }
             }),
-            catchError((error) =>
-              of(userManagementActions.updateUserFailure({ error }))
-            )
+            catchError((error) => {
+              this.toastrService.error('An error occurred');
+              return of(userManagementActions.updateUserFailure());
+            })
           )
       )
     )
@@ -85,18 +90,19 @@ export class UserManagementEffects {
       ofType(userManagementActions.createUserRequest),
       switchMap((action) =>
         this.userManagementService.createUser(action.userData).pipe(
-          map((response) =>
-            response.status
-              ? userManagementActions.createUserSuccess()
-              : userManagementActions.createUserFailure({
-                  error: response.message,
-                })
-          ),
-          catchError((error) =>
-            of(
-              userManagementActions.createUserFailure({ error })
-            )
-          )
+          map((response) => {
+            if (response.status) {
+              this.toastrService.success('User created successfully');
+              return userManagementActions.createUserSuccess();
+            } else {
+              this.toastrService.error(response.message || 'Creation failed');
+              return userManagementActions.createUserFailure();
+            }
+          }),
+          catchError((error) => {
+            this.toastrService.error('An error occurred');
+            return of(userManagementActions.createUserFailure());
+          })
         )
       )
     )
@@ -104,6 +110,7 @@ export class UserManagementEffects {
 
   constructor(
     private actions$: Actions,
-    private userManagementService: UserManagementService
+    private userManagementService: UserManagementService,
+    private toastrService: ToastrService
   ) {}
 }

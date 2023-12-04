@@ -18,7 +18,6 @@ export const getUserDataSuccess = createAction(
 
 export const getUserDataFailure = createAction(
   UserActionTypes.GET_USER_DATA_FAILURE,
-  props<{ error: string }>()
 );
 
 export type UserActions =

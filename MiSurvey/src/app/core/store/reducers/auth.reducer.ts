@@ -5,7 +5,6 @@ import { AuthState } from '../states';
 
 export const initialAuthState: AuthState = {
   isAuthenticated: false,
-  error: null,
   loading: false,
 };
 
@@ -18,16 +17,14 @@ export const authReducer = createReducer(
     loading: false,
     error: null,
   })),
-  on(authActions.loginFailure, (state, { error }) => ({
+  on(authActions.loginFailure, (state) => ({
     ...state,
-    error: { message: error, timestamp: new Date() },
     loading: false,
   })),
   on(authActions.logoutRequest, (state) => ({ ...state, loading: true })),
-  on(authActions.logoutFailure, (state, { error }) => ({
+  on(authActions.logoutFailure, (state) => ({
     ...state,
-    error: { message: error, timestamp: new Date() },
     loading: false,
   })),
-  on(authActions.logoutSuccess, (state) => ({ ...initialAuthState, error: null, }))
+  on(authActions.logoutSuccess, (state) => ({ ...initialAuthState }))
 );

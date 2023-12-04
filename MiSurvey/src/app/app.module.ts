@@ -7,6 +7,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { ToastrModule } from 'ngx-toastr';
 
+import { ShareModule } from './shared/share.module';
+
 // Import routing module
 import { AppRoutingModule } from './app-routing.module';
 
@@ -45,7 +47,6 @@ import {
 } from '@coreui/angular';
 
 import { IconModule, IconSetService } from '@coreui/icons-angular';
-import { CustomInputComponent } from './shared/components/custom-input/custom-input.component';
 
 // date time
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -65,6 +66,14 @@ import { AuthEffects, UserEffects, UserManagementEffects} from './core/store/eff
 
 import { ApiDocumentationsComponent } from '@docs-components/api-documentations/api-documentations.component';
 
+// lottie
+
+import { LottieModule } from 'ngx-lottie';
+// Function required for ngx-lottie
+export function playerFactory() {
+  return import('lottie-web');
+}
+
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
@@ -73,11 +82,11 @@ const APP_CONTAINERS = [
   Page500Component,
   LoginComponent,
   RegisterComponent,
-  ApiDocumentationsComponent
+  ApiDocumentationsComponent,
 ];
 
 @NgModule({
-  declarations: [AppComponent, ...APP_CONTAINERS, CustomInputComponent],
+  declarations: [AppComponent, ...APP_CONTAINERS],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -109,6 +118,8 @@ const APP_CONTAINERS = [
     HttpClientModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    ShareModule,
+    LottieModule.forRoot({ player: playerFactory }),
     ToastrModule.forRoot({
       positionClass: 'toast-top-right',
       preventDuplicates: true,

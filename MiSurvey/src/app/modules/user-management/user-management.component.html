@@ -1,3 +1,4 @@
+<app-loading *ngIf="isLoading$ | async"></app-loading>
 <div *ngIf="userPermissions$ | async as permissions">
   <div class="d-flex justify-content-start">
     <button *ngIf="permissions.CanAdd" class="btn-action me-2" [cModalToggle]="addUserModal.id">Create a new user</button>
