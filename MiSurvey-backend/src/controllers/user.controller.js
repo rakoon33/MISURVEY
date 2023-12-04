@@ -87,9 +87,8 @@ const getAllUsersController = async (req, res) => {
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
-  };
+};
   
-
 const searchUserController = async (req, res) => {
   try {
     const { column, searchTerm } = req.query;

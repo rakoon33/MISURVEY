@@ -6,7 +6,7 @@ const router = express.Router();
  * @swagger
  * /api/login:
  *   post:
- *     summary: Login for SuperAdmin
+ *     summary: Login for users
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -172,43 +172,6 @@ router.post('/logout', authController.logoutController);
  *                 error:
  *                   type: string
  *                   description: Detailed error message
- *
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         UserID:
- *           type: integer
- *           description: Unique identifier for the user
- *         Username:
- *           type: string
- *           description: Username for the user account
- *         FirstName:
- *           type: string
- *           description: First name of the user
- *         LastName:
- *           type: string
- *           description: Last name of the user
- *         Email:
- *           type: string
- *           format: email
- *           description: Email address of the user
- *         UserRole:
- *           type: string
- *           description: Role of the user in the system
- *     Company:
- *       type: object
- *       properties:
- *         CompanyID:
- *           type: integer
- *           description: Unique identifier for the company
- *         CompanyName:
- *           type: string
- *           description: Name of the company
- *         AdminID:
- *           type: integer
- *           description: Identifier for the admin user of the company
  */
 router.post('/register', authController.registerUserController);
 
@@ -218,7 +181,7 @@ router.post('/register', authController.registerUserController);
  *   get:
  *     summary: Check permissions for a specific user
  *     tags:
- *       - User
+ *       - Authentication
  *     parameters:
  *       - in: path
  *         name: userId
@@ -255,19 +218,12 @@ router.post('/register', authController.registerUserController);
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
  *                 message:
  *                   type: string
  *                   description: Error message explaining why the request failed
- *       404:
- *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Error message indicating the user does not exist
  */
 router.get('/checkpermissions/:userId', authController.checkPermissionsController);
 
