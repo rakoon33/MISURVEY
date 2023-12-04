@@ -10,8 +10,9 @@ const {
   SurveyResponse,
 } = require("../models");
 const { Op } = require('sequelize');
+const db = require('../config/database');
 
-const createCompany = async (companyData) => {
+/*const createCompany = async (companyData) => {
   try {
     const adminID = companyData.AdminID;
     const user = await User.findOne({
@@ -59,6 +60,57 @@ const createCompany = async (companyData) => {
       status: false,
       message: "Create company failed",
       error: error?.toString(),
+    };
+  }
+};*/
+
+const createCompany = async (companyData) => {
+  const transaction = await db.sequelize.transaction();
+
+  try {
+    const { AdminID } = companyData;
+
+    // Validate if the user exists and is an Admin
+    const user = await User.findOne({ where: { UserID: AdminID } });
+    if (!user) {
+      throw new Error("Admin user not found");
+    }
+    if (user.UserRole !== "Admin") {
+      throw new Error("Only Admin users can create companies");
+    }
+
+    // Check if the Admin already owns a company
+    const existingCompany = await Company.findOne({ where: { AdminID } });
+    if (existingCompany) {
+      throw new Error("Admin already owns a company");
+    }
+
+    // Create the company
+    const newCompany = await Company.create(companyData, { transaction });
+
+    // Set the CompanyRoleID for Admin as 1
+    const adminRoleID = 1;
+
+    // Add Admin as a CompanyUser
+    await CompanyUser.create({
+      UserID: AdminID,
+      CompanyID: newCompany.CompanyID,
+      CompanyRoleID: adminRoleID
+    }, { transaction });
+
+    await transaction.commit();
+
+    return {
+      status: true,
+      message: "Company and Admin CompanyUser created successfully",
+      data: newCompany
+    };
+  } catch (error) {
+    await transaction.rollback();
+    return {
+      status: false,
+      message: error.message || "Failed to create company",
+      error: error.toString()
     };
   }
 };
