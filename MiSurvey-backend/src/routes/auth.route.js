@@ -6,7 +6,7 @@ const router = express.Router();
  * @swagger
  * /api/login:
  *   post:
- *     summary: Login for SuperAdmin
+ *     summary: Login for users
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -218,19 +218,12 @@ router.post('/register', authController.registerUserController);
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
  *                 message:
  *                   type: string
  *                   description: Error message explaining why the request failed
- *       404:
- *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Error message indicating the user does not exist
  */
 router.get('/checkpermissions/:userId', authController.checkPermissionsController);
 

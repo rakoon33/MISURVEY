@@ -49,7 +49,15 @@ const router = express.Router();
  *         CompanyName:
  *           type: string
  *           description: Name of the company.
- * 
+ */
+router
+    .route('/companyProfile')
+    .get(authMiddleware.tokenVerification, companyController.getCompanyProfileController)
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Company
  * /api/companies/companyProfile/{CompanyID}:
  *   put:
  *     summary: Update a specific company's profile
@@ -113,9 +121,8 @@ const router = express.Router();
  *                   example: "Invalid input parameters or malformed syntax."
  */
 router
-    .route('/companyProfile')
-    .get(authMiddleware.tokenVerification, companyController.getCompanyProfileController)
-    .put(authMiddleware.tokenVerification, companyController.updateCompanyController);
+    .route('/companyProfile/:CompanyID')
+    .put(authMiddleware.tokenVerification, companyController.updateCompanyController); // chưa xài
 
 /**
  * @swagger
