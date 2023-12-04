@@ -10,8 +10,6 @@ const router = express.Router();
  *     summary: Get data of current username
  *     tags:
  *       - User
- *     security:
- *       - jwt: []
  *     responses:
  *       200:
  *         description: User data retrieved successfully
@@ -68,8 +66,6 @@ router.get('/getUserData', authMiddleware.tokenVerification, userController.getU
  *     summary: Retrieve the authenticated user's profile
  *     tags:
  *       - User
- *     security:
- *       - jwt: []
  *     responses:
  *       200:
  *         description: User profile retrieved successfully
@@ -97,8 +93,6 @@ router.get('/getUserData', authMiddleware.tokenVerification, userController.getU
  *     summary: Update the profile of the authenticated user
  *     tags:
  *       - User
- *     security:
- *       - jwt: []
  *     parameters:
  *       - in: path
  *         name: UserID

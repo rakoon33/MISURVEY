@@ -181,7 +181,7 @@ router.post('/register', authController.registerUserController);
  *   get:
  *     summary: Check permissions for a specific user
  *     tags:
- *       - User
+ *       - Authentication
  *     parameters:
  *       - in: path
  *         name: userId
