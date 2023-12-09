@@ -13,7 +13,7 @@ export const getUserDataRequest = createAction(
 
 export const getUserDataSuccess = createAction(
   UserActionTypes.GET_USER_DATA_SUCCESS,
-  props<{ user: User, permissions: Permission[] }>()
+  props<{ user: User | null, permissions: Permission[] }>()
 );
 
 export const getUserDataFailure = createAction(

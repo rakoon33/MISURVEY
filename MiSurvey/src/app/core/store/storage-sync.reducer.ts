@@ -2,11 +2,13 @@ import * as featureReducer from './reducers';
 import { ActionReducer, ActionReducerMap, MetaReducer } from '@ngrx/store';
 import { storageSync } from '@larscom/ngrx-store-storagesync';
 import { AppState } from './app.state'; 
+import { routerReducer } from '@ngrx/router-store';
 
 export const reducers: ActionReducerMap<AppState> = {
     feature_user: featureReducer.userReducer,
     feature_auth: featureReducer.authReducer,
     feature_user_management: featureReducer.userManagementReducer,
+    router: routerReducer,
 };
 
   

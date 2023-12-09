@@ -62,6 +62,8 @@ import { environment } from 'src/environments/environment';
 import { reducers, metaReducers } from './core/store/storage-sync.reducer';
 import { AuthEffects, UserEffects, UserManagementEffects} from './core/store/effects';
 
+import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
+
 // api
 
 import { ApiDocumentationsComponent } from '@docs-components/api-documentations/api-documentations.component';
@@ -74,7 +76,7 @@ export function playerFactory() {
   return import('lottie-web');
 }
 
-// pagination
+
 
 const APP_CONTAINERS = [
   DefaultFooterComponent,
@@ -132,9 +134,16 @@ const APP_CONTAINERS = [
       progressAnimation: 'increasing',
       tapToDismiss: true,
     }),
-    StoreModule.forRoot(reducers, { metaReducers }),
+    StoreModule.forRoot(reducers, { 
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+      },
+    }),
     EffectsModule.forRoot([AuthEffects,UserEffects, UserManagementEffects ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreRouterConnectingModule.forRoot(),
   ],
   providers: [
     {

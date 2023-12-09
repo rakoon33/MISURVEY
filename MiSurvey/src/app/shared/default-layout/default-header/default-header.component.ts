@@ -20,8 +20,6 @@ export class DefaultHeaderComponent
   private subscription = new Subscription();
 
   constructor(
-    private classToggler: ClassToggleService,
-    private toastr: ToastrService,
     private router: Router,
     private store: Store<AppState>
   ) {
@@ -33,7 +31,6 @@ export class DefaultHeaderComponent
         .select(authSelector.selectCurrentAuth)
         .subscribe((isAuthenticated) => {
           if (!isAuthenticated) {
-            this.clearLocalStorage();
             this.router.navigate(['/login']);
           }
         })
@@ -43,10 +40,6 @@ export class DefaultHeaderComponent
   logout(): void {
     this.store.dispatch(authActions.logoutRequest());
     window.location.reload();
-  }
-
-  clearLocalStorage(): void {
-    localStorage.clear();
   }
 
   ngOnDestroy() {
