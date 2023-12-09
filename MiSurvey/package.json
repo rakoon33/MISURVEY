@@ -39,6 +39,7 @@
     "@larscom/ngrx-store-storagesync": "^14.0.4",
     "@ngrx/effects": "^16.3.0",
     "@ngrx/entity": "^16.3.0",
+    "@ngrx/router-store": "^17.0.1",
     "@ngrx/store": "^16.3.0",
     "@ngrx/store-devtools": "^16.3.0",
     "chart.js": "^3.9.1",

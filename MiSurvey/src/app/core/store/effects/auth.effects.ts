@@ -42,27 +42,31 @@ export class AuthEffects {
   );
 
   logout$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(authActions.logoutRequest),
-      switchMap(() =>
-        this.authService.logout().pipe(
-          map((response) => {
-            if (response.status) {
-              this.toastrService.success('Logout successful');
-              return authActions.logoutSuccess();
-            } else {
-              this.toastrService.error(response.message || 'Logout failed');
-              return authActions.logoutFailure();
-            }
-          }),
-          catchError((error) => {
-            this.toastrService.error('An error occurred during logout');
-            return of(authActions.logoutFailure());
-          })
-        )
+  this.actions$.pipe(
+    ofType(authActions.logoutRequest),
+    switchMap(() =>
+      this.authService.logout().pipe(
+        concatMap((response) => {
+          if (response.status) {
+            this.toastrService.success('Logout successful');
+            return [
+              authActions.logoutSuccess(),
+              userActions.getUserDataSuccess({ user: null, permissions: [] })
+            ];
+          } else {
+            this.toastrService.error(response.message || 'Logout failed');
+            return [authActions.logoutFailure()];
+          }
+        }),
+        catchError((error) => {
+          this.toastrService.error('An error occurred during logout');
+          return of(authActions.logoutFailure());
+        })
       )
     )
-  );
+  )
+);
+
 
   constructor(
     private actions$: Actions,
