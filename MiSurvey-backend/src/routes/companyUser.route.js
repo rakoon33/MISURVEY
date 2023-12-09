@@ -1,18 +1,16 @@
 const express = require('express');
 const { companyUserController } = require('../controllers');
 const { authMiddleware } = require('../middlewares');
-
 const router = express.Router();
 
-// Route to create a new company user
-router.post('/', authMiddleware.tokenVerification, companyUserController.createCompanyUserController);
+router
+    .route('/')
+    .post(authMiddleware.tokenVerification, companyUserController.createCompanyUserController)
+    .get(authMiddleware.tokenVerification, companyUserController.getAllCompanyUsersController);
 
-// You can add more routes here if needed
-router.delete('/:companyUserId', authMiddleware.tokenVerification, companyUserController.deleteCompanyUserController);
-
-router.get('/:companyUserId', authMiddleware.tokenVerification, companyUserController.getOneCompanyUserController);
-
-// Route to get all company users
-router.get('/', authMiddleware.tokenVerification, companyUserController.getAllCompanyUsersController);
+router
+    .route('/:companyUserId')
+    .delete(authMiddleware.tokenVerification, companyUserController.deleteCompanyUserController)
+    .get(authMiddleware.tokenVerification, companyUserController.getOneCompanyUserController);
 
 module.exports = router;
