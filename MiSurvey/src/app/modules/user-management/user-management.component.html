@@ -368,21 +368,6 @@
             <mat-datepicker #editLastLoginPicker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="mb-3">
-          <mat-form-field appearance="fill">
-            <mat-label>Updated At</mat-label>
-            <input
-              matInput
-              [matDatepicker]="editUpdatedAtPicker"
-              formControlName="UpdatedAt"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="editUpdatedAtPicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #editUpdatedAtPicker></mat-datepicker>
-          </mat-form-field>
-        </div>
       </form>
     </c-modal-body>
     <c-modal-footer>
