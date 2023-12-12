@@ -22,7 +22,7 @@ const SurveyType = require('./surveyType.model');
 
 // Set up the association
 
-Module.hasMany(IndividualPermission, { foreignKey: 'ModuleID', as: 'permissions1' });
+Module.hasMany(IndividualPermission, { foreignKey: 'ModuleID', as: 'permissions' });
 IndividualPermission.belongsTo(Module, { foreignKey: 'ModuleID', as: 'module' });
 
 RolePermission.belongsTo(Module, {
@@ -59,7 +59,7 @@ CompanyUser.belongsTo(User, {
 // Company and CompanyUser associations
 Company.hasMany(CompanyUser, {
   foreignKey: 'CompanyID',
-  as: 'CompanyUsers1'
+  as: 'CompanyUsers'
 });
 CompanyUser.belongsTo(Company, {
   foreignKey: 'CompanyID',
@@ -69,11 +69,11 @@ CompanyUser.belongsTo(Company, {
 //CompanyUser vs CompanyRole
 CompanyUser.belongsTo(CompanyRole, {
   foreignKey: 'CompanyRoleID',
-  as: 'CompanyRole1'
+  as: 'CompanyRole'
 });
 CompanyRole.hasMany(CompanyUser, {
   foreignKey: 'CompanyRoleID',
-  as: 'CompanyUsers2'
+  as: 'CompanyUsers'
 });
 
 // CompanyRole and RolePermission
@@ -87,7 +87,46 @@ CompanyRole.hasMany(RolePermission, {
   as: 'permissions'
 });
 
+// Survey and SurveyPage
+Survey.hasMany(SurveyPage, {
+  foreignKey: 'SurveyID',
+  as: 'SurveyPages'
+});
+SurveyPage.belongsTo(Survey, {
+  foreignKey: 'SurveyID',
+  as: 'Survey'
+});
 
+// SurveyPage and SurveyQuestion
+SurveyPage.hasMany(SurveyQuestion, {
+  foreignKey: 'PageID',
+  as: 'SurveyQuestions'
+});
+SurveyQuestion.belongsTo(SurveyPage, {
+  foreignKey: 'PageID',
+  as: 'SurveyPage'
+});
+
+// Survey and SurveyDetail
+Survey.hasMany(SurveyDetail, {
+  foreignKey: 'SurveyID',
+  as: 'SurveyDetails'
+});
+SurveyDetail.belongsTo(Survey, {
+  foreignKey: 'SurveyID',
+  as: 'Survey'
+});
+
+// SurveyQuestion and SurveyType
+SurveyQuestion.belongsTo(SurveyType, {
+  foreignKey: 'QuestionType', // Assuming 'QuestionType' is the foreign key in SurveyQuestion referring to SurveyTypeID in SurveyType
+  as: 'SurveyType'
+});
+
+SurveyType.hasMany(SurveyQuestion, {
+  foreignKey: 'QuestionType',
+  as: 'SurveyQuestions'
+});
 
 module.exports = {
   User,

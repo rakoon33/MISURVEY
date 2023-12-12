@@ -16,6 +16,10 @@ const SurveyType = db.sequelize.define('SurveyType', {
         type: DataTypes.TEXT,
         allowNull: false
     },
+    ResponseType: { // New field added
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
     CreatedAt: {
         type: DataTypes.DATE,
         allowNull: false,

@@ -93,7 +93,7 @@ const getOneCompanyUser = async (companyUserId) => {
       include: [
         { model: User, as: 'User' },
         { model: Company, as: 'Company' },
-        { model: CompanyRole, as: 'CompanyRole1' }
+        { model: CompanyRole, as: 'CompanyRole' }
       ]
     });
 
@@ -113,7 +113,7 @@ const getAllCompanyUsers = async () => {
       include: [
         { model: User, as: 'User' },
         { model: Company, as: 'Company' },
-        { model: CompanyRole, as: 'CompanyRole1' }
+        { model: CompanyRole, as: 'CompanyRole' }
       ]
     });
 
