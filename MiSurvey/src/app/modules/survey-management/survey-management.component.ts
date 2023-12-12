@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-survey-management',
@@ -10,9 +11,14 @@ import { DatePipe } from '@angular/common';
 export class SurveyManagementComponent implements OnInit {
 
   constructor(
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
+  }
+
+  navigateToCreateSurvey() {
+    this.router.navigate(['/survey-management/new']);
   }
 
 }

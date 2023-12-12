@@ -30,9 +30,8 @@ const tokenVerification = (req, res, next) => {
             });
           }
           // Successfully decoded the token, now we can generate a new one
-          
+        
           const newToken = await tokenFunctions.generateToken(refreshedDecoded.id, refreshedDecoded.username, refreshedDecoded.role, refreshedDecoded.companyID);
-          
 
           // Set the new token in the cookie
           res.cookie('jwt', newToken, {
