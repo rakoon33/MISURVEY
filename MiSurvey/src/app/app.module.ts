@@ -75,9 +75,6 @@ import { LottieModule } from 'ngx-lottie';
 export function playerFactory() {
   return import('lottie-web');
 }
-
-
-
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,

@@ -12,7 +12,7 @@ const generateToken = (id, username, role, companyID = null) => {
       payload.companyID = companyID;
     }
   
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30d' });
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
   }
 module.exports = {
     generateToken
