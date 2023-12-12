@@ -27,6 +27,7 @@ const companyRoleRoute = require('./src/routes/companyrole.route.js');
 const moduleRoute = require('./src/routes/module.route');
 const individualPermissionRoute = require('./src/routes/individualPermission.route.js')
 const companyUserRoute = require('./src/routes/companyUser.route.js');
+const surveyRoute = require('./src/routes/survey.route.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,6 +41,7 @@ app.use('/api/companyRoles', companyRoleRoute);
 app.use('/api/modules', moduleRoute);
 app.use('/api/permissions', individualPermissionRoute);
 app.use('/api/companyusers', companyUserRoute);
+app.use('/api/survey', surveyRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
