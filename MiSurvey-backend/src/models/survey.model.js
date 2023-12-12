@@ -27,6 +27,10 @@ const Survey = db.sequelize.define('Survey', {
         type: DataTypes.STRING(100),
         allowNull: false
     },
+    SurveyDescription: { // New field added
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     SurveyImages: {
         type: DataTypes.STRING(255)
     },
