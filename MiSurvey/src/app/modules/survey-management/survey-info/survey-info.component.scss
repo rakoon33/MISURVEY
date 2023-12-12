@@ -1,0 +1,103 @@
+/* Layout for the overall container holding both columns */
+.container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Styling for each column */
+.column {
+  display: flex;
+  flex-direction: column;
+  width: 48%; /* Adjust the width of each column to take up almost half the container width */
+  margin: 5px;
+}
+
+/* Styling specific to the left column */
+.left-column {
+  /* Add styles specific to the left column if needed */
+}
+
+/* Styling specific to the right column */
+.right-column {
+  /* Add styles specific to the right column if needed */
+}
+
+/* Shared styling for both the survey container and form */
+.survey-container,
+.survey-form {
+  background-color: #f7f7f7;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Form group styling */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px; /* Spacing between form elements */
+}
+
+/* Rating scale styling */
+.rating-scale {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.rating-scale .scale {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-scale .buttons {
+  margin: 0 10px;
+}
+
+.rating-scale .buttons button {
+  margin: 0 2px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+}
+
+/* Color picker styling */
+.color-picker {
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+/* Shared button styling */
+button {
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

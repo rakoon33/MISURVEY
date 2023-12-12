@@ -1,0 +1,58 @@
+<div class="container">
+    <div class="column left-column">
+      <!-- Customize Appearance -->
+      <div class="survey-container">
+        <h2>Customize Appearance</h2>
+        <p>This is the NPS survey that will be emailed to all people.</p>
+  
+        <div class="basic-customization">
+          <input type="text" placeholder="Brand/product name" />
+          <button (click)="addLogo()">Add a logo</button>
+          <input type="color" />
+          <input type="color" />
+        </div>
+  
+        <div class="email-customization">
+          <input type="email"/>
+          <input type="text" placeholder="Subject" />
+        </div>
+  
+        <button (click)="nextStep()">Next</button>
+      </div>
+    </div>
+  
+    <div class="column right-column">
+      <!-- Survey Customization -->
+      <div class="survey-form">
+        <h2>Survey Customization</h2>
+        <form (ngSubmit)="submitSurvey()">
+          <div class="form-group">
+            <label for="fromEmail">From</label>
+            <input type="email" id="fromEmail" name="fromEmail" placeholder="Enter sender email">
+          </div>
+  
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject"  name="subject" placeholder="Enter email subject">
+          </div>
+  
+          <div class="form-group">
+            <label for="question">Question</label>
+            <input type="text" id="question" name="question" placeholder="Enter your question">
+          </div>
+  
+          <div class="rating-scale">
+            <label>How likely are you to recommend 3N to a friend?</label>
+            <div class="scale">
+              <span>Not likely</span>
+              <div class="buttons">
+                <button type="button" *ngFor="let number of ratingScale" (click)="setRating(number)">{{ number }}</button>
+              </div>
+              <span>Very likely</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

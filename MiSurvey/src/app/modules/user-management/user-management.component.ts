@@ -7,7 +7,6 @@ import { userManagementActions } from 'src/app/core/store/actions';
 import {
   userManagementSelector,
   userSelector,
-  routerSelector
 } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -149,9 +148,7 @@ export class UserManagementComponent implements OnInit {
       .select(userSelector.selectCurrentUser)
       .subscribe((id) => (this.currentUserId = id?.UserID));
 
-      this.store
-      .select(routerSelector.selectCurrentRoute)
-      .subscribe((id) => (console.log(id.root.queryParams)));
+
   }
 
   getPaginationRange(
@@ -264,8 +261,6 @@ export class UserManagementComponent implements OnInit {
   }
 
   createUser() {
-    console.log(this.addUserForm.valid);
-    console.log(this.currentUserId);
     if (this.addUserForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addUserForm.value,
