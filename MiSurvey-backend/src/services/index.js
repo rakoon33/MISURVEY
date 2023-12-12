@@ -4,7 +4,8 @@ const companyRoleService = require('./companyrole.service');
 const userService = require('./user.service');
 const moduleService = require('./module.service');
 const individualPermissionService = require('./individualPermission.service');
-const companyUser = require('./companyUser.service');
+const companyUserService = require('./companyUser.service');
+const surveyService = require('./survey.service');
 
 module.exports = {
     authService,
@@ -13,6 +14,7 @@ module.exports = {
     companyRoleService,
     moduleService,
     individualPermissionService,
-    companyUser
+    companyUserService,
+    surveyService
   // ...other services
 };
