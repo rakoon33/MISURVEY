@@ -7,12 +7,12 @@ import { apiConstants } from '../constants';
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class CompanyService {
   constructor(private http: HttpClient) {}
 
-  getUserData(): Observable<any> {
-    const userDataUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.USER}/getUserData`;
-    return this.http.get<any>(userDataUrl, { withCredentials: true }).pipe(
+  getCompanyData(): Observable<any> {
+    const companyDataUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.COMPANY}/getCompanyData`;
+    return this.http.get<any>(companyDataUrl, { withCredentials: true }).pipe(
       map((response) => response),
       catchError((error) => {
         return throwError(() => error);

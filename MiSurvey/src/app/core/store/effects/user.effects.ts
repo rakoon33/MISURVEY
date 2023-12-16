@@ -6,10 +6,9 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { userActions } from '../actions';
 import { UserService } from '../../services';
 import { Router } from '@angular/router';
+
 @Injectable()
 export class UserEffects {
-  // ... other effects
-
   getUserData$ = createEffect(() =>
     this.actions$.pipe(
       ofType(userActions.getUserDataRequest),
