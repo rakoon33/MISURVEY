@@ -27,8 +27,12 @@ const Survey = db.sequelize.define('Survey', {
         type: DataTypes.STRING(100),
         allowNull: false
     },
+    SurveyDescription: { // New field added
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     SurveyImages: {
-        type: DataTypes.STRING(255)
+        type: DataTypes.BLOB
     },
     InvitationMethod: {
         type: DataTypes.STRING(50),
@@ -36,15 +40,15 @@ const Survey = db.sequelize.define('Survey', {
     },
     SurveyStatus: {
         type: DataTypes.STRING(50),
-        allowNull: false
+        allowNull: true
     },
     StartDate: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: true
     },
     EndDate: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: true
     },
     Customizations: {
         type: DataTypes.JSON

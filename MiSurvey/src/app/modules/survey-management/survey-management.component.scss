@@ -1,0 +1,118 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.header h1 {
+  margin: 0;
+  color: #333333;
+  font-size: 1.6em;
+}
+
+.create-survey-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-size: 0.9em;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.create-survey-btn:hover {
+  background-color: #0069d9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.survey-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+}
+
+.survey-card {
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.survey-card h3 {
+  margin-top: 0;
+  color: #333333;
+  font-size: 1.1em;
+}
+
+.survey-status {
+  color: #757575;
+  font-size: 0.9em;
+  margin-bottom: 0;
+  position: relative;
+  font-size: 14px;
+  padding-top: 10px;
+}
+
+.survey-status::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  width: 100%; /* Adjusted width to consider padding and ellipsis */
+  background-color: #ddd;
+}
+.create-survey-btn:hover {
+  background-color: #004494;
+}
+
+.ellipsis {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 1.5em;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .create-survey-btn {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+
+  .survey-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .survey-card {
+    width: auto;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .create-survey-btn {
+    margin-top: 20px;
+  }
+}

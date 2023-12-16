@@ -15,10 +15,6 @@ const SurveyPage = db.sequelize.define('SurveyPage', {
             key: 'SurveyID'
         }
     },
-    PageTitle: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-    },
     PageOrder: {
         type: DataTypes.INTEGER,
         allowNull: false

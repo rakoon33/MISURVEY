@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { userActions } from '../actions';
 import { UserService } from '../../services';
-
+import { Router } from '@angular/router';
 @Injectable()
 export class UserEffects {
   // ... other effects
@@ -17,6 +17,7 @@ export class UserEffects {
         this.userService.getUserData().pipe(
           map(response => {
             if (response.status) {
+              this.router.navigate(['/dashboard']);
               return userActions.getUserDataSuccess({
                 user: response.userDetails,
                 permissions: response.permissions
@@ -38,6 +39,7 @@ export class UserEffects {
   constructor(
     private actions$: Actions,
     private userService: UserService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private router: Router
   ) {}
 }

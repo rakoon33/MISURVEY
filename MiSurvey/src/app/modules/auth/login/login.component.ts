@@ -29,19 +29,19 @@ export class LoginComponent implements OnDestroy {
     });
 
     this.subscription.add(
+      this.store.select(authSelector.selectIsAuthLoading).subscribe(loading => {
+        this.isLoading = loading; // Set the isLoading state
+      })
+    );
+
+    this.subscription.add(
       this.store.select(authSelector.selectCurrentAuth).subscribe(isAuthenticated => {
         if (isAuthenticated) {
           this.router.navigate(['/dashboard']); // Điều hướng sau khi đăng nhập thành công
         }
       })
     );
-
-    this.subscription.add(
-      this.store.select(authSelector.selectIsAuthLoading).subscribe(loading => {
-        this.isLoading = loading; // Set the isLoading state
-      })
-    );
-
+    
   }
 
   onSubmit() {

@@ -31,13 +31,6 @@ const SurveyResponse = db.sequelize.define('SurveyResponse', {
             key: 'QuestionID'
         }
     },
-    ResponseType: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-        validate: {
-            isIn: [['Rating', 'Comment', 'Radio', 'Checkbox']]
-        }
-    },
     ResponseValue: {
         type: DataTypes.TEXT
     },

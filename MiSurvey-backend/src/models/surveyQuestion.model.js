@@ -26,10 +26,6 @@ const SurveyQuestion = db.sequelize.define('SurveyQuestion', {
             model: 'SurveyType',
             key: 'SurveyTypeID'
         }
-    },
-    QuestionOrder: {
-        type: DataTypes.INTEGER,
-        allowNull: false
     }
 }, {
     tableName: 'SurveyQuestions',
