@@ -27,7 +27,6 @@ const createCompanyUserController = async (req, res) => {
     }
 };
 
-
 const deleteCompanyUserController = async (req, res) => {
   try {
     const result = await companyUser.deleteCompanyUser(req.params.companyUserId);
