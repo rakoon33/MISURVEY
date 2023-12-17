@@ -2,31 +2,25 @@ const { companyUser } = require('../services');
 
 const createCompanyUserController = async (req, res) => {
     try {
-        // Extracting the company user data and user data from the request body
         const { companyUserData, userData } = req.body;
 
-        // Validating the received data
         if (!companyUserData || !userData) {
             return res.status(400).json({
                 status: false,
                 message: "Both company user data and user data are required"
             });
         }
-
-        // Calling the service function to create a company user and associated user account
         const result = await companyUser.createCompanyUser(companyUserData, userData);
 
-        // Sending a successful response back
         res.status(201).json(result);
+
     } catch (error) {
-        // Handling any errors that occur during the process
         res.status(400).json({ 
             status: false, 
             message: error.message || "Error occurred while creating company user" 
         });
     }
 };
-
 
 const deleteCompanyUserController = async (req, res) => {
   try {

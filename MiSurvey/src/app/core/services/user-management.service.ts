@@ -17,7 +17,6 @@ export class UserManagementService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
-
     return this.http.get<any>(this.apiUrl, { params, withCredentials: true });
   }
 

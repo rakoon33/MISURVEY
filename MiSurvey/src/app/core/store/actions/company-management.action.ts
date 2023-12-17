@@ -60,7 +60,7 @@ export const createCompanyFailure = createAction(
 
 export const updateCompanyRequest = createAction(
     CompanyManagementActionTypes.UPDATE_COMPANY_REQUEST,
-    props<{ CompanyID: number; companyData: Company }>()
+    props<{ CompanyID: number; updatedData: Company }>()
 );
 export const updateCompanySuccess = createAction(
     CompanyManagementActionTypes.UPDATE_COMPANY_SUCCESS,
