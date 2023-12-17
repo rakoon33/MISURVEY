@@ -10,7 +10,6 @@ import { Company } from '../models';
 })
 export class CompanyManagementService {
   private apiUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.COMPANY}`;
-
   constructor(private http: HttpClient) {}
 
   getCompanies(page: number, pageSize: number): Observable<any> {

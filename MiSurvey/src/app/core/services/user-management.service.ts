@@ -10,7 +10,6 @@ import { User } from '../models';
 })
 export class UserManagementService {
   private apiUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.USER}`;
-
   constructor(private http: HttpClient) {}
 
   getUsers(page: number, pageSize: number): Observable<any> {

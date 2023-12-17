@@ -6,17 +6,19 @@ import { routerReducer } from '@ngrx/router-store';
 
 export const reducers: ActionReducerMap<AppState> = {
     feature_user: featureReducer.userReducer,
+    feature_company: featureReducer.companyReducer,
     feature_auth: featureReducer.authReducer,
     feature_user_management: featureReducer.userManagementReducer,
+    feature_company_management: featureReducer.companyManagementReducer,
     router: routerReducer,
 };
-
   
 export function storageSyncReducer(reducer: ActionReducer<AppState>): ActionReducer<AppState> {
   const metaReducer = storageSync<AppState>({
     features: [
       { stateKey: 'feature_auth' },
-      { stateKey: 'feature_user' }
+      { stateKey: 'feature_user' },
+      { stateKey: 'feature_company' },
     ],
     storage: window.localStorage
   });

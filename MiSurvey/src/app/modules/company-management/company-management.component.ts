@@ -56,8 +56,8 @@ export class CompanyManagementComponent implements OnInit {
     });
   }
 
-  editCompany(companyID: string): void {
-    this.companyManagementService.getCompanyId(companyID).subscribe(company => {
+  editCompany(CompanyID: number): void {
+    this.companyManagementService.getCompanyById(CompanyID).subscribe(company => {
       if (company) {
         this.currentCompany = {
           ...company, 

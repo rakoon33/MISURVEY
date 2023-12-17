@@ -1,7 +1,6 @@
 import { UserState } from './../states';
 import { createReducer, on } from '@ngrx/store';
-import  {userActions } from './../actions';
-
+import { userActions } from './../actions';
 
 export const initialState: UserState = {
   user: null,
@@ -25,5 +24,4 @@ export const userReducer = createReducer(
     ...state,
     loading: false
   })),
-  
 );
