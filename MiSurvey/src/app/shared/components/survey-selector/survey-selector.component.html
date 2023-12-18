@@ -1,0 +1,36 @@
+<div
+  class="survey-container"
+  [style.--custom-border-top-color]="borderTopColor"
+>
+  <h3>{{ question }}</h3>
+  <div [ngSwitch]="selectedSurveyType">
+    <app-nps-survey
+      *ngSwitchCase="'nps'"
+      [question]="
+        'How likely are you to recommend our product/service to a friend or colleague?'
+      "
+      [buttonTextColor]="buttonTextColor">
+    ></app-nps-survey>
+
+    <app-csat-survey
+      *ngSwitchCase="'csat'"
+      [question]="'How satisfied are you with our product/service?'"
+    ></app-csat-survey>
+
+    <app-star-rating
+      *ngSwitchCase="'star'"
+      [question]="'How would you rate our product/service out of five stars?'"
+    ></app-star-rating>
+
+    <app-star-rating
+      *ngSwitchCase="'star'"
+      [question]="'How would you rate our product/service out of five stars?'"
+    ></app-star-rating>
+
+    <app-emoticon-rating
+      *ngSwitchCase="'emoticons'"
+      [question]="'How does our product/service make you feel?'"
+    ></app-emoticon-rating>
+  </div>
+  <div class="powered-by">Powered by MiSurvey</div>
+</div>

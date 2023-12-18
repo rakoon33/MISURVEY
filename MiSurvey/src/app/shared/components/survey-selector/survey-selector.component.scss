@@ -1,0 +1,32 @@
+h3 {
+  font-size: 20px;
+  text-align: center;
+  padding: 30px;
+  margin: 0;
+}
+
+.survey-container {
+  position: relative; /* Cho phép định vị tuyệt đối cho pseudo-element */
+  border: 1.2px solid #edede7;
+  border-top: none;
+  height: 100%;
+}
+
+.survey-container::before {
+  content: "";
+  position: absolute; 
+  top: 0; 
+  left: -2px;
+  right: -2px; 
+  height: 8px;
+  background-color: var(--custom-border-top-color, #000); 
+  border-top-left-radius: 6px; 
+  border-top-right-radius: 6px; 
+}
+
+.powered-by {
+  text-align: center;
+  padding: 10px; 
+  font-size: 12px;
+  color: #888;
+}

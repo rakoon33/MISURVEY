@@ -52,6 +52,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'survey-management/option',
+        loadChildren: () =>
+          import(
+            './modules/survey-management/survey-option/survey-option.module'
+          ).then((m) => m.SurveyOptionModule),
+      },
+      {
         path: 'survey-management/questions',
         loadChildren: () =>
           import(

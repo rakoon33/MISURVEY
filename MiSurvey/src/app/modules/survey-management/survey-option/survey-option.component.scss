@@ -1,0 +1,58 @@
+.survey-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 960px;
+    margin: auto;
+}
+
+.survey-option {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    padding: 20px;
+}
+
+.survey-option h3 {
+    margin: 10px 0;
+}
+
+.survey-option p {
+    color: #555;
+}
+
+.survey-option button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.survey-option button:hover {
+    background-color: #0056b3;
+}
+
+.most-popular {
+    position: relative;
+}
+
+.most-popular::before {
+    content: 'MOST POPULAR';
+    background-color: #ffcc00;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.survey-icon {
+    font-size: 2em;
+    margin-bottom: 10px;
+}

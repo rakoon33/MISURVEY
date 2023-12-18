@@ -1,0 +1,9 @@
+<div class="survey-question-container">
+    <p>{{ question }}</p>
+    <div class="csat-buttons">
+      <button *ngFor="let score of [1,2,3,4,5]" (click)="setScore(score)">
+        {{ score }}
+      </button>
+    </div>
+  </div>
+  

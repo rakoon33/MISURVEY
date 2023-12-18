@@ -1,0 +1,37 @@
+/* Styles for the survey container */
+.survey-question-container {
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #f6f6f6;
+}
+
+/* Styles for the CSAT buttons */
+.csat-buttons button {
+  margin: 5px;
+  padding: 8px 10px;
+  width: 40px;
+  border: 2px solid #28a745;
+  background-color: #fff;
+  color: #28a745;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+}
+
+.survey-question-container p {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Hover and focus styles for the buttons */
+.csat-buttons button:hover,
+.csat-buttons button:focus {
+  background-color: #28a745;
+  color: #fff;
+  outline: none;
+}

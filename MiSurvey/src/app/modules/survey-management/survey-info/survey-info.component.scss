@@ -1,103 +1,92 @@
-/* Layout for the overall container holding both columns */
-.container {
-  display: flex;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
+/* customization-container.component.css */
+.customization-container {
+  font-family: Arial, sans-serif;
+  margin: 20px auto;
   padding: 20px;
-  box-sizing: border-box;
-}
-
-/* Styling for each column */
-.column {
-  display: flex;
-  flex-direction: column;
-  width: 48%; /* Adjust the width of each column to take up almost half the container width */
-  margin: 5px;
-}
-
-/* Styling specific to the left column */
-.left-column {
-  /* Add styles specific to the left column if needed */
-}
-
-/* Styling specific to the right column */
-.right-column {
-  /* Add styles specific to the right column if needed */
-}
-
-/* Shared styling for both the survey container and form */
-.survey-container,
-.survey-form {
-  background-color: #f7f7f7;
-  padding: 20px;
+  border: 1px solid #eaeaea;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+.title {
+  font-size: 24px;
+  color: #333;
   margin-bottom: 20px;
 }
 
-/* Form group styling */
-.form-group {
+.customization-content {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.input-section {
+  width: 48%;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
   margin-bottom: 15px;
 }
 
-.form-group label {
+.input-group label {
   display: block;
   margin-bottom: 5px;
+  color: #666;
 }
 
-.form-group input,
-.form-group button {
+.input-group input[type="text"],
+.input-group input[type="file"],
+.input-group input[type="color"] {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 10px; /* Spacing between form elements */
+  box-sizing: border-box;
 }
-
-/* Rating scale styling */
-.rating-scale {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.rating-scale .scale {
+.color-group {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-around;
 }
 
-.rating-scale .buttons {
-  margin: 0 10px;
+.color-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666;
 }
 
-.rating-scale .buttons button {
-  margin: 0 2px;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  background: #fff;
+.color-group input[type="color"] {
+  width: calc(100% - 4px);
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
+  height: 40px; /* Adjust height for better color picker appearance */
 }
 
-/* Color picker styling */
-.color-picker {
-  padding: 5px;
-  border: none;
-  border-radius: 4px;
-  margin-right: 10px;
+.color-group-item {
+  width: 30%;
+  min-width: 120px;
 }
 
-/* Shared button styling */
+.preview-section {
+  width: 48%;
+  background-color: white;
+}
+
 button {
-  cursor: pointer;
-  background-color: #007bff;
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  margin-top: 10px;
+  background-color: #0056b3;
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 10px 15px;
-  margin-top: 10px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #003d82;
 }

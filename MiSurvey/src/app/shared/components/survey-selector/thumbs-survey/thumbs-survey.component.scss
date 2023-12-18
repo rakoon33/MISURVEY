@@ -1,0 +1,27 @@
+/* General Styles for Survey Container */
+.survey-question-container {
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #f6f6f6;
+  flex: 1;
+}
+
+.survey-question-container p {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+.thumb-wrapper {
+    padding: 10px;
+}
+.thumbs-rating .thumb-wrapper {
+  display: inline-block;
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.2s;
+}
+
+.thumbs-rating .thumb-wrapper:hover .thumb {
+  transform: scale(1.1);
+}

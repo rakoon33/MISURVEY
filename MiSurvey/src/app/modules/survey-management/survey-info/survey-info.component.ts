@@ -6,31 +6,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./survey-info.component.scss'],
 })
 export class SurveyInfoComponent {
-  survey = {
-    title: '',
-    topBarColor: '#ffffff',
-    buttonTextColor: '#000000',
-    fromEmail: '',
-    subject: '',
-    question: '',
-    rating: null,
-  };
+  surveyTitle: string = '3N';
+  topBarColor: string = '#BA3232'; 
+  buttonTextColor: string = '#2f3c54'; 
 
-  ratingScale = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-
-  addLogo() {
-    // Logic to add a logo
-  }
-
-  nextStep() {
+  onFileSelected(event: Event): void {
 
   }
 
+  importPeople(): void {
 
-  setRating(number: number) {}
-
-  submitSurvey() {
-    console.log(this.survey);
-    // Send the survey data to your server here
   }
 }
