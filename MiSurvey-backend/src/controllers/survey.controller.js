@@ -16,7 +16,8 @@ const createSurveyController = async (req, res) => {
             SurveyDescription: req.body.SurveyDescription,
             SurveyImages: req.file, // Assuming image is sent as a file
             InvitationMethod: req.body.InvitationMethod,
-            Customizations: req.body.Customizations
+            Customizations: req.body.Customizations,
+            Approve: req.body.Approve
         };
 
         // Convert image to BLOB if present

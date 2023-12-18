@@ -1,10 +1,6 @@
 const db = require('../config/database');
 const {Survey} = require('../models');
 
-const fs = require('fs');
-const util = require('util');
-const readFile = util.promisify(fs.readFile);
-
 const createSurvey = async (surveyData) => {
     console.log(surveyData);
     try {
@@ -14,7 +10,8 @@ const createSurvey = async (surveyData) => {
             Title, 
             SurveyDescription, // Optional field
             InvitationMethod, 
-            Customizations // Optional field
+            Customizations,
+            Approve // Optional field
         } = surveyData;
 
         if (!UserID || !CompanyID || !Title || !InvitationMethod) {
@@ -29,7 +26,8 @@ const createSurvey = async (surveyData) => {
             SurveyDescription,
             SurveyImages: surveyData.SurveyImages,
             InvitationMethod,
-            Customizations
+            Customizations,
+            Approve
         });
 
         return {
