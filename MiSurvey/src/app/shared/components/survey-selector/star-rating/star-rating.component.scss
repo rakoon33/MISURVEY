@@ -1,12 +1,14 @@
+
 .survey-question-container {
   text-align: center;
   padding: 20px;
-  border: 1px solid #ddd;
   background-color: #f6f6f6;
+  flex: 1;
 }
 
 .star-rating {
   display: inline-block;
+  padding: 20px;
 }
 
 .star-rating span {
@@ -20,7 +22,6 @@
 .star-rating span:hover,
 .star-rating span.selected {
   transform: scale(1.2);
-  color: #ffc107; // Highlight color
 }
 
 .survey-question-container p {

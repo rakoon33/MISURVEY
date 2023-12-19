@@ -18,7 +18,7 @@ export class SurveyManagementComponent implements OnInit {
   }
 
   navigateToCreateSurvey() {
-    this.router.navigate(['/survey-management/new']);
+    this.router.navigate(['/survey-management/survey-method']);
   }
 
 }

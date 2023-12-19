@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class CsatSurveyComponent {
   @Input() question: string = '';
+  @Input() buttonTextColor: string = '';
   csatScore: number | null = null;
 
   setScore(score: number) {

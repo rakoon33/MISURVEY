@@ -11,4 +11,5 @@ export class SurveySelectorComponent {
   @Input() question: string = 'How do you feel ...';
   @Input() selectedSurveyType: string = 'nps';
   @Input() buttonTextColor: string = '#000000';
+  @Input() selectedImage: string | ArrayBuffer | null = null; 
 }

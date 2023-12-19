@@ -4,9 +4,19 @@
     <button
       *ngFor="let score of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
       (click)="setScore(score)"
-      [style.color]="buttonTextColor"
-      [style.border-color]="buttonTextColor"
-      [ngStyle]="{'--hover-bg-color': getDarkerColor(buttonTextColor, 40)}"
+      [ngStyle]="
+        npsScore === score
+          ? {
+              'background-color': buttonTextColor,
+              color: 'white',
+              'border-color': buttonTextColor
+            }
+          : {
+              'background-color': 'white',
+              color: buttonTextColor,
+              'border-color': buttonTextColor
+            }
+      "
     >
       {{ score }}
     </button>

@@ -1,23 +1,34 @@
 .survey-question-container {
   text-align: center;
   padding: 20px;
-  border: 1px solid #ddd;
   background-color: #f6f6f6;
-}
-
-.emoticon-rating span {
-  cursor: pointer;
-  font-size: 30px;
-  margin: 0 10px;
-  transition: transform 0.2s ease;
-}
-
-.emoticon-rating span:hover {
-  transform: scale(1.3);
+  flex: 1;
 }
 
 .survey-question-container p {
   margin-bottom: 15px;
   font-size: 16px;
   color: #333;
+}
+
+.emoticon-wrapper {
+  padding: 10px;
+}
+
+.emoticon-rating .emoticon-wrapper {
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+::ng-deep .emoticon-rating .emoticon-wrapper svg.icon.ng-star-inserted {
+  width: 45px;
+  height: 45px;
+  display: inline;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.emoticon-rating .emoticon-wrapper:hover {
+  transform: scale(1.1);
 }

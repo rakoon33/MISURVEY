@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class EmoticonRatingComponent {
   @Input() question: string = '';
+  @Input() buttonTextColor: string = '#000000';
   emoticonRating: string | null = null;
 
   setEmoticonRating(rating: string) {

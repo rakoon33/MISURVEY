@@ -9,7 +9,7 @@
           type="text"
           id="surveyTitle"
           [(ngModel)]="surveyTitle"
-          placeholder="3N"
+          placeholder="Your survey title"
         />
       </div>
       <div class="input-group">
@@ -31,17 +31,39 @@
           />
         </div>
       </div>
+      <div class="input-group">
+        <label class="surveyDescriptionText" for="surveyDescription">Survey description:</label>
+        <textarea 
+          id="surveyDescription" 
+          [(ngModel)]="surveyDescription" 
+          placeholder="Describe your survey" 
+          rows="4" 
+        ></textarea>
+      </div>
+      
     </div>
 
     <div class="preview-section">
+      <div class="input-group">
+        <label for="surveyTypeSelect">Select survey type:</label>
+        <select id="surveyTypeSelect" [(ngModel)]="selectedSurveyType">
+          <option value="nps">NPS</option>
+          <option value="csat">CSAT</option>
+          <option value="emoticons">Emoticons</option>
+          <option value="star">Star</option>
+          <option value="thumb">Thumb</option>
+        </select>
+      </div>
+
       <app-survey-selector
         [borderTopColor]="topBarColor"
         [question]="surveyTitle"
-        [selectedSurveyType]="'nps'"
+        [selectedSurveyType]="selectedSurveyType"
         [buttonTextColor]="buttonTextColor"
+        [selectedImage]="selectedImage"
       >
       </app-survey-selector>
     </div>
   </div>
 </div>
-<button (click)="importPeople()">Next: Import people</button>
+<button (click)="nextToQuestion()">Next</button>

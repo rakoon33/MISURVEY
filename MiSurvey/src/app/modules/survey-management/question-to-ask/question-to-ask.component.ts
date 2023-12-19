@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./question-to-ask.component.scss']
 })
 export class QuestionToAskComponent {
-
+  
 }

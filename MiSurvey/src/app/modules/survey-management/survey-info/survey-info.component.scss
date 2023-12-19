@@ -1,7 +1,9 @@
 /* customization-container.component.css */
 .customization-container {
   font-family: Arial, sans-serif;
-  margin: 20px auto;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 20px;
   padding: 20px;
   border: 1px solid #eaeaea;
   border-radius: 8px;
@@ -22,6 +24,10 @@
 
 .input-section {
   width: 48%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .input-group {
@@ -71,7 +77,10 @@
 
 .preview-section {
   width: 48%;
-  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 button {
@@ -85,8 +94,55 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  margin: auto;
 }
 
 button:hover {
   background-color: #003d82;
 }
+
+.input-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.surveyDescriptionText {
+  padding-top: 15px;
+}
+
+app-survey-selector {
+  width: 100%;
+}
+
+.input-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.input-group select:focus {
+  border-color: #0056b3;
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.input-group select option {
+  padding: 8px;
+  background-color: white;
+  color: #333;
+}
+
+#logoUpload {
+  background-color: #fff;
+}
+
+

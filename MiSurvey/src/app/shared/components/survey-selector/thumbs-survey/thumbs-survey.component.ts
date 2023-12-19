@@ -7,9 +7,12 @@ import { Component, Input } from '@angular/core';
 })
 export class ThumbsSurveyComponent {
   @Input() question: string = '';
+  @Input() buttonTextColor: string = '';
   thumbsUpSelected: boolean | null = null;
 
   setThumbsUp(selected: boolean) {
     this.thumbsUpSelected = selected;
+    console.log(this.buttonTextColor)
   }
 }
+  

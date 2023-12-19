@@ -2,8 +2,8 @@
 .survey-question-container {
   text-align: center;
   padding: 20px;
-  border: 1px solid #ddd;
   background-color: #f6f6f6;
+  flex: 1;
 }
 
 /* Styles for the CSAT buttons */
@@ -11,9 +11,8 @@
   margin: 5px;
   padding: 8px 10px;
   width: 40px;
-  border: 2px solid #28a745;
+  border: 2px solid;
   background-color: #fff;
-  color: #28a745;
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 5px;

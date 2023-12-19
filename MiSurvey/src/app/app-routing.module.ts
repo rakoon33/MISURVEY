@@ -52,25 +52,32 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'survey-management/option',
+        path: 'survey-management/survey-method',
         loadChildren: () =>
           import(
             './modules/survey-management/survey-option/survey-option.module'
           ).then((m) => m.SurveyOptionModule),
       },
       {
-        path: 'survey-management/questions',
+        path: 'survey-management/question',
         loadChildren: () =>
           import(
             './modules/survey-management/question-to-ask/question-to-ask.module'
           ).then((m) => m.QuestionToAskModule),
       },
       {
-        path: 'survey-management/new',
+        path: 'survey-management/survey',
         loadChildren: () =>
           import(
             './modules/survey-management/survey-info/survey-info.module'
           ).then((m) => m.SurveyInfoModule)
+      },
+      {
+        path: 'survey-management/question/configure',
+        loadChildren: () =>
+          import(
+            './modules/survey-management/question-configure/question-configure.module'
+          ).then((m) => m.QuestionConfigureModule),
       },
       {
         path: 'base',

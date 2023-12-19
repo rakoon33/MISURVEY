@@ -78,7 +78,7 @@
   color: #878E99;
   font-size:  15px;
   position: relative;
-  padding-top: 20px; /* Khoảng cách từ nội dung đến đường phân cách */
+  padding-top: 20px;
   margin: 0;
 }
 
@@ -86,21 +86,21 @@
 .survey-status::after {
   content: "";
   position: absolute;
-  left: -20px; /* Đẩy nó ra ngoài bên trái theo padding của survey-card */
+  left: -20px; 
   top: 0;
   height: 1px;
-  width: calc(100% + 40px); /* Mở rộng chiều rộng để bù đắp cho padding ở cả hai bên */
+  width: calc(100% + 40px); 
   background-color: #ddd;
 }
 
 .ellipsis {
   position: absolute;
-  top: 50%; /* Đặt top ở giữa theo chiều dọc */
+  top: 50%; 
   right: 0;
   cursor: pointer;
   font-size: 2em;
   user-select: none;
-  transform: translateY(-30%); /* Dịch lên trên để căn giữa theo chiều dọc */
+  transform: translateY(-30%);
 }
 
 .btn-survey {

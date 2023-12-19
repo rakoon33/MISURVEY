@@ -1,11 +1,11 @@
 <div class="survey-question-container">
   <p>{{ question }}</p>
-  <div class="thumbs-rating">
+  <div class="thumbs-rating" [style.color]="buttonTextColor">
     <div class="thumb-wrapper" (click)="setThumbsUp(true)">
-      <span class="thumb">👍</span>
+      <c-icon name="cil-thumb-up"></c-icon>
     </div>
     <div class="thumb-wrapper" (click)="setThumbsUp(false)">
-      <span class="thumb">👎</span>
+      <c-icon name="cil-thumb-down"></c-icon>
     </div>
   </div>
 </div>

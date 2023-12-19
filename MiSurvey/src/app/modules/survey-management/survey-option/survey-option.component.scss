@@ -3,7 +3,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     max-width: 960px;
-    margin: auto;
+    margin: 10px auto;
 }
 
 .survey-option {
@@ -11,29 +11,26 @@
     border-radius: 5px;
     text-align: center;
     padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.survey-option:hover {
+    transform: translateY(-5px); 
 }
 
 .survey-option h3 {
     margin: 10px 0;
+    font-size: 20px;
 }
 
 .survey-option p {
     color: #555;
+    font-size: 14px; 
 }
 
-.survey-option button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.survey-option button:hover {
-    background-color: #0056b3;
-}
 
 .most-popular {
     position: relative;
@@ -53,6 +50,6 @@
 }
 
 .survey-icon {
-    font-size: 2em;
+    font-size: 35px;
     margin-bottom: 10px;
 }
