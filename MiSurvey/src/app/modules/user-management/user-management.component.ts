@@ -290,7 +290,6 @@ export class UserManagementComponent implements OnInit {
       );
 
     } else {
-      // Handle form invalid or user ID not set
       this.toastr.error('Form is invalid or user ID is not set');
     }
   }
