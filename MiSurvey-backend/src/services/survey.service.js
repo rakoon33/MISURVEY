@@ -1,48 +1,49 @@
 const db = require('../config/database');
-const {Survey} = require('../models');
+const { Survey } = require('../models');
+const {createSurveyPage} = require('./surveyPage.service');
+const {createSurveyQuestion} = require('./surveyQuestion.service');
 
-const fs = require('fs');
-const util = require('util');
-const readFile = util.promisify(fs.readFile);
-
-const createSurvey = async (surveyData) => {
-    console.log(surveyData);
+const createSurvey = async (data) => {
     try {
-        const { 
-            UserID, 
-            CompanyID, 
-            Title, 
-            SurveyDescription, // Optional field
-            InvitationMethod, 
-            Customizations // Optional field
-        } = surveyData;
+        // Directly access the survey data since only one survey is being created at a time
+        const surveyData = data;
 
-        if (!UserID || !CompanyID || !Title || !InvitationMethod) {
-            throw new Error('Missing required fields for creating a survey');
-        }
-
-
-        const newSurvey = await Survey.create({
-            UserID,
-            CompanyID,
-            Title,
-            SurveyDescription,
-            SurveyImages: surveyData.SurveyImages,
-            InvitationMethod,
-            Customizations
+        // Create the survey
+        const survey = await Survey.create({
+            UserID: surveyData.UserID,
+            CompanyID: surveyData.CompanyID,
+            Title: surveyData.Title,
+            SurveyDescription: surveyData.SurveyDescription,
+            InvitationMethod: surveyData.InvitationMethod,
+            SurveyStatus: surveyData.SurveyStatus,
+            StartDate: surveyData.StartDate,
+            EndDate: surveyData.EndDate,
+            ResponseRate: surveyData.ResponseRate,
+            CreatedBy: surveyData.CreatedBy,
+            Approve: surveyData.Approve
         });
 
-        return {
-            status: true,
-            message: "Survey created successfully",
-            survey: newSurvey
-        };
+        // Create each survey page
+        for (const pageData of surveyData.pages) {
+            // Add SurveyID to page data
+            pageData.SurveyID = survey.SurveyID; // Assuming the created survey object has an 'id' property
+
+            // Create the survey page
+            const page = await createSurveyPage(pageData);
+
+            // Create each survey question for this page
+            for (const questionData of pageData.questions) {
+                // Add PageID to question data
+                questionData.PageID = page; // Assuming the created page object has an 'id' property
+                console.log(questionData);
+                // Create the survey question
+                await createSurveyQuestion(questionData);
+            }
+        }
+
+        return { status: true, message: "Survey created successfully", survey };
     } catch (error) {
-        return {
-            status: false,
-            message: error.message || "Failed to create survey",
-            error: error.toString()
-        };
+        return { status: false, message: error.message, error: error.toString() };
     }
 };
 
