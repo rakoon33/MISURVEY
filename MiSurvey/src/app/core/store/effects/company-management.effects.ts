@@ -60,7 +60,6 @@ export class CompanyManagementEffects {
       )
     )
   );
-
   
   updateCompany$ = createEffect(() =>
     this.actions$.pipe(

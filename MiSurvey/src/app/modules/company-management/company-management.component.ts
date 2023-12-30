@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
 import { companyManagementActions } from 'src/app/core/store/actions';
-import { companyManagementSelector, companySelector } from 'src/app/core/store/selectors';
+import { companyManagementSelector, companySelector, userSelector } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, NavigationStart, Event as RouterEvent, ActivatedRoute } from '@angular/router';
@@ -36,7 +36,7 @@ export class CompanyManagementComponent implements OnInit {
   selectedCompany$: Observable<Company | null> = this.store.select(
     companyManagementSelector.selectCurrentCompany
   );
-  companyPermissions$: Observable<Permission | undefined> | undefined;
+  userPermissions$: Observable<Permission | undefined> | undefined;
 
   constructor(
     private store: Store,
@@ -46,17 +46,16 @@ export class CompanyManagementComponent implements OnInit {
     private router: Router
   ) {
     this.editCompanyFormGroup = new FormGroup({
-      CompanyLogo: new FormControl(''),
       CompanyName: new FormControl('', [Validators.required]),
       CompanyDomain: new FormControl('', [Validators.required]),
+      AdminID: new FormControl(''),
       CreatedAt: new FormControl(''),
     });
 
     this.addCompanyForm = new FormGroup({
-      CompanyLogo: new FormControl(''),
       CompanyName: new FormControl('', [Validators.required]),
       CompanyDomain: new FormControl('', [Validators.required]),
-      CreatedAt: new FormControl(''),
+      AdminID: new FormControl(''),
     });
 
     this.subscription.add(
@@ -77,28 +76,28 @@ export class CompanyManagementComponent implements OnInit {
         })
     );
 
-    // this.companyPermissions$ = combineLatest([
-    //   this.store.select(companySelector.selectCurrentCompany),
-    //   this.store.select(
-    //     companySelector.selectPermissionByModuleName('Company Management')
-    //   ),
-    // ]).pipe(
-    //   map(([currentCompany, permissions]) => {
-    //     // If the current user is a Supervisor, return their actual permissions
-    //     if (currentCompany?.UserRole === 'Supervisor') {
-    //       return permissions;
-    //     }
-    //     // If not, return an object with all permissions set to true
-    //     return {
-    //       CanView: true,
-    //       CanAdd: true,
-    //       CanUpdate: true,
-    //       CanDelete: true,
-    //       CanExport: true,
-    //       CanViewData: true,
-    //     } as Permission;
-    //   })
-    // );
+    this.userPermissions$ = combineLatest([
+      this.store.select(userSelector.selectCurrentUser),
+      this.store.select(
+        userSelector.selectPermissionByModuleName('Company Management')
+      ),
+    ]).pipe(
+      map(([currentUser, permissions]) => {
+        // If the current user is a Supervisor, return their actual permissions
+        if (currentUser?.UserRole === 'Supervisor') {
+          return permissions;
+        }
+        // If not, return an object with all permissions set to true
+        return {
+          CanView: true,
+          CanAdd: true,
+          CanUpdate: true,
+          CanDelete: true,
+          CanExport: true,
+          CanViewData: true,
+        } as Permission;
+      })
+    );
   }
 
   ngOnInit() {
