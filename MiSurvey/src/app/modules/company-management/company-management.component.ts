@@ -173,6 +173,7 @@ export class CompanyManagementComponent implements OnInit {
     this.store
       .select(companyManagementSelector.selectCurrentTotalCompanies)
       .subscribe((totalCompanies) => {
+        console.log(`Total companies received: ${totalCompanies}`);
         this.totalCompanies = totalCompanies;
         this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
       });

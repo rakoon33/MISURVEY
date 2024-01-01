@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { CompanyActions } from '../actions';
+import { companyActions } from '../actions';
 import { CompanyService } from '../../services';
 import { Router } from '@angular/router';
 
@@ -11,24 +11,24 @@ import { Router } from '@angular/router';
 export class CompanyEffects {
   getCompanyData$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(CompanyActions.getCompanyDataRequest),
+      ofType(companyActions.getCompanyDataRequest),
       switchMap(() => 
         this.companyService.getCompanyData().pipe(
           map(response => {
             if (response.status) {
               this.router.navigate(['/dashboard']);
-              return CompanyActions.getCompanyDataSuccess({
+              return companyActions.getCompanyDataSuccess({
                 company: response.companyDetails,
                 permissions: response.permissions
               });
             } else {
               this.toastrService.error(response.message || 'Failed to fetch user data');
-              return CompanyActions.getCompanyDataFailure();
+              return companyActions.getCompanyDataFailure();
             }
           }),
           catchError(error => {
             this.toastrService.error(error.message || 'An error occurred while fetching user data');
-            return of(CompanyActions.getCompanyDataFailure());
+            return of(companyActions.getCompanyDataFailure());
           })
         )
       )

@@ -16,18 +16,20 @@ export class CompanyManagementEffects {
       switchMap((action) =>
         this.companyManagementService.getCompanies(action.page, action.pageSize).pipe(
           map((response) => {
+            console.log('API response:', response);
             if (response.status) {
               return companyManagementActions.loadCompaniesSuccess({
                 companies: response.data,
                 totalCompanies: response.total,
               });
             } else {
-              this.toastrService.error('Failed to load users');
+              this.toastrService.error('Failed to load companies');
               return companyManagementActions.loadCompaniesFailure();
             }
           }),
           catchError((error) => {
-            this.toastrService.error('An error occurred while loading users');
+            console.error('API error:', error);
+            this.toastrService.error('An error occurred while loading companies');
             return of(companyManagementActions.loadCompaniesFailure());
           })
         )

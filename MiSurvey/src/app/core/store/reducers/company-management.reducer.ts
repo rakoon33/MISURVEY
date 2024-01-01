@@ -15,12 +15,15 @@ export const companyManagementReducer = createReducer(
     ...state,
     loading: true,
   })),
-  on(companyManagementActions.loadCompaniesSuccess, (state, { companies, totalCompanies }) => ({
-    ...state,
-    companies: companies,
-    loading: false,
-    totalCompanies
-  })),
+  on(companyManagementActions.loadCompaniesSuccess, (state, { companies, totalCompanies }) => {
+    console.log('LOAD_COMPANIES_SUCCESS action received', companies, totalCompanies);
+    return {
+      ...state,
+      companies: companies,
+      loading: false,
+      totalCompanies: totalCompanies,
+    };
+  }),
   on(companyManagementActions.loadCompaniesFailure, (state) => ({
     ...state,
     loading: false,

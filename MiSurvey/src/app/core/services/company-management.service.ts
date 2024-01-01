@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { apiConstants } from '../constants';
 import { Company } from '../models';
 
@@ -16,7 +16,13 @@ export class CompanyManagementService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
-    return this.http.get<any>(this.apiUrl, { params, withCredentials: true });
+    return this.http.get<any>(this.apiUrl, { params, withCredentials: true }).pipe(
+      tap(data => console.log('getCompanies response:', data)), // Log the response data
+      catchError((error: HttpErrorResponse) => {
+        console.error('getCompanies error:', error); // Log any error that occurs
+        return throwError(() => error);
+      })
+    );
   }
 
   getCompanyById(CompanyID: number): Observable<any> {

@@ -6,6 +6,7 @@ import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../../services';
 import { authActions } from '../actions';
 import { userActions } from '../actions';
+import { companyActions } from '../actions';
 
 @Injectable()
 export class AuthEffects {
@@ -22,6 +23,7 @@ export class AuthEffects {
               return [
                 authActions.loginSuccess(),
                 userActions.getUserDataRequest(),
+                companyActions.getCompanyDataRequest(),
               ];
             } else {
               // Trigger error toast notification
@@ -51,7 +53,8 @@ export class AuthEffects {
             this.toastrService.success('Logout successful');
             return [
               authActions.logoutSuccess(),
-              userActions.getUserDataSuccess({ user: null, permissions: [] })
+              userActions.getUserDataSuccess({ user: null, permissions: [] }),
+              companyActions.getCompanyDataSuccess ({ company: null, permissions: [] })
             ];
           } else {
             this.toastrService.error(response.message || 'Logout failed');
@@ -66,7 +69,6 @@ export class AuthEffects {
     )
   )
 );
-
 
   constructor(
     private actions$: Actions,
