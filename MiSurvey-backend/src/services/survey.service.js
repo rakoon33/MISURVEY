@@ -1,5 +1,5 @@
 const db = require('../config/database');
-const { Survey } = require('../models');
+const { Survey, SurveyPage, SurveyQuestion } = require('../models');
 const {createSurveyPage} = require('./surveyPage.service');
 const {createSurveyQuestion} = require('./surveyQuestion.service');
 let nanoid;
@@ -54,7 +54,70 @@ const createSurvey = async (data) => {
     }
 };
 
+const getOneSurveyWithData = async (surveyID) => {
+    try {
+        const survey = await Survey.findByPk(surveyID, {
+            attributes: { 
+                exclude: [
+                    "SurveyDescription", "SurveyImages", "InvitationMethod",
+                    "StartDate", "EndDate", "CreatedAt", "ResponseRate",
+                    "CreatedBy", "UpdatedAt", "UpdatedBy", "Approve", "SurveyStatus", "SurveyLink"
+                ]
+            },
+            include: [{
+                model: SurveyPage,
+                as: 'SurveyPages',
+                include: [{
+                    model: SurveyQuestion,
+                    as: 'SurveyQuestions'
+                }]
+            }]
+        });
+
+        if (!survey) {
+            return { status: false, message: "Survey not found" };
+        }
+
+        return { status: true, survey: survey.toJSON() };
+    } catch (error) {
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
+
+const getOneSurveyWithoutData = async (surveyID) => {
+    try {
+        const survey = await Survey.findByPk(surveyID);
+
+        if (!survey) {
+            return { status: false, message: "Survey not found" };
+        }
+
+        return { status: true, survey };
+    } catch (error) {
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
+const getAllSurvey = async () => {
+    try {
+        const surveys = await Survey.findAll({
+            attributes: { 
+                exclude: [
+                    "CreatedAt", "ResponseRate",
+                    "CreatedBy", "UpdatedAt", "UpdatedBy"
+                ]
+            }
+        });
+        return { status: true, message: "Surveys fetched successfully", surveys };
+    } catch (error) {
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
 
 module.exports = {
-    createSurvey
+    createSurvey,
+    getOneSurveyWithData,
+    getOneSurveyWithoutData,
+    getAllSurvey
 };

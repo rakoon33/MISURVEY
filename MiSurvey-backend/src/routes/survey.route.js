@@ -13,7 +13,15 @@ const storage = multer.memoryStorage(); // You can also use diskStorage
 const upload = multer({ storage: storage });
 
 // Route to create a new survey with image upload handling
-router.post('/', surveyController.createSurveyController);
+router.route('/')
+    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.createSurveyController)
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getAllSurveyController);
+
+router.route('/:SurveyID')
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getOneSurveyWithDataController)
+
+router.route('/detail/:SurveyID')
+    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getOneSurveyWithoutDataController)
 
 // You can add more routes here for other survey functionalities
 
