@@ -237,27 +237,44 @@ const deleteCompany = async (CompanyID) => {
   }
 };
 
-const getAllCompanies = async () => {
+const getAllCompanies = async (requestingUserRole, requestingUserCompanyId, page, pageSize) => {
   try {
-    const companies = await Company.findAll({
-      attributes: ["CompanyID", "CompanyLogo", "CompanyName", "CompanyDomain", "CreatedAt", "AdminID"]
-    });
+    const offset = (page - 1) * pageSize;
+    const limit = pageSize;
 
-    if (companies.length === 0) {
-      return {
-        status: false,
-        message: "No companies found",
-      };
-    }
-    return {
-      status: true,
-      data: companies
+    let queryOptions = {
+      attributes: [
+        "CompanyID",
+        "CompanyLogo",
+        "CompanyName",
+        "CompanyDomain",
+        "AdminID",
+      ],
+      offset,
+      limit,
     };
+
+    // Apply filtering based on CompanyID only when the user is not a SuperAdmin
+    if (requestingUserRole !== "SuperAdmin") {
+      queryOptions.include = [
+        {
+          model: CompanyUser,
+          as: "CompanyUsers",
+          attributes: [],
+          where: { CompanyID: requestingUserCompanyId },
+        },
+      ];
+    }
+
+    const { count, rows: companies } = await Company.findAndCountAll(queryOptions);
+
+    return { status: true, data: companies, total: count };
   } catch (error) {
+    console.error("Error in getAllCompanies service: ", error);
     return {
       status: false,
-      message: error.message || "Failed to fetch companies",
-      error: error?.toString()
+      message: error.message || "Failed to retrieve companies",
+      error: error.toString(),
     };
   }
 };

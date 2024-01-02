@@ -305,8 +305,8 @@ router
  *           description: Unique identifier of the admin user
  */
 router.route('/')
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.getAllCompaniesController)
-    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.createCompanyController);
+    .get(authMiddleware.tokenVerification, companyController.getAllCompaniesController)
+    .post(authMiddleware.tokenVerification, companyController.createCompanyController);
 
 /**
  * @swagger
