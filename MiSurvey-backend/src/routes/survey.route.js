@@ -19,6 +19,7 @@ router.route('/')
 
 router.route('/:SurveyID')
     .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getOneSurveyWithDataController)
+    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.updateSurveyController);
 
 router.route('/detail/:SurveyID')
     .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getOneSurveyWithoutDataController)

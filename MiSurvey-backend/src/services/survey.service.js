@@ -1,7 +1,8 @@
 const db = require('../config/database');
 const { Survey, SurveyPage, SurveyQuestion } = require('../models');
-const {createSurveyPage} = require('./surveyPage.service');
-const {createSurveyQuestion} = require('./surveyQuestion.service');
+const {createSurveyPage, updateSurveyPage} = require('./surveyPage.service');
+const {createSurveyQuestion, updateSurveyQuestion} = require('./surveyQuestion.service');
+const { sequelize } = require('../config/database');
 let nanoid;
 
 const createSurvey = async (data) => {
@@ -115,9 +116,49 @@ const getAllSurvey = async () => {
     }
 };
 
+const updateSurvey = async (surveyID, updateData) => {
+    const transaction = await sequelize.transaction();
+
+    try {
+        // Update the survey main details
+        await Survey.update(updateData, {
+            where: { SurveyID: surveyID },
+            transaction
+        });
+
+        // Iterate through each page data in the updateData
+        for (const pageData of updateData.pages || []) {
+            if (pageData.PageID) {
+                // Update existing question
+                const questionData = pageData.question;
+                if (questionData && questionData.QuestionID) {
+                    await updateSurveyQuestion(questionData.QuestionID, questionData, transaction);
+                }
+            } else {
+                // Create new page and question
+                const newPageID = await createSurveyPage({ SurveyID: surveyID, PageOrder: pageData.PageOrder }, transaction);
+                const questionData = pageData.question;
+                if (questionData) {
+                    await createSurveyQuestion({ ...questionData, PageID: newPageID }, transaction);
+                }
+            }
+        }
+
+        await transaction.commit();
+        const updatedSurvey = await Survey.findByPk(surveyID);
+        return { status: true, message: "Survey updated successfully", updatedSurvey };
+    } catch (error) {
+        if (transaction.finished !== 'commit') {
+            await transaction.rollback();
+        }
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
 module.exports = {
     createSurvey,
     getOneSurveyWithData,
     getOneSurveyWithoutData,
-    getAllSurvey
+    getAllSurvey,
+    updateSurvey
 };

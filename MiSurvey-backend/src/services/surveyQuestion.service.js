@@ -1,20 +1,33 @@
-const db = require('../config/database');
 const { SurveyQuestion } = require('../models');
 
-const createSurveyQuestion = async (questionData) => {
+const createSurveyQuestion = async (questionData, transaction) => {
     try {
-        const surveyquestion = await SurveyQuestion.create({
-            PageID: questionData.PageID,
-            QuestionText: questionData.QuestionText,
-            QuestionType: questionData.QuestionType
-            // Include other fields if necessary
-        });
+        const surveyquestion = await SurveyQuestion.create(questionData, { transaction });
         return { status: true, message: "SurveyQuestion created successfully", surveyquestion };
     } catch (error) {
         return { status: false, message: error.message, error: error.toString() };
     }
 };
 
+const updateSurveyQuestion = async (questionID, questionData, transaction) => {
+    try {
+        const [updatedRows] = await SurveyQuestion.update(questionData, {
+            where: { QuestionID: questionID },
+            transaction
+        });
+
+        if (updatedRows === 0) {
+            return { status: false, message: "No survey question found with the given ID or no changes were made." };
+        }
+
+        const updatedQuestion = await SurveyQuestion.findByPk(questionID, { transaction });
+        return { status: true, message: "SurveyQuestion updated successfully", updatedQuestion };
+    } catch (error) {
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
 module.exports = {
-    createSurveyQuestion
+    createSurveyQuestion,
+    updateSurveyQuestion
 };

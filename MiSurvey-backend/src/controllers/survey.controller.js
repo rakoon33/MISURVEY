@@ -37,9 +37,20 @@ const getAllSurveyController = async (req, res) => {
     }
 };
 
+const updateSurveyController = async (req, res) => {
+
+    try {
+        const result = await surveyService.updateSurvey(req.params.SurveyID, req.body);  
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createSurveyController,
     getOneSurveyWithDataController,
     getOneSurveyWithoutDataController,
-    getAllSurveyController
+    getAllSurveyController,
+    updateSurveyController
 };
