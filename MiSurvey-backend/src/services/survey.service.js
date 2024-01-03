@@ -155,10 +155,51 @@ const updateSurvey = async (surveyID, updateData) => {
     }
 };
 
+const deleteSurvey = async (surveyID) => {
+    const transaction = await sequelize.transaction();
+
+    try {
+        // First, find all the pages associated with the survey
+        const pages = await SurveyPage.findAll({
+            where: { SurveyID: surveyID },
+            transaction
+        });
+
+        // Delete each question associated with each page
+        for (const page of pages) {
+            await SurveyQuestion.destroy({
+                where: { PageID: page.PageID },
+                transaction
+            });
+        }
+
+        // Delete all the pages associated with the survey
+        await SurveyPage.destroy({
+            where: { SurveyID: surveyID },
+            transaction
+        });
+
+        // Finally, delete the survey itself
+        await Survey.destroy({
+            where: { SurveyID: surveyID },
+            transaction
+        });
+
+        await transaction.commit();
+        return { status: true, message: "Survey deleted successfully" };
+    } catch (error) {
+        if (transaction.finished !== 'commit') {
+            await transaction.rollback();
+        }
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
 module.exports = {
     createSurvey,
     getOneSurveyWithData,
     getOneSurveyWithoutData,
     getAllSurvey,
-    updateSurvey
+    updateSurvey,
+    deleteSurvey
 };

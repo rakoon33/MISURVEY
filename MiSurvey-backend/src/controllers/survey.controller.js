@@ -47,10 +47,20 @@ const updateSurveyController = async (req, res) => {
     }
 };
 
+const deleteSurveyController = async (req, res) => {
+    try {
+        const result = await surveyService.deleteSurvey(req.params.SurveyID);  
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createSurveyController,
     getOneSurveyWithDataController,
     getOneSurveyWithoutDataController,
     getAllSurveyController,
-    updateSurveyController
+    updateSurveyController,
+    deleteSurveyController
 };

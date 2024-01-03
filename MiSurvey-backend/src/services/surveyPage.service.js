@@ -27,7 +27,25 @@ const updateSurveyPage = async (pageID, updateData, transaction) => {
     }
 };
 
+const deleteSurveyPage = async (pageID, transaction) => {
+    try {
+        const deletedRows = await SurveyPage.destroy({
+            where: { PageID: pageID },
+            transaction
+        });
+
+        if (deletedRows === 0) {
+            return { status: false, message: "No survey page found with the given ID or no page was deleted." };
+        }
+
+        return { status: true, message: "Survey page deleted successfully" };
+    } catch (error) {
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
 module.exports = {
     createSurveyPage,
-    updateSurveyPage
+    updateSurveyPage,
+    deleteSurveyPage
 };

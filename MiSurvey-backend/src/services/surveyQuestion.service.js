@@ -27,7 +27,25 @@ const updateSurveyQuestion = async (questionID, questionData, transaction) => {
     }
 };
 
+const deleteSurveyQuestion = async (questionID, transaction) => {
+    try {
+        const deletedRows = await SurveyQuestion.destroy({
+            where: { QuestionID: questionID },
+            transaction
+        });
+
+        if (deletedRows === 0) {
+            return { status: false, message: "No survey question found with the given ID." };
+        }
+
+        return { status: true, message: "SurveyQuestion deleted successfully" };
+    } catch (error) {
+        return { status: false, message: error.message, error: error.toString() };
+    }
+};
+
 module.exports = {
     createSurveyQuestion,
-    updateSurveyQuestion
+    updateSurveyQuestion,
+    deleteSurveyQuestion
 };
