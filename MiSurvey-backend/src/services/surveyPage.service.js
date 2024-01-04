@@ -1,4 +1,5 @@
-const { SurveyPage } = require('../models');
+const { SurveyPage, SurveyQuestion } = require('../models');
+const { sequelize } = require('../config/database');
 
 const createSurveyPage = async (pageData, transaction) => {
     try {
@@ -28,18 +29,34 @@ const updateSurveyPage = async (pageID, updateData, transaction) => {
 };
 
 const deleteSurveyPage = async (pageID, transaction) => {
+    const t = transaction || await sequelize.transaction();
+
     try {
+        // Delete the survey question associated with the page
+        await SurveyQuestion.destroy({
+            where: { PageID: pageID },
+            transaction: t
+        });
+
+        // Delete the survey page
         const deletedRows = await SurveyPage.destroy({
             where: { PageID: pageID },
-            transaction
+            transaction: t
         });
 
         if (deletedRows === 0) {
-            return { status: false, message: "No survey page found with the given ID or no page was deleted." };
+            throw new Error("No survey page found with the given ID or no page was deleted.");
         }
 
-        return { status: true, message: "Survey page deleted successfully" };
+        if (!transaction) {
+            await t.commit();
+        }
+
+        return { status: true, message: "Survey page and its question deleted successfully" };
     } catch (error) {
+        if (!transaction && t.finished !== 'commit') {
+            await t.rollback();
+        }
         return { status: false, message: error.message, error: error.toString() };
     }
 };

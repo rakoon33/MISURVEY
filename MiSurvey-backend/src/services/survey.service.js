@@ -3,6 +3,7 @@ const { Survey, SurveyPage, SurveyQuestion } = require('../models');
 const {createSurveyPage, updateSurveyPage} = require('./surveyPage.service');
 const {createSurveyQuestion, updateSurveyQuestion} = require('./surveyQuestion.service');
 const { sequelize } = require('../config/database');
+const { Op } = require('sequelize');
 let nanoid;
 
 const createSurvey = async (data) => {
@@ -195,11 +196,89 @@ const deleteSurvey = async (surveyID) => {
     }
 };
 
+const searchSurvey = async (column, searchTerm) => {
+    console.log(column,searchTerm);
+    try {
+      const validColumns = [
+        "Title",
+        "SurveyDescription",
+        "InvitationMethod"
+      ];
+      if (!validColumns.includes(column) && column !== "Fullname") {
+        return {
+          status: false,
+          message: "Invalid search column",
+        };
+      }
+  
+      let whereClause;
+      if (column === "Fullname") {
+        // Split names by spaces, hyphens, or capital letters
+        let names = searchTerm.split(/\s|-/).map((name) => name.trim());
+  
+        // If it's a single string like "NancyMiller", split it further using capital letters
+        if (names.length === 1 && names[0].length > 1) {
+          names = searchTerm.split(/(?=[A-Z])/).map((name) => name.trim());
+        }
+  
+        if (names.length === 1) {
+          whereClause = {
+            [Op.or]: [
+              { FirstName: { [Op.like]: `%${names[0]}%` } },
+              { LastName: { [Op.like]: `%${names[0]}%` } },
+            ],
+          };
+        } else {
+          whereClause = {
+            [Op.or]: [
+              {
+                [Op.and]: [
+                  { FirstName: { [Op.like]: `%${names[0]}%` } },
+                  { LastName: { [Op.like]: `%${names[1]}%` } },
+                ],
+              },
+              {
+                [Op.and]: [
+                  { FirstName: { [Op.like]: `%${names[1]}%` } },
+                  { LastName: { [Op.like]: `%${names[0]}%` } },
+                ],
+              },
+            ],
+          };
+        }
+      } else {
+        whereClause = { [column]: { [Op.like]: `%${searchTerm}%` } };
+      }
+  
+      const users = await Survey.findAll({ where: whereClause });
+  
+      if (!users || users.length === 0) {
+        return {
+          status: false,
+          message: "No surveys found for the given search criteria",
+        };
+      }
+  
+      return {
+        status: true,
+        data: users,
+      };
+    } catch (error) {
+      return {
+        status: false,
+        message: error.message || "Failed to search survey",
+        error: error?.toString(),
+      };
+    }
+  };
+
+
 module.exports = {
     createSurvey,
     getOneSurveyWithData,
     getOneSurveyWithoutData,
     getAllSurvey,
     updateSurvey,
-    deleteSurvey
+    deleteSurvey,
+    searchSurvey
 };

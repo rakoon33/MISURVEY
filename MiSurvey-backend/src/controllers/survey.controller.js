@@ -56,11 +56,31 @@ const deleteSurveyController = async (req, res) => {
     }
 };
 
+const searchSurveyController = async (req, res) => {
+    try {
+      const { column, searchTerm } = req.query;
+  
+      if (!column || !searchTerm) {
+        return res.status(400).json({
+          message: "Both column and searchTerm are required as query parameters.",
+        });
+      }
+      const result = await surveyService.searchSurvey(column, searchTerm);
+      res.json(result);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: error.message || "Failed to search surveys." });
+    }
+};
+
+
 module.exports = {
     createSurveyController,
     getOneSurveyWithDataController,
     getOneSurveyWithoutDataController,
     getAllSurveyController,
     updateSurveyController,
-    deleteSurveyController
+    deleteSurveyController,
+    searchSurveyController
 };
