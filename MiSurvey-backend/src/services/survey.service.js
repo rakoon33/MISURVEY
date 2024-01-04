@@ -20,6 +20,7 @@ const createSurvey = async (data) => {
             CompanyID: surveyData.CompanyID,
             Title: surveyData.Title,
             SurveyDescription: surveyData.SurveyDescription,
+            SurveyImages: surveyData.SurveyImages,
             InvitationMethod: surveyData.InvitationMethod,
             SurveyStatus: surveyData.SurveyStatus,
             Customizations: surveyData.Customizations, // Assuming Customizations is stored as JSON in the database

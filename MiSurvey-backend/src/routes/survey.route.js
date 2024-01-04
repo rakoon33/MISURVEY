@@ -4,14 +4,6 @@ const { authMiddleware } = require('../middlewares'); // Import this if you need
 
 const router = express.Router();
 
-// Route to create a new survey
-//router.post('/', authMiddleware.tokenVerification, surveyController.createSurveyController);
-const multer = require('multer');
-
-// Configure multer for image upload
-const storage = multer.memoryStorage(); // You can also use diskStorage
-const upload = multer({ storage: storage });
-
 // Route to create a new survey with image upload handling
 router.route('/')
     .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.createSurveyController)

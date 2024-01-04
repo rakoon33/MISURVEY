@@ -32,7 +32,7 @@ const Survey = db.sequelize.define('Survey', {
         allowNull: true
     },
     SurveyImages: {
-        type: DataTypes.BLOB
+        type: DataTypes.TEXT
     },
     InvitationMethod: {
         type: DataTypes.STRING(50),
