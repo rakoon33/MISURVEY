@@ -3,6 +3,8 @@ const { companyController } = require('../controllers');
 const { authMiddleware } = require('../middlewares');
 const router = express.Router();
 
+router.get('/getCompanyData', authMiddleware.tokenVerification, companyController.getCompanyDataController);
+
 /**
  * @swagger
  * tags:
@@ -452,8 +454,8 @@ router.route('/')
  */
 router
     .route('/:CompanyID')
-    .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.deleteCompanyController)
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.getOneCompanyController)
-    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, companyController.updateCompanyController);
+    .delete(authMiddleware.tokenVerification, companyController.deleteCompanyController)
+    .get(authMiddleware.tokenVerification, companyController.getOneCompanyController)
+    .put(authMiddleware.tokenVerification, companyController.updateCompanyController);
 
 module.exports = router;

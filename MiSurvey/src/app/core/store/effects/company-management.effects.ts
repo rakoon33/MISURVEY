@@ -37,7 +37,7 @@ export class CompanyManagementEffects {
     )
   );
 
-  loadUserById$ = createEffect(() =>
+  loadCompanyById$ = createEffect(() =>
     this.actions$.pipe(
       ofType(companyManagementActions.loadCompanyByIdRequest),
       switchMap((action) =>
@@ -48,13 +48,13 @@ export class CompanyManagementEffects {
                 company: response.data,
               });
             } else {
-              this.toastrService.error('Failed to load user details');
+              this.toastrService.error('Failed to load company details');
               return companyManagementActions.loadCompanyByIdFailure();
             }
           }),
           catchError((error) => {
             this.toastrService.error(
-              'An error occurred while loading user details'
+              'An error occurred while loading company details'
             );
             return of(companyManagementActions.loadCompanyByIdFailure());
           })
@@ -77,7 +77,7 @@ export class CompanyManagementEffects {
               .pipe(
                 map((response) => {
                   if (response.status) {
-                    this.toastrService.success('User updated successfully');
+                    this.toastrService.success('Company updated successfully');
                     this.store.dispatch(
                         companyManagementActions.loadCompaniesRequest({
                         page: Number(page),
@@ -105,7 +105,7 @@ export class CompanyManagementEffects {
     )
   );
 
-  createUser$ = createEffect(() =>
+  createCompany$ = createEffect(() =>
   this.actions$.pipe(
     ofType(companyManagementActions.createCompanyRequest),
     switchMap((action) => 
@@ -118,7 +118,7 @@ export class CompanyManagementEffects {
           return this.companyManagementService.createCompany(action.companyData).pipe(
             map((response) => {
               if (response.status) {
-                this.toastrService.success('User created successfully');
+                this.toastrService.success('Company created successfully');
                 this.store.dispatch(
                     companyManagementActions.loadCompaniesRequest({
                     page: Number(page),

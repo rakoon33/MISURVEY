@@ -85,6 +85,23 @@ const getCompanyProfileController = async (req, res) => {
   }
 };
 
+const getCompanyDataController = async (req, res) => {
+  try {
+    const companyID = req.user.companyID;
+    if (!companyID) {
+      return res
+        .status(400)
+        .json({ message: "companyID is required as a query parameter." });
+    }
+    const result = await companyService.getCompanyData(companyID, req.user.role);
+    res.json(result);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: error.message || "Failed to retrieve company data." });
+  }
+};
+
 module.exports = {
   createCompanyController,
   updateCompanyController,
@@ -93,4 +110,5 @@ module.exports = {
   searchCompanyController,
   getOneCompanyController,
   getCompanyProfileController,
+  getCompanyDataController,
 };

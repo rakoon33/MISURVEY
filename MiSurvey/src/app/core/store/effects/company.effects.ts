@@ -22,12 +22,12 @@ export class CompanyEffects {
                 permissions: response.permissions
               });
             } else {
-              this.toastrService.error(response.message || 'Failed to fetch user data');
+              this.toastrService.error(response.message || 'Failed to fetch company data');
               return companyActions.getCompanyDataFailure();
             }
           }),
           catchError(error => {
-            this.toastrService.error(error.message || 'An error occurred while fetching user data');
+            this.toastrService.error(error.message || 'An error occurred while fetching company data');
             return of(companyActions.getCompanyDataFailure());
           })
         )

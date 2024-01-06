@@ -15,7 +15,11 @@ export class CompanyService {
     return this.http.get<any>(companyDataUrl, { withCredentials: true }).pipe(
       map((response) => response),
       catchError((error) => {
-        return throwError(() => error);
+        let errorMessage = 'An unknown error occurred.';
+        if (error.status === 400) {
+          errorMessage = 'Company ID does not exist for superadmin';
+        }
+        return throwError(() => new Error(errorMessage));
       })
     );
   }

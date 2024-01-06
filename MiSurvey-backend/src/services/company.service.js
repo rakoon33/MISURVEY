@@ -8,61 +8,11 @@ const {
   SurveyPage,
   SurveyQuestion,
   SurveyResponse,
+  RolePermission,
+  Module,
 } = require("../models");
 const { Op } = require('sequelize');
 const db = require('../config/database');
-
-/*const createCompany = async (companyData) => {
-  try {
-    const adminID = companyData.AdminID;
-    const user = await User.findOne({
-      where: {
-        UserID: adminID
-      }
-    });
-
-    if (!user) {
-      return {
-        status: false,
-        message: "AdminID does not exist in Users table"
-      };
-    }
-
-    if (user.UserRole !== "Admin") {
-      return {
-        status: false,
-        message: "Only Admin can own their company"
-      };
-    }
-
-    const existingCompany = await Company.findOne({
-      where: {
-        AdminID: adminID
-      }
-    });
-
-    if (existingCompany) {
-      return {
-        status: false,
-        message: "This AdminID already has a company"
-      };
-    }
-
-    const newCompany = await Company.create(companyData);
-
-    return {
-      status: true,
-      message: "Company created successfully by SuperAdmin",
-      data: newCompany
-    };
-  } catch (error) {
-    return {
-      status: false,
-      message: "Create company failed",
-      error: error?.toString(),
-    };
-  }
-};*/
 
 const createCompany = async (companyData) => {
   const transaction = await db.sequelize.transaction();
@@ -122,7 +72,7 @@ const updateCompany = async (CompanyID, updatedData) => {
     if (!company) {
       return {
         status: false,
-        message: "Company not found",
+        message: "Company not fo",
       };
     }
 
@@ -389,6 +339,77 @@ const getOneCompany = async (CompanyID) => {
   }
 };
 
+const getCompanyData = async (companyID, userRole) => {
+  try {
+    const companyDetails = await Company.findByPk(companyID);
+    if (!companyDetails) {
+      return {
+        status: false,
+        message: "Company not found",
+      };
+    }
+
+    if (userRole === "SuperAdmin" || userRole === "Admin") {
+      return {
+        status: true,
+        companyDetails: companyDetails
+      };
+    }
+
+    const companyUser = await CompanyUser.findOne({
+      where: { CompanyID: companyID },
+    });
+    if (!companyUser) {
+      return {
+        status: false,
+        message: "Company not found",
+      };
+    }
+
+    let permissionsMap = {};
+
+    if (companyUser.CompanyUserID) {
+      const individualPermissions = await IndividualPermission.findAll({
+        where: { CompanyUserID: companyUser.CompanyUserID },
+        include: [{ model: Module, as: "module", required: true }],
+      });
+
+      permissionsMap = individualPermissions.reduce((acc, permission) => {
+        if (permission.module) {
+          acc[permission.module.ModuleName] = permission;
+        }
+        return acc;
+      }, {});
+    }
+
+    if (companyUser.CompanyRoleID) {
+      const rolePermissions = await RolePermission.findAll({
+        where: { CompanyRoleID: companyUser.CompanyRoleID },
+        include: [{ model: Module, as: "module", required: true }],
+      });
+
+      rolePermissions.forEach((permission) => {
+        if (
+          permission.module &&
+          !permissionsMap.hasOwnProperty(permission.module.ModuleName)
+        ) {
+          permissionsMap[permission.module.ModuleName] = permission;
+        }
+      });
+    }
+
+    const mergedPermissions = Object.values(permissionsMap);
+
+    return {
+      status: true,
+      userDetails: userDetails,
+      permissions: mergedPermissions,
+    };
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch permissions");
+  }
+};
+
 module.exports = {
   createCompany,
   updateCompany,
@@ -397,4 +418,5 @@ module.exports = {
   searchCompanies,
   getOneCompany,
   createCompanyByAdmin,
+  getCompanyData,
 };
