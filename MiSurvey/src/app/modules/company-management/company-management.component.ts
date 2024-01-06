@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Permission, Company } from '../../core/models';
+import { Permission, Company, User } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
@@ -23,7 +23,7 @@ export class CompanyManagementComponent implements OnInit {
   currentPage: string = '1';
   currentAction: 'view' | 'edit' | null = null;
   currentSelectedCompanyId: number | undefined;
-  currentCompanyId: number | undefined;
+  currentUserId: number | undefined;
   editCompanyFormGroup: FormGroup;
   addCompanyForm: FormGroup;
 
@@ -48,7 +48,6 @@ export class CompanyManagementComponent implements OnInit {
     this.editCompanyFormGroup = new FormGroup({
       CompanyName: new FormControl('', [Validators.required]),
       CompanyDomain: new FormControl('', [Validators.required]),
-      AdminID: new FormControl(''),
       CreatedAt: new FormControl(''),
     });
 
@@ -122,8 +121,8 @@ export class CompanyManagementComponent implements OnInit {
     });
     this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
     this.store
-      .select(companySelector.selectCurrentCompany)
-      .subscribe((id) => (this.currentCompanyId = id?.CompanyID));
+      .select(userSelector.selectCurrentUser)
+      .subscribe((id) => (this.currentUserId = id?.UserID));
   }
 
   getPaginationRange(
@@ -230,11 +229,11 @@ export class CompanyManagementComponent implements OnInit {
   }
 
   createCompany() {
-    if (this.addCompanyForm.valid && this.currentCompanyId != null) {
+    if (this.addCompanyForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addCompanyForm.value,
         CreatedAt: new Date(),
-        CreatedBy: this.currentCompanyId,
+        CreatedBy: this.currentUserId,
       };
       this.store.dispatch(
         companyManagementActions.createCompanyRequest({ companyData: formData })
@@ -250,10 +249,10 @@ export class CompanyManagementComponent implements OnInit {
   }
 
   saveChanges() {
-    if (this.editCompanyFormGroup.valid && this.currentCompanyId) {
+    if (this.editCompanyFormGroup.valid && this.currentUserId) {
       const formValue = {
         ...this.editCompanyFormGroup.value,
-        UpdatedBy: this.currentCompanyId,
+        UpdatedBy: this.currentUserId,
       };
 
       this.store.dispatch(
@@ -264,7 +263,6 @@ export class CompanyManagementComponent implements OnInit {
       );
 
     } else {
-      // Handle form invalid or company ID not set
       this.toastr.error('Form is invalid or company ID is not set');
     }
   }
