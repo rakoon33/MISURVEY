@@ -1,22 +1,20 @@
 <div class="survey-question-container">
-    <p>{{ question }}</p>
-    <div class="emoticon-rating" [style.color]="buttonTextColor">
-
-      <div class="emoticon-wrapper" (click)="setEmoticonRating('veryBad')">
-        <c-icon name="cil-mood-very-bad"></c-icon>
-      </div>
-      <div class="emoticon-wrapper" (click)="setEmoticonRating('bad')">
-        <c-icon name="cil-mood-bad"></c-icon>
-      </div>
-      <div class="emoticon-wrapper" (click)="setEmoticonRating('meh')">
-        <c-icon name="cil-meh"></c-icon>
-      </div>
-      <div class="emoticon-wrapper" (click)="setEmoticonRating('good')">
-        <c-icon name="cil-mood-good"></c-icon>
-      </div>
-      <div class="emoticon-wrapper" (click)="setEmoticonRating('veryGood')">
-        <c-icon name="cil-mood-very-good"></c-icon>
-      </div>
+  <p>{{ question }}</p>
+  <div class="emoticon-rating" [style.color]="buttonTextColor">
+    <div class="emoticon-wrapper" (click)="setEmoticonRating('veryBad')">
+      <c-icon name="cil-mood-very-bad"></c-icon>
+    </div>
+    <div class="emoticon-wrapper" (click)="setEmoticonRating('bad')">
+      <c-icon name="cil-mood-bad"></c-icon>
+    </div>
+    <div class="emoticon-wrapper" (click)="setEmoticonRating('meh')">
+      <c-icon name="cil-meh"></c-icon>
+    </div>
+    <div class="emoticon-wrapper" (click)="setEmoticonRating('good')">
+      <c-icon name="cil-mood-good"></c-icon>
+    </div>
+    <div class="emoticon-wrapper" (click)="setEmoticonRating('veryGood')">
+      <c-icon name="cil-mood-very-good"></c-icon>
     </div>
   </div>
-  
+</div>

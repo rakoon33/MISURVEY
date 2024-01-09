@@ -1,14 +1,17 @@
 <div class="survey-container">
 
   <svg cIcon name="cilThumbUp" size="lg"></svg>
-  <h2 class="survey-title">What is the first question you'd like to ask?</h2>
+  <h2 class="survey-title">
+    {{ (questionCount$ | async) === 0 ? 'No questions yet. What is the first question you\'d like to ask?' : 'You have ' + (questionCount$ | async) + ' questions so far. Any more questions?' }}
+  </h2>
   <div class="question-input-container">
     <input
       type="text"
       class="question-input"
       placeholder="How was your experience with..."
+      [(ngModel)]="questionText"
     />
-    <button class="next-button">Next</button>
+    <button class="next-button" (click)="addQuestion()">Next</button>
   </div>
   <button class="recommended-questions">Recommended questions</button>
 </div>

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { surveyManagementActions } from 'src/app/core/store/actions';
 
 @Component({
   selector: 'app-survey-info',
@@ -9,6 +11,7 @@ import { Router } from '@angular/router';
 export class SurveyInfoComponent {
   constructor(
     private router: Router,
+    private store: Store
   ) {}
 
   surveyTitle: string = 'Your survey title';
@@ -29,6 +32,14 @@ export class SurveyInfoComponent {
   }
 
   nextToQuestion(): void {
+    this.store.dispatch(surveyManagementActions.cacheSurveyInfo({
+      title: this.surveyTitle,
+      customizations: {
+        topBarColor: this.topBarColor,
+        buttonTextColor: this.buttonTextColor
+      },
+      surveyDescription: this.surveyDescription,
+    }));
     this.router.navigate(['/survey-management/question']);
   }
 }

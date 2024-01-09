@@ -1,13 +1,43 @@
 import { Component } from '@angular/core';
-
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Subscription, filter } from 'rxjs';
+import { surveyManagementActions } from 'src/app/core/store/actions';
+import { surveyManagementSelector } from 'src/app/core/store/selectors';
 @Component({
   selector: 'app-question-configure',
   templateUrl: './question-configure.component.html',
-  styleUrls: ['./question-configure.component.scss']
+  styleUrls: ['./question-configure.component.scss'],
 })
 export class QuestionConfigureComponent {
   currentType: 'text' | 'graphic' | 'numeric' = 'text';
-  currentTitle = 'Configure Your Question';
+  questionText: string = '';
+
+  public selectedOption:
+    | 'text'
+    | 'stars'
+    | 'thumbs'
+    | 'smileys'
+    | 'csat'
+    | 'nps' = 'text';
+
+  private subscription = new Subscription();
+  hasSaved: boolean = false;
+  isInitialized: boolean = false;
+  constructor(private store: Store, private router: Router) {
+    this.subscription.add(
+      this.store
+        .select(surveyManagementSelector.selectLastQuestionText)
+        .subscribe((text) => {
+          this.questionText = text || '';
+        })
+    );
+  }
+
+  ngOnInit() {
+    this.isInitialized = true;
+  }
+
 
   changeType(event: Event): void {
     const select = event.target as HTMLSelectElement; // Type assertion
@@ -18,7 +48,57 @@ export class QuestionConfigureComponent {
     }
   }
 
-  selectOption(option: 'stars' | 'thumbs' | 'smileys'): void {
-    // Handle option selection logic here
+  selectOption(
+    option: 'text' | 'stars' | 'thumbs' | 'smileys' | 'csat' | 'nps'
+  ): void {
+    this.selectedOption = option;
+  }
+
+  saveSelection(): void {
+    let questionType = this.mapOptionToQuestionType(this.selectedOption);
+  
+    this.store.dispatch(
+      surveyManagementActions.addSurveyQuestionType({
+        questionText: this.questionText,
+        questionType,
+      })
+    );
+  
+    this.hasSaved = true;
+  }
+  
+
+  clearQuestionText(): void {
+    this.store.dispatch(surveyManagementActions.clearUnsavedQuestionText());
+  }
+
+  mapOptionToQuestionType(
+    option: 'stars' | 'thumbs' | 'smileys' | 'text' | 'nps' | 'csat'
+  ): number {
+    switch (option) {
+      case 'stars':
+        return 1;
+      case 'thumbs':
+        return 2;
+      case 'smileys':
+        return 3;
+      case 'text':
+        return 4;
+      case 'nps':
+        return 5;
+      case 'csat':
+        return 6;
+      default:
+        return 1;
+    }
+  }
+
+  ngOnDestroy() {
+    // Only clear the question text if the component has been initialized and not saved
+    if (this.isInitialized && !this.hasSaved) {
+      this.clearQuestionText();
+    }
+    this.subscription.unsubscribe();
+    this.isInitialized = false;
   }
 }

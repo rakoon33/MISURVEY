@@ -1,61 +1,189 @@
 .survey-container {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+  max-width: 100%;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
 }
 
 .question-container {
-    margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .question-container label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
+p.config-text-style {
+  font-weight: bold;
+  margin: 0px 0px 5px !important;
+  font-size: 14px !important;
+}
 .question-container input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 0;
 }
 
 .options-container {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .options-container select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .content-container {
-    text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  text-align: center;
 }
 
 .card {
-    display: inline-block;
-    margin: 10px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    cursor: pointer;
+  display: inline-block;
+  margin: 10px;
+  padding: 20px 20px 0px 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .card:hover {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
-.rating-card, .feedback-card, .smiley-card {
-    text-align: center;
+.rating-card,
+.feedback-card,
+.smiley-card {
+  text-align: center;
 }
 
-.stars, .thumbs, .smileys {
-    font-size: 24px;
-    margin-bottom: 10px;
+.stars {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.thumb-wrapper,
+.emoticon-wrapper {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.csat-card button,
+.nps-card button {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.csat-card button:hover,
+.nps-card button:hover {
+  background-color: #f0f0f0;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+input[type="text"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+input[type="text"]::placeholder {
+  color: #888;
+}
+
+.survey-container p {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.card p {
+  color: #555;
+  font-size: 14px;
+}
+
+.options-container p {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.thumb-wrapper,
+.emoticon-wrapper {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center !important;
+
+  margin: 0;
+}
+
+.emoticon-rating,
+.thumb-rating {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center !important;
+  margin: 0;
+}
+::ng-deep .emoticon-rating .emoticon-wrapper svg.icon.ng-star-inserted {
+  width: 35px;
+  height: 35px;
+  display: inline;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+::ng-deep .thumb-rating .thumb-wrapper svg.icon.ng-star-inserted {
+  width: 35px;
+  height: 35px;
+  display: inline;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.selected {
+  background-color: #f0f0f0;
+}
+
+.save-button-container {
+  text-align: center;
+  margin-top: 20px; 
+}
+
+.save-button-container button {
+  padding: 10px 20px; 
+  background-color: #007bff; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  font-size: 16px; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; 
+}
+
+.save-button-container button:hover {
+  background-color: #0056b3; 
 }
