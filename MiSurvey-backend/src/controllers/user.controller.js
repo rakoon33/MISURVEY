@@ -104,11 +104,8 @@ const searchUserController = async (req, res) => {
     }
     const result = await userService.searchUsers(column, searchTerm);
 
-    if (result.status) {
-      res.json(result.users);
-    } else {
-      res.status(400).json({ message: result.message });
-    }
+   
+      res.json(result);
   } catch (error) {
     res
       .status(500)

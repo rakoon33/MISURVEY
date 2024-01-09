@@ -32,7 +32,7 @@ const Survey = db.sequelize.define('Survey', {
         allowNull: true
     },
     SurveyImages: {
-        type: DataTypes.BLOB
+        type: DataTypes.TEXT
     },
     InvitationMethod: {
         type: DataTypes.STRING(50),
@@ -59,7 +59,8 @@ const Survey = db.sequelize.define('Survey', {
         defaultValue: DataTypes.NOW,
     },
     ResponseRate: {
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT,
+        allowNull: true
     },
     CreatedBy: {
         type: DataTypes.INTEGER
@@ -70,9 +71,11 @@ const Survey = db.sequelize.define('Survey', {
     UpdatedBy: {
         type: DataTypes.INTEGER
     },
-    Approve: { // New field added to match the database schema
-        type: DataTypes.TEXT,
-        allowNull: false,
+    Approve: {
+        type: DataTypes.TEXT
+    },
+    SurveyLink: {
+        type: DataTypes.TEXT
     }
 }, {
     tableName: 'Surveys',

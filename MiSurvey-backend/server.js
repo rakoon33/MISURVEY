@@ -43,7 +43,7 @@ app.use('/api/modules', moduleRoute);
 app.use('/api/permissions', individualPermissionRoute);
 app.use('/api/companyusers', companyUserRoute);
 app.use('/api/survey', surveyRoute);
-app.use('/api/surveyPage', surveyPageRoute);
+app.use('/api/surveyPages', surveyPageRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
