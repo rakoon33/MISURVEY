@@ -3,7 +3,6 @@ const { sequelize } = require('../config/database');
 const { Op } = require('sequelize');
 
 // Create CompanyRole by SuperAdmin
-
 const createCompanyRole = async (roleData, permissionsData) => {
     const transaction = await sequelize.transaction(); // Begin a transaction
 
@@ -89,8 +88,6 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
         };
     }
 };
-
-
 
 // Delete CompanyRole by SuperAdmin
 const deleteCompanyRole = async (id) => {
@@ -184,10 +181,8 @@ const getOneCompanyRole = async (id) => {
     }
 };
 
-
 const searchCompanyRoles = async (query) => {
     try {
-      console.log("Searching company roles');", query);
       const companyroles = await CompanyRole.findAll({
         where: {
           CompanyRoleName: {

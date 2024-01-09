@@ -550,5 +550,4 @@ router
     .get(authMiddleware.tokenVerification,userController.getOneUserController)
     .put(authMiddleware.tokenVerification, userController.updateUserController);
 
-
 module.exports = router;

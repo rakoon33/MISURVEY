@@ -1,4 +1,4 @@
-const { companyUser } = require('../services');
+const { companyUserService } = require('../services');
 
 const createCompanyUserController = async (req, res) => {
     try {
@@ -10,7 +10,9 @@ const createCompanyUserController = async (req, res) => {
                 message: "Both company user data and user data are required"
             });
         }
-        const result = await companyUser.createCompanyUser(companyUserData, userData);
+
+        // Calling the service function to create a company user and associated user account
+        const result = await companyUserService.createCompanyUser(companyUserData, userData);
 
         res.status(201).json(result);
 
@@ -24,7 +26,7 @@ const createCompanyUserController = async (req, res) => {
 
 const deleteCompanyUserController = async (req, res) => {
   try {
-    const result = await companyUser.deleteCompanyUser(req.params.companyUserId);
+    const result = await companyUserService.deleteCompanyUser(req.params.companyUserId);
 
     if (result.status) {
       res.json({ status: true, message: result.message });
@@ -38,7 +40,7 @@ const deleteCompanyUserController = async (req, res) => {
 
 const getOneCompanyUserController = async (req, res) => {
     try {
-        const result = await companyUser.getOneCompanyUser(req.params.companyUserId);
+        const result = await companyUserService.getOneCompanyUser(req.params.companyUserId);
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -47,7 +49,7 @@ const getOneCompanyUserController = async (req, res) => {
 
 const getAllCompanyUsersController = async (req, res) => {
     try {
-        const result = await companyUser.getAllCompanyUsers();
+        const result = await companyUserService.getAllCompanyUsers();
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
