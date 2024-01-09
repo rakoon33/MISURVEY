@@ -1,66 +1,35 @@
 const { CompanyUser, User, Company, CompanyRole } = require('../models');
-const {createUser} = require('./user.service');
+const { createUser } = require('./user.service');
 const db = require('../config/database');
-
-/*const createCompanyUser = aync (companyUserData) => {
-  try {
-    // Destructure the required fields from companyUserData
-    const { UserID, CompanyID, CompanyRoleID } = companyUserData;
-
-    // Validate that all required fields are provided
-    if (!UserID || !CompanyID || !CompanyRoleID) {
-      throw new Error('UserID, CompanyID, and CompanyRoleID are required');
-    }
-
-    // Create the company user
-    const newCompanyUser = await CompanyUser.create({
-      UserID,
-      CompanyID,
-      CompanyRoleID
-    });
-
-    return {
-      status: true,
-      message: "Company User created successfully",
-      companyUser: newCompanyUser
-    };
-  } catch (error) {
-    return {
-      status: false,
-      message: error.message || "Failed to create company user",
-      error: error.toString()
-    };
-  }
-};*/
 
 const createCompanyUser = async (companyUserData, userData) => {
     const transaction = await db.sequelize.transaction();
     try {
-        const { CompanyID, CompanyRoleID } = companyUserData;
-  
-        if (!CompanyID || !CompanyRoleID) {
-            throw new Error('CompanyID and CompanyRoleID are required');
-        }
+      const { CompanyID, CompanyRoleID } = companyUserData;
 
-        const newUser = await createUser(userData);
-  
-        if (!newUser.status) {
-            throw new Error(newUser.message);
-        }
-  
-        const newCompanyUser = await CompanyUser.create({
-            UserID: newUser.userID,
-            CompanyID,
-            CompanyRoleID
-        }, { transaction });
-  
-        await transaction.commit();
-  
-        return {
-            status: true,
-            message: "Company User and associated User account created successfully",
-            companyUser: newCompanyUser
-        };
+      if (!CompanyID || !CompanyRoleID) {
+          throw new Error('CompanyID and CompanyRoleID are required');
+      }
+
+      const newUser = await createUser(userData);
+
+      if (!newUser.status) {
+          throw new Error(newUser.message);
+      }
+
+      const newCompanyUser = await CompanyUser.create({
+          UserID: newUser.userID,
+          CompanyID,
+          CompanyRoleID
+      }, { transaction });
+
+      await transaction.commit();
+
+      return {
+          status: true,
+          message: "Company User and associated User account created successfully",
+          companyUser: newCompanyUser
+      };
     } catch (error) {
         await transaction.rollback();
         return {
@@ -71,7 +40,6 @@ const createCompanyUser = async (companyUserData, userData) => {
     }
 };
   
-
 const deleteCompanyUser = async (companyUserId) => {
   try {
     const companyUser = await CompanyUser.findByPk(companyUserId);
