@@ -1,0 +1,12 @@
+<div class="survey-question-container">
+  <p>{{ question }}</p>
+  <div class="csat-buttons">
+    <button *ngFor="let score of [1,2,3,4,5]" 
+            (click)="setScore(score)"
+            [ngStyle]="csatScore === score ? 
+                      {'background-color': buttonTextColor, 'color': 'white', 'border-color': buttonTextColor} : 
+                      {'background-color': 'white', 'color': buttonTextColor, 'border-color': buttonTextColor}">
+      {{ score }}
+    </button>
+  </div>
+</div>

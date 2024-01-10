@@ -11,7 +11,7 @@ const Survey = db.sequelize.define('Survey', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'User',
+            model: 'User', // The model name should match the Sequelize model name for Users
             key: 'UserID'
         }
     },
@@ -19,7 +19,7 @@ const Survey = db.sequelize.define('Survey', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Company',
+            model: 'Company', // The model name should match the Sequelize model name for Companies
             key: 'CompanyID'
         }
     },
@@ -27,7 +27,7 @@ const Survey = db.sequelize.define('Survey', {
         type: DataTypes.STRING(100),
         allowNull: false
     },
-    SurveyDescription: { // New field added
+    SurveyDescription: {
         type: DataTypes.TEXT,
         allowNull: true
     },

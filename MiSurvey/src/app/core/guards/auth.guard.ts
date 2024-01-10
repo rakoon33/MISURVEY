@@ -18,6 +18,7 @@ export class AuthGuard implements CanActivate {
 
       userActions.getUserDataSuccess({ user: null, permissions: [] })
       companyActions.getCompanyDataSuccess({ company: null, permissions: [] })
+
       return true;
     } else {
       // If the HttpOnly JWT cookie does not exist, redirect to login

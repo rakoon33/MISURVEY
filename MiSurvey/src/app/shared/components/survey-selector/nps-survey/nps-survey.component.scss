@@ -1,0 +1,36 @@
+/* Styles for the survey container */
+.survey-question-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #f6f6f6;
+  flex: 1;
+}
+
+/* Styles for the NPS buttons */
+.nps-buttons button {
+  margin: 5px;
+  padding: 8px 10px;
+  width: 40px;
+  border: 2px solid;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+}
+
+.survey-question-container p {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Hover and focus styles for the buttons */
+.nps-buttons button:hover,
+.nps-buttons button:focus {
+  background-color: var(--hover-bg-color);
+  color: #fff;
+  outline: none;
+}

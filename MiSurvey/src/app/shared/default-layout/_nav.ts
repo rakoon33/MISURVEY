@@ -27,7 +27,7 @@ export const navItems: INavData[] = [
   {
     name: 'Survey Management',
     url: '/survey-management',
-    iconComponent: { name: 'cil-building' }
+    iconComponent: { name: 'cil-spreadsheet' }
   },
   {
     name: 'Components',

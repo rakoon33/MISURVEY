@@ -1,0 +1,32 @@
+.survey-question-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #f6f6f6;
+  flex: 1;
+}
+
+.survey-question-container p {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+.thumb-wrapper {
+  padding: 10px;
+}
+.thumbs-rating .thumb-wrapper {
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+::ng-deep .thumbs-rating .thumb-wrapper svg.icon.ng-star-inserted {
+  width: 45px;
+  height: 45px;
+  display: inline;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.thumbs-rating .thumb-wrapper:hover {
+  transform: scale(1.1);
+}

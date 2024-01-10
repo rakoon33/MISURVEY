@@ -1,3 +1,4 @@
+import { SurveyManagementService } from './survey-management.service';
 import { AuthService } from './auth.service';
 import { CompanyManagementService } from './company-management.service';
 import { DefaultLayoutService } from './default-layout.service';
@@ -12,4 +13,5 @@ export {
   DefaultLayoutService,
   CompanyManagementService,
   UserManagementService,
+  SurveyManagementService
 };

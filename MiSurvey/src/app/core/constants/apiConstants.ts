@@ -7,6 +7,7 @@ const BACKEND_API = {
     USER: '/users',
     LOGOUT: '/logout',
     COMPANY: '/companies',
+    SURVEY: '/survey',
 };
 
 export default {BACKEND_API};

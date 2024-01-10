@@ -56,13 +56,16 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { reducers, metaReducers } from './core/store/storage-sync.reducer';
+
 import { 
   AuthEffects, 
   UserEffects, 
   UserManagementEffects, 
   CompanyManagementEffects, 
   CompanyEffects,
+  SurveyManagementEffects
 } from './core/store/effects';
+
 import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
 
 // api
@@ -144,7 +147,8 @@ const APP_CONTAINERS = [
       UserEffects, 
       UserManagementEffects, 
       CompanyManagementEffects, 
-      CompanyEffects ,
+      CompanyEffects,
+      SurveyManagementEffects
     ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     StoreRouterConnectingModule.forRoot(),

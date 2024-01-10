@@ -4,7 +4,9 @@ import {
   CompanyState, 
   UserManagementState, 
   CompanyManagementState,
+  SurveyState
 } from "./states";
+
 import { RouterReducerState } from '@ngrx/router-store';
 
 export interface AppState {
@@ -13,5 +15,6 @@ export interface AppState {
   feature_auth: AuthState;
   feature_user_management: UserManagementState;
   feature_company_management: CompanyManagementState;
+  feature_survey_management: SurveyState;
   router: RouterReducerState;
 }
