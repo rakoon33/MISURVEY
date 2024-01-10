@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-
+import { Survey } from '../../models';
 export const resetSurveyState = createAction('[Survey] Reset State');
 
 export const setInvitationMethod = createAction(
@@ -28,4 +28,25 @@ export const addSurveyQuestionType = createAction(
 
 export const clearUnsavedQuestionText = createAction(
   '[Survey] Clear Unsaved Question Text'
+);
+
+export const createSurveyRequest = createAction(
+  '[Survey] Create Survey Request'
+);
+export const createSurveySuccess = createAction(
+  '[Survey] Create Survey Success'
+);
+export const createSurveyFailure = createAction(
+  '[Survey] Create Survey Failure'
+);
+
+
+export const fetchSurveysRequest = createAction('[Survey] Fetch Surveys Request');
+export const fetchSurveysSuccess = createAction(
+  '[Survey] Fetch Surveys Success',
+  props<{ surveys: any[] }>()
+);
+export const fetchSurveysFailure = createAction(
+  '[Survey] Fetch Surveys Failure',
+  props<{ error: any }>()
 );

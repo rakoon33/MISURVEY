@@ -50,9 +50,23 @@ const selectQuestionsCount = createSelector(
   selectAllSurveyQuestions,
   (questions) => questions.length
 );
+
+// Use the selectCurrentSurvey to get the entire survey object
+export const selectSurveyValue = createSelector(
+  selectCurrentSurvey,
+  (survey) => survey
+);
+
+const selectAllSurveys = createSelector(
+  selectFeatureSurveyManagementState,
+  (state) => state.surveys
+);
+
 export default {
   selectAllQuestionTexts,
   selectFirstQuestionText,
   selectLastQuestionText,
-  selectQuestionsCount
+  selectQuestionsCount,
+  selectSurveyValue,
+  selectAllSurveys
 };

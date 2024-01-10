@@ -3,6 +3,7 @@ import { SurveyState } from '../states';
 import { createReducer, on } from '@ngrx/store';
 
 export const initialState: SurveyState = {
+  surveys: [],
   survey: null,
   currentSurveyId: null,
   loading: false,
@@ -128,5 +129,30 @@ export const surveyManagementReducer = createReducer(
         pages: updatedPages,
       },
     };
-  })
+  }),
+  on(surveyManagementActions.createSurveyRequest, (state) => ({
+    ...state,
+    loading: true,
+    error: null
+  })),
+  on(surveyManagementActions.createSurveySuccess, (state) => ({
+    ...state,
+    loading: false
+  })),
+  on(surveyManagementActions.createSurveyFailure, (state) => ({
+    ...state,
+    loading: false,
+    error: 'Error creating survey'
+  })),
+  on(surveyManagementActions.fetchSurveysSuccess, (state, { surveys }) => ({
+    ...state,
+    surveys,
+    loading: false,
+    error: null
+  })),
+  on(surveyManagementActions.fetchSurveysFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  }))
 );
