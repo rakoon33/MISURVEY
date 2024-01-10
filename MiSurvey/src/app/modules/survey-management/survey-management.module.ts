@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
-
 import {
   AvatarModule,
   ButtonGroupModule,
@@ -23,7 +22,6 @@ import {
 import { IconModule } from '@coreui/icons-angular';
 import { SurveyManagementRoutingModule } from './survey-management-routing.module';
 import { SurveyManagementComponent } from './survey-management.component';
-
 @NgModule({
   imports: [
     DropdownModule,

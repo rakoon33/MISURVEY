@@ -1,0 +1,31 @@
+
+.survey-question-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #f6f6f6;
+  flex: 1;
+}
+
+.star-rating {
+  display: inline-block;
+  padding: 20px;
+}
+
+.star-rating span {
+  cursor: pointer;
+  font-size: 30px; // Increased font size for better visibility
+  color: #ccc; // Default color
+  margin: 0 5px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.star-rating span:hover,
+.star-rating span.selected {
+  transform: scale(1.2);
+}
+
+.survey-question-container p {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}

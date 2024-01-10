@@ -8,6 +8,7 @@ export const reducers: ActionReducerMap<AppState> = {
     feature_user: featureReducer.userReducer,
     feature_auth: featureReducer.authReducer,
     feature_user_management: featureReducer.userManagementReducer,
+    feature_survey_management: featureReducer.surveyManagementReducer,
     router: routerReducer,
 };
 
@@ -16,7 +17,8 @@ export function storageSyncReducer(reducer: ActionReducer<AppState>): ActionRedu
   const metaReducer = storageSync<AppState>({
     features: [
       { stateKey: 'feature_auth' },
-      { stateKey: 'feature_user' }
+      { stateKey: 'feature_user' },
+      { stateKey: 'feature_survey_management' },
     ],
     storage: window.localStorage
   });

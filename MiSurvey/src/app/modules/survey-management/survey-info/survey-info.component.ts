@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { surveyManagementActions } from 'src/app/core/store/actions';
 
 @Component({
   selector: 'app-survey-info',
@@ -6,31 +9,37 @@ import { Component } from '@angular/core';
   styleUrls: ['./survey-info.component.scss'],
 })
 export class SurveyInfoComponent {
-  survey = {
-    title: '',
-    topBarColor: '#ffffff',
-    buttonTextColor: '#000000',
-    fromEmail: '',
-    subject: '',
-    question: '',
-    rating: null,
-  };
+  constructor(
+    private router: Router,
+    private store: Store
+  ) {}
 
-  ratingScale = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  surveyTitle: string = 'Your survey title';
+  topBarColor: string = '#BA3232';
+  buttonTextColor: string = '#2f3c54';
+  selectedImage: string | ArrayBuffer | null = null;
+  surveyDescription: string = '';
+  selectedSurveyType: string = 'nps';
 
-  addLogo() {
-    // Logic to add a logo
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => (this.selectedImage = reader.result);
+      reader.readAsDataURL(file);
+    }
   }
 
-  nextStep() {
-
-  }
-
-
-  setRating(number: number) {}
-
-  submitSurvey() {
-    console.log(this.survey);
-    // Send the survey data to your server here
+  nextToQuestion(): void {
+    this.store.dispatch(surveyManagementActions.cacheSurveyInfo({
+      title: this.surveyTitle,
+      customizations: {
+        topBarColor: this.topBarColor,
+        buttonTextColor: this.buttonTextColor
+      },
+      surveyDescription: this.surveyDescription,
+    }));
+    this.router.navigate(['/survey-management/question']);
   }
 }

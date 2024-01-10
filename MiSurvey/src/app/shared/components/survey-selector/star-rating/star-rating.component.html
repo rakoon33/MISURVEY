@@ -1,0 +1,11 @@
+<div class="survey-question-container">
+  <p>{{ question }}</p>
+  <div class="star-rating">
+    <span *ngFor="let star of [1,2,3,4,5]" 
+          (click)="setRating(star)"
+          [class.selected]="star <= (starRating ?? 0)"
+          [ngStyle]="star <= (starRating ?? 0) ? {'color': selectedStarColor} : {}">
+      ★
+    </span>
+  </div>
+</div>

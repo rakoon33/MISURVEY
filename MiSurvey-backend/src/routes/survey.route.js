@@ -6,20 +6,20 @@ const router = express.Router();
 
 // Route to create a new survey with image upload handling
 router.route('/')
-    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.createSurveyController)
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getAllSurveyController);
+    .post(authMiddleware.tokenVerification, surveyController.createSurveyController)
+    .get(authMiddleware.tokenVerification, surveyController.getAllSurveyController);
 
 router
     .route('/searchSurveys')
     .get(authMiddleware.tokenVerification, surveyController.searchSurveyController);
 
 router.route('/detail/:SurveyID')
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getOneSurveyWithoutDataController);
+    .get(authMiddleware.tokenVerification, surveyController.getOneSurveyWithoutDataController);
 
 router.route('/:SurveyID')
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.getOneSurveyWithDataController)
-    .put(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.updateSurveyController)
-    .delete(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, surveyController.deleteSurveyController);
+    .get(authMiddleware.tokenVerification, surveyController.getOneSurveyWithDataController)
+    .put(authMiddleware.tokenVerification, surveyController.updateSurveyController)
+    .delete(authMiddleware.tokenVerification, surveyController.deleteSurveyController);
 
 
 // You can add more routes here for other survey functionalities

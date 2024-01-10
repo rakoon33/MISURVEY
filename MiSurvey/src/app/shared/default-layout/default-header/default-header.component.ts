@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { ToastrService } from 'ngx-toastr';
 import { authActions } from '../../../core/store/actions'; // Update with the correct path
 import { AppState } from '../../../core/store/app.state'; // Update with the correct path
 import { Subscription, skip } from 'rxjs';
@@ -19,10 +18,7 @@ export class DefaultHeaderComponent
   @Input() sidebarId: string = 'sidebar';
   private subscription = new Subscription();
 
-  constructor(
-    private router: Router,
-    private store: Store<AppState>
-  ) {
+  constructor(private router: Router, private store: Store<AppState>) {
     super();
 
     // Subscribe to auth state changes

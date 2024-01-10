@@ -1,0 +1,51 @@
+.survey-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  margin: 10px auto;
+}
+
+.survey-option {
+  border: 0 solid #e5e7eb;
+  border-radius: 5px;
+  text-align: center;
+  padding: 40px;
+  background-color: #fff;
+  box-shadow: 0 1px 4px 0 #0000001a;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+}
+
+.survey-option h3 {
+  margin: 10px 0;
+  font-size: 20px;
+}
+
+.survey-option p {
+  color: #555;
+  font-size: 14px;
+}
+
+.most-popular {
+  position: relative;
+}
+
+.most-popular::before {
+  content: "MOST POPULAR";
+  background-color: #ffcc00;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.survey-icon {
+  font-size: 35px;
+  margin-bottom: 10px;
+}

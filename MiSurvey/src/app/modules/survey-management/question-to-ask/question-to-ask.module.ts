@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { QuestionToAskRoutingModule } from './question-to-ask-routing.module';
 import { QuestionToAskComponent } from './question-to-ask.component';
+import { FormsModule } from '@angular/forms'; // Đảm bảo rằng đã nhập module này
 
 @NgModule({
   declarations: [
@@ -10,7 +11,8 @@ import { QuestionToAskComponent } from './question-to-ask.component';
   ],
   imports: [
     CommonModule,
-    QuestionToAskRoutingModule
+    QuestionToAskRoutingModule,
+    FormsModule
   ]
 })
 export class QuestionToAskModule { }

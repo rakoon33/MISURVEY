@@ -44,7 +44,6 @@ export class UserManagementComponent implements OnInit {
     userManagementSelector.selectCurrentUser
   );
   userPermissions$: Observable<Permission | undefined> | undefined;
-
   constructor(
     private store: Store,
     private toastr: ToastrService,
