@@ -18,8 +18,7 @@ const getUserData = async (userId, userRole) => {
         message: "User not found",
       };
     }
-    const { UserPassword, ...userDetailsWithoutPassword } =
-      userDetails.dataValues;
+    const { UserPassword, ...userDetailsWithoutPassword } = userDetails.dataValues;
 
     if (userRole === "SuperAdmin" || userRole === "Admin") {
       return {

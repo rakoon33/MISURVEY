@@ -1,35 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-
-import { FormsModule } from '@angular/forms'; 
-
-import { IconModule } from '@coreui/icons-angular';
-
-import { CompanyManagementComponent } from './company-management.component';
-import { CompanyManagementRoutingModule } from './company-management-routing.module';
-
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
 import {
   AvatarModule,
   ButtonGroupModule,
+  ButtonModule,
   DropdownModule,
+  FormModule,
   ModalModule,
+  ProgressModule,
   TableModule,
   CardModule,
   GridModule,
   NavModule,
   UtilitiesModule,
-  TabsModule
+  TabsModule,
 } from '@coreui/angular';
+import { IconModule } from '@coreui/icons-angular';
+import { CompanyManagementComponent } from './company-management.component';
+import { CompanyManagementRoutingModule } from './company-management-routing.module';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { ShareModule } from 'src/app/shared/share.module';
 
 @NgModule({
-  imports: [  
-    CommonModule,
+  imports: [
+    DropdownModule,
     CompanyManagementRoutingModule,
+    CommonModule,
     CardModule,
     GridModule,
     UtilitiesModule,
@@ -37,19 +36,19 @@ import {
     NavModule,
     TabsModule,
     FormsModule,
-    DropdownModule,
     ModalModule,
     ButtonGroupModule,
+    TableModule, 
+    AvatarModule,
     MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
-    MatNativeDateModule,
-    TableModule,
-    AvatarModule
+    ReactiveFormsModule,
+    ShareModule
   ],
   declarations: [
-    CompanyManagementComponent,
-  ],
+    CompanyManagementComponent,  
+  ]
 })
-export class CompanyManagementModule {
-}
+
+export class CompanyManagementModule {}

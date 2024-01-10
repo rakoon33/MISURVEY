@@ -4,10 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
 import { userManagementActions } from 'src/app/core/store/actions';
-import {
-  userManagementSelector,
-  userSelector,
-} from 'src/app/core/store/selectors';
+import { userManagementSelector, userSelector } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, NavigationStart, Event as RouterEvent, ActivatedRoute } from '@angular/router';
@@ -146,8 +143,6 @@ export class UserManagementComponent implements OnInit {
     this.store
       .select(userSelector.selectCurrentUser)
       .subscribe((id) => (this.currentUserId = id?.UserID));
-
-
   }
 
   getPaginationRange(
@@ -294,7 +289,6 @@ export class UserManagementComponent implements OnInit {
       );
 
     } else {
-      // Handle form invalid or user ID not set
       this.toastr.error('Form is invalid or user ID is not set');
     }
   }

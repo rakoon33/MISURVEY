@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { apiConstants } from '../constants';
 import { Company } from '../models';
 
@@ -10,53 +10,48 @@ import { Company } from '../models';
 })
 export class CompanyManagementService {
   private apiUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.COMPANY}`;
-
   constructor(private http: HttpClient) {}
-
-  getCompanies(): Observable<Company[]> {
-    return this.http
-      .get<{ status: boolean; data: Company[] }>(this.apiUrl, {
-        withCredentials: true,
-      })
-      .pipe(
-        map((response) => {
-          console.log('Full response:', response);
-          if (response.status) {
-            console.log('alo ' + response.data);
-            return response.data;
-          } else {
-            return [];
-          }
-        }),
-        catchError(this.handleError)
-      );
+  
+  getCompanies(page: number, pageSize: number): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+    return this.http.get<any>(this.apiUrl, { params, withCredentials: true });
   }
 
-  getCompanyId(companyId: string): Observable<Company | null> {
-    console.log(`${this.apiUrl}/${companyId}`);
+  getCompanyById(CompanyID: number): Observable<any> {
     return this.http
-      .get<{ status: boolean; data: Company }>(`${this.apiUrl}/${companyId}`, {
+      .get<any>(`${this.apiUrl}/${CompanyID}`, {
         withCredentials: true,
       })
       .pipe(
         map((response) => {
-          if (response.status) {
-            return response.data;
-          } else {
-            return null;
-          }
+          return response;
+        }),
+        catchError((error) => {
+          return throwError(() => error);
         })
       );
   }
 
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      console.error('An error occurred:', error.error.message);
-    } else {
-      console.error(
-        `Backend returned code ${error.status}, ` + `body was: ${error.error}`
+  updateCompany(CompanyID: number, updatedData: Company): Observable<any> {
+    return this.http
+      .put<any>(`${this.apiUrl}/${CompanyID}`, updatedData, { withCredentials: true })
+      .pipe(
+        map((response) => response),
+        catchError((error) => {
+          return throwError(() => error);
+        })
       );
-    }
-    return throwError('Something bad happened; please try again later.');
+  }
+
+  createCompany(companyData: Company): Observable<any> {
+    const url = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.COMPANY}`;
+    return this.http.post<any>(url, companyData, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
   }
 }

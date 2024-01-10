@@ -3,32 +3,32 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { userActions } from '../actions';
-import { UserService } from '../../services';
+import { companyActions } from '../actions';
+import { CompanyService } from '../../services';
 import { Router } from '@angular/router';
 
 @Injectable()
-export class UserEffects {
-  getUserData$ = createEffect(() =>
+export class CompanyEffects {
+  getCompanyData$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(userActions.getUserDataRequest),
+      ofType(companyActions.getCompanyDataRequest),
       switchMap(() => 
-        this.userService.getUserData().pipe(
+        this.companyService.getCompanyData().pipe(
           map(response => {
             if (response.status) {
               this.router.navigate(['/dashboard']);
-              return userActions.getUserDataSuccess({
-                user: response.userDetails,
+              return companyActions.getCompanyDataSuccess({
+                company: response.companyDetails,
                 permissions: response.permissions
               });
             } else {
-              this.toastrService.error(response.message || 'Failed to fetch user data');
-              return userActions.getUserDataFailure();
+              this.toastrService.error(response.message || 'Failed to fetch company data');
+              return companyActions.getCompanyDataFailure();
             }
           }),
           catchError(error => {
-            this.toastrService.error(error.message || 'An error occurred while fetching user data');
-            return of(userActions.getUserDataFailure());
+            this.toastrService.error(error.message || 'An error occurred while fetching company data');
+            return of(companyActions.getCompanyDataFailure());
           })
         )
       )
@@ -37,7 +37,7 @@ export class UserEffects {
 
   constructor(
     private actions$: Actions,
-    private userService: UserService,
+    private companyService: CompanyService,
     private toastrService: ToastrService,
     private router: Router
   ) {}

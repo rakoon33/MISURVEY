@@ -34,8 +34,22 @@ const deleteCompanyController = async (req, res) => {
 
 const getAllCompaniesController = async (req, res) => {
   try {
-    const result = await companyService.getAllCompanies();
-    res.json(result);
+    const requestingUserRole = req.user.role;
+    let requestingUserCompanyId = null;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    // Chỉ thiết lập CompanyID nếu người dùng không phải là SuperAdmin
+    if (requestingUserRole !== "SuperAdmin") {
+      requestingUserCompanyId = req.user.companyID;
+    }
+
+    const allCompanies = await companyService.getAllCompanies(
+      requestingUserRole,
+      requestingUserCompanyId,
+      page, pageSize
+    );
+    res.json(allCompanies);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -71,6 +85,23 @@ const getCompanyProfileController = async (req, res) => {
   }
 };
 
+const getCompanyDataController = async (req, res) => {
+  try {
+    const companyID = req.user.companyID;
+    if (!companyID) {
+      return res
+        .status(400)
+        .json({ message: "companyID is required as a query parameter." });
+    }
+    const result = await companyService.getCompanyData(companyID, req.user.role);
+    res.json(result);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: error.message || "Failed to retrieve company data." });
+  }
+};
+
 module.exports = {
   createCompanyController,
   updateCompanyController,
@@ -79,4 +110,5 @@ module.exports = {
   searchCompanyController,
   getOneCompanyController,
   getCompanyProfileController,
+  getCompanyDataController,
 };

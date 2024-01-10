@@ -1,5 +1,15 @@
 import { AuthEffects } from './auth.effects';
 import { UserEffects } from './user.effects';
-import {UserManagementEffects } from './user-management.effects';
+
+import { CompanyEffects } from './company.effects';
+import { UserManagementEffects } from './user-management.effects';
+import { CompanyManagementEffects } from './company-management.effects';
 import {SurveyManagementEffects} from './survey-management.effects';
-export {AuthEffects, UserEffects, UserManagementEffects, SurveyManagementEffects};
+export {
+    AuthEffects, 
+    UserEffects, 
+    CompanyEffects,
+    UserManagementEffects, 
+    CompanyManagementEffects,
+    SurveyManagementEffects
+};

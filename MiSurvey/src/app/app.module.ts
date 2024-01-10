@@ -6,7 +6,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { ToastrModule } from 'ngx-toastr';
-
 import { ShareModule } from './shared/share.module';
 
 // Import routing module
@@ -17,7 +16,6 @@ import { AppComponent } from './app.component';
 
 // Import containers
 import { DefaultFooterComponent, DefaultHeaderComponent, DefaultLayoutComponent } from './shared';
-
 import { Page404Component } from './shared/page404/page404.component';
 import { Page500Component } from './shared/page500/page500.component';
 import { LoginComponent } from './modules/auth/login/login.component';
@@ -56,11 +54,17 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-
 import { environment } from 'src/environments/environment';
-
 import { reducers, metaReducers } from './core/store/storage-sync.reducer';
-import { AuthEffects, UserEffects, UserManagementEffects, SurveyManagementEffects} from './core/store/effects';
+
+import { 
+  AuthEffects, 
+  UserEffects, 
+  UserManagementEffects, 
+  CompanyManagementEffects, 
+  CompanyEffects,
+  SurveyManagementEffects
+} from './core/store/effects';
 
 import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
 
@@ -138,7 +142,14 @@ const APP_CONTAINERS = [
         strictActionImmutability: true,
       },
     }),
-    EffectsModule.forRoot([AuthEffects,UserEffects, UserManagementEffects, SurveyManagementEffects ]),
+    EffectsModule.forRoot([
+      AuthEffects, 
+      UserEffects, 
+      UserManagementEffects, 
+      CompanyManagementEffects, 
+      CompanyEffects,
+      SurveyManagementEffects
+    ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     StoreRouterConnectingModule.forRoot(),
   ],
@@ -152,5 +163,5 @@ const APP_CONTAINERS = [
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+
+export class AppModule {}

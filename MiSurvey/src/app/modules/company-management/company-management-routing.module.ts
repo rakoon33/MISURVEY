@@ -10,7 +10,6 @@ const routes: Routes = [
     data: {
       title: 'Company Management',
     },
-    
   },
 ];
 
@@ -18,4 +17,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
+
 export class CompanyManagementRoutingModule {}
