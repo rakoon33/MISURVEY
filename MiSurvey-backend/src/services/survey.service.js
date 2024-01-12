@@ -1,5 +1,5 @@
 const db = require('../config/database');
-const { Survey, SurveyPage, SurveyQuestion } = require('../models');
+const { Survey, SurveyPage, SurveyQuestion, SurveyType } = require('../models');
 const {createSurveyPage, updateSurveyPage} = require('./surveyPage.service');
 const {createSurveyQuestion, updateSurveyQuestion} = require('./surveyQuestion.service');
 const { sequelize } = require('../config/database');
@@ -58,34 +58,51 @@ const createSurvey = async (data) => {
 };
 
 const getOneSurveyWithData = async (surveyID) => {
-    try {
-        const survey = await Survey.findByPk(surveyID, {
-            attributes: { 
-                exclude: [
-                    "SurveyDescription", "SurveyImages", "InvitationMethod",
-                    "StartDate", "EndDate", "CreatedAt", "ResponseRate",
-                    "CreatedBy", "UpdatedAt", "UpdatedBy", "Approve", "SurveyStatus", "SurveyLink"
-                ]
-            },
-            include: [{
-                model: SurveyPage,
-                as: 'SurveyPages',
-                include: [{
-                    model: SurveyQuestion,
-                    as: 'SurveyQuestions'
-                }]
-            }]
-        });
+  try {
+      const survey = await Survey.findByPk(surveyID, {
+          attributes: { 
+              exclude: [
+                  "SurveyDescription", "SurveyImages", "InvitationMethod",
+                  "StartDate", "EndDate", "CreatedAt", "ResponseRate",
+                  "CreatedBy", "UpdatedAt", "UpdatedBy", "Approve", "SurveyStatus", "SurveyLink"
+              ]
+          },
+          include: [{
+              model: SurveyPage,
+              as: 'SurveyPages',
+              include: [{
+                  model: SurveyQuestion,
+                  as: 'SurveyQuestions',
+                  include: [{
+                      model: SurveyType,
+                      as: 'SurveyType',
+                      attributes: ['SurveyTypeName'] // Replace 'TypeName' with the actual name of the field in your SurveyType model
+                  }]
+              }]
+          }]
+      });
 
-        if (!survey) {
-            return { status: false, message: "Survey not found" };
-        }
+      if (!survey) {
+          return { status: false, message: "Survey not found" };
+      }
 
-        return { status: true, survey: survey.toJSON() };
-    } catch (error) {
-        return { status: false, message: error.message, error: error.toString() };
-    }
+      // Transform the 'QuestionType' field to use the TypeName from SurveyType
+      const surveyJSON = survey.toJSON();
+      surveyJSON.SurveyPages.forEach(page => {
+          page.SurveyQuestions.forEach(question => {
+              if (question.SurveyType) {
+                  question.QuestionType = question.SurveyType.SurveyTypeName;
+                  delete question.SurveyType; // Remove the SurveyType object if not needed in the response
+              }
+          });
+      });
+
+      return { status: true, survey: surveyJSON };
+  } catch (error) {
+      return { status: false, message: error.message, error: error.toString() };
+  }
 };
+
 
 
 const getOneSurveyWithoutData = async (surveyID) => {
