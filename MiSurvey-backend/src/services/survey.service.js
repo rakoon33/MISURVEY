@@ -86,14 +86,15 @@ const getOneSurveyWithData = async (surveyID) => {
           return { status: false, message: "Survey not found" };
       }
 
-      // Transform the 'QuestionType' field to use the TypeName from SurveyType
+      // Transform the 'QuestionType' field to include the type name
       const surveyJSON = survey.toJSON();
       surveyJSON.SurveyPages.forEach(page => {
           page.SurveyQuestions.forEach(question => {
-              if (question.SurveyType) {
-                  question.QuestionType = question.SurveyType.SurveyTypeName;
-                  delete question.SurveyType; // Remove the SurveyType object if not needed in the response
-              }
+              question.QuestionType = {
+                  id: question.QuestionType,
+                  name: question.SurveyType ? question.SurveyType.SurveyTypeName : null
+              };
+              delete question.SurveyType; // Optional: Remove if you don't want the SurveyType object in the response
           });
       });
 
