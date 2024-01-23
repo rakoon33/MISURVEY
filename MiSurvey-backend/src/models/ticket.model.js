@@ -16,15 +16,17 @@ const Ticket = db.sequelize.define('Ticket', {
     },
     CreatedBy: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     CreatedAt: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: DataTypes.NOW
     },
     UpdatedAt: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: DataTypes.NOW
     },
     SurveyID: {
         type: DataTypes.INTEGER,
