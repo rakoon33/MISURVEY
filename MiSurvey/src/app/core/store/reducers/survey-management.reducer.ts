@@ -37,7 +37,7 @@ export const surveyManagementReducer = createReducer(
           Title: title,
           Customizations: customizations,
           SurveyDescription: surveyDescription,
-          pages: state.survey.pages,
+          SurveyPages: state.survey.SurveyPages,
         },
       };
     }
@@ -49,25 +49,25 @@ export const surveyManagementReducer = createReducer(
     }
 
     // Initialize pages as an empty array if it doesn't exist
-    const pages = state.survey.pages || [];
+    const SurveyPages = state.survey.SurveyPages || [];
 
     // Determine the new PageOrder value
-    const newPageOrder = pages.length + 1;
+    const newPageOrder = SurveyPages.length + 1;
 
     // Create a new page with the new question
     const newPage = {
       PageOrder: newPageOrder,
-      question: { QuestionText: questionText }, // Change to single question object
+      SurveyQuestions: { QuestionText: questionText }, // Change to single question object
     };
 
     // Add the new page to the list of pages
-    const updatedPages = [...pages, newPage];
+    const updatedPages = [...SurveyPages, newPage];
 
     return {
       ...state,
       survey: {
         ...state.survey,
-        pages: updatedPages,
+        SurveyPages: updatedPages,
       },
     };
   }),
@@ -75,16 +75,16 @@ export const surveyManagementReducer = createReducer(
   on(
     surveyManagementActions.addSurveyQuestionType,
     (state, { questionText, questionType }) => {
-      if (!state.survey || !state.survey.pages) {
+      if (!state.survey || !state.survey.SurveyPages) {
         return state;
       }
 
-      const updatedPages = state.survey.pages.map((page) => {
-        if (page.question && page.question.QuestionText === questionText) {
+      const updatedPages = state.survey.SurveyPages.map((page) => {
+        if (page.SurveyQuestions && page.SurveyQuestions.QuestionText === questionText) {
           return {
             ...page,
-            question: {
-              ...page.question,
+            SurveyQuestions: {
+              ...page.SurveyQuestions,
               QuestionType: questionType,
             },
           };
@@ -96,7 +96,7 @@ export const surveyManagementReducer = createReducer(
         ...state,
         survey: {
           ...state.survey,
-          pages: updatedPages,
+          SurveyPages: updatedPages,
         },
       };
     }
@@ -105,20 +105,20 @@ export const surveyManagementReducer = createReducer(
   on(surveyManagementActions.clearUnsavedQuestionText, (state) => {
     if (
       !state.survey ||
-      !state.survey.pages ||
-      state.survey.pages.length === 0
+      !state.survey.SurveyPages ||
+      state.survey.SurveyPages.length === 0
     ) {
       return state;
     }
 
     // Clone the pages array
-    const updatedPages = [...state.survey.pages];
+    const updatedPages = [...state.survey.SurveyPages];
 
     // Get the last page
     const lastPage = updatedPages[updatedPages.length - 1];
 
     // Check if the last page's question lacks a QuestionType
-    if (lastPage.question && lastPage.question.QuestionType === undefined) {
+    if (lastPage.SurveyQuestions && lastPage.SurveyQuestions.QuestionType === undefined) {
       updatedPages.pop(); // Remove the last page
     }
 
@@ -126,7 +126,7 @@ export const surveyManagementReducer = createReducer(
       ...state,
       survey: {
         ...state.survey,
-        pages: updatedPages,
+        SurveyPages: updatedPages,
       },
     };
   }),
@@ -146,11 +146,23 @@ export const surveyManagementReducer = createReducer(
   })),
   on(surveyManagementActions.fetchSurveysSuccess, (state, { surveys }) => ({
     ...state,
-    surveys,
+    surveys,  
     loading: false,
     error: null
   })),
   on(surveyManagementActions.fetchSurveysFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
+   on(surveyManagementActions.loadSurveyDetailSuccess, (state, { survey }) => ({
+    ...state,
+    survey,
+    loading: false,
+    error: null
+  })),
+
+  on(surveyManagementActions.loadSurveyDetailFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error

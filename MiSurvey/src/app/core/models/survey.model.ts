@@ -21,7 +21,7 @@ interface Survey {
     ResponseRate?: number;
     CreatedBy?: number;
     Approve?: string;
-    pages?: SurveyPage[]; // Array of Pages
+    SurveyPages?: SurveyPage[]; // Array of Pages
     CreatedAt?: Date;
     UpdatedAt?: Date;
     UpdatedBy?: number;
@@ -31,7 +31,7 @@ interface SurveyPage {
     PageID?: number;
     SurveyID?: number;
     PageOrder?: number;
-    question?: SurveyQuestion; // Array of Questions
+    SurveyQuestions?: SurveyQuestion; // Array of Questions
 }
 
 interface SurveyQuestion {

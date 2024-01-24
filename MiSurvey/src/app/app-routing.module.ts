@@ -18,7 +18,7 @@ const routes: Routes = [
   {
     path: '',
     component: DefaultLayoutComponent,
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     data: {
       title: 'Home',
     },
@@ -66,11 +66,11 @@ const routes: Routes = [
           ).then((m) => m.QuestionToAskModule),
       },
       {
-        path: 'survey-management/survey',
+        path: 'survey-management/survey-detailed/:id',
         loadChildren: () =>
           import(
-            './modules/survey-management/survey-info/survey-info.module'
-          ).then((m) => m.SurveyInfoModule)
+            './modules/survey-management/survey-detailed/survey-detailed.module'
+          ).then((m) => m.SurveyDetailedModule)
       },
       {
         path: 'survey-management/question/configure',
@@ -78,6 +78,13 @@ const routes: Routes = [
           import(
             './modules/survey-management/question-configure/question-configure.module'
           ).then((m) => m.QuestionConfigureModule),
+      },
+      {
+        path: 'survey-management/survey',
+        loadChildren: () =>
+          import(
+            './modules/survey-management/survey-info/survey-info.module'
+          ).then((m) => m.SurveyInfoModule)
       },
       {
         path: 'base',
