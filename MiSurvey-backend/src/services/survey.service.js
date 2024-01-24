@@ -92,23 +92,25 @@ const getOneSurveyWithData = async (surveyID) => {
       return { status: false, message: "Survey not found" };
     }
 
-      // Transform the 'QuestionType' field to include the type name
-      const surveyJSON = survey.toJSON();
-      surveyJSON.SurveyPages.forEach(page => {
-          page.SurveyQuestions.forEach(question => {
-              question.QuestionType = {
-                  id: question.QuestionType,
-                  name: question.SurveyType ? question.SurveyType.SurveyTypeName : null
-              };
-              delete question.SurveyType; // Optional: Remove if you don't want the SurveyType object in the response
-          });
+    // Transform the response to match the required output format
+    const surveyJSON = survey.toJSON();
+
+    // Iterate over SurveyPages and SurveyQuestions to adjust the structure
+    surveyJSON.SurveyPages.forEach(page => {
+      page.SurveyQuestions.forEach(question => {
+        if (question.SurveyType) {
+          question.SurveyTypeName = question.SurveyType.SurveyTypeName;
+          delete question.SurveyType; // Remove the SurveyType object
+        }
       });
+    });
 
     return { status: true, survey: surveyJSON };
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }
 };
+
 
 
 const getOneSurveyWithoutData = async (surveyID) => {
