@@ -128,6 +128,43 @@ SurveyType.hasMany(SurveyQuestion, {
   as: 'SurveyQuestions'
 });
 
+// SurveyResponse belongs to Customer
+SurveyResponse.belongsTo(Customer, {
+  foreignKey: 'CustomerID',
+  as: 'Customer'
+});
+
+// SurveyResponse belongs to Survey
+SurveyResponse.belongsTo(Survey, {
+  foreignKey: 'SurveyID',
+  as: 'Survey'
+});
+
+// SurveyResponse belongs to SurveyQuestion
+SurveyResponse.belongsTo(SurveyQuestion, {
+  foreignKey: 'QuestionID',
+  as: 'SurveyQuestion'
+});
+
+// Optionally, define the inverse relationships
+// Customer has many SurveyResponses
+Customer.hasMany(SurveyResponse, {
+  foreignKey: 'CustomerID',
+  as: 'SurveyResponses'
+});
+
+// Survey has many SurveyResponses
+Survey.hasMany(SurveyResponse, {
+  foreignKey: 'SurveyID',
+  as: 'SurveyResponses'
+});
+
+// SurveyQuestion has many SurveyResponses
+SurveyQuestion.hasMany(SurveyResponse, {
+  foreignKey: 'QuestionID',
+  as: 'SurveyResponses'
+});
+
 module.exports = {
   User,
   Company,
