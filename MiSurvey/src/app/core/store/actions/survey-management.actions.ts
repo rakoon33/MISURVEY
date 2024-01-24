@@ -50,3 +50,18 @@ export const fetchSurveysFailure = createAction(
   '[Survey] Fetch Surveys Failure',
   props<{ error: any }>()
 );
+
+export const loadSurveyDetailRequest = createAction(
+  '[Survey] Load Survey Detail Request',
+  props<{ id: number }>()
+);
+
+export const loadSurveyDetailSuccess = createAction(
+  '[Survey] Load Survey Detail Success',
+  props<{ survey: Survey }>()
+);
+
+export const loadSurveyDetailFailure = createAction(
+  '[Survey] Load Survey Detail Failure',
+  props<{ error: any }>()
+);

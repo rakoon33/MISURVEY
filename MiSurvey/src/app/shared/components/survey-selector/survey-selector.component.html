@@ -3,7 +3,7 @@
   [style.--custom-border-top-color]="borderTopColor"
 >
   <h3 [ngStyle]="selectedImage ? { 'background-color': '#f6f6f6' } : {}">
-    {{ question }}
+    {{ title === '' ? 'Dear Customer!' : title }}
   </h3>
   <img
     *ngIf="selectedImage"
@@ -11,36 +11,35 @@
     alt="Selected Image"
     class="selected-image"
   />
-  <div [ngSwitch]="selectedSurveyType">
+  <div [ngSwitch]="selectedSurveyType | lowercase" >
     <app-nps-survey
       *ngSwitchCase="'nps'"
-      [question]="
-        'How likely are you to recommend our product/service to a friend or colleague?'
+      [question]="question === '' ? 'How likely are you to recommend our product/service to a friend or colleague?' : question
       "
       [buttonTextColor]="buttonTextColor"
     ></app-nps-survey>
 
     <app-csat-survey
       *ngSwitchCase="'csat'"
-      [question]="'How satisfied are you with our product/service?'"
+      [question]="question === '' ?'How satisfied are you with our product/service?' : question"
       [buttonTextColor]="buttonTextColor"
     ></app-csat-survey>    
   
     <app-star-rating
-      *ngSwitchCase="'star'"
-      [question]="'How would you rate our product/service out of five stars?'"
+      *ngSwitchCase="'stars'"
+      [question]="question === '' ?'How would you rate our product/service out of five stars?' : question"
       [buttonTextColor]="buttonTextColor"
     ></app-star-rating>
 
     <app-emoticon-rating
       *ngSwitchCase="'emoticons'"
-      [question]="'How does our product/service make you feel?'"
+      [question]="question === '' ?'How does our product/service make you feel?' : question"
       [buttonTextColor]="buttonTextColor"
     ></app-emoticon-rating>
 
     <app-thumbs-survey
-      *ngSwitchCase="'thumb'"
-      [question]="'How does our product/service make you feel?'"
+      *ngSwitchCase="'thumbs'"
+      [question]="question === '' ?'How does our product/service make you feel?' : question"
       [buttonTextColor]="buttonTextColor"
     ></app-thumbs-survey>
   </div>

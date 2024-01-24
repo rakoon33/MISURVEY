@@ -7,100 +7,107 @@ const { Op } = require('sequelize');
 let nanoid;
 
 const createSurvey = async (data) => {
-    if (!nanoid) {
-        nanoid = (await import('nanoid')).nanoid;
-    }
-    try {
-        // Directly access the survey data since only one survey is being created at a time
-        const surveyData = data;
+  let nanoid;
+  if (!nanoid) {
+      nanoid = (await import('nanoid')).nanoid;
+  }
 
-        // Create the survey
-        const survey = await Survey.create({
-            UserID: surveyData.UserID,
-            CompanyID: surveyData.CompanyID,
-            Title: surveyData.Title,
-            SurveyDescription: surveyData.SurveyDescription,
-            SurveyImages: surveyData.SurveyImages,
-            InvitationMethod: surveyData.InvitationMethod,
-            SurveyStatus: surveyData.SurveyStatus,
-            Customizations: surveyData.Customizations, // Assuming Customizations is stored as JSON in the database
-            CreatedBy: surveyData.CreatedBy,
-            Approve: surveyData.Approve
-        });
+  try {
+      const surveyData = data; // Assuming 'data' contains all necessary survey information
 
-        surveyData.SurveyLink = await nanoid();
-        const [addSurveyLink] = await Survey.update({SurveyLink:surveyData.SurveyLink}, {
-            where: { SurveyID: survey.SurveyID },
-          });
-        if (addSurveyLink === 0) {
-            return { status: false, message: "Failed create Survey Link" };
-        }
-        // Create each survey page
-        for (const pageData of surveyData.pages) {
-            // Add SurveyID to page data
-            pageData.SurveyID = survey.SurveyID; // Assuming the created survey object has an 'id' property
+      // Start a transaction
+      const transaction = await db.sequelize.transaction();
 
-            // Create the survey page
-            const page = await createSurveyPage(pageData);
-            
-            const questionData = pageData.question;
-            // Add PageID to question data
-            questionData.PageID = page; // Assuming the created page object has an 'id' property
-            console.log(questionData);
-            // Create the survey question
-            await createSurveyQuestion(questionData);
-        }
+      try {
+          // Create the survey
+          const survey = await Survey.create({
+              UserID: surveyData.UserID,
+              CompanyID: surveyData.CompanyID,
+              Title: surveyData.Title,
+              SurveyDescription: surveyData.SurveyDescription,
+              SurveyImages: surveyData.SurveyImages,
+              InvitationMethod: surveyData.InvitationMethod,
+              SurveyStatus: surveyData.SurveyStatus,
+              Customizations: surveyData.Customizations,
+              CreatedBy: surveyData.CreatedBy,
+              Approve: surveyData.Approve
+          }, { transaction });
 
-        return { status: true, message: "Survey created successfully", survey };
-    } catch (error) {
-        return { status: false, message: error.message, error: error.toString() };
-    }
+          // Generate a SurveyLink using nanoid
+          surveyData.SurveyLink = nanoid();
+          await survey.update({ SurveyLink: surveyData.SurveyLink }, { transaction });
+
+          // Create each survey page and its questions
+          for (const pageData of surveyData.SurveyPages) {
+              // Create the survey page
+              const page = await SurveyPage.create({
+                  SurveyID: survey.SurveyID,
+                  PageOrder: pageData.PageOrder
+              }, { transaction });
+
+              // Prepare question data
+              const questionData = pageData.SurveyQuestions;
+              questionData.PageID = page.PageID;
+
+              // Create the survey question
+              await SurveyQuestion.create(questionData, { transaction });
+          }
+
+          // Commit the transaction
+          await transaction.commit();
+
+          return { status: true, message: "Survey created successfully", survey: survey.toJSON() };
+      } catch (error) {
+          // Rollback the transaction in case of an error
+          await transaction.rollback();
+          throw error; // Rethrow the error after rollback
+      }
+  } catch (error) {
+      // If an error is caught, it means transaction rollback also failed
+      return { status: false, message: error.message, error: error.toString() };
+  }
 };
 
 const getOneSurveyWithData = async (surveyID) => {
   try {
-      const survey = await Survey.findByPk(surveyID, {
-          attributes: { 
-              exclude: [
-                  "SurveyDescription", "SurveyImages", "InvitationMethod",
-                  "StartDate", "EndDate", "CreatedAt", "ResponseRate",
-                  "CreatedBy", "UpdatedAt", "UpdatedBy", "Approve", "SurveyStatus", "SurveyLink"
-              ]
-          },
-          include: [{
-              model: SurveyPage,
-              as: 'SurveyPages',
-              include: [{
-                  model: SurveyQuestion,
-                  as: 'SurveyQuestions',
-                  include: [{
-                      model: SurveyType,
-                      as: 'SurveyType',
-                      attributes: ['SurveyTypeName'] // Replace 'TypeName' with the actual name of the field in your SurveyType model
-                  }]
-              }]
-          }]
+    const survey = await Survey.findByPk(surveyID, {
+      attributes: [
+        'UserID', 'CompanyID', 'Title', 'Customizations', 'SurveyDescription', 'SurveyImages', 
+        'InvitationMethod', 'SurveyStatus', 'CreatedBy', 'Approve',
+        // Any other attributes you want to include
+      ],
+      include: [{
+        model: SurveyPage,
+        as: 'SurveyPages',
+        attributes: ['PageOrder'],
+        include: [{
+          model: SurveyQuestion,
+          as: 'SurveyQuestions',
+          attributes: ['QuestionText', 'QuestionType'],
+        }]
+      }]
+    });
+
+    if (!survey) {
+      return { status: false, message: "Survey not found" };
+    }
+
+    // Transform the response to match the required output format
+    const surveyJSON = survey.toJSON();
+
+    // Iterate over SurveyPages and SurveyQuestions to adjust the structure
+    surveyJSON.SurveyPages.forEach(page => {
+      page.SurveyQuestions.forEach(question => {
+        if (question.SurveyType) {
+          question.SurveyTypeName = question.SurveyType.SurveyTypeName;
+          delete question.SurveyType; // Remove the SurveyType object
+        }
       });
+    });
 
-      if (!survey) {
-          return { status: false, message: "Survey not found" };
-      }
-
-      // Transform the 'QuestionType' field to include the type name
-      const surveyJSON = survey.toJSON();
-      surveyJSON.SurveyPages.forEach(page => {
-          page.SurveyQuestions.forEach(question => {
-              question.QuestionType = {
-                  id: question.QuestionType,
-                  name: question.SurveyType ? question.SurveyType.SurveyTypeName : null
-              };
-              delete question.SurveyType; // Optional: Remove if you don't want the SurveyType object in the response
-          });
-      });
-
-      return { status: true, survey: surveyJSON };
+    return { status: true, survey: surveyJSON };
   } catch (error) {
-      return { status: false, message: error.message, error: error.toString() };
+    return { status: false, message: error.message, error: error.toString() };
   }
 };
 
