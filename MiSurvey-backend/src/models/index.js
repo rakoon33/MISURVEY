@@ -6,7 +6,6 @@ const CompanyUser = require('./companyUser.model');
 const IndividualPermission = require('./individualPermission.model');
 const SurveyDetail = require('./surveyDetail.model');
 const Survey = require('./survey.model');
-const SurveyPage = require('./surveyPage.model');
 const SurveyQuestion = require('./surveyQuestion.model');
 const SurveyResponse = require('./surveyResponse.model');
 const CompanyRole = require('./companyrole.model');
@@ -87,26 +86,6 @@ CompanyRole.hasMany(RolePermission, {
   as: 'permissions'
 });
 
-// Survey and SurveyPage
-Survey.hasMany(SurveyPage, {
-  foreignKey: 'SurveyID',
-  as: 'SurveyPages'
-});
-SurveyPage.belongsTo(Survey, {
-  foreignKey: 'SurveyID',
-  as: 'Survey'
-});
-
-// SurveyPage and SurveyQuestion
-SurveyPage.hasMany(SurveyQuestion, {
-  foreignKey: 'PageID',
-  as: 'SurveyQuestions'
-});
-SurveyQuestion.belongsTo(SurveyPage, {
-  foreignKey: 'PageID',
-  as: 'SurveyPage'
-});
-
 // Survey and SurveyDetail
 Survey.hasMany(SurveyDetail, {
   foreignKey: 'SurveyID',
@@ -128,6 +107,18 @@ SurveyType.hasMany(SurveyQuestion, {
   as: 'SurveyQuestions'
 });
 
+// A Survey can have many SurveyQuestions
+Survey.hasMany(SurveyQuestion, {
+  foreignKey: 'SurveyID',
+  as: 'SurveyQuestions'
+});
+
+// A SurveyQuestion belongs to a Survey
+SurveyQuestion.belongsTo(Survey, {
+  foreignKey: 'SurveyID',
+  as: 'Survey'
+});
+
 module.exports = {
   User,
   Company,
@@ -137,7 +128,6 @@ module.exports = {
   IndividualPermission,
   SurveyDetail,
   Survey,
-  SurveyPage,
   SurveyQuestion,
   SurveyResponse,
   RolePermission,

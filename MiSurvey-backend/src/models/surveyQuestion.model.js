@@ -7,14 +7,6 @@ const SurveyQuestion = db.sequelize.define('SurveyQuestion', {
         primaryKey: true,
         autoIncrement: true,
     },
-    PageID: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'SurveyPage',
-            key: 'PageID'
-        }
-    },
     QuestionText: {
         type: DataTypes.TEXT,
         allowNull: false
@@ -26,7 +18,19 @@ const SurveyQuestion = db.sequelize.define('SurveyQuestion', {
             model: 'SurveyType',
             key: 'SurveyTypeID'
         }
-    }
+    },
+    PageOrder: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    SurveyID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Survey',
+            key: 'SurveyID'
+        }
+    },
 }, {
     tableName: 'SurveyQuestions',
     timestamps: false, 
