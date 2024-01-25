@@ -1,9 +1,14 @@
 
-.survey-question-container {
+.survey-question-container-star {
   text-align: center;
   padding: 20px;
   background-color: #f6f6f6;
   flex: 1;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .star-rating {

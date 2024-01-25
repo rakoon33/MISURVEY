@@ -1,11 +1,3 @@
-interface SurveyType {
-    SurveyTypeID?: number;
-    SurveyTypeName: string;
-    SurveyTypeDescription: string;
-    ResponseType: string;
-    CreatedAt: Date;
-}
-
 interface Survey {
     SurveyID?: number;
     UserID?: number;
@@ -15,32 +7,35 @@ interface Survey {
     SurveyImages?: string;
     InvitationMethod?: string;
     SurveyStatus?: string;
-    Customizations?: any; 
     StartDate?: Date;
     EndDate?: Date;
+    Customizations?: any;
+    CreatedAt?: Date;
     ResponseRate?: number;
     CreatedBy?: number;
-    Approve?: string;
-    SurveyPages?: SurveyPage[]; // Array of Pages
-    CreatedAt?: Date;
     UpdatedAt?: Date;
     UpdatedBy?: number;
+    Approve?: string;
+    SurveyLink?: string;
+    SurveyQuestions?: SurveyQuestion[];
 }
 
-interface SurveyPage {
-    PageID?: number;
-    SurveyID?: number;
-    PageOrder?: number;
-    SurveyQuestions?: SurveyQuestion; // Array of Questions
+
+interface SurveyType {
+    SurveyTypeID?: number;
+    SurveyTypeName: string;
+    SurveyTypeDescription: string;
+    ResponseType: string;
+    CreatedAt: Date;
 }
 
 interface SurveyQuestion {
     QuestionID?: number;
-    PageID?: number;
     QuestionText?: string;
-    QuestionType?: number; // Referencing SurveyTypeID
+    QuestionType?: number; // This should reference SurveyTypeID
+    PageOrder?: number;
+    SurveyID?: number;
 }
-
 
 interface SurveyResponse {
     ResponseID?: number;
@@ -51,30 +46,6 @@ interface SurveyResponse {
     CreatedAt: Date;
 }
 
-interface SurveyDetail {
-    SurveyDetailID?: number;
-    SurveyID?: number;
-    SentBy: number;
-    SentAt: Date;
-    RecipientCount: number;
-    Recipients: string; // This could be a JSON string or an array
-    CompanyID?: number;
-}
 
-interface SurveyReport {
-    ReportID?: number;
-    UserID?: number;
-    SurveyID?: number;
-    FeedbacksCount: number;
-    AverageRating: number;
-    CreatedAt: Date;
-    ReportFrequency: number;
-    ExpiredDays: number;
-    SurveyDetailID: number;
-    CompanyID?: number;
-    CreatedBy?: number;
-    UpdatedAt?: Date;
-    UpdatedBy?: number;
-}
 
-export { SurveyType, Survey, SurveyPage, SurveyQuestion, SurveyResponse, SurveyDetail, SurveyReport };
+export { SurveyType, Survey, SurveyQuestion, SurveyResponse, };

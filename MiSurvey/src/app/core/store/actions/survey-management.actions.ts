@@ -65,3 +65,29 @@ export const loadSurveyDetailFailure = createAction(
   '[Survey] Load Survey Detail Failure',
   props<{ error: any }>()
 );
+
+
+// Define actions for updating a survey
+export const updateSurveyRequest = createAction(
+  '[Survey] Update Survey Request',
+  props<{ surveyId: number; surveyData: Survey }>()
+);
+
+export const updateSurveySuccess = createAction(
+  '[Survey] Update Survey Success',
+  props<{ survey: Survey }>()
+);
+
+export const updateSurveyFailure = createAction(
+  '[Survey] Update Survey Failure',
+  props<{ error: any }>()
+);
+
+
+
+// update questions
+// Action to initiate an update to a survey question
+export const updateSurveyQuestion = createAction(
+  '[Survey] Update Survey Question',
+  props<{ questionId: number; questionText: string, questionType: number }>()
+);

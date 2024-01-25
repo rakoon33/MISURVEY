@@ -31,4 +31,9 @@ export class SurveyManagementComponent implements OnInit {
     this.router.navigate(['/survey-management/survey-method']);
   }
 
+  navigateToSurveyDetails(surveyId: number, event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/survey-management/survey-detailed', surveyId]);
+  }
+
 }

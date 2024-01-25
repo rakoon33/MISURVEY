@@ -2,6 +2,7 @@ import { SurveyManagementService } from './../../../core/services/survey-managem
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { SurveyQuestion } from 'src/app/core/models';
 import { surveyManagementActions } from 'src/app/core/store/actions';
 import { surveyManagementSelector } from 'src/app/core/store/selectors';
 @Component({
@@ -10,8 +11,7 @@ import { surveyManagementSelector } from 'src/app/core/store/selectors';
   styleUrls: ['./survey-detailed.component.scss'],
 })
 export class SurveyDetailedComponent implements OnInit {
-
-  survey: any; 
+  survey: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -20,18 +20,38 @@ export class SurveyDetailedComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      const id = +params['id']; // '+' chuyển đổi string sang number
+    this.route.params.subscribe((params) => {
+      const id = +params['id'];
       if (id) {
-        this.store.dispatch(surveyManagementActions.loadSurveyDetailRequest({ id }));
+        this.store.dispatch(
+          surveyManagementActions.loadSurveyDetailRequest({ id })
+        );
       }
     });
 
-    // Theo dõi state để cập nhật dữ liệu khi có thay đổi
-    this.store.select(surveyManagementSelector.selectSurveyValue).subscribe(survey => {
-      this.survey = survey;
-      console.log(survey);
-    });
+    this.store
+      .select(surveyManagementSelector.selectSurveyValue)
+      .subscribe((survey) => {
+        if (survey && survey.SurveyQuestions) {
+          // Create a copy of the SurveyQuestions array
+          const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
+            const orderA =
+              a.PageOrder !== undefined ? a.PageOrder : Number.MAX_SAFE_INTEGER;
+            const orderB =
+              b.PageOrder !== undefined ? b.PageOrder : Number.MAX_SAFE_INTEGER;
+
+            return orderA - orderB;
+          });
+
+          // Assign the sorted array to a new property or modify the existing survey object
+          this.survey = {
+            ...survey,
+            SurveyQuestions: sortedQuestions,
+          };
+        }
+      });
+
+    console.log(this.survey);
   }
 
   getSurveyTypeName(questionType: number): string {
@@ -49,20 +69,70 @@ export class SurveyDetailedComponent implements OnInit {
       case 6:
         return 'csat';
       default:
-        return 'stars'; 
+        return 'stars';
     }
   }
 
-  moveQuestionUp() {
-    // Logic để di chuyển câu hỏi lên
+  moveQuestionUp(question: SurveyQuestion) {
+    this.updateQuestionOrder(question, -1);
   }
 
-  moveQuestionDown() {
-    // Logic để di chuyển câu hỏi xuống
+  moveQuestionDown(question: SurveyQuestion) {
+    this.updateQuestionOrder(question, 1);
   }
 
-  editQuestion() {
-    // Logic để mở form chỉnh sửa câu hỏi
+  private updateQuestionOrder(question: SurveyQuestion, direction: number) {
+    const questions = [...this.survey.SurveyQuestions]; // Create a shallow copy of the questions array
+    const index = questions.findIndex(
+      (q) => q.QuestionID === question.QuestionID
+    );
+
+    if (
+      (direction === -1 && index > 0) ||
+      (direction === 1 && index < questions.length - 1)
+    ) {
+      // Create copies of the questions to be swapped
+      const question1 = { ...questions[index] };
+      const question2 = { ...questions[index + direction] };
+
+      // Swap the PageOrder values
+      [question1.PageOrder, question2.PageOrder] = [
+        question2.PageOrder,
+        question1.PageOrder,
+      ];
+
+      // Replace the questions in the array with their updated copies
+      questions[index] = question1;
+      questions[index + direction] = question2;
+
+      // Sort the questions again based on the updated PageOrder
+      questions.sort(
+        (a, b) =>
+          (a.PageOrder || Number.MAX_SAFE_INTEGER) -
+          (b.PageOrder || Number.MAX_SAFE_INTEGER)
+      );
+
+      // Update the local survey object with the new questions array
+      this.survey = {
+        ...this.survey,
+        SurveyQuestions: questions,
+      };
+
+      console.log(this.survey);
+
+      this.store.dispatch(
+        surveyManagementActions.updateSurveyRequest({
+          surveyId: this.survey.SurveyID,
+          surveyData: this.survey,
+        })
+      );
+    }
+  }
+
+  editQuestion(question: SurveyQuestion) {
+    this.router.navigate(['/survey-management/question/configure'], {
+      queryParams: { edit: true, question: JSON.stringify(question) },
+    });
   }
 
   deleteQuestion() {
@@ -70,12 +140,14 @@ export class SurveyDetailedComponent implements OnInit {
   }
 
   addNewQuestion() {
-    this.router.navigate(['/survey-management/question']);
+    this.router.navigate(['/survey-management/question'], {
+      queryParams: { add: true, surveyId: this.survey.SurveyID },
+    });
   }
 
+  editThankMessage() {}
 
   addThankYouMessage() {
     // Logic để xoá câu hỏi
   }
-
 }
