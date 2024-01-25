@@ -6,7 +6,6 @@ const CompanyUser = require('./companyUser.model');
 const IndividualPermission = require('./individualPermission.model');
 const SurveyDetail = require('./surveyDetail.model');
 const Survey = require('./survey.model');
-const SurveyPage = require('./surveyPage.model');
 const SurveyQuestion = require('./surveyQuestion.model');
 const SurveyResponse = require('./surveyResponse.model');
 const CompanyRole = require('./companyrole.model');
@@ -87,26 +86,6 @@ CompanyRole.hasMany(RolePermission, {
   as: 'permissions'
 });
 
-// Survey and SurveyPage
-Survey.hasMany(SurveyPage, {
-  foreignKey: 'SurveyID',
-  as: 'SurveyPages'
-});
-SurveyPage.belongsTo(Survey, {
-  foreignKey: 'SurveyID',
-  as: 'Survey'
-});
-
-// SurveyPage and SurveyQuestion
-SurveyPage.hasMany(SurveyQuestion, {
-  foreignKey: 'PageID',
-  as: 'SurveyQuestions'
-});
-SurveyQuestion.belongsTo(SurveyPage, {
-  foreignKey: 'PageID',
-  as: 'SurveyPage'
-});
-
 // Survey and SurveyDetail
 Survey.hasMany(SurveyDetail, {
   foreignKey: 'SurveyID',
@@ -128,42 +107,19 @@ SurveyType.hasMany(SurveyQuestion, {
   as: 'SurveyQuestions'
 });
 
-// SurveyResponse belongs to Customer
-SurveyResponse.belongsTo(Customer, {
-  foreignKey: 'CustomerID',
-  as: 'Customer'
+
+// A Survey can have many SurveyQuestions
+Survey.hasMany(SurveyQuestion, {
+  foreignKey: 'SurveyID',
+  as: 'SurveyQuestions'
 });
 
-// SurveyResponse belongs to Survey
-SurveyResponse.belongsTo(Survey, {
+// A SurveyQuestion belongs to a Survey
+SurveyQuestion.belongsTo(Survey, {
   foreignKey: 'SurveyID',
   as: 'Survey'
 });
 
-// SurveyResponse belongs to SurveyQuestion
-SurveyResponse.belongsTo(SurveyQuestion, {
-  foreignKey: 'QuestionID',
-  as: 'SurveyQuestion'
-});
-
-// Optionally, define the inverse relationships
-// Customer has many SurveyResponses
-Customer.hasMany(SurveyResponse, {
-  foreignKey: 'CustomerID',
-  as: 'SurveyResponses'
-});
-
-// Survey has many SurveyResponses
-Survey.hasMany(SurveyResponse, {
-  foreignKey: 'SurveyID',
-  as: 'SurveyResponses'
-});
-
-// SurveyQuestion has many SurveyResponses
-SurveyQuestion.hasMany(SurveyResponse, {
-  foreignKey: 'QuestionID',
-  as: 'SurveyResponses'
-});
 
 module.exports = {
   User,
@@ -174,7 +130,6 @@ module.exports = {
   IndividualPermission,
   SurveyDetail,
   Survey,
-  SurveyPage,
   SurveyQuestion,
   SurveyResponse,
   RolePermission,

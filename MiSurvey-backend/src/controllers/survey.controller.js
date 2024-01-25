@@ -6,15 +6,7 @@ const createSurveyController = async (req, res) => {
     if (!req.user) {
       return res.status(400).json({ message: "User not found" });
     }
-
-    const surveyData = {
-      ...req.body,
-      UserID: req.user.id,
-      CompanyID: req.user.companyID,
-      CreatedBy: req.user.id,
-    };
-
-    const newSurvey = await surveyService.createSurvey(surveyData);
+    const newSurvey = await surveyService.createSurvey(req.body);
 
     res.json(newSurvey);
   } catch (error) {
