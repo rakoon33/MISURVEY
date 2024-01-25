@@ -49,6 +49,7 @@ const createSurvey = async (data) => {
 
 const getOneSurveyWithData = async (surveyID) => {
   try {
+
       const survey = await Survey.findByPk(surveyID, {
           include: [{
               model: SurveyQuestion,
@@ -64,14 +65,13 @@ const getOneSurveyWithData = async (surveyID) => {
             ]
         },
       });
-
-      if (!survey) {
-          return { status: false, message: "Survey not found" };
-      }
-
+    if (!survey) {
+      return { status: false, message: "Survey not found" };
+    }
+    
       return { status: true, survey: survey };
   } catch (error) {
-      return { status: false, message: error.message, error: error.toString() };
+    return { status: false, message: error.message, error: error.toString() };
   }
 };
 

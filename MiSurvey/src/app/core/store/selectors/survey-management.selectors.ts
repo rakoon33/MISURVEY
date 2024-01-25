@@ -12,32 +12,32 @@ const selectCurrentSurvey = createSelector(
 // Selector for the pages of the current survey
 const selectSurveyPages = createSelector(
   selectCurrentSurvey,
-  (survey) => survey?.pages || []
+  (survey) => survey?.SurveyPages || []
 );
 
 // Selector for all questions in the current survey
 const selectAllSurveyQuestions = createSelector(
   selectSurveyPages,
-  (pages) => pages.map(page => page.question).filter(question => question != null)
+  (SurveyPages) => SurveyPages.map(page => page.SurveyQuestions).filter(question => question != null)
 );
 // Selector for all question texts in the current survey
 const selectAllQuestionTexts = createSelector(
   selectAllSurveyQuestions,
-  (questions) => questions.filter((question) => question !== undefined).map((question) => question!.QuestionText)
+  (SurveyQuestions) => SurveyQuestions.filter((question) => question !== undefined).map((question) => question!.QuestionText)
 );
 
 // Selector for the first question text in the current survey
 const selectFirstQuestionText = createSelector(
   selectAllSurveyQuestions,
-  (questions) => (questions.length > 0 && questions[0]) ? questions[0].QuestionText : null
+  (SurveyQuestions) => (SurveyQuestions.length > 0 && SurveyQuestions[0]) ? SurveyQuestions[0].QuestionText : null
 );
 
 // Selector for the last question text in the current survey
 const selectLastQuestionText = createSelector(
   selectAllSurveyQuestions,
-  (questions) => {
-    if (questions.length > 0) {
-      const lastQuestion = questions[questions.length - 1];
+  (SurveyQuestions) => {
+    if (SurveyQuestions.length > 0) {
+      const lastQuestion = SurveyQuestions[SurveyQuestions.length - 1];
       if (lastQuestion) {
         return lastQuestion.QuestionText;
       }
@@ -48,7 +48,7 @@ const selectLastQuestionText = createSelector(
 // Selector for the count of questions in the current survey
 const selectQuestionsCount = createSelector(
   selectAllSurveyQuestions,
-  (questions) => questions.length
+  (SurveyQuestions) => SurveyQuestions.length
 );
 
 // Use the selectCurrentSurvey to get the entire survey object

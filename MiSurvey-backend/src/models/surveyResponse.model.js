@@ -9,7 +9,6 @@ const SurveyResponse = db.sequelize.define('SurveyResponse', {
     },
     CustomerID: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
             model: 'Customer',
             key: 'CustomerID'
@@ -36,7 +35,8 @@ const SurveyResponse = db.sequelize.define('SurveyResponse', {
     },
     CreatedAt: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: DataTypes.NOW
     }
 }, {
     tableName: 'SurveyResponses',

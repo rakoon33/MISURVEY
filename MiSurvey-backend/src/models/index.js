@@ -107,6 +107,7 @@ SurveyType.hasMany(SurveyQuestion, {
   as: 'SurveyQuestions'
 });
 
+
 // A Survey can have many SurveyQuestions
 Survey.hasMany(SurveyQuestion, {
   foreignKey: 'SurveyID',
@@ -118,6 +119,7 @@ SurveyQuestion.belongsTo(Survey, {
   foreignKey: 'SurveyID',
   as: 'Survey'
 });
+
 
 module.exports = {
   User,

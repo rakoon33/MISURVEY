@@ -14,16 +14,13 @@ export class AuthGuard implements CanActivate {
     if (this.doesHttpOnlyCookieExist('jwt')) {
       // If the HttpOnly JWT cookie exists, dispatch user data request and allow access
       this.store.dispatch(userActions.getUserDataRequest());
-      this.store.dispatch(companyActions.getCompanyDataRequest());
 
       userActions.getUserDataSuccess({ user: null, permissions: [] })
-      companyActions.getCompanyDataSuccess({ company: null, permissions: [] })
 
       return true;
     } else {
       // If the HttpOnly JWT cookie does not exist, redirect to login
       this.store.dispatch(userActions.getUserDataSuccess({ user: null, permissions: [] }));
-      this.store.dispatch(companyActions.getCompanyDataSuccess({ company: null, permissions: [] }));
       this.router.navigate(['/login']);
       return false;
     }

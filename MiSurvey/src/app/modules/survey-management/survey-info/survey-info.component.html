@@ -50,14 +50,15 @@
           <option value="nps">NPS</option>
           <option value="csat">CSAT</option>
           <option value="emoticons">Emoticons</option>
-          <option value="star">Star</option>
-          <option value="thumb">Thumb</option>
+          <option value="stars">Star</option>
+          <option value="thumbs">Thumb</option>
         </select>
       </div>
 
       <app-survey-selector
         [borderTopColor]="topBarColor"
-        [question]="surveyTitle"
+        [title]="surveyTitle"
+        [question]="''"
         [selectedSurveyType]="selectedSurveyType"
         [buttonTextColor]="buttonTextColor"
         [selectedImage]="selectedImage"
