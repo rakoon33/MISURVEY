@@ -56,6 +56,7 @@
   color: #333333;
   font-size: 18px;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .description-wrapper {
@@ -101,6 +102,7 @@
   font-size: 2em;
   user-select: none;
   transform: translateY(-30%);
+  background-color: transparent !important;
 }
 
 .btn-survey {
@@ -150,4 +152,8 @@ ul[cdropdownmenu] li button[cdropdownitem] {
   .survey-card {
     max-width: 100%; /* Adjusts max-width for smaller screens */
   }
+}
+
+div.survey-card.ng-star-inserted {
+  cursor: pointer;
 }

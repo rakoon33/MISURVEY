@@ -57,10 +57,11 @@ app-survey-selector {
 }
 
 .additional-controls button.add-question {
-  width: 30%;
+  width: 40%;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.additional-controls button.add-thank-you {
-  width: 50%;
-  border-radius: 5px;
+app-survey-selector {
+  margin: 20px;
 }

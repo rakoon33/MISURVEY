@@ -1,32 +1,60 @@
-<div *ngFor="let page of survey?.SurveyPages" class="page">
-    <div *ngFor="let question of page.SurveyQuestions" class="question-container">
-      <app-survey-selector
-        [borderTopColor]="survey.Customizations.topBarColor"
-        [question]="question.QuestionText"
-        [title]="survey.Title"
-        [selectedSurveyType]="getSurveyTypeName(question.QuestionType)"
-        [buttonTextColor]="survey.Customizations.buttonTextColor">
-      </app-survey-selector>
-  
-      <div class="controls">
-        <button class="control-btn move-up" (click)="moveQuestionUp()">
-          &#9650;
-        </button>
-        <button class="control-btn move-down" (click)="moveQuestionDown()">
-          &#9660;
-        </button>
-        <button class="control-btn edit" (click)="editQuestion()">&#9998;</button>
-        <button class="control-btn delete" (click)="deleteQuestion()">x</button>
-      </div>
-    </div>
-  </div>
-  
-  <div class="additional-controls">
-    <button class="add-question" (click)="addNewQuestion()">
-      Add another question
+<div
+  *ngFor="
+    let question of survey?.SurveyQuestions;
+    let i = index;
+    let isFirst = first;
+    let isLast = last
+  "
+  class="question-container"
+>
+  <app-survey-selector
+    [borderTopColor]="survey.Customizations.topBarColor"
+    [question]="question.QuestionText"
+    [title]="survey.Title"
+    [selectedSurveyType]="getSurveyTypeName(question.QuestionType)"
+    [buttonTextColor]="survey.Customizations.buttonTextColor"
+  >
+  </app-survey-selector>
+
+  <div class="controls">
+    <button
+      *ngIf="!isFirst"
+      class="control-btn move-up"
+      (click)="moveQuestionUp(question)"
+    >
+      &#9650;
     </button>
-    <button class="add-thank-you" (click)="addThankYouMessage()">
-      Add a thank you message
+    <button
+      *ngIf="!isLast"
+      class="control-btn move-down"
+      (click)="moveQuestionDown(question)"
+    >
+      &#9660;
+    </button>
+    <button class="control-btn edit" (click)="editQuestion(question)">
+      &#9998;
+    </button>
+    <button class="control-btn delete" (click)="deleteQuestion()">x</button>
+  </div>
+</div>
+
+<div class="question-container">
+  <app-survey-selector
+    [selectedSurveyType]="'thank-message'"
+    [borderTopColor]="survey.Customizations.topBarColor"
+    [title]="'Dear Customer'"
+  >
+  </app-survey-selector>
+
+  <div class="controls">
+    <button class="control-btn edit" (click)="editThankMessage()">
+      &#9998;
     </button>
   </div>
-  
+</div>
+
+<div class="additional-controls">
+  <button class="add-question" (click)="addNewQuestion()">
+    Add another question
+  </button>
+</div>

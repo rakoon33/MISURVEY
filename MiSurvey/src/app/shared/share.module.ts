@@ -10,7 +10,10 @@ import { CsatSurveyComponent } from './components/survey-selector/csat-survey/cs
 import { StarRatingComponent } from './components/survey-selector/star-rating/star-rating.component';
 import { ThumbsSurveyComponent } from './components/survey-selector/thumbs-survey/thumbs-survey.component';
 import { EmoticonRatingComponent } from './components/survey-selector/emoticon-rating/emoticon-rating.component';
+import { TextSurveyComponent } from './components/survey-selector/text-survey/text-survey.component';
 import { IconModule } from '@coreui/icons-angular';
+import { ThankYouMessageComponent } from './components/survey-selector/thank-you-message/thank-you-message.component';
+
 @NgModule({
   declarations: [
     CustomInputComponent,
@@ -20,7 +23,9 @@ import { IconModule } from '@coreui/icons-angular';
     CsatSurveyComponent,
     StarRatingComponent,
     ThumbsSurveyComponent,
-    EmoticonRatingComponent  
+    EmoticonRatingComponent,
+    TextSurveyComponent,
+    ThankYouMessageComponent  
   ],
   imports: [
     CommonModule,

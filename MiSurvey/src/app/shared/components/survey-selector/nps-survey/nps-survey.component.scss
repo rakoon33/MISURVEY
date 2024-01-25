@@ -1,9 +1,14 @@
 /* Styles for the survey container */
-.survey-question-container {
+.survey-question-container-nps {
   text-align: center;
   padding: 20px;
   background-color: #f6f6f6;
   flex: 1;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Styles for the NPS buttons */

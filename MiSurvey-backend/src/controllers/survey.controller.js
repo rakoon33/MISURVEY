@@ -2,17 +2,32 @@ const { surveyService } = require("../services");
 
 const createSurveyController = async (req, res) => {
   try {
-    // Ensure req.user and req.user.UserID exist
+    // Ensure req.user exists
     if (!req.user) {
       return res.status(400).json({ message: "User not found" });
     }
-    const newSurvey = await surveyService.createSurvey(req.body);
+
+    // Prepare the survey data
+    const surveyData = {
+      ...req.body,
+      UserID: req.user.id,
+      CompanyID: req.user.companyID,
+      CreatedBy: req.user.id,
+      CreatedAt: new Date(), // Set the current date and time
+      Approve: req.user.role === 'Supervisor' ? 'Pending' : 'Yes' // Set based on user role
+    };
+
+    console.log(surveyData);
+
+    // Create the survey
+    const newSurvey = await surveyService.createSurvey(surveyData);
 
     res.json(newSurvey);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 const getOneSurveyWithDataController = async (req, res) => {
   try {

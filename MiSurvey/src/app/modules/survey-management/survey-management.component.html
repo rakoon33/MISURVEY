@@ -5,7 +5,7 @@
 </div>
 
 <div class="survey-container">
-  <div class="survey-card" *ngFor="let survey of surveys$ | async">
+  <div class="survey-card" *ngFor="let survey of surveys$ | async" (click)="navigateToSurveyDetails(survey.SurveyID, $event)">
     <c-dropdown>
       <button class="btn-survey ellipsis" cButton cDropdownToggle>&#x2026;</button>
       <ul cDropdownMenu>
