@@ -4,7 +4,6 @@ const { authMiddleware } = require("../middlewares"); // Import this if you need
 
 const router = express.Router();
 
-// Route to create a new survey with image upload handling
 router
   .route("/")
   .post(
@@ -12,6 +11,15 @@ router
     surveyResponseController.createSurveyResponseController
   );
 
+
+  router
+  .route("/all/:surveyID")
+  .get(
+    authMiddleware.tokenVerification,
+    surveyResponseController.getAllResponseController
+  );
+
+  
 router
   .route("/:responseID")
   .get(
@@ -23,12 +31,5 @@ router
     surveyResponseController.deleteSurveyResponseController
   );
 
-router
-  .route("/all/:surveyID")
-  .get(
-    authMiddleware.tokenVerification,
-    surveyResponseController.getAllResponseController
-  );
-// You can add more routes here for other survey functionalities
 
 module.exports = router;

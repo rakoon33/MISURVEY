@@ -12,6 +12,19 @@ const createSurveyQuestionController = async (req, res) => {
   }
 };
 
+const deleteSurveyQuestionController = async (req, res) => {
+    try {
+      const questionID = req.params.questionID; // Assuming the response ID is passed as a URL parameter
+      const result = await surveyQuestionService.deleteSurveyQuestion(questionID);
+  
+      res.json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+  
+
 module.exports = {
   createSurveyQuestionController,
+  deleteSurveyQuestionController
 };
