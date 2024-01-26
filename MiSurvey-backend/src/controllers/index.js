@@ -7,7 +7,7 @@ const individualPermissionController = require("./individualPermission.controlle
 const companyUserController = require("./companyUser.controller");
 const surveyController = require("./survey.controller");
 const surveyResponseController = require("./surveyResponse.controller");
-
+const surveyQuestionController = require("./surveyQuestion.controller");
 module.exports = {
   authController,
   companyController,
@@ -18,5 +18,5 @@ module.exports = {
   companyUserController,
   surveyController,
   surveyResponseController,
-  // ...other models
+  surveyQuestionController
 };
