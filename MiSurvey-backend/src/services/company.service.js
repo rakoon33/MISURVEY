@@ -11,8 +11,8 @@ const {
   RolePermission,
   Module,
 } = require("../models");
-const { Op } = require('sequelize');
-const db = require('../config/database');
+const { Op } = require("sequelize");
+const db = require("../config/database");
 
 const createCompany = async (companyData) => {
   const transaction = await db.sequelize.transaction();
@@ -42,25 +42,28 @@ const createCompany = async (companyData) => {
     const adminRoleID = 1;
 
     // Add Admin as a CompanyUser
-    await CompanyUser.create({
-      UserID: AdminID,
-      CompanyID: newCompany.CompanyID,
-      CompanyRoleID: adminRoleID
-    }, { transaction });
+    await CompanyUser.create(
+      {
+        UserID: AdminID,
+        CompanyID: newCompany.CompanyID,
+        CompanyRoleID: adminRoleID,
+      },
+      { transaction }
+    );
 
     await transaction.commit();
 
     return {
       status: true,
       message: "Company and Admin CompanyUser created successfully",
-      data: newCompany
+      data: newCompany,
     };
   } catch (error) {
     await transaction.rollback();
     return {
       status: false,
       message: error.message || "Failed to create company",
-      error: error.toString()
+      error: error.toString(),
     };
   }
 };
@@ -98,13 +101,13 @@ const updateCompany = async (CompanyID, updatedData) => {
     return {
       status: true,
       message: "Company updated successfully",
-      data: company
+      data: company,
     };
   } catch (error) {
     return {
       status: false,
       message: error.message || "Update company failed",
-      error: error?.toString()
+      error: error?.toString(),
     };
   }
 };
@@ -134,7 +137,6 @@ const deleteCompany = async (CompanyID) => {
 
       // 3.1 For each survey page, delete associated survey questions first
       for (const page of surveyPages) {
-
         // 3.1.1 Fetch all questions for the current page
         const questions = await SurveyQuestion.findAll({
           where: { PageID: page.PageID },
@@ -164,7 +166,7 @@ const deleteCompany = async (CompanyID) => {
     // 6. For each CompanyUser, delete all related IndividualPermissions
     for (const user of companyUsers) {
       await IndividualPermission.destroy({
-        where: { CompanyUserID: user.CompanyUserID }
+        where: { CompanyUserID: user.CompanyUserID },
       });
     }
 
@@ -187,7 +189,12 @@ const deleteCompany = async (CompanyID) => {
   }
 };
 
-const getAllCompanies = async (requestingUserRole, requestingUserCompanyId, page, pageSize) => {
+const getAllCompanies = async (
+  requestingUserRole,
+  requestingUserCompanyId,
+  page,
+  pageSize
+) => {
   try {
     const offset = (page - 1) * pageSize;
     const limit = pageSize;
@@ -216,7 +223,9 @@ const getAllCompanies = async (requestingUserRole, requestingUserCompanyId, page
       ];
     }
 
-    const { count, rows: companies } = await Company.findAndCountAll(queryOptions);
+    const { count, rows: companies } = await Company.findAndCountAll(
+      queryOptions
+    );
 
     return { status: true, data: companies, total: count };
   } catch (error) {
@@ -235,69 +244,73 @@ const searchCompanies = async (companyName, adminID) => {
 
     if (companyName) {
       whereConditions.CompanyName = {
-        [Op.like]: `%${companyName}%`
+        [Op.like]: `%${companyName}%`,
       };
     }
 
     if (adminID) {
       whereConditions.AdminID = adminID;
-    }    
+    }
 
     const companies = await Company.findAll({
-      where: whereConditions
+      where: whereConditions,
     });
 
     if (companies.length === 0) {
       return { status: false, message: "No companies found" };
     }
 
-    return { status: true, message: "Companies fetched successfully", companies };
+    return {
+      status: true,
+      message: "Companies fetched successfully",
+      companies,
+    };
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }
 };
-
 
 // Admin services
 const createCompanyByAdmin = async (AdminID, companyData) => {
   try {
     const user = await User.findOne({
       where: {
-        UserID: AdminID
-      }
+        UserID: AdminID,
+      },
     });
 
     if (!user) {
       return {
         status: false,
-        message: "AdminID does not exist in Users table"
+        message: "AdminID does not exist in Users table",
       };
     }
 
     if (user.UserRole !== "Admin") {
       return {
         status: false,
-        message: "Only Admin can create a company for themselves"
+        message: "Only Admin can create a company for themselves",
       };
     }
 
     const existingCompany = await Company.findOne({
       where: {
-        AdminID: AdminID
-      }
+        AdminID: AdminID,
+      },
     });
 
     if (existingCompany) {
       return {
         status: false,
-        message: "This AdminID already has a company"
+        message: "This AdminID already has a company",
       };
     }
 
     if (companyData.AdminID !== AdminID) {
       return {
         status: false,
-        message: "You don't have permission to create company for another admin"
+        message:
+          "You don't have permission to create company for another admin",
       };
     }
 
@@ -306,7 +319,7 @@ const createCompanyByAdmin = async (AdminID, companyData) => {
     return {
       status: true,
       message: "Company created successfully by Admin",
-      data: newCompany
+      data: newCompany,
     };
   } catch (error) {
     return {
@@ -352,7 +365,7 @@ const getCompanyData = async (companyID, userRole) => {
     if (userRole === "SuperAdmin" || userRole === "Admin") {
       return {
         status: true,
-        companyDetails: companyDetails
+        companyDetails: companyDetails,
       };
     }
 

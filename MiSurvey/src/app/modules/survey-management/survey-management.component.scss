@@ -75,25 +75,6 @@
 }
 
 
-.survey-status {
-  color: #878E99;
-  font-size:  15px;
-  position: relative;
-  padding-top: 20px;
-  margin: 0;
-}
-
-
-.survey-status::after {
-  content: "";
-  position: absolute;
-  left: -20px; 
-  top: 0;
-  height: 1px;
-  width: calc(100% + 40px); 
-  background-color: #ddd;
-}
-
 .ellipsis {
   position: absolute;
   top: 50%; 
@@ -156,4 +137,42 @@ ul[cdropdownmenu] li button[cdropdownitem] {
 
 div.survey-card.ng-star-inserted {
   cursor: pointer;
+}
+
+.copy-link {
+  color: #007bff; 
+  cursor: pointer; 
+  text-decoration: none; 
+}
+
+.status-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-end;
+  vertical-align: middle;
+  text-align: center;
+
+}
+
+
+.survey-status {
+  color: #878E99;
+  font-size:  15px;
+  position: relative;
+  padding-top: 20px;
+  margin: 0;
+  display: inline-flex;
+}
+
+
+.status-container::after {
+  content: "";
+  position: absolute;
+  left: 0px; 
+  bottom: 60px;
+  height: 1px;
+  width: 100%; 
+  background-color: #ddd;
 }

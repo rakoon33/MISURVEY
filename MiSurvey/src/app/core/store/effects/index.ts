@@ -4,12 +4,14 @@ import { UserEffects } from './user.effects';
 import { CompanyEffects } from './company.effects';
 import { UserManagementEffects } from './user-management.effects';
 import { CompanyManagementEffects } from './company-management.effects';
-import {SurveyManagementEffects} from './survey-management.effects';
+import { SurveyManagementEffects } from './survey-management.effects';
+import { CustomerSurveyEffects } from './customer-survey.effects';
 export {
-    AuthEffects, 
-    UserEffects, 
-    CompanyEffects,
-    UserManagementEffects, 
-    CompanyManagementEffects,
-    SurveyManagementEffects
+  AuthEffects,
+  UserEffects,
+  CompanyEffects,
+  UserManagementEffects,
+  CompanyManagementEffects,
+  SurveyManagementEffects,
+  CustomerSurveyEffects,
 };

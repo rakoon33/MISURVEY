@@ -47,7 +47,8 @@ const getAllCompaniesController = async (req, res) => {
     const allCompanies = await companyService.getAllCompanies(
       requestingUserRole,
       requestingUserCompanyId,
-      page, pageSize
+      page,
+      pageSize
     );
     res.json(allCompanies);
   } catch (error) {
@@ -93,7 +94,10 @@ const getCompanyDataController = async (req, res) => {
         .status(400)
         .json({ message: "companyID is required as a query parameter." });
     }
-    const result = await companyService.getCompanyData(companyID, req.user.role);
+    const result = await companyService.getCompanyData(
+      companyID,
+      req.user.role
+    );
     res.json(result);
   } catch (error) {
     res

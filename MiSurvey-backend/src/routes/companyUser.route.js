@@ -1,6 +1,6 @@
-const express = require('express');
-const { companyUserController } = require('../controllers');
-const { authMiddleware } = require('../middlewares');
+const express = require("express");
+const { companyUserController } = require("../controllers");
+const { authMiddleware } = require("../middlewares");
 const router = express.Router();
 
 /**
@@ -138,9 +138,15 @@ const router = express.Router();
  *                   example: 'Failed to fetch company users'
  */
 router
-    .route('/')
-    .post(authMiddleware.tokenVerification, companyUserController.createCompanyUserController)
-    .get(authMiddleware.tokenVerification, companyUserController.getAllCompanyUsersController);
+  .route("/")
+  .post(
+    authMiddleware.tokenVerification,
+    companyUserController.createCompanyUserController
+  )
+  .get(
+    authMiddleware.tokenVerification,
+    companyUserController.getAllCompanyUsersController
+  );
 
 /**
  * @swagger
@@ -246,8 +252,14 @@ router
  *                   example: 'Company User not found'
  */
 router
-    .route('/:companyUserId')
-    .delete(authMiddleware.tokenVerification, companyUserController.deleteCompanyUserController)
-    .get(authMiddleware.tokenVerification, companyUserController.getOneCompanyUserController);
+  .route("/:companyUserId")
+  .delete(
+    authMiddleware.tokenVerification,
+    companyUserController.deleteCompanyUserController
+  )
+  .get(
+    authMiddleware.tokenVerification,
+    companyUserController.getOneCompanyUserController
+  );
 
 module.exports = router;

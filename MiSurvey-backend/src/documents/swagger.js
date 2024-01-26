@@ -15,7 +15,7 @@ const options = {
       version,
     },
   },
-  apis: [routeFilesPath],// sử dụng ký tự đại diện * để chỉ định tất cả các file có phần mở rộng là .route.js trong thư mục routes
+  apis: [routeFilesPath], // sử dụng ký tự đại diện * để chỉ định tất cả các file có phần mở rộng là .route.js trong thư mục routes
 };
 
 const swaggerSpec = swaggerJsdoc(options);

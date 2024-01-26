@@ -14,7 +14,7 @@ const createSurveyController = async (req, res) => {
       CompanyID: req.user.companyID,
       CreatedBy: req.user.id,
       CreatedAt: new Date(), // Set the current date and time
-      Approve: req.user.role === 'Supervisor' ? 'Pending' : 'Yes' // Set based on user role
+      Approve: req.user.role === "Supervisor" ? "Pending" : "Yes", // Set based on user role
     };
 
     console.log(surveyData);
@@ -33,6 +33,17 @@ const getOneSurveyWithDataController = async (req, res) => {
   try {
     const result = await surveyService.getOneSurveyWithData(
       req.params.SurveyID
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const getOneSurveyWithDataByLinkController = async (req, res) => {
+  try {
+    const result = await surveyService.getOneSurveyWithDataByLink(
+      req.params.SurveyLink
     );
     res.json(result);
   } catch (error) {
@@ -107,4 +118,5 @@ module.exports = {
   updateSurveyController,
   deleteSurveyController,
   searchSurveyController,
+  getOneSurveyWithDataByLinkController,
 };

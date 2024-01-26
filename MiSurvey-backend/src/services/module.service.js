@@ -1,5 +1,5 @@
-const { Module } = require('../models');
-const { Op } = require('sequelize');
+const { Module } = require("../models");
+const { Op } = require("sequelize");
 
 const createModule = async (moduleData) => {
   try {
@@ -12,7 +12,9 @@ const createModule = async (moduleData) => {
 
 const updateModule = async (id, moduleData) => {
   try {
-    const [updatedRows] = await Module.update(moduleData, { where: { ModuleID: id } });
+    const [updatedRows] = await Module.update(moduleData, {
+      where: { ModuleID: id },
+    });
     if (updatedRows === 0) {
       return { status: false, message: "No module updated" };
     }
@@ -40,7 +42,6 @@ const getAllModules = async () => {
   }
 };
 
-
 const getOneModule = async (id) => {
   try {
     const module = await Module.findByPk(id);
@@ -59,9 +60,9 @@ const searchModules = async (query) => {
     const modules = await Module.findAll({
       where: {
         ModuleName: {
-          [Op.like]: '%' + query + '%'
-        }
-      }
+          [Op.like]: "%" + query + "%",
+        },
+      },
     });
 
     if (modules.length === 0) {
@@ -74,12 +75,11 @@ const searchModules = async (query) => {
   }
 };
 
-
 module.exports = {
   createModule,
   updateModule,
   deleteModule,
   getAllModules,
   getOneModule,
-  searchModules
+  searchModules,
 };

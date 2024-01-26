@@ -1,9 +1,13 @@
-const express = require('express');
-const { companyController } = require('../controllers');
-const { authMiddleware } = require('../middlewares');
+const express = require("express");
+const { companyController } = require("../controllers");
+const { authMiddleware } = require("../middlewares");
 const router = express.Router();
 
-router.get('/getCompanyData', authMiddleware.tokenVerification, companyController.getCompanyDataController);
+router.get(
+  "/getCompanyData",
+  authMiddleware.tokenVerification,
+  companyController.getCompanyDataController
+);
 
 /**
  * @swagger
@@ -53,8 +57,11 @@ router.get('/getCompanyData', authMiddleware.tokenVerification, companyControlle
  *           description: Name of the company.
  */
 router
-    .route('/companyProfile')
-    .get(authMiddleware.tokenVerification, companyController.getCompanyProfileController)
+  .route("/companyProfile")
+  .get(
+    authMiddleware.tokenVerification,
+    companyController.getCompanyProfileController
+  );
 
 /**
  * @swagger
@@ -88,7 +95,7 @@ router
  *                 description: Updated domain of the company
  *               CreatedAt:
  *                 type: string
- *                 description: Updated created date of the company 
+ *                 description: Updated created date of the company
  *               AdminID:
  *                 type: integer
  *                 description: Updated AdminID that exists in Users table and has a role of Admin
@@ -123,8 +130,11 @@ router
  *                   example: "Invalid input parameters or malformed syntax."
  */
 router
-    .route('/companyProfile/:CompanyID')
-    .put(authMiddleware.tokenVerification, companyController.updateCompanyController); // chưa xài
+  .route("/companyProfile/:CompanyID")
+  .put(
+    authMiddleware.tokenVerification,
+    companyController.updateCompanyController
+  ); // chưa xài
 
 /**
  * @swagger
@@ -178,15 +188,18 @@ router
  *                   example: Error message describing the reason for failure
  */
 router
-    .route('/searchCompanies')
-    .get(authMiddleware.tokenVerification, companyController.searchCompanyController);
+  .route("/searchCompanies")
+  .get(
+    authMiddleware.tokenVerification,
+    companyController.searchCompanyController
+  );
 
 /**
  * @swagger
  * tags:
  *   name: Company
  *   description: API for managing companies
- * 
+ *
  * /api/companies:
  *   get:
  *     summary: Get a list of all companies
@@ -213,7 +226,7 @@ router
  *                 message:
  *                   type: string
  *                   example: "Invalid request parameters. Please check your request and try again."
- * 
+ *
  *   post:
  *     summary: Create a new company
  *     tags: [Company]
@@ -277,7 +290,7 @@ router
  *                 error:
  *                   type: string
  *                   description: Detailed error message from the server
- * 
+ *
  * components:
  *   schemas:
  *     Company:
@@ -306,9 +319,16 @@ router
  *           type: integer
  *           description: Unique identifier of the admin user
  */
-router.route('/')
-    .get(authMiddleware.tokenVerification, companyController.getAllCompaniesController)
-    .post(authMiddleware.tokenVerification, companyController.createCompanyController);
+router
+  .route("/")
+  .get(
+    authMiddleware.tokenVerification,
+    companyController.getAllCompaniesController
+  )
+  .post(
+    authMiddleware.tokenVerification,
+    companyController.createCompanyController
+  );
 
 /**
  * @swagger
@@ -351,7 +371,7 @@ router.route('/')
  *                 message:
  *                   type: string
  *                   example: "CompanyID is invalid or related survey details could not be deleted."
- * 
+ *
  *   get:
  *     summary: Retrieve a specific company's profile
  *     tags:
@@ -389,7 +409,7 @@ router.route('/')
  *                 message:
  *                   type: string
  *                   example: "Invalid CompanyID provided or company does not exist."
- * 
+ *
  *   put:
  *     summary: Update the details of an existing company
  *     tags:
@@ -453,9 +473,18 @@ router.route('/')
  *                   example: "Invalid data provided or company does not exist."
  */
 router
-    .route('/:CompanyID')
-    .delete(authMiddleware.tokenVerification, companyController.deleteCompanyController)
-    .get(authMiddleware.tokenVerification, companyController.getOneCompanyController)
-    .put(authMiddleware.tokenVerification, companyController.updateCompanyController);
+  .route("/:CompanyID")
+  .delete(
+    authMiddleware.tokenVerification,
+    companyController.deleteCompanyController
+  )
+  .get(
+    authMiddleware.tokenVerification,
+    companyController.getOneCompanyController
+  )
+  .put(
+    authMiddleware.tokenVerification,
+    companyController.updateCompanyController
+  );
 
 module.exports = router;

@@ -40,12 +40,7 @@ interface SurveyQuestion {
 interface SurveyResponse {
     ResponseID?: number;
     CustomerID?: number;
-    SurveyID: number;
-    QuestionID: number;
-    ResponseValue?: string;
     CreatedAt: Date;
 }
-
-
 
 export { SurveyType, Survey, SurveyQuestion, SurveyResponse, };
