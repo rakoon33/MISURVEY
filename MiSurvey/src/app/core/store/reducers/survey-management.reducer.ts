@@ -37,7 +37,6 @@ export const surveyManagementReducer = createReducer(
           Title: title,
           Customizations: customizations,
           SurveyDescription: surveyDescription,
-          pages: state.survey.pages,
         },
       };
     }
@@ -48,26 +47,27 @@ export const surveyManagementReducer = createReducer(
       return state;
     }
 
-    // Initialize pages as an empty array if it doesn't exist
-    const pages = state.survey.pages || [];
+    // Initialize SurveyQuestions as an empty array if it doesn't exist
+    const SurveyQuestions = state.survey.SurveyQuestions || [];
 
     // Determine the new PageOrder value
-    const newPageOrder = pages.length + 1;
+    const newPageOrder = SurveyQuestions.length + 1;
 
-    // Create a new page with the new question
-    const newPage = {
+    // Create a new question object
+    const newQuestion = {
+      QuestionText: questionText,
+      // QuestionType can be added later when available
       PageOrder: newPageOrder,
-      question: { QuestionText: questionText }, // Change to single question object
     };
 
-    // Add the new page to the list of pages
-    const updatedPages = [...pages, newPage];
+    // Add the new question to the list of questions
+    const updatedQuestions = [...SurveyQuestions, newQuestion];
 
     return {
       ...state,
       survey: {
         ...state.survey,
-        pages: updatedPages,
+        SurveyQuestions: updatedQuestions,
       },
     };
   }),
@@ -75,84 +75,132 @@ export const surveyManagementReducer = createReducer(
   on(
     surveyManagementActions.addSurveyQuestionType,
     (state, { questionText, questionType }) => {
-      if (!state.survey || !state.survey.pages) {
+      // Ensure that the survey and its questions are defined
+      if (!state.survey || !state.survey.SurveyQuestions) {
         return state;
       }
 
-      const updatedPages = state.survey.pages.map((page) => {
-        if (page.question && page.question.QuestionText === questionText) {
+      // Map through the survey questions to find and update the question type
+      const updatedQuestions = state.survey.SurveyQuestions.map((question) => {
+        if (question.QuestionText === questionText) {
           return {
-            ...page,
-            question: {
-              ...page.question,
-              QuestionType: questionType,
-            },
+            ...question,
+            QuestionType: questionType, // Update the question type
           };
         }
-        return page;
+        return question;
       });
 
       return {
         ...state,
         survey: {
           ...state.survey,
-          pages: updatedPages,
+          SurveyQuestions: updatedQuestions, // Update the survey questions array
         },
       };
     }
   ),
 
   on(surveyManagementActions.clearUnsavedQuestionText, (state) => {
+    // Ensure that the survey and its questions are defined
     if (
       !state.survey ||
-      !state.survey.pages ||
-      state.survey.pages.length === 0
+      !state.survey.SurveyQuestions ||
+      state.survey.SurveyQuestions.length === 0
     ) {
       return state;
     }
 
-    // Clone the pages array
-    const updatedPages = [...state.survey.pages];
+    // Clone the questions array
+    const updatedQuestions = [...state.survey.SurveyQuestions];
 
-    // Get the last page
-    const lastPage = updatedPages[updatedPages.length - 1];
+    // Get the last question
+    const lastQuestion = updatedQuestions[updatedQuestions.length - 1];
 
-    // Check if the last page's question lacks a QuestionType
-    if (lastPage.question && lastPage.question.QuestionType === undefined) {
-      updatedPages.pop(); // Remove the last page
+    // Check if the last question lacks a QuestionType
+    if (lastQuestion.QuestionType === undefined) {
+      updatedQuestions.pop(); // Remove the last question
     }
 
     return {
       ...state,
       survey: {
         ...state.survey,
-        pages: updatedPages,
+        SurveyQuestions: updatedQuestions,
       },
     };
   }),
+
   on(surveyManagementActions.createSurveyRequest, (state) => ({
     ...state,
     loading: true,
-    error: null
+    error: null,
   })),
   on(surveyManagementActions.createSurveySuccess, (state) => ({
     ...state,
-    loading: false
+    loading: false,
   })),
   on(surveyManagementActions.createSurveyFailure, (state) => ({
     ...state,
     loading: false,
-    error: 'Error creating survey'
+    error: 'Error creating survey',
   })),
   on(surveyManagementActions.fetchSurveysSuccess, (state, { surveys }) => ({
     ...state,
     surveys,
     loading: false,
-    error: null
+    error: null,
   })),
   on(surveyManagementActions.fetchSurveysFailure, (state, { error }) => ({
     ...state,
     loading: false,
-    error
-  }))
+    error,
+  })),
+  on(surveyManagementActions.loadSurveyDetailSuccess, (state, { survey }) => ({
+    ...state,
+    survey,
+    loading: false,
+    error: null,
+  })),
+
+  on(surveyManagementActions.loadSurveyDetailFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+  on(surveyManagementActions.updateSurveySuccess, (state, { survey }) => ({
+    ...state,
+    survey,
+    // ... update other parts of the state if necessary
+  })),
+  on(surveyManagementActions.updateSurveyFailure, (state, { error }) => ({
+    ...state,
+  })),
+  on(surveyManagementActions.updateSurveyQuestion, (state, { questionId, questionText, questionType }) => {
+    // Check if the survey and its questions are defined
+    if (state.survey && state.survey.SurveyQuestions) {
+      // Find the question with the matching QuestionID and update its text and type
+      const updatedQuestions = state.survey.SurveyQuestions.map(question => {
+        if (question.QuestionID === questionId) {
+          return {
+            ...question,
+            QuestionText: questionText,
+            QuestionType: questionType
+          };
+        }
+        return question;
+      });
+
+      return {
+        ...state,
+        survey: {
+          ...state.survey,
+          SurveyQuestions: updatedQuestions,
+        },
+      };
+    } else {
+      // Return the state unchanged if survey or SurveyQuestions are not defined
+      return state;
+    }
+  }),
 );

@@ -1,7 +1,7 @@
-const authMiddleware = require('./auth.middleware');
-const asyncHandler = require('./asyncHandler');
+const authMiddleware = require("./auth.middleware");
+const asyncHandler = require("./asyncHandler");
 module.exports = {
-    authMiddleware,
-    asyncHandler
+  authMiddleware,
+  asyncHandler,
   // ...other models
 };

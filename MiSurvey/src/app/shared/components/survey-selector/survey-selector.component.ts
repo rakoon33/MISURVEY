@@ -8,8 +8,10 @@ import { Component, Input } from '@angular/core';
 export class SurveySelectorComponent {
 
   @Input() borderTopColor: string = '#000';
-  @Input() question: string = 'How do you feel ...';
+  @Input() title: string = '';
+  @Input() question: string = '';
   @Input() selectedSurveyType: string = 'nps';
   @Input() buttonTextColor: string = '#000000';
   @Input() selectedImage: string | ArrayBuffer | null = null; 
+  @Input() message: string = '';
 }

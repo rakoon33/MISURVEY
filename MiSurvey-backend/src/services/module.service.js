@@ -1,5 +1,5 @@
-const { Module } = require('../models');
-const { Op } = require('sequelize');
+const { Module } = require("../models");
+const { Op } = require("sequelize");
 
 const createModule = async (moduleData) => {
   try {
@@ -77,9 +77,9 @@ const searchModules = async (query) => {
     const modules = await Module.findAll({
       where: {
         ModuleName: {
-          [Op.like]: '%' + query + '%'
-        }
-      }
+          [Op.like]: "%" + query + "%",
+        },
+      },
     });
 
     if (modules.length === 0) {
@@ -92,12 +92,11 @@ const searchModules = async (query) => {
   }
 };
 
-
 module.exports = {
   createModule,
   updateModule,
   deleteModule,
   getAllModules,
   getOneModule,
-  searchModules
+  searchModules,
 };

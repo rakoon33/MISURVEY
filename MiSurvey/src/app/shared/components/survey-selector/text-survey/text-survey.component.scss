@@ -1,0 +1,33 @@
+.survey-question-container-text {
+    text-align: center;
+    padding: 20px;
+    background-color: #f6f6f6;
+    flex: 1;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .survey-question-container-text input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+  
+    &:focus {
+      outline: none;
+      border-color: darken($color: #ccc, $amount: 15%);
+    }
+  }
+  
+  .survey-question-container-text p {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #333;
+  }
+  

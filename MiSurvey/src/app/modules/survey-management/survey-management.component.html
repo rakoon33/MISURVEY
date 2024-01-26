@@ -5,7 +5,7 @@
 </div>
 
 <div class="survey-container">
-  <div class="survey-card" *ngFor="let survey of surveys$ | async">
+  <div class="survey-card" *ngFor="let survey of surveys$ | async" >
     <c-dropdown>
       <button class="btn-survey ellipsis" cButton cDropdownToggle>&#x2026;</button>
       <ul cDropdownMenu>
@@ -17,10 +17,15 @@
         </li>
       </ul>
     </c-dropdown>
-    <h3>{{ survey.Title }}</h3>
-    <div class="description-wrapper">
+    <h3 (click)="navigateToSurveyDetails(survey.SurveyID, $event)">{{ survey.Title }}</h3>
+    <div class="description-wrapper" (click)="navigateToSurveyDetails(survey.SurveyID, $event)">
       <p class="survey-description">{{ survey.SurveyDescription || 'No description' }}</p>
     </div>
-    <p class="survey-status">{{ survey.SurveyStatus || 'Unpublished' }}</p>
+    <div class="status-container">
+      <p class="survey-status" (click)="navigateToSurveyDetails(survey.SurveyID, $event)">{{ survey.SurveyStatus || 'Unpublished' }}</p>
+      <a href="" class="copy-link" (click)="copySurveyLink(survey.SurveyLink, $event)">
+        Copy survey's link
+      </a>
+    </div>
   </div>
 </div>

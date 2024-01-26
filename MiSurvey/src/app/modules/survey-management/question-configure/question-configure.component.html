@@ -5,13 +5,14 @@
       type="text"
       id="userQuestion"
       placeholder="Type your question here"
-      [value]="questionText"
-      [disabled]="true"
+
+      [(ngModel)]="questionText"
+      [disabled]="!editingQuestionId"
     />
   </div>
   <p class="config-text-style">Choose your question's type</p>
   <div class="options-container">
-    <select (change)="changeType($event)">
+    <select [value]="currentType" (change)="changeType($event)">
       <option value="text">Text</option>
       <option value="graphic">Graphic scale</option>
       <option value="numeric">Numeric scale</option>

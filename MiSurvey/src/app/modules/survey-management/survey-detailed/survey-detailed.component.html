@@ -1,0 +1,60 @@
+<div
+  *ngFor="
+    let question of survey?.SurveyQuestions;
+    let i = index;
+    let isFirst = first;
+    let isLast = last
+  "
+  class="question-container"
+>
+  <app-survey-selector
+    [borderTopColor]="survey?.Customizations?.topBarColor || '#2f3c54' "
+    [question]="question.QuestionText"
+    [title]="survey.Title"
+    [selectedSurveyType]="getSurveyTypeName(question.QuestionType)"
+    [buttonTextColor]="survey?.Customizations?.buttonTextColor || '#2f3c54'"
+  >
+  </app-survey-selector>
+
+  <div class="controls">
+    <button
+      *ngIf="!isFirst"
+      class="control-btn move-up"
+      (click)="moveQuestionUp(question)"
+    >
+      &#9650;
+    </button>
+    <button
+      *ngIf="!isLast"
+      class="control-btn move-down"
+      (click)="moveQuestionDown(question)"
+    >
+      &#9660;
+    </button>
+    <button class="control-btn edit" (click)="editQuestion(question)">
+      &#9998;
+    </button>
+    <button class="control-btn delete" (click)="deleteQuestion()">x</button>
+  </div>
+</div>
+
+<div class="question-container">
+  <app-survey-selector
+    [selectedSurveyType]="'thank-message'"
+    [borderTopColor]="survey.Customizations.topBarColor || '#2f3c54'"
+    [title]="'Dear Customer'"
+  >
+  </app-survey-selector>
+
+  <div class="controls">
+    <button class="control-btn edit" (click)="editThankMessage()">
+      &#9998;
+    </button>
+  </div>
+</div>
+
+<div class="additional-controls">
+  <button class="add-question" (click)="addNewQuestion()">
+    Add another question
+  </button>
+</div>

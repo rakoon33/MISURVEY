@@ -4,7 +4,8 @@ import {
   CompanyState, 
   UserManagementState, 
   CompanyManagementState,
-  SurveyState
+  SurveyState,
+  CustomerSurveyState
 } from "./states";
 
 import { RouterReducerState } from '@ngrx/router-store';
@@ -16,5 +17,6 @@ export interface AppState {
   feature_user_management: UserManagementState;
   feature_company_management: CompanyManagementState;
   feature_survey_management: SurveyState;
+  feature_customer_survey: CustomerSurveyState;
   router: RouterReducerState;
 }

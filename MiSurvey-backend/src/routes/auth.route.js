@@ -1,5 +1,5 @@
-const express = require('express');
-const { authController } = require('../controllers');
+const express = require("express");
+const { authController } = require("../controllers");
 const router = express.Router();
 
 /**
@@ -60,7 +60,7 @@ const router = express.Router();
  *                   type: string
  *                   description: Error message regarding the login operation
  */
-router.post('/login', authController.loginController);
+router.post("/login", authController.loginController);
 
 /**
  * @swagger
@@ -92,7 +92,7 @@ router.post('/login', authController.loginController);
  *                   type: string
  *                   description: Error message regarding the logout operation
  */
-router.post('/logout', authController.logoutController);
+router.post("/logout", authController.logoutController);
 
 /**
  * @swagger
@@ -173,7 +173,7 @@ router.post('/logout', authController.logoutController);
  *                   type: string
  *                   description: Detailed error message
  */
-router.post('/register', authController.registerUserController);
+router.post("/register", authController.registerUserController);
 
 /**
  * @swagger
@@ -225,7 +225,9 @@ router.post('/register', authController.registerUserController);
  *                   type: string
  *                   description: Error message explaining why the request failed
  */
-router.get('/checkpermissions/:userId', authController.checkPermissionsController);
+router.get(
+  "/checkpermissions/:userId",
+  authController.checkPermissionsController
+);
 
 module.exports = router;
-

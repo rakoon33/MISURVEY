@@ -28,7 +28,8 @@ const moduleRoute = require('./src/routes/module.route');
 const individualPermissionRoute = require('./src/routes/individualPermission.route.js')
 const companyUserRoute = require('./src/routes/companyUser.route.js');
 const surveyRoute = require('./src/routes/survey.route.js');
-const surveyPageRoute = require('./src/routes/surveyPage.route.js');
+const surveyResponseRoute = require('./src/routes/surveyResponse.route.js');
+const surveyQuestionRoute = require('./src/routes/surveyQuestion.route.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -43,8 +44,8 @@ app.use('/api/modules', moduleRoute);
 app.use('/api/permissions', individualPermissionRoute);
 app.use('/api/companyusers', companyUserRoute);
 app.use('/api/survey', surveyRoute);
-app.use('/api/surveyPages', surveyPageRoute);
-
+app.use('/api/responses', surveyResponseRoute);
+app.use('/api/questions', surveyQuestionRoute);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -26,9 +26,26 @@ export class SurveyManagementComponent implements OnInit {
     this.store.dispatch(surveyManagementActions.fetchSurveysRequest());
   }
 
+  copySurveyLink(link: string, event: MouseEvent) {
+    event.preventDefault();   
+    navigator.clipboard.writeText(link).then(
+      () => {
+        console.log('Link copied to clipboard!');
+      },
+      err => {
+        console.error('Error copying link: ', err);
+      }
+    );
+  }
+
   navigateToCreateSurvey() {
     this.store.dispatch(surveyManagementActions.resetSurveyState());
     this.router.navigate(['/survey-management/survey-method']);
+  }
+
+  navigateToSurveyDetails(surveyId: number, event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/survey-management/survey-detailed', surveyId]);
   }
 
 }

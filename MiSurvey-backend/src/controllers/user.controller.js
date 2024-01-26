@@ -85,7 +85,8 @@ const getAllUsersController = async (req, res) => {
     const allUsers = await userService.getAllUsers(
       requestingUserRole,
       requestingUserCompanyId,
-      page, pageSize
+      page,
+      pageSize
     );
     res.json(allUsers);
   } catch (error) {
@@ -104,8 +105,7 @@ const searchUserController = async (req, res) => {
     }
     const result = await userService.searchUsers(column, searchTerm);
 
-   
-      res.json(result);
+    res.json(result);
   } catch (error) {
     res
       .status(500)
