@@ -7,8 +7,10 @@ import { Page500Component } from './shared/page500/page500.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
 import { ApiDocumentationsComponent } from '@docs-components/api-documentations/api-documentations.component';
+import { CustomerSurveyComponent } from './modules/customer-survey/customer-survey.component';
 
 import { AuthGuard } from './core/guards/auth.guard';
+
 const routes: Routes = [
   {
     path: '',
@@ -143,6 +145,13 @@ const routes: Routes = [
     component: Page500Component,
     data: {
       title: 'Page 500',
+    },
+  },
+  {
+    path: 'c/f/:SurveyLink',
+    component: CustomerSurveyComponent,
+    data: {
+      title: 'Customer Survey Page',
     },
   },
   {

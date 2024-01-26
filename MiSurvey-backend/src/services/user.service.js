@@ -18,7 +18,8 @@ const getUserData = async (userId, userRole) => {
         message: "User not found",
       };
     }
-    const { UserPassword, ...userDetailsWithoutPassword } = userDetails.dataValues;
+    const { UserPassword, ...userDetailsWithoutPassword } =
+      userDetails.dataValues;
 
     if (userRole === "SuperAdmin" || userRole === "Admin") {
       return {
@@ -89,14 +90,16 @@ const createUser = async (userData) => {
     return {
       status: true,
       message: "User created successfully",
-      userID: newUser.UserID
+      userID: newUser.UserID,
     };
   } catch (error) {
     console.error("Error details:", error);
     return {
       status: false,
       message: error.message || "User creation failed",
-      error: error.errors ? error.errors.map(e => e.message).join(", ") : error.toString(),
+      error: error.errors
+        ? error.errors.map((e) => e.message).join(", ")
+        : error.toString(),
     };
   }
 };
@@ -188,7 +191,12 @@ const getOneUser = async (UserID) => {
 };
 
 // API to retrieve a list of all users with their basic details
-const getAllUsers = async (requestingUserRole, requestingUserCompanyId, page, pageSize) => {
+const getAllUsers = async (
+  requestingUserRole,
+  requestingUserCompanyId,
+  page,
+  pageSize
+) => {
   try {
     const offset = (page - 1) * pageSize;
     const limit = pageSize;

@@ -1,0 +1,23 @@
+<div class="survey-container" *ngIf="survey">
+  <ng-container *ngFor="let question of survey?.SurveyQuestions; let i = index">
+    <div class="question-container" *ngIf="currentQuestionIndex === i">
+      <app-survey-selector
+        [borderTopColor]="survey?.Customizations?.topBarColor || '#2f3c54'"
+        [question]="question.QuestionText"
+        [title]="survey.Title"
+        [selectedSurveyType]="getSurveyTypeName(question.QuestionType)"
+        [buttonTextColor]="survey?.Customizations?.buttonTextColor || '#2f3c54'"
+      ></app-survey-selector>
+    </div>
+  </ng-container>
+
+  <button (click)="goToPreviousQuestion()" *ngIf="currentQuestionIndex > 0">
+    Previous
+  </button>
+  <button
+    (click)="goToNextQuestion()"
+    *ngIf="currentQuestionIndex < survey.SurveyQuestions.length - 1"
+  >
+    Next
+  </button>
+</div>

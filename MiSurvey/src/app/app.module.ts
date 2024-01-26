@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
-import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import {
+  HashLocationStrategy,
+  LocationStrategy,
+  PathLocationStrategy,
+} from '@angular/common';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +19,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 // Import containers
-import { DefaultFooterComponent, DefaultHeaderComponent, DefaultLayoutComponent } from './shared';
+import {
+  DefaultFooterComponent,
+  DefaultHeaderComponent,
+  DefaultLayoutComponent,
+} from './shared';
 import { Page404Component } from './shared/page404/page404.component';
 import { Page500Component } from './shared/page500/page500.component';
 import { LoginComponent } from './modules/auth/login/login.component';
@@ -41,7 +49,6 @@ import {
   SidebarModule,
   TabsModule,
   UtilitiesModule,
-
 } from '@coreui/angular';
 
 import { IconModule, IconSetService } from '@coreui/icons-angular';
@@ -57,13 +64,14 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { reducers, metaReducers } from './core/store/storage-sync.reducer';
 
-import { 
-  AuthEffects, 
-  UserEffects, 
-  UserManagementEffects, 
-  CompanyManagementEffects, 
+import {
+  AuthEffects,
+  UserEffects,
+  UserManagementEffects,
+  CompanyManagementEffects,
   CompanyEffects,
-  SurveyManagementEffects
+  SurveyManagementEffects,
+  CustomerSurveyEffects,
 } from './core/store/effects';
 
 import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
@@ -75,10 +83,14 @@ import { ApiDocumentationsComponent } from '@docs-components/api-documentations/
 // lottie
 
 import { LottieModule } from 'ngx-lottie';
+
 // Function required for ngx-lottie
 export function playerFactory() {
   return import('lottie-web');
 }
+
+// customer survey
+import { CustomerSurveyComponent } from './modules/customer-survey/customer-survey.component';
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
@@ -88,6 +100,7 @@ const APP_CONTAINERS = [
   LoginComponent,
   RegisterComponent,
   ApiDocumentationsComponent,
+  CustomerSurveyComponent,
 ];
 
 @NgModule({
@@ -135,7 +148,7 @@ const APP_CONTAINERS = [
       progressAnimation: 'increasing',
       tapToDismiss: true,
     }),
-    StoreModule.forRoot(reducers, { 
+    StoreModule.forRoot(reducers, {
       metaReducers,
       runtimeChecks: {
         strictStateImmutability: true,
@@ -143,25 +156,28 @@ const APP_CONTAINERS = [
       },
     }),
     EffectsModule.forRoot([
-      AuthEffects, 
-      UserEffects, 
-      UserManagementEffects, 
-      CompanyManagementEffects, 
+      AuthEffects,
+      UserEffects,
+      UserManagementEffects,
+      CompanyManagementEffects,
       CompanyEffects,
-      SurveyManagementEffects
+      SurveyManagementEffects,
+      CustomerSurveyEffects,
     ]),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
     StoreRouterConnectingModule.forRoot(),
   ],
   providers: [
     {
       provide: LocationStrategy,
-      useClass: HashLocationStrategy
+      useClass: HashLocationStrategy,
     },
     IconSetService,
-    Title
+    Title,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-
 export class AppModule {}

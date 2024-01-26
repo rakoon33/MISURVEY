@@ -4,12 +4,13 @@ import CompanyState from './company.state';
 import UserManagementState from './user-management.state';
 import SurveyState from './survey.state';
 import CompanyManagementState from './company-management.state';
-
+import CustomerSurveyState from './customer-survey.state';
 export {
     UserState, 
     AuthState, 
     CompanyState,
     UserManagementState,
     CompanyManagementState,
-    SurveyState
+    SurveyState,
+    CustomerSurveyState
 };

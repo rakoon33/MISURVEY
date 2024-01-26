@@ -1,6 +1,6 @@
-const express = require('express');
-const userController = require('../controllers/user.controller');
-const { authMiddleware } = require('../middlewares');
+const express = require("express");
+const userController = require("../controllers/user.controller");
+const { authMiddleware } = require("../middlewares");
 const router = express.Router();
 
 /**
@@ -33,7 +33,7 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
-*                 status:
+ *                 status:
  *                   type: boolean
  *                   example: false
  *                 message:
@@ -66,7 +66,11 @@ const router = express.Router();
  *                   type: string
  *                   example: Failed to retrieve user data.
  */
-router.get('/getUserData', authMiddleware.tokenVerification, userController.getUserDataController);
+router.get(
+  "/getUserData",
+  authMiddleware.tokenVerification,
+  userController.getUserDataController
+);
 
 /**
  * @swagger
@@ -127,8 +131,11 @@ router.get('/getUserData', authMiddleware.tokenVerification, userController.getU
  *           description: Role of the user in the system
  */
 router
-    .route('/profile')
-    .get(authMiddleware.tokenVerification, userController.getUserProfileController)
+  .route("/profile")
+  .get(
+    authMiddleware.tokenVerification,
+    userController.getUserProfileController
+  );
 
 /**
  * @swagger
@@ -207,8 +214,8 @@ router
  *                   example: "Invalid data provided or user does not exist."
  */
 router
-    .route('/profile/:UserID')
-    .put(authMiddleware.tokenVerification, userController.updateUserController); // chưa xài
+  .route("/profile/:UserID")
+  .put(authMiddleware.tokenVerification, userController.updateUserController); // chưa xài
 
 /**
  * @swagger
@@ -268,8 +275,8 @@ router
  *                   example: An unexpected error occurred while searching for users.
  */
 router
-    .route('/searchUsers')
-    .get(authMiddleware.tokenVerification, userController.searchUserController);
+  .route("/searchUsers")
+  .get(authMiddleware.tokenVerification, userController.searchUserController);
 
 /**
  * @swagger
@@ -378,9 +385,10 @@ router
  *                   type: string
  *                   example: "User creation failed, invalid data provided"
  */
-router.route('/')
-    .get(authMiddleware.tokenVerification, userController.getAllUsersController)
-    .post(authMiddleware.tokenVerification, userController.createUserController);
+router
+  .route("/")
+  .get(authMiddleware.tokenVerification, userController.getAllUsersController)
+  .post(authMiddleware.tokenVerification, userController.createUserController);
 
 /**
  * @swagger
@@ -545,9 +553,9 @@ router.route('/')
  *                   example: "User not found or failed to update user details."
  */
 router
-    .route('/:UserID')
-    .delete(authMiddleware.tokenVerification, userController.deleteUserController)
-    .get(authMiddleware.tokenVerification,userController.getOneUserController)
-    .put(authMiddleware.tokenVerification, userController.updateUserController);
+  .route("/:UserID")
+  .delete(authMiddleware.tokenVerification, userController.deleteUserController)
+  .get(authMiddleware.tokenVerification, userController.getOneUserController)
+  .put(authMiddleware.tokenVerification, userController.updateUserController);
 
 module.exports = router;
