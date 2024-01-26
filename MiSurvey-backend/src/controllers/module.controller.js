@@ -1,7 +1,6 @@
 const { moduleService } = require('../services');
 
 const createModuleController = async (req, res) => {
-    console.log(req.body)
     try {
         const newUser = await moduleService.createModule(req.body);
         res.json(newUser);
@@ -11,7 +10,6 @@ const createModuleController = async (req, res) => {
 };
 
 const updateModuleController = async (req, res) => {
-
     try {
         const result = await moduleService.updateModule(req.params.ModuleID, req.body);  
         res.json(result);

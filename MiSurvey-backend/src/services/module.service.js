@@ -12,6 +12,14 @@ const createModule = async (moduleData) => {
 
 const updateModule = async (id, moduleData) => {
   try {
+    const module = await Module.findByPk(id);
+    if (!module) {
+      return {
+        status: false,
+        message: "Module not found",
+      };
+    }
+
     const [updatedRows] = await Module.update(moduleData, { where: { ModuleID: id } });
     if (updatedRows === 0) {
       return { status: false, message: "No module updated" };
@@ -24,8 +32,16 @@ const updateModule = async (id, moduleData) => {
 
 const deleteModule = async (id) => {
   try {
+    const module = await Module.findByPk(id);
+
+    if (!module) {
+      return { status: false, message: "Module not found" };
+    }
+
     await Module.destroy({ where: { ModuleID: id } });
+
     return { status: true, message: "Module deleted successfully" };
+
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }
@@ -40,14 +56,16 @@ const getAllModules = async () => {
   }
 };
 
-
 const getOneModule = async (id) => {
   try {
     const module = await Module.findByPk(id);
+
     if (!module) {
       return { status: false, message: "Module not found" };
     }
+
     return { status: true, message: "Module fetched successfully", module };
+    
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }
