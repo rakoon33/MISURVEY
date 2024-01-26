@@ -57,7 +57,9 @@ const router = express.Router();
  */
 router
     .route('/searchModules')
-    .get(authMiddleware.tokenVerification, moduleController.searchModulesController);
+    .get(authMiddleware.tokenVerification, 
+        moduleController.searchModulesController
+    );
 
 /**
  * @swagger
@@ -157,8 +159,16 @@ router
  *                   example: 'Error occurred while creating module'
  */
 router.route('/')
-    .get(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, moduleController.getAllModulesController)
-    .post(authMiddleware.tokenVerification, authMiddleware.isSuperAdmin, moduleController.createModuleController);
+    .get(
+        authMiddleware.tokenVerification, 
+        authMiddleware.isSuperAdmin, 
+        moduleController.getAllModulesController
+    )
+    .post(
+        authMiddleware.tokenVerification, 
+        authMiddleware.isSuperAdmin, 
+        moduleController.createModuleController
+    );
 
 /**
  * @swagger
@@ -299,8 +309,7 @@ router.route('/')
  */
 router
   .route("/")
-  .get(
-    authMiddleware.tokenVerification,
+  .get(authMiddleware.tokenVerification,
     authMiddleware.isSuperAdmin,
     moduleController.getAllModulesController
   )
