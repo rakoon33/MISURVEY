@@ -1,7 +1,6 @@
 const { individualPermissionService } = require("../services");
 
 const createIndividualPermissionController = async (req, res) => {
-  console.log(req.body);
   try {
     const newPermission =
       await individualPermissionService.createIndividualPermission(req.body);
@@ -12,7 +11,7 @@ const createIndividualPermissionController = async (req, res) => {
 };
 
 const updateIndividualPermissionController = async (req, res) => {
-  const { companyUserId, moduleId } = req.params; // Assuming these are passed as URL parameters
+  const { companyUserId, moduleId } = req.params;
   const permissionData = req.body;
 
   try {
@@ -28,8 +27,7 @@ const updateIndividualPermissionController = async (req, res) => {
 };
 
 const deleteIndividualPermissionController = async (req, res) => {
-  const { companyUserId, moduleId } = req.params; // Assuming these are passed as URL parameters
-
+  const { companyUserId, moduleId } = req.params;
   try {
     const result = await individualPermissionService.deleteIndividualPermission(
       companyUserId,
@@ -43,7 +41,6 @@ const deleteIndividualPermissionController = async (req, res) => {
 
 const getOneIndividualPermissionController = async (req, res) => {
   const { companyUserId, moduleId } = req.params; // Extract params
-
   try {
     const result = await individualPermissionService.getOneIndividualPermission(
       companyUserId,
@@ -66,8 +63,7 @@ const getAllIndividualPermissionsController = async (req, res) => {
 };
 
 const searchIndividualPermissionsController = async (req, res) => {
-  const { companyUserId } = req.params; // Extracting companyUserId from route parameters
-
+  const { companyUserId } = req.params;
   try {
     const result =
       await individualPermissionService.searchIndividualPermissions(
