@@ -56,10 +56,10 @@ const router = express.Router();
  *                   example: 'No modules found'
  */
 router
-    .route('/searchModules')
-    .get(authMiddleware.tokenVerification, 
-        moduleController.searchModulesController
-    );
+  .route('/searchModules')
+  .get(authMiddleware.tokenVerification, 
+      moduleController.searchModulesController
+  );
 
 /**
  * @swagger
@@ -158,17 +158,18 @@ router
  *                   type: string
  *                   example: 'Error occurred while creating module'
  */
-router.route('/')
-    .get(
-        authMiddleware.tokenVerification, 
-        authMiddleware.isSuperAdmin, 
-        moduleController.getAllModulesController
-    )
-    .post(
-        authMiddleware.tokenVerification, 
-        authMiddleware.isSuperAdmin, 
-        moduleController.createModuleController
-    );
+router
+  .route('/')
+  .get(
+      authMiddleware.tokenVerification, 
+      authMiddleware.isSuperAdmin, 
+      moduleController.getAllModulesController
+  )
+  .post(
+      authMiddleware.tokenVerification, 
+      authMiddleware.isSuperAdmin, 
+      moduleController.createModuleController
+  );
 
 /**
  * @swagger
@@ -307,18 +308,6 @@ router.route('/')
  *                   type: string
  *                   example: 'Error occurred while updating module'
  */
-router
-  .route("/")
-  .get(authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
-    moduleController.getAllModulesController
-  )
-  .post(
-    authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
-    moduleController.createModuleController
-  );
-
 router
   .route("/:ModuleID")
   .delete(

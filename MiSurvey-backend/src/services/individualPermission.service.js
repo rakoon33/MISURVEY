@@ -13,8 +13,7 @@ const createIndividualPermission = async (permissionData) => {
     if (existingPermission) {
       return {
         status: false,
-        message:
-          "Individual Permission with this CompanyUserID and ModuleID already exists",
+        message:"Individual Permission with this CompanyUserID and ModuleID already exists",
       };
     }
 
@@ -36,6 +35,20 @@ const updateIndividualPermission = async (
   permissionData
 ) => {
   try {
+    const existingPermission = await IndividualPermission.findOne({
+      where: {
+        CompanyUserID: companyUserId,
+        ModuleID: moduleId,
+      },
+    });
+
+    if (!existingPermission) {
+      return {
+        status: false,
+        message: "Individual Permission with this CompanyUserID or ModuleID not exists",
+      };
+    }
+
     const [updatedRows] = await IndividualPermission.update(permissionData, {
       where: {
         CompanyUserID: companyUserId,
@@ -46,6 +59,7 @@ const updateIndividualPermission = async (
     if (updatedRows === 0) {
       return { status: false, message: "No individual permission updated" };
     }
+
     return {
       status: true,
       message: "Individual Permission updated successfully",
@@ -57,6 +71,20 @@ const updateIndividualPermission = async (
 
 const deleteIndividualPermission = async (companyUserId, moduleId) => {
   try {
+    const existingPermission = await IndividualPermission.findOne({
+      where: {
+        CompanyUserID: companyUserId,
+        ModuleID: moduleId,
+      },
+    });
+
+    if (!existingPermission) {
+      return {
+        status: false,
+        message: "Individual Permission with this CompanyUserID or ModuleID not exists",
+      };
+    }
+
     await IndividualPermission.destroy({
       where: {
         CompanyUserID: companyUserId,
@@ -112,7 +140,6 @@ const getAllIndividualPermissions = async () => {
 
 const searchIndividualPermissions = async (companyUserId) => {
   try {
-    // Construct the search condition
     const condition = {};
     if (companyUserId) condition.CompanyUserID = companyUserId;
 
