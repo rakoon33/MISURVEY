@@ -17,9 +17,6 @@ const createSurveyController = async (req, res) => {
       Approve: req.user.role === "Supervisor" ? "Pending" : "Yes", // Set based on user role
     };
 
-    console.log(surveyData);
-
-    // Create the survey
     const newSurvey = await surveyService.createSurvey(surveyData);
 
     res.json(newSurvey);
@@ -27,7 +24,6 @@ const createSurveyController = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
 
 const getOneSurveyWithDataController = async (req, res) => {
   try {
