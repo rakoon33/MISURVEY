@@ -199,7 +199,7 @@ router
     surveyController.getAllSurveyController
   );
 
-  /**
+/**
  * @swagger
  * /api/survey/searchSurveys:
  *   get:
