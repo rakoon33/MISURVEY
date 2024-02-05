@@ -5,8 +5,6 @@ const {
   SurveyResponse,
   Ticket,
 } = require("../models");
-const { sequelize } = require("../config/database");
-const { Op } = require("sequelize");
 
 const createSurveyResponses = async (responses) => {
   try {
@@ -48,14 +46,14 @@ const evaluateResponse = async (response) => {
     case "Thumb":
       return responseValue === 0;
     default:
-      return false; // Default case for unexpected types
+      return false;
   }
 };
 
 const insertIntoSurveyResponses = async (response) => {
   const insertedResponse = await SurveyResponse.create({
     ...response,
-    CreatedAt: new Date(), // Ensuring CreatedAt is set
+    CreatedAt: new Date(),
   });
   return insertedResponse;
 };
@@ -63,7 +61,7 @@ const insertIntoSurveyResponses = async (response) => {
 const createTicket = async (response) => {
   return await Ticket.create({
     TicketStatus: "Open",
-    CreatedBy: null, // Setting CreatedBy to null
+    CreatedBy: null,
     SurveyID: response.SurveyID,
     ResponseID: response.ResponseID,
   });
@@ -83,7 +81,6 @@ const getOneResponse = async (responseID) => {
 
 const deleteResponse = async (responseID) => {
   try {
-    // Start a transaction
     const transaction = await db.sequelize.transaction();
 
     try {
