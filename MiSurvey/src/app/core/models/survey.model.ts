@@ -20,7 +20,6 @@ interface Survey {
     SurveyQuestions?: SurveyQuestion[];
 }
 
-
 interface SurveyType {
     SurveyTypeID?: number;
     SurveyTypeName: string;

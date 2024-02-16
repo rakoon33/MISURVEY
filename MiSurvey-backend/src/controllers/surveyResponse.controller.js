@@ -2,7 +2,6 @@ const { surveyResponseService } = require("../services");
 
 const createSurveyResponseController = async (req, res) => {
   try {
-    // Expecting an array of responses in req.body
     const responses = req.body;
     const result = await surveyResponseService.createSurveyResponses(responses);
     res.json(result);

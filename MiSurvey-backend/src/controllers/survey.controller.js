@@ -2,7 +2,6 @@ const { surveyService } = require("../services");
 
 const createSurveyController = async (req, res) => {
   try {
-    // Ensure req.user exists
     if (!req.user) {
       return res.status(400).json({ message: "User not found" });
     }
@@ -17,9 +16,6 @@ const createSurveyController = async (req, res) => {
       Approve: req.user.role === "Supervisor" ? "Pending" : "Yes", // Set based on user role
     };
 
-    console.log(surveyData);
-
-    // Create the survey
     const newSurvey = await surveyService.createSurvey(surveyData);
 
     res.json(newSurvey);
@@ -27,7 +23,6 @@ const createSurveyController = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
 
 const getOneSurveyWithDataController = async (req, res) => {
   try {

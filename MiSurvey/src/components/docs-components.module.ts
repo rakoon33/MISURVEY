@@ -30,5 +30,5 @@ import { DocsCalloutComponent } from './docs-callout/docs-callout.component';
     CalloutModule
   ]
 })
-export class DocsComponentsModule {
-}
+
+export class DocsComponentsModule {}

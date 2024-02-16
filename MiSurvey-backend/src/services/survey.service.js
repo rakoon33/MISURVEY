@@ -213,6 +213,12 @@ const deleteSurvey = async (surveyID) => {
   const transaction = await sequelize.transaction();
 
   try {
+    // Check if the survey exists
+    const survey = await Survey.findByPk(surveyID);
+    if (!survey) {
+      return { status: false, message: "Survey not found" };
+    }
+
     // Delete associated questions
     await SurveyQuestion.destroy({
       where: { SurveyID: surveyID },

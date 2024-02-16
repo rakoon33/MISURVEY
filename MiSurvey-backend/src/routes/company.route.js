@@ -3,6 +3,64 @@ const { companyController } = require("../controllers");
 const { authMiddleware } = require("../middlewares");
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/companies/getCompanyData:
+ *   get:
+ *     tags: [Company]
+ *     summary: Retrieve company data (only admin can use this API)
+ *     responses:
+ *       200:
+ *         description: Company data retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 companyDetails:
+ *                   type: object
+ *                   properties:
+ *                     CompanyID:
+ *                       type: integer
+ *                       example: 1
+ *                     CompanyName:
+ *                       type: string
+ *                       example: 'Acme Corp'
+ *                 permissions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       PermissionID:
+ *                         type: integer
+ *                         example: 1
+ *                       ModuleName:
+ *                         type: string
+ *                         example: 'Dashboard'
+ *       400:
+ *         description: Bad request, companyID is required as a query parameter.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'companyID is required as a query parameter.'
+ *       500:
+ *         description: Internal Server Error, failed to retrieve company data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Failed to retrieve company data.'
+ */
 router.get(
   "/getCompanyData",
   authMiddleware.tokenVerification,
