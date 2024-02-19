@@ -34,7 +34,7 @@ const Customer = db.sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-    },
+    }
   },
   {
     tableName: "Customers",
