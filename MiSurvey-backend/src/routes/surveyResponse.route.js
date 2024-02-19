@@ -11,15 +11,13 @@ router
     surveyResponseController.createSurveyResponseController
   );
 
-
-  router
+router
   .route("/all/:surveyID")
   .get(
     authMiddleware.tokenVerification,
     surveyResponseController.getAllResponseController
   );
 
-  
 router
   .route("/:responseID")
   .get(

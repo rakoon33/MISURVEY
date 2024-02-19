@@ -98,7 +98,7 @@ const getCompanyDataController = async (req, res) => {
       companyID,
       req.user.role
     );
-    res.json(result);
+    res.status(200).json(result); 
   } catch (error) {
     res
       .status(500)
