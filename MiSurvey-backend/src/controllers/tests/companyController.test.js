@@ -4,6 +4,9 @@ const {
   searchCompanyController,
   getAllCompaniesController,
   createCompanyController,
+  deleteCompanyController,
+  getOneCompanyController,
+  updateCompanyController,
 } = require("../company.controller");
 const companyService = require("../../services/company.service");
 
@@ -13,6 +16,8 @@ jest.mock("../../services/company.service", () => ({
   searchCompanies: jest.fn(),
   getAllCompanies: jest.fn(),
   createCompany: jest.fn(),
+  deleteCompany: jest.fn(),
+  updateCompany: jest.fn(),
 }));
 
 describe("Company controller: getCompanyDataController", () => {
@@ -320,19 +325,12 @@ describe("Company controller: getAllCompaniesController", () => {
 
 describe("Company controller: createCompany", () => {
   // Happy case
-  it("should create a user and return success message with userID", async () => {
+  it("should create a user and return success message with company data", async () => {
     const req = {
       body: {
-        UserAvatar: "./assets/img/avatars/2.jpg",
-        Username: "admin3",
-        FirstName: "Admin456",
-        LastName: "ABC",
-        Gender: "Male",
-        Email: "supervisor@example.com",
-        PhoneNumber: "0123456789",
-        UserPassword: "Admin123#",
-        UserRole: "Admin",
-        IsActive: "1",
+        CompanyName: "company6",
+        CompanyDomain: "nhuphan123453r4633@sgma3il.com",
+        AdminID: "6",
       },
     };
 
@@ -343,8 +341,16 @@ describe("Company controller: createCompany", () => {
 
     companyService.createCompany.mockResolvedValue({
       status: true,
-      message: "User created successfully",
-      userID: 9,
+      message: "Company and Admin CompanyUser created successfully",
+      data: [
+        {
+          CompanyID: 1,
+          CompanyLogo: null,
+          CompanyName: "company6",
+          CompanyDomain: "nhuphan123453r4633@sgma3il.com",
+          AdminID: 6,
+        },
+      ],
     });
 
     await createCompanyController(req, res);
@@ -352,8 +358,269 @@ describe("Company controller: createCompany", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       status: true,
-      message: "User created successfully",
-      userID: 9,
+      message: "Company and Admin CompanyUser created successfully",
+      data: [
+        {
+          CompanyID: 1,
+          CompanyLogo: null,
+          CompanyName: "company6",
+          CompanyDomain: "nhuphan123453r4633@sgma3il.com",
+          AdminID: 6,
+        },
+      ],
+    });
+  });
+
+  // Test for case AdminID is not found
+  it("should not create a company if AdminID is not found", async () => {
+    const req = {
+      body: {
+        CompanyName: "company6",
+        CompanyDomain: "nhuphan123453r4633@sgma3il.com",
+      },
+    };
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.createCompany.mockResolvedValue({
+      status: false,
+      message: "Admin user not found",
+    });
+
+    await createCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: false,
+      message: "Admin user not found",
+    });
+  });
+
+  // Test for case user is not Admin
+  it("should not create a company if AdminID is not an Admin", async () => {
+    const req = {
+      body: {
+        CompanyName: "company7",
+        CompanyDomain: "email@example.com",
+        AdminID: "Supervisor",
+      },
+    };
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.createCompany.mockResolvedValue({
+      status: false,
+      message: "Only Admin users can create companies",
+    });
+
+    await createCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: false,
+      message: "Only Admin users can create companies",
+    });
+  });
+
+  // Test for case Admin already owns their company
+  it("should not create a company if Admin already owns a company", async () => {
+    const req = {
+      body: {
+        CompanyName: "company8",
+        CompanyDomain: "anotheremail@example.com",
+        AdminID: "8",
+      },
+    };
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.createCompany.mockResolvedValue({
+      status: false,
+      message: "Admin already owns a company",
+    });
+
+    await createCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: false,
+      message: "Admin already owns a company",
+    });
+  });
+});
+
+describe("Company controller: deleteCompany", () => {
+  // Happy case
+  it("should successfully delete a company and return a success message", async () => {
+    const req = {
+      params: { CompanyID: "1" },
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.deleteCompany.mockResolvedValue({
+      status: true,
+      message: "Company deleted successfully",
+    });
+
+    await deleteCompanyController(req, res);
+
+    expect(companyService.deleteCompany).toHaveBeenCalledWith("1");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: true,
+      message: "Company deleted successfully",
+    });
+  });
+
+  // Test for case company not found
+  it("should return an error message when the company is not found", async () => {
+    const req = {
+      params: { CompanyID: "2" },
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.deleteCompany.mockResolvedValue({
+      status: false,
+      message: "Company not found",
+    });
+
+    await deleteCompanyController(req, res);
+
+    expect(companyService.deleteCompany).toHaveBeenCalledWith("2");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: false,
+      message: "Company not found",
+    });
+  });
+});
+
+describe("Company controller: getOneCompany", () => {
+  // Happy case
+  it("should retrieve a company successfully and return the company data", async () => {
+    const req = {
+      params: { CompanyID: "2" },
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.getOneCompany.mockResolvedValue({
+      status: true,
+      data: {
+        CompanyID: "2",
+        CompanyName: "Test Company",
+        CompanyDomain: "test.com",
+      },
+    });
+
+    await getOneCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: true,
+      data: {
+        CompanyID: "2",
+        CompanyName: "Test Company",
+        CompanyDomain: "test.com",
+      },
+    });
+  });
+
+  // Test for case Company not found
+  it("should return a 'Company not found' message when the company does not exist", async () => {
+    const req = {
+      params: { CompanyID: "invalid" },
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.getOneCompany.mockResolvedValue({
+      status: false,
+      message: "Company not found",
+    });
+
+    await getOneCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(companyService.getOneCompany).toHaveBeenCalledWith("invalid");
+    expect(res.json).toHaveBeenCalledWith({
+      status: false,
+      message: "Company not found",
+    });
+  });
+});
+
+describe("Company controller: updateCompany", () => {
+  // Happy case
+  it("should successfully update a company and return success message", async () => {
+    const req = {
+      params: { CompanyID: "1" },
+      body: { CompanyName: "Updated Company", AdminID: "2" },
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.updateCompany.mockResolvedValue({
+      status: true,
+      message: "Company updated successfully",
+      data: { ...req.body },
+    });
+
+    await updateCompanyController(req, res);
+
+    expect(companyService.updateCompany).toHaveBeenCalledWith("1", req.body);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: true,
+      message: "Company updated successfully",
+      data: expect.any(Object),
+    });
+  });
+
+  // Test for case company does not exist
+  it('should return an error message when the company does not exist', async () => {
+    const req = {
+      params: { CompanyID: 'nonexistent' },
+      body: { CompanyName: 'Nonexistent Company' },
+    };
+    const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+    };
+  
+    companyService.updateCompany.mockResolvedValue({
+      status: false,
+      message: 'Company not found',
+    });
+  
+    await updateCompanyController(req, res);
+  
+    expect(companyService.updateCompany).toHaveBeenCalledWith('nonexistent', req.body);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+        status: false,
+      message: 'Company not found',
     });
   });
 });
