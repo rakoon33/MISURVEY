@@ -599,28 +599,31 @@ describe("Company controller: updateCompany", () => {
   });
 
   // Test for case company does not exist
-  it('should return an error message when the company does not exist', async () => {
+  it("should return an error message when the company does not exist", async () => {
     const req = {
-      params: { CompanyID: 'nonexistent' },
-      body: { CompanyName: 'Nonexistent Company' },
+      params: { CompanyID: "nonexistent" },
+      body: { CompanyName: "Nonexistent Company" },
     };
     const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
     };
-  
+
     companyService.updateCompany.mockResolvedValue({
       status: false,
-      message: 'Company not found',
+      message: "Company not found",
     });
-  
+
     await updateCompanyController(req, res);
-  
-    expect(companyService.updateCompany).toHaveBeenCalledWith('nonexistent', req.body);
+
+    expect(companyService.updateCompany).toHaveBeenCalledWith(
+      "nonexistent",
+      req.body
+    );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-        status: false,
-      message: 'Company not found',
+      status: false,
+      message: "Company not found",
     });
   });
 });
