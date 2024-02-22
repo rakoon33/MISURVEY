@@ -11,7 +11,6 @@ const createCompanyUserController = async (req, res) => {
       });
     }
 
-    // Calling the service function to create a company user and associated user account
     const result = await companyUserService.createCompanyUser(
       companyUserData,
       userData

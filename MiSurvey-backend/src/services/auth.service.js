@@ -78,20 +78,17 @@ const registerUser = async (userData) => {
   const transaction = await db.sequelize.transaction();
 
   try {
-    // Destructure userData with the exact keys from your JSON request
     const { firstName, lastName, companyName, email, username, password } =
       userData;
 
-    // Check if the user already exists
     const userExists = await User.findOne({ where: { Username: username } });
+
     if (userExists) {
       throw new Error("User already exists");
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the user
     const newUser = await User.create(
       {
         Username: username,
@@ -218,5 +215,4 @@ module.exports = {
   logoutUser,
   registerUser,
   checkUserPermissions,
-  // ...other exported functions
 };

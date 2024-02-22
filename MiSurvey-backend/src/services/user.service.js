@@ -82,7 +82,6 @@ const getUserData = async (userId, userRole) => {
   }
 };
 
-// Create user by SuperAdmin
 const createUser = async (userData) => {
   try {
     userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); // Hash password before saving
@@ -104,7 +103,6 @@ const createUser = async (userData) => {
   }
 };
 
-// Update user by SuperAdmin
 const updateUser = async (UserID, userData) => {
   try {
     console.log(UserID);
@@ -119,7 +117,6 @@ const updateUser = async (UserID, userData) => {
       return { status: false, message: "No rows updated" };
     }
 
-    // Fetch the updated user
     const updatedUser = await User.findOne({ where: { UserID: UserID } });
 
     return {
@@ -138,7 +135,6 @@ const updateUser = async (UserID, userData) => {
   }
 };
 
-// Delete user by SuperAdmin
 const deleteUser = async (UserID) => {
   try {
     const deletedUser = await User.findOne({ where: { UserID: UserID } });
@@ -168,12 +164,10 @@ const deleteUser = async (UserID) => {
   }
 };
 
-// API to retrieve all details of a specific user based on the UserID
 const getOneUser = async (UserID) => {
   try {
     const user = await User.findOne({
       where: { UserID: UserID },
-      // All attributes will be fetched by default
     });
 
     if (!user) {
@@ -190,7 +184,6 @@ const getOneUser = async (UserID) => {
   }
 };
 
-// API to retrieve a list of all users with their basic details
 const getAllUsers = async (
   requestingUserRole,
   requestingUserCompanyId,
@@ -216,7 +209,6 @@ const getAllUsers = async (
       limit,
     };
 
-    // Apply filtering based on CompanyID only when the user is not a SuperAdmin
     if (requestingUserRole !== "SuperAdmin") {
       queryOptions.include = [
         {
