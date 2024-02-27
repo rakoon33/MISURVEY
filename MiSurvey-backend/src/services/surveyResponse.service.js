@@ -4,24 +4,41 @@ const {
   SurveyType,
   SurveyResponse,
   Ticket,
+  Customer
 } = require("../models");
 
-const createSurveyResponses = async (responses) => {
+const createSurveyResponses = async (data) => {
   try {
-    for (const response of responses) {
-      // Insert the survey response and get the inserted response with its ResponseID
-      const insertedResponse = await insertIntoSurveyResponses(response);
+    let customerID = null;
+
+    // Check if customer information is provided and create customer record
+    if (data.FirstName && data.Email) { // Simple check to determine if customer data is provided
+      const customerResult = await createCustomer(data);
+      if (!customerResult.status) {
+        throw new Error(customerResult.message);
+      }
+      customerID = customerResult.CustomerID;
+    }
+
+    // Process each survey response
+    for (const response of data.SurveyResponses) {
+      // Include CustomerID in the response if available
+      const responseWithCustomer = { ...response, CustomerID: customerID };
+
+      // Insert the survey response
+      const insertedResponse = await insertIntoSurveyResponses(responseWithCustomer);
 
       // Evaluate the response
       const isBadResponse = await evaluateResponse(insertedResponse);
       if (isBadResponse) {
-        // Create a ticket if the response is bad, passing the insertedResponse which includes ResponseID
+        // Create a ticket if the response is bad
         await createTicket(insertedResponse);
       }
     }
+
     return { status: true, message: "Responses recorded successfully" };
   } catch (error) {
-    return { status: false, message: error.message };
+    return { status: false, message: error.message, error: error.toString() };
   }
 };
 
@@ -140,9 +157,34 @@ const getAllResponsesFromSurvey = async (surveyID) => {
   }
 };
 
+const createCustomer = async (customerData) => {
+  try {
+    const newCustomer = await Customer.create({
+      FirstName: customerData.FirstName,
+      LastName: customerData.LastName,
+      Email: customerData.Email,
+      PhoneNumber: customerData.PhoneNumber,
+      Address: customerData.Address
+    });
+
+    return {
+      status: true,
+      message: "Customer created successfully",
+      CustomerID: newCustomer.CustomerID, // Returning the CustomerID of the newly created customer
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error.message,
+      error: error.toString(),
+    };
+  }
+};
+
+
 module.exports = {
   createSurveyResponses,
   deleteResponse,
   getOneResponse,
-  getAllResponsesFromSurvey,
+  getAllResponsesFromSurvey
 };
