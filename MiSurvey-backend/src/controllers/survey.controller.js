@@ -6,14 +6,13 @@ const createSurveyController = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // Prepare the survey data
     const surveyData = {
       ...req.body,
       UserID: req.user.id,
       CompanyID: req.user.companyID,
       CreatedBy: req.user.id,
-      CreatedAt: new Date(), // Set the current date and time
-      Approve: req.user.role === "Supervisor" ? "Pending" : "Yes", // Set based on user role
+      CreatedAt: new Date(),
+      Approve: req.user.role === "Supervisor" ? "Pending" : "Yes",
     };
 
     const newSurvey = await surveyService.createSurvey(surveyData);

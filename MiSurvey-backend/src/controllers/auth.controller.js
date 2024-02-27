@@ -24,8 +24,8 @@ const logoutController = async (req, res) => {
 
 const registerUserController = async (req, res) => {
   try {
-    const userData = req.body; // Get the entire request body as userData
-    const result = await authService.registerUser(userData); // Pass userData as a single object
+    const userData = req.body;
+    const result = await authService.registerUser(userData);
     res.status(201).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -33,7 +33,7 @@ const registerUserController = async (req, res) => {
 };
 
 const checkPermissionsController = async (req, res) => {
-  const userId = req.params.userId; // Extracting UserID from URL parameter
+  const userId = req.params.userId;
 
   if (!userId) {
     return res.status(400).json({ message: "UserID is required" });

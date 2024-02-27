@@ -2,15 +2,14 @@ const { CompanyRole, RolePermission } = require("../models");
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 
-// Create CompanyRole by SuperAdmin
 const createCompanyRole = async (roleData, permissionsData) => {
-  const transaction = await sequelize.transaction(); // Begin a transaction
+  const transaction = await sequelize.transaction();
 
   try {
     const newRole = await CompanyRole.create(roleData, { transaction });
-    // Assuming permissionsData is an array of permissions to be created for the new role.
+
     for (const permission of permissionsData) {
-      permission.CompanyRoleID = newRole.CompanyRoleID; // Set the CompanyRoleID for each permission.
+      permission.CompanyRoleID = newRole.CompanyRoleID;
       await RolePermission.create(permission, { transaction });
     }
 
@@ -21,11 +20,11 @@ const createCompanyRole = async (roleData, permissionsData) => {
       message: "Company Role and Role Permissions created successfully",
       data: {
         role: newRole,
-        permissions: permissionsData, // Send back the permissions as they were intended to be created.
+        permissions: permissionsData,
       },
     };
   } catch (error) {
-    await transaction.rollback(); // Rollback the transaction on error.
+    await transaction.rollback();
 
     return {
       status: false,
@@ -35,12 +34,10 @@ const createCompanyRole = async (roleData, permissionsData) => {
   }
 };
 
-// Update CompanyRole by SuperAdmin
 const updateCompanyRole = async (id, roleData, permissionsData) => {
   const transaction = await sequelize.transaction();
 
   try {
-    // Update the company role
     const [updatedRoleRows] = await CompanyRole.update(roleData, {
       where: { CompanyRoleID: id },
       transaction,
@@ -54,7 +51,6 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
       };
     }
 
-    // Update each permission in permissionsData
     for (const permission of permissionsData) {
       await RolePermission.update(permission, {
         where: {
@@ -67,7 +63,6 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
 
     await transaction.commit();
 
-    // Fetch the updated role and its permissions
     const updatedRole = await CompanyRole.findByPk(id, {
       include: {
         model: RolePermission,
@@ -92,41 +87,37 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
   }
 };
 
-// Delete CompanyRole by SuperAdmin
 const deleteCompanyRole = async (id) => {
-  const transaction = await sequelize.transaction(); // Begin a transaction
+  const transaction = await sequelize.transaction();
 
   try {
-    // Check if the role exists
     const role = await CompanyRole.findByPk(id, { transaction });
     if (!role) {
-      await transaction.rollback(); // If no role, rollback the transaction
+      await transaction.rollback();
       return {
         status: false,
         message: "Company Role not found",
       };
     }
 
-    // Delete associated role permissions first
     await RolePermission.destroy({
       where: { CompanyRoleID: id },
       transaction,
     });
 
-    // Delete the company role
     await CompanyRole.destroy({
       where: { CompanyRoleID: id },
       transaction,
     });
 
-    await transaction.commit(); // Commit the transaction if all goes well
+    await transaction.commit();
 
     return {
       status: true,
       message: "Company Role and its permissions deleted successfully",
     };
   } catch (error) {
-    await transaction.rollback(); // Rollback the transaction on error
+    await transaction.rollback();
     return {
       status: false,
       message: error.message || "Company Role deletion failed",

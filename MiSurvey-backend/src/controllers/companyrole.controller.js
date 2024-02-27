@@ -1,7 +1,7 @@
 const { companyRoleService } = require("../services");
 
 const createCompanyRoleController = async (req, res) => {
-  const { roleData, permissionsData } = req.body; // Assuming the request body will have roleData and permissionsData properties.
+  const { roleData, permissionsData } = req.body;
 
   try {
     const newRole = await companyRoleService.createCompanyRole(
@@ -15,7 +15,7 @@ const createCompanyRoleController = async (req, res) => {
 };
 
 const updateCompanyRoleController = async (req, res) => {
-  const { roleData, permissionsData } = req.body; // Extract roleData and permissionsData from the request body
+  const { roleData, permissionsData } = req.body;
 
   if (!roleData || !permissionsData) {
     return res.status(400).json({
