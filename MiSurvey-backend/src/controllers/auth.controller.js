@@ -15,7 +15,7 @@ const loginController = async (req, res) => {
 
 const logoutController = async (req, res) => {
   try {
-    const result = await authService.logoutUser(res);
+    const result = authService.logoutUser(res);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
