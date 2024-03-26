@@ -149,9 +149,16 @@ const getOneSurveyWithoutData = async (surveyID) => {
   }
 };
 
-const getAllSurvey = async () => {
+const getAllSurvey = async (user) => {
   try {
+    // Xác định điều kiện lọc dựa trên vai trò người dùng
+    let whereCondition = {};
+    if (user.role !== "SuperAdmin") {
+      whereCondition.CompanyID = user.companyID;
+    }
+
     const surveys = await Survey.findAll({
+      where: whereCondition,
       attributes: {
         exclude: [
           "CreatedAt",

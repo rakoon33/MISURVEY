@@ -113,7 +113,7 @@ export class UserManagementEffects {
         take(1), // Take only the first emitted value
         switchMap(route => {
           const page = route.root.queryParams['page'] || '1'; // Default page is 1 if not available
-          const pageSize = route.root.queryParams['pageSize'] || '10'; // Default pageSize is 5 if not available
+          const pageSize = route.root.queryParams['pageSize'] || '10'; // Default pageSize is 10 if not available
 
           return this.userManagementService.createUser(action.userData).pipe(
             map((response) => {
@@ -125,7 +125,7 @@ export class UserManagementEffects {
                     pageSize: Number(pageSize),
                   })
                 );
-                return userManagementActions.createUserSuccess();
+                return userManagementActions.createUserSuccess(response.userID);
               } else {
                 this.toastrService.error(response.message || 'Creation failed');
                 return userManagementActions.createUserFailure();

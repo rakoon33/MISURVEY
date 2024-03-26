@@ -27,9 +27,11 @@ export class UserManagementComponent implements OnInit {
   currentSelectedUserId: number | undefined;
   // to get the user login id to fill in create by, update by,...
   currentUserId: number | undefined;
+  currentUserRole: string | undefined;
 
   editUserFormGroup: FormGroup;
   addUserForm: FormGroup;
+  companyInfoFormGroup: FormGroup;
 
   users$: Observable<User[]> = this.store.select(
     userManagementSelector.selectCurrentUsers
@@ -75,6 +77,11 @@ export class UserManagementComponent implements OnInit {
         Validators.required,
         Validators.minLength(8),
       ]),
+    });
+
+    this.companyInfoFormGroup = new FormGroup({
+      CompanyName: new FormControl('', [Validators.required]), // Thêm Validators nếu cần
+      CompanyDomain: new FormControl(''), // Không bắt buộc, có thể thêm Validators nếu cần
     });
 
     this.subscription.add(
@@ -143,6 +150,21 @@ export class UserManagementComponent implements OnInit {
     this.store
       .select(userSelector.selectCurrentUser)
       .subscribe((id) => (this.currentUserId = id?.UserID));
+
+
+    this.store.select(userSelector.selectCurrentUser).subscribe((currentUser) => {
+      this.currentUserId = currentUser?.UserID;
+      if (currentUser?.UserRole === 'Admin' || currentUser?.UserRole === 'Supervisor') {
+        // Lưu vai trò người dùng hiện tại để sử dụng sau này
+        this.currentUserRole = currentUser?.UserRole;
+  
+        if (this.currentUserRole === 'Admin' || this.currentUserRole === 'Supervisor') {
+          this.addUserForm.get('UserRole')?.setValue('Supervisor');
+          this.addUserForm.get('UserRole')?.disable();
+        }
+
+      }
+    });
   }
 
   getPaginationRange(

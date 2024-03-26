@@ -28,6 +28,7 @@ export class SurveyManagementComponent implements OnInit {
 
   copySurveyLink(link: string, event: MouseEvent) {
     event.preventDefault();   
+    link = 'http://localhost:8082/#/c/f/' + link
     navigator.clipboard.writeText(link).then(
       () => {
         console.log('Link copied to clipboard!');

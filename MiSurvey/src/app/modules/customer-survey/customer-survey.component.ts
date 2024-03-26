@@ -20,11 +20,9 @@ export class CustomerSurveyComponent {
   ) {}
 
   ngOnInit() {
-    console.log('haha');
     this.route.params.subscribe((params) => {
-      // const link = params['SurveyLink'];
+      const link = params['SurveyLink'];
 
-      const link = 'gt6kKERXLepBQa0xKm1km';
       if (link) {
         this.store.dispatch(
           customerSurveyActions.loadCustomerSurveyDetailRequest({ link })
@@ -35,7 +33,7 @@ export class CustomerSurveyComponent {
     this.store
     .select(customerSurveySelector.selectSurvey)
     .subscribe((survey) => {
-      if (survey && survey.SurveyQuestions) {
+      if (survey && survey?.SurveyQuestions) {
         // Create a copy of the SurveyQuestions array
         const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
           const orderA =

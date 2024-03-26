@@ -128,7 +128,13 @@ const deleteCompanyRole = async (id) => {
 
 const getAllCompanyRoles = async () => {
   try {
-    const roles = await CompanyRole.findAll();
+    const roles = await CompanyRole.findAll({
+      where: {
+        CompanyRoleName: {
+          [Op.ne]: 'Admin' 
+        }
+      }
+    });
     return {
       status: true,
       message: "Company Roles fetched successfully",
@@ -144,6 +150,7 @@ const getAllCompanyRoles = async () => {
     };
   }
 };
+
 
 const getOneCompanyRole = async (id) => {
   try {

@@ -34,6 +34,21 @@ export const logoutSuccess = createAction(
   AuthActionTypes.LOGOUT_SUCCESS
 );
 
+
+
+export const registerRequest = createAction(
+  '[Auth] Register Request',
+  props<{ userData: { firstName: string; lastName: string; companyName: string; email: string; username: string; password: string } }>()
+);
+
+export const registerSuccess = createAction(
+  '[Auth] Register Success',
+);
+
+export const registerFailure = createAction(
+  '[Auth] Register Failure',
+);
+
 export type AuthActions =
   | ActionType<typeof loginRequest>
   | ActionType<typeof loginSuccess>
