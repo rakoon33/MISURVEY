@@ -36,4 +36,23 @@ export class AuthService {
       .post<any>(logoutUrl, {}, { withCredentials: true })
       .pipe(catchError((error) => throwError(() => error)));
   }
+
+  register(userData: { firstName: string; lastName: string; companyName: string; email: string; username: string; password: string }): Observable<any> {
+    const registerUrl = `${apiConstants.BACKEND_API.BASE_API_URL}/register`;
+    return this.http
+      .post<any>(registerUrl, userData, { withCredentials: true })
+      .pipe(
+        map((response) => {
+          if (response.status) {
+            return response;
+          } else {
+            throw new Error(response.message);
+          }
+        }),
+        catchError((error) => {
+          console.error('Error during registration:', error);
+          return throwError(() => error);
+        })
+      );
+  }
 }

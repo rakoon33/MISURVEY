@@ -162,7 +162,6 @@ router
   .route('/')
   .get(
       authMiddleware.tokenVerification, 
-      authMiddleware.isSuperAdmin, 
       moduleController.getAllModulesController
   )
   .post(
