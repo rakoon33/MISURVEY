@@ -17,5 +17,4 @@ router
     surveyQuestionController.deleteSurveyQuestionController
   );
 
-
 module.exports = router;

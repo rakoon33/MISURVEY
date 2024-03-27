@@ -20,7 +20,9 @@ const updateModule = async (id, moduleData) => {
       };
     }
 
-    const [updatedRows] = await Module.update(moduleData, { where: { ModuleID: id } });
+    const [updatedRows] = await Module.update(moduleData, {
+      where: { ModuleID: id },
+    });
     if (updatedRows === 0) {
       return { status: false, message: "No module updated" };
     }
@@ -41,7 +43,6 @@ const deleteModule = async (id) => {
     await Module.destroy({ where: { ModuleID: id } });
 
     return { status: true, message: "Module deleted successfully" };
-
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }
@@ -65,7 +66,6 @@ const getOneModule = async (id) => {
     }
 
     return { status: true, message: "Module fetched successfully", module };
-    
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }

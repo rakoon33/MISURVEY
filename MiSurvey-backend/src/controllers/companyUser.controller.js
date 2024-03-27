@@ -17,7 +17,7 @@ const createCompanyUserController = async (req, res) => {
     };
     const userData2 = {
       ...userData,
-      UserAvatar: "./assets/img/avatars/avt_default.png"
+      UserAvatar: "./assets/img/avatars/avt_default.png",
     };
 
     const result = await companyUserService.createCompanyUser(

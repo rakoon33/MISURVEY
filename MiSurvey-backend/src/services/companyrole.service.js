@@ -131,9 +131,9 @@ const getAllCompanyRoles = async () => {
     const roles = await CompanyRole.findAll({
       where: {
         CompanyRoleName: {
-          [Op.ne]: 'Admin' 
-        }
-      }
+          [Op.ne]: "Admin",
+        },
+      },
     });
     return {
       status: true,
@@ -150,7 +150,6 @@ const getAllCompanyRoles = async () => {
     };
   }
 };
-
 
 const getOneCompanyRole = async (id) => {
   try {

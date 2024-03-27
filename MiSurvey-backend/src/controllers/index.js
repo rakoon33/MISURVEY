@@ -18,5 +18,5 @@ module.exports = {
   companyUserController,
   surveyController,
   surveyResponseController,
-  surveyQuestionController
+  surveyQuestionController,
 };
