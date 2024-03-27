@@ -7,6 +7,7 @@ import * as surveyManagementActions from './survey-management.actions';
 import * as customerSurveyActions from './customer-survey.action';
 import * as companyRoleManagementActions from './company-roles-management.actions';
 import * as moduleActions from './module.actions';
+import * as companyUserManagementActions from './company-user-management.actions';
 export {
   authActions,
   userActions,
@@ -17,4 +18,5 @@ export {
   customerSurveyActions,
   companyRoleManagementActions,
   moduleActions,
+  companyUserManagementActions
 };

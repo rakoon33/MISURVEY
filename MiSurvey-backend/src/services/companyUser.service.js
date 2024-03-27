@@ -7,6 +7,7 @@ const createCompanyUser = async (companyUserData, userData) => {
   try {
     const { CompanyID, CompanyRoleID } = companyUserData;
 
+    console.log(userData)
     if (!CompanyID || !CompanyRoleID) {
       throw new Error("CompanyID and CompanyRoleID are required");
     }
