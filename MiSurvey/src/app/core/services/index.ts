@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 import { CompanyService } from './company.service';
 import { CustomerSurveyService } from './customer-survey.service';
 import { CompanyRolesManagementService } from './company-roles-management.service';
+import {CompanyUserManagementService} from './company-user-management.service';
 export {
   UserService,
   AuthService,
@@ -16,5 +17,6 @@ export {
   UserManagementService,
   SurveyManagementService,
   CustomerSurveyService,
-  CompanyRolesManagementService
+  CompanyRolesManagementService,
+  CompanyUserManagementService
 };

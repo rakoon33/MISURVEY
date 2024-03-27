@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { User, Permission } from '../../core/models';
+import { User, Permission, CompanyRole } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
-import { userManagementActions } from 'src/app/core/store/actions';
-import { userManagementSelector, userSelector } from 'src/app/core/store/selectors';
+import { companyRoleManagementActions, companyUserManagementActions, userManagementActions } from 'src/app/core/store/actions';
+import { companyRolesManagementSelectors, userManagementSelector, userSelector } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, NavigationStart, Event as RouterEvent, ActivatedRoute } from '@angular/router';
@@ -28,11 +28,12 @@ export class UserManagementComponent implements OnInit {
   // to get the user login id to fill in create by, update by,...
   currentUserId: number | undefined;
   currentUserRole: string | undefined;
+  currentUserRoleId: string = '0';
 
   editUserFormGroup: FormGroup;
   addUserForm: FormGroup;
   companyInfoFormGroup: FormGroup;
-
+  companyRoleFormGroup: FormGroup;
   users$: Observable<User[]> = this.store.select(
     userManagementSelector.selectCurrentUsers
   );
@@ -43,6 +44,10 @@ export class UserManagementComponent implements OnInit {
     userManagementSelector.selectCurrentUser
   );
   userPermissions$: Observable<Permission | undefined> | undefined;
+
+  roles$: Observable<CompanyRole[]> = this.store.select(
+    companyRolesManagementSelectors.selectAllCompanyRoles
+  );
   constructor(
     private store: Store,
     private toastr: ToastrService,
@@ -80,8 +85,12 @@ export class UserManagementComponent implements OnInit {
     });
 
     this.companyInfoFormGroup = new FormGroup({
-      CompanyName: new FormControl('', [Validators.required]), // Thêm Validators nếu cần
-      CompanyDomain: new FormControl(''), // Không bắt buộc, có thể thêm Validators nếu cần
+      CompanyName: new FormControl('', [Validators.required]),
+      CompanyDomain: new FormControl(''), 
+    });
+
+    this.companyRoleFormGroup = new FormGroup({
+      CompanyRoleID: new FormControl('', [Validators.required])
     });
 
     this.subscription.add(
@@ -124,6 +133,11 @@ export class UserManagementComponent implements OnInit {
         } as Permission;
       })
     );
+
+    this.companyRoleFormGroup.get('CompanyRoleID')!.valueChanges.subscribe(value => {
+      this.currentUserRoleId = value;
+    });
+    
   }
 
   ngOnInit() {
@@ -165,6 +179,9 @@ export class UserManagementComponent implements OnInit {
 
       }
     });
+    
+    this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
+    
   }
 
   getPaginationRange(
@@ -277,18 +294,41 @@ export class UserManagementComponent implements OnInit {
   }
 
   createUser() {
+
     if (this.addUserForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addUserForm.value,
         CreatedAt: new Date(),
         CreatedBy: this.currentUserId,
       };
-      this.store.dispatch(
-        userManagementActions.createUserRequest({ userData: formData })
-      );
+      
+      if (this.currentUserRole === 'Admin' || this.currentUserRole === 'Supervisor') {
+
+        const formData = {
+          ...this.addUserForm.value,
+          CreatedAt: new Date(),
+          CreatedBy: this.currentUserId,
+          UserRole: 'Supervisor',
+        };
+      
+        this.store.dispatch(
+          companyUserManagementActions.createCompanyUserRequest({
+            companyUserData: {
+              CompanyRoleID: parseInt(this.currentUserRoleId)
+            },
+            userData: formData
+          })
+        );
+      } else {
+        // Xử lý cho các vai trò người dùng khác
+        this.store.dispatch(
+          userManagementActions.createUserRequest({ userData: formData })
+        );
+      }
     } else {
       this.toastr.error('Form is not valid or user ID is not available');
     }
+
   }
 
   editUser(UserID: number): void {
