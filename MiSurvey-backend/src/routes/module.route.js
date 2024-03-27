@@ -56,9 +56,10 @@ const router = express.Router();
  *                   example: 'No modules found'
  */
 router
-  .route('/searchModules')
-  .get(authMiddleware.tokenVerification, 
-      moduleController.searchModulesController
+  .route("/searchModules")
+  .get(
+    authMiddleware.tokenVerification,
+    moduleController.searchModulesController
   );
 
 /**
@@ -159,15 +160,15 @@ router
  *                   example: 'Error occurred while creating module'
  */
 router
-  .route('/')
+  .route("/")
   .get(
-      authMiddleware.tokenVerification, 
-      moduleController.getAllModulesController
+    authMiddleware.tokenVerification,
+    moduleController.getAllModulesController
   )
   .post(
-      authMiddleware.tokenVerification, 
-      authMiddleware.isSuperAdmin, 
-      moduleController.createModuleController
+    authMiddleware.tokenVerification,
+    authMiddleware.isSuperAdmin,
+    moduleController.createModuleController
   );
 
 /**

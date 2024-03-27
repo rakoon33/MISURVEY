@@ -65,7 +65,7 @@ router
     authMiddleware.isSuperAdmin,
     individualPermissionController.searchIndividualPermissionsController
   );
-  
+
 /**
  * @swagger
  * /api/permissions:

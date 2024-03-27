@@ -136,13 +136,13 @@ const router = express.Router();
  *                 message:
  *                   type: string
  *                   example: 'Error occurred while creating survey'
- * 
+ *
  *   get:
  *     tags: [Survey]
  *     summary: Retrieve all surveys (admin & supervisor can use this API)
  *     responses:
  *       200:
- *         description: Surveys fetched successfully. 
+ *         description: Surveys fetched successfully.
  *         content:
  *           application/json:
  *             schema:
