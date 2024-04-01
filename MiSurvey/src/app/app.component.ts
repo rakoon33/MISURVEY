@@ -9,8 +9,8 @@ import { Title } from '@angular/platform-browser';
   template: '<router-outlet></router-outlet>',
 })
 export class AppComponent implements OnInit {
-  title = 'CoreUI Free Angular Admin Template';
-
+  title = 'Survey Management System';
+  
   constructor(
     private router: Router,
     private titleService: Title,

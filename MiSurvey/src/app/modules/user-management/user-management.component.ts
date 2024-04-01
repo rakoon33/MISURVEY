@@ -8,6 +8,9 @@ import { companyRolesManagementSelectors, userManagementSelector, userSelector }
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, NavigationStart, Event as RouterEvent, ActivatedRoute } from '@angular/router';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-user-management',
@@ -355,6 +358,68 @@ export class UserManagementComponent implements OnInit {
     }
   }
 
+  exportToPdf() {
+    this.users$.subscribe(users => {
+      if (users.length > 0) {
+        const documentDefinition = this.getDocumentDefinition(users);
+        pdfMake.createPdf(documentDefinition).open();
+        pdfMake.createPdf(documentDefinition).download('users-report.pdf');
+      } else {
+        this.toastr.error('No users data available to export.');
+      }
+    });
+  }
+
+  getDocumentDefinition(users: User[]) {
+    return {
+      content: [
+        {
+          text: 'Users Report',
+          style: 'header'
+        },
+        this.buildUserTable(users),
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 20, 0, 10] as [number, number, number, number] // left, top, right, bottom
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 13,
+          color: 'black'
+        }
+      }
+    };
+  }
+
+  buildUserTable(users: User[]) {
+    return {
+      table: {
+        headerRows: 1,
+        widths: [100, 'auto', 'auto', '*', 'auto'],
+        body: [
+          [
+            { text: 'Username', style: 'tableHeader' },
+            { text: 'First Name', style: 'tableHeader' },
+            { text: 'Last Name', style: 'tableHeader' },
+            { text: 'Email', style: 'tableHeader' },
+            { text: 'Role', style: 'tableHeader' },
+          ],
+          ...users.map(user => [
+            user.Username,
+            user.FirstName,
+            user.LastName,
+            user.Email,
+            user.UserRole,
+          ])
+        ]
+      },
+      layout: 'auto'
+    };
+  }
+  
   private toggleModal(modalId: string): void {
     const action = { show: true, id: modalId };
     this.modalService.toggle(action);
