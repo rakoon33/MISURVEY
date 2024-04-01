@@ -8,9 +8,12 @@
     >
       Create a new user
     </button>
-    <button *ngIf="permissions.CanExport" class="btn-action">
+    <button *ngIf="permissions.CanExport" class="btn-action" (click)="exportToPdf()">
       Export Data
     </button>
+    <!-- <button *ngIf="permissions$ | async as permissions" (click)="exportToPdf()" class="btn btn-primary" *ngIf="permissions.CanExport">
+      Export to PDF
+    </button> -->
   </div>
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>
