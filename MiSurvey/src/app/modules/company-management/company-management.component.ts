@@ -8,6 +8,9 @@ import { companyManagementSelector, companySelector, userSelector } from 'src/ap
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, NavigationStart, Event as RouterEvent, ActivatedRoute } from '@angular/router';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-company-management',
@@ -265,6 +268,84 @@ export class CompanyManagementComponent implements OnInit {
     } else {
       this.toastr.error('Form is invalid or company ID is not set');
     }
+  }
+
+  exportToPdf() {
+    this.companies$.subscribe(companies => {
+      if (companies.length > 0) {
+        const documentDefinition = this.getDocumentDefinition(companies);
+        pdfMake.createPdf(documentDefinition).open();
+        pdfMake.createPdf(documentDefinition).download('companies-report.pdf');
+      } else {
+        this.toastr.error('No companies data available to export.');
+      }
+    });
+  }
+
+  getDocumentDefinition(companies: Company[]) {
+    const now = new Date();
+    const formattedTime = now.toLocaleString();
+  
+    return {
+      content: [
+        {
+          text: 'Companies Report',
+          style: 'header'
+        },
+        this.buildCompanyTable(companies),
+        {
+          text: `Report generated on: ${formattedTime}`,
+          style: 'subheader'
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 20, 0, 10] as [number, number, number, number],
+        },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 10] as [number, number, number, number],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 13,
+          color: 'black',
+        },
+        tableCell: {
+          margin: [5, 5, 5, 5] as [number, number, number, number], 
+          fontSize: 11, 
+        },
+      }
+    };
+  }
+
+  buildCompanyTable(companies: Company[]) {
+    return {
+      table: {
+        headerRows: 1,
+        widths: [30, '*', '*', '*', '*'],
+        body: [
+          [
+            { text: '#', style: 'tableHeader' },
+            { text: 'Company Name', style: 'tableHeader' },
+            { text: 'Domain', style: 'tableHeader' },
+            { text: 'Created At', style: 'tableHeader' },
+            { text: 'Admin ID', style: 'tableHeader' },
+          ],
+          ...companies.map((company, index) => [
+            { text: (index + 1).toString() || 'N/A', style: 'tableCell' },
+            { text: company.CompanyName || 'N/A', style: 'tableCell' },
+            { text: company.CompanyDomain || 'N/A', style: 'tableCell' },
+            { text: company.CreatedAt ? new Date(company.CreatedAt).toLocaleDateString() : 'N/A', style: 'tableCell' },
+            { text: company.AdminID ? company.AdminID.toString() : 'N/A', style: 'tableCell' },
+          ])
+        ]
+      },
+      layout: 'auto'
+    };
   }
 
   private toggleModal(modalId: string): void {
