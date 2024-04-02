@@ -140,7 +140,6 @@ export class UserManagementComponent implements OnInit {
     this.companyRoleFormGroup.get('CompanyRoleID')!.valueChanges.subscribe(value => {
       this.currentUserRoleId = value;
     });
-    
   }
 
   ngOnInit() {
@@ -168,7 +167,6 @@ export class UserManagementComponent implements OnInit {
       .select(userSelector.selectCurrentUser)
       .subscribe((id) => (this.currentUserId = id?.UserID));
 
-
     this.store.select(userSelector.selectCurrentUser).subscribe((currentUser) => {
       this.currentUserId = currentUser?.UserID;
       if (currentUser?.UserRole === 'Admin' || currentUser?.UserRole === 'Supervisor') {
@@ -179,12 +177,9 @@ export class UserManagementComponent implements OnInit {
           this.addUserForm.get('UserRole')?.setValue('Supervisor');
           this.addUserForm.get('UserRole')?.disable();
         }
-
       }
     });
-    
     this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
-    
   }
 
   getPaginationRange(
@@ -297,7 +292,6 @@ export class UserManagementComponent implements OnInit {
   }
 
   createUser() {
-
     if (this.addUserForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addUserForm.value,
@@ -306,7 +300,6 @@ export class UserManagementComponent implements OnInit {
       };
       
       if (this.currentUserRole === 'Admin' || this.currentUserRole === 'Supervisor') {
-
         const formData = {
           ...this.addUserForm.value,
           CreatedAt: new Date(),
@@ -331,7 +324,6 @@ export class UserManagementComponent implements OnInit {
     } else {
       this.toastr.error('Form is not valid or user ID is not available');
     }
-
   }
 
   editUser(UserID: number): void {
@@ -345,14 +337,12 @@ export class UserManagementComponent implements OnInit {
         ...this.editUserFormGroup.value,
         UpdatedBy: this.currentUserId,
       };
-
       this.store.dispatch(
         userManagementActions.updateUserRequest({
           UserID: Number(this.currentSelectedUserId),
           userData: formValue,
         })
       );
-
     } else {
       this.toastr.error('Form is invalid or user ID is not set');
     }
@@ -371,6 +361,9 @@ export class UserManagementComponent implements OnInit {
   }
 
   getDocumentDefinition(users: User[]) {
+    const now = new Date();
+    const formattedTime = now.toLocaleString(); 
+
     return {
       content: [
         {
@@ -378,6 +371,10 @@ export class UserManagementComponent implements OnInit {
           style: 'header'
         },
         this.buildUserTable(users),
+        {
+          text: `Report generated on: ${formattedTime}`,
+          style: 'subheader'
+        },
       ],
       styles: {
         header: {
@@ -385,9 +382,14 @@ export class UserManagementComponent implements OnInit {
           bold: true,
           margin: [0, 20, 0, 10] as [number, number, number, number] // left, top, right, bottom
         },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 10] as [number, number, number, number]
+        },
         tableHeader: {
           bold: true,
-          fontSize: 13,
+          fontSize: 12,
           color: 'black'
         }
       }
@@ -398,21 +400,25 @@ export class UserManagementComponent implements OnInit {
     return {
       table: {
         headerRows: 1,
-        widths: [100, 'auto', 'auto', '*', 'auto'],
+        widths: [30, 'auto', 'auto', '*', 'auto', '*', 'auto'],
         body: [
           [
+            { text: '#', style: 'tableHeader' },
             { text: 'Username', style: 'tableHeader' },
             { text: 'First Name', style: 'tableHeader' },
             { text: 'Last Name', style: 'tableHeader' },
             { text: 'Email', style: 'tableHeader' },
             { text: 'Role', style: 'tableHeader' },
+            { text: 'Active', style: 'tableHeader' },
           ],
-          ...users.map(user => [
+          ...users.map((user, index) => [
+            (index + 1).toString(),
             user.Username,
             user.FirstName,
             user.LastName,
             user.Email,
             user.UserRole,
+            user.IsActive ? 'Yes' : 'No',
           ])
         ]
       },
