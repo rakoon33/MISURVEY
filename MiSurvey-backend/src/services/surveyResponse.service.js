@@ -101,8 +101,13 @@ const getOneResponse = async (responseID) => {
 
 const deleteResponse = async (responseID) => {
   try {
+    const getResponse = await getOneResponse(responseID);
+    if (!getResponse.status) {
+      // If the response doesn't exist, return the message from getOneResponse
+      return getResponse;
+    }
+    
     const transaction = await db.sequelize.transaction();
-
     try {
       // First, delete any tickets associated with the response
       await Ticket.destroy({
