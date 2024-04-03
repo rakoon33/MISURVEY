@@ -1,6 +1,6 @@
 const express = require("express");
 const { surveyController } = require("../controllers");
-const { authMiddleware } = require("../middlewares"); // Import this if you need authentication
+const { authMiddleware } = require("../middlewares");
 
 const router = express.Router();
 
