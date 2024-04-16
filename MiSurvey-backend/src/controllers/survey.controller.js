@@ -58,7 +58,8 @@ const getOneSurveyWithoutDataController = async (req, res) => {
 
 const getAllSurveyController = async (req, res) => {
   try {
-    const result = await surveyService.getAllSurvey();
+    // Truyền req.user vào hàm getAllSurvey để sử dụng thông tin người dùng
+    const result = await surveyService.getAllSurvey(req.user);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

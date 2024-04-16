@@ -97,6 +97,7 @@ const registerUser = async (userData) => {
         Email: email,
         UserPassword: hashedPassword,
         UserRole: "Admin",
+        UserAvatar: "./assets/img/avatars/avt_default.png",
       },
       { transaction }
     );

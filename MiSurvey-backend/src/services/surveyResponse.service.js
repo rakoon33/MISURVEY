@@ -4,7 +4,7 @@ const {
   SurveyType,
   SurveyResponse,
   Ticket,
-  Customer
+  Customer,
 } = require("../models");
 
 const createSurveyResponses = async (data) => {
@@ -12,7 +12,8 @@ const createSurveyResponses = async (data) => {
     let customerID = null;
 
     // Check if customer information is provided and create customer record
-    if (data.FirstName && data.Email) { // Simple check to determine if customer data is provided
+    if (data.FirstName && data.Email) {
+      // Simple check to determine if customer data is provided
       const customerResult = await createCustomer(data);
       if (!customerResult.status) {
         throw new Error(customerResult.message);
@@ -26,7 +27,9 @@ const createSurveyResponses = async (data) => {
       const responseWithCustomer = { ...response, CustomerID: customerID };
 
       // Insert the survey response
-      const insertedResponse = await insertIntoSurveyResponses(responseWithCustomer);
+      const insertedResponse = await insertIntoSurveyResponses(
+        responseWithCustomer
+      );
 
       // Evaluate the response
       const isBadResponse = await evaluateResponse(insertedResponse);
@@ -98,8 +101,13 @@ const getOneResponse = async (responseID) => {
 
 const deleteResponse = async (responseID) => {
   try {
+    const getResponse = await getOneResponse(responseID);
+    if (!getResponse.status) {
+      // If the response doesn't exist, return the message from getOneResponse
+      return getResponse;
+    }
+    
     const transaction = await db.sequelize.transaction();
-
     try {
       // First, delete any tickets associated with the response
       await Ticket.destroy({
@@ -164,7 +172,7 @@ const createCustomer = async (customerData) => {
       LastName: customerData.LastName,
       Email: customerData.Email,
       PhoneNumber: customerData.PhoneNumber,
-      Address: customerData.Address
+      Address: customerData.Address,
     });
 
     return {
@@ -181,10 +189,9 @@ const createCustomer = async (customerData) => {
   }
 };
 
-
 module.exports = {
   createSurveyResponses,
   deleteResponse,
   getOneResponse,
-  getAllResponsesFromSurvey
+  getAllResponsesFromSurvey,
 };

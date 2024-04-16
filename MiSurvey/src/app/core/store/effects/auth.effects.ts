@@ -6,7 +6,9 @@ import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../../services';
 import { authActions } from '../actions';
 import { userActions } from '../actions';
+import { surveyManagementActions } from '../actions';
 import { companyActions } from '../actions';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthEffects {
@@ -54,7 +56,8 @@ export class AuthEffects {
             return [
               authActions.logoutSuccess(),
               userActions.getUserDataSuccess({ user: null, permissions: [] }),
-              companyActions.getCompanyDataSuccess ({ company: null, permissions: [] })
+              companyActions.getCompanyDataSuccess ({ company: null, permissions: [] }),
+              surveyManagementActions.resetSurveyState(),
             ];
           } else {
             this.toastrService.error(response.message || 'Logout failed');
@@ -70,9 +73,35 @@ export class AuthEffects {
   )
 );
 
+
+register$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(authActions.registerRequest),
+    concatMap((action) =>
+      this.authService.register(action.userData).pipe(
+        map((response) => {
+          if (response.status) {
+            this.toastrService.success('Registration successful');
+            this.router.navigate(['/login']);
+            return authActions.registerSuccess();
+          } else {
+            this.toastrService.error(response.message || 'Registration failed');
+            return authActions.registerFailure();
+          }
+        }),
+        catchError((error) => {
+          this.toastrService.error('An error occurred during registration');
+          return of(authActions.registerFailure());
+        })
+      )
+    )
+  )
+);
+
   constructor(
     private actions$: Actions,
     private authService: AuthService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private router: Router,
   ) {}
 }

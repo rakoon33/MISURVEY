@@ -13,7 +13,8 @@ const createIndividualPermission = async (permissionData) => {
     if (existingPermission) {
       return {
         status: false,
-        message:"Individual Permission with this CompanyUserID and ModuleID already exists",
+        message:
+          "Individual Permission with this CompanyUserID and ModuleID already exists",
       };
     }
 
@@ -45,7 +46,8 @@ const updateIndividualPermission = async (
     if (!existingPermission) {
       return {
         status: false,
-        message: "Individual Permission with this CompanyUserID or ModuleID not exists",
+        message:
+          "Individual Permission with this CompanyUserID or ModuleID not exists",
       };
     }
 
@@ -81,7 +83,8 @@ const deleteIndividualPermission = async (companyUserId, moduleId) => {
     if (!existingPermission) {
       return {
         status: false,
-        message: "Individual Permission with this CompanyUserID or ModuleID not exists",
+        message:
+          "Individual Permission with this CompanyUserID or ModuleID not exists",
       };
     }
 

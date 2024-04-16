@@ -15,7 +15,7 @@ const loginController = async (req, res) => {
 
 const logoutController = async (req, res) => {
   try {
-    const result = await authService.logoutUser(res);
+    const result = authService.logoutUser(res);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -24,6 +24,16 @@ const logoutController = async (req, res) => {
 
 const registerUserController = async (req, res) => {
   try {
+    const { firstName, lastName, companyName, email, username, password } =
+      req.body;
+    console.log({
+      firstName,
+      lastName,
+      companyName,
+      email,
+      username,
+      password,
+    });
     const userData = req.body;
     const result = await authService.registerUser(userData);
     res.status(201).json(result);

@@ -60,7 +60,7 @@
         cTextColor="primary"
         shape="rounded-1"
         size="md"
-        src="./assets/img/avatars/8.jpg"
+        [src]="avatarSrc" 
         status="success"
       >
       </c-avatar>
@@ -145,7 +145,7 @@
       <li>
         <a (click)="logout()" cDropdownItem>
           <svg cIcon class="me-2" name="cilLockLocked"></svg>
-          Lock Account
+          Log Out
         </a>
       </li>
       <li></li>

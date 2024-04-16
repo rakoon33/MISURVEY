@@ -47,6 +47,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'company-role-management',
+        loadChildren: () =>
+          import('./modules/company-roles-management/company-roles-management.module').then(
+            (m) => m.CompanyRolesManagementModule
+          ),
+      },
+      {
         path: 'survey-management',
         loadChildren: () =>
           import('./modules/survey-management/survey-management.module').then(

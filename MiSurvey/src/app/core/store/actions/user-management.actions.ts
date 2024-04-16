@@ -51,7 +51,8 @@ export const createUserRequest = createAction(
 );
 
 export const createUserSuccess = createAction(
-  UserManagementActionTypes.CREATE_USER_SUCCESS
+  UserManagementActionTypes.CREATE_USER_SUCCESS,
+  props<{ UserID: string }>()
 );
 
 export const createUserFailure = createAction(

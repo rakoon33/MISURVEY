@@ -25,6 +25,11 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-building' }
   },
   {
+    name: 'Company Role Management',
+    url: '/company-role-management',
+    iconComponent: { name: 'cil-contact' }
+  },
+  {
     name: 'Survey Management',
     url: '/survey-management',
     iconComponent: { name: 'cil-spreadsheet' }
@@ -228,16 +233,10 @@ export const navItems: INavData[] = [
     class: 'py-0'
   },
   {
-    name: 'Docs',
-    url: 'https://coreui.io/angular/docs/templates/installation',
+    name: 'API Documentation',
+    url: 'http://localhost:3000/api-docs',
     iconComponent: { name: 'cil-description' },
     attributes: { target: '_blank', class: '-text-dark' },
     class: 'mt-auto'
-  },
-  {
-    name: 'Try CoreUI PRO',
-    url: 'https://coreui.io/product/angular-dashboard-template/',
-    iconComponent: { name: 'cil-layers' },
-    attributes: { target: '_blank' }
   }
 ];

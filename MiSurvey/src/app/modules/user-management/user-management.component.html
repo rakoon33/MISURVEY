@@ -8,9 +8,12 @@
     >
       Create a new user
     </button>
-    <button *ngIf="permissions.CanExport" class="btn-action">
+    <button *ngIf="permissions.CanExport" class="btn-action" (click)="exportToPdf()">
       Export Data
     </button>
+    <!-- <button *ngIf="permissions$ | async as permissions" (click)="exportToPdf()" class="btn btn-primary" *ngIf="permissions.CanExport">
+      Export to PDF
+    </button> -->
   </div>
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>
@@ -137,8 +140,18 @@
     >
       << Previous
     </button>
-    <div *ngFor="let page of getPaginationRange(currentPage, totalPages); let i = index" class="page-item">
-      <button *ngIf="page !== '...'" (click)="onPageChange(page)" [class.active]="currentPage === page.toString()">
+    <div
+      *ngFor="
+        let page of getPaginationRange(currentPage, totalPages);
+        let i = index
+      "
+      class="page-item"
+    >
+      <button
+        *ngIf="page !== '...'"
+        (click)="onPageChange(page)"
+        [class.active]="currentPage === page.toString()"
+      >
         {{ page }}
       </button>
       <span *ngIf="page === '...'">{{ page }}</span>
@@ -488,13 +501,68 @@
             placeholder="Phone Number"
           />
         </div>
-        <div class="mb-3">
+
+        <div
+          class="mb-3"
+          *ngIf="
+            currentUserRole !== 'Admin' && currentUserRole !== 'Supervisor'
+          "
+        >
           <label for="userRole" class="form-label">Role</label>
           <select class="form-select" id="userRole" formControlName="UserRole">
-            <option selected>Select Role</option>
             <option value="SuperAdmin">SuperAdmin</option>
             <option value="Admin">Admin</option>
+            <option value="Supervisor" selected>Supervisor</option>
           </select>
+        </div>
+
+        <div
+          *ngIf="
+            addUserForm.get('UserRole')!.value === 'Admin' ||
+            addUserForm.get('UserRole')!.value === 'Supervisor'
+          "
+        >
+          <form [formGroup]="companyRoleFormGroup" class="mb-3">
+            <label for="companyRole" class="form-label">Company Role</label>
+            <select
+              class="form-select"
+              id="companyRole"
+              formControlName="CompanyRoleID"
+            >
+              <option
+                *ngFor="let role of roles$ | async"
+                [value]="role.CompanyRoleID"
+              >
+                {{ role.CompanyRoleName }}
+              </option>
+            </select>
+          </form>
+        </div>
+        <div *ngIf="addUserForm.get('UserRole')?.value === 'Admin'">
+          <form [formGroup]="companyInfoFormGroup">
+            <div class="mb-3">
+              <label for="companyName" class="form-label">Company Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="companyName"
+                formControlName="CompanyName"
+                placeholder="Company Name"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="companyDomain" class="form-label"
+                >Company Domain (Optional)</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="companyDomain"
+                formControlName="CompanyDomain"
+                placeholder="Company Domain"
+              />
+            </div>
+          </form>
         </div>
         <div class="mb-3">
           <label for="isActive" class="form-label">Active</label>

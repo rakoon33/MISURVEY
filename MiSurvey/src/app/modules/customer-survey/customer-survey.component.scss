@@ -1,34 +1,41 @@
-
 .survey-container {
-    max-width: 600px; /* Adjust width as needed */
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ddd; /* Light grey border */
-    border-radius: 10px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  max-width: 70dvw;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: white;
+}
+
+button {
+  padding: 10px 15px;
+  margin-right: 10px; /* Space between buttons */
+  border: none;
+  border-radius: 5px;
+  background-color: #2f3c54; /* Default color, can be overridden */
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #243b4a; /* Darken button on hover */
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 562px) {
+  .survey-container {
+    max-width: 90vw;
   }
-  
-  
-  button {
-    padding: 10px 15px;
-    margin-right: 10px; /* Space between buttons */
-    border: none;
-    border-radius: 5px;
-    background-color: #2f3c54; /* Default color, can be overridden */
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #243b4a; /* Darken button on hover */
-  }
-  
-  /* Styling for specific buttons if needed */
-  button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
+}
+
+
+::ng-deep .icon:not(.icon-c-s):not(.icon-custom-size) {
+  width: 3rem !important;
+  height: 3rem !important;
+  font-size: 3rem !important;
+}

@@ -79,7 +79,7 @@ const getCompanyProfileController = async (req, res) => {
   try {
     console.log(req.user.companyID);
     const result = await companyService.getOneCompany(req.user.companyID);
-    res.status(200).json(result); 
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -97,7 +97,7 @@ const getCompanyDataController = async (req, res) => {
       companyID,
       req.user.role
     );
-    res.status(200).json(result); 
+    res.status(200).json(result);
   } catch (error) {
     res
       .status(500)

@@ -8,7 +8,7 @@
     >
       Create a new company
     </button>
-    <button *ngIf="permissions.CanExport" class="btn-action">
+    <button *ngIf="permissions.CanExport" class="btn-action" (click)="exportToPdf()">
       Export Data
     </button>
   </div>

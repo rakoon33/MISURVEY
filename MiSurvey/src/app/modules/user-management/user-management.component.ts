@@ -1,13 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { User, Permission } from '../../core/models';
+import { User, Permission, CompanyRole } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
-import { userManagementActions } from 'src/app/core/store/actions';
-import { userManagementSelector, userSelector } from 'src/app/core/store/selectors';
+import { companyRoleManagementActions, companyUserManagementActions, userManagementActions } from 'src/app/core/store/actions';
+import { companyRolesManagementSelectors, userManagementSelector, userSelector } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, NavigationStart, Event as RouterEvent, ActivatedRoute } from '@angular/router';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-user-management',
@@ -27,10 +30,13 @@ export class UserManagementComponent implements OnInit {
   currentSelectedUserId: number | undefined;
   // to get the user login id to fill in create by, update by,...
   currentUserId: number | undefined;
+  currentUserRole: string | undefined;
+  currentUserRoleId: string = '0';
 
   editUserFormGroup: FormGroup;
   addUserForm: FormGroup;
-
+  companyInfoFormGroup: FormGroup;
+  companyRoleFormGroup: FormGroup;
   users$: Observable<User[]> = this.store.select(
     userManagementSelector.selectCurrentUsers
   );
@@ -41,6 +47,10 @@ export class UserManagementComponent implements OnInit {
     userManagementSelector.selectCurrentUser
   );
   userPermissions$: Observable<Permission | undefined> | undefined;
+
+  roles$: Observable<CompanyRole[]> = this.store.select(
+    companyRolesManagementSelectors.selectAllCompanyRoles
+  );
   constructor(
     private store: Store,
     private toastr: ToastrService,
@@ -75,6 +85,15 @@ export class UserManagementComponent implements OnInit {
         Validators.required,
         Validators.minLength(8),
       ]),
+    });
+
+    this.companyInfoFormGroup = new FormGroup({
+      CompanyName: new FormControl('', [Validators.required]),
+      CompanyDomain: new FormControl(''), 
+    });
+
+    this.companyRoleFormGroup = new FormGroup({
+      CompanyRoleID: new FormControl('', [Validators.required])
     });
 
     this.subscription.add(
@@ -117,6 +136,10 @@ export class UserManagementComponent implements OnInit {
         } as Permission;
       })
     );
+
+    this.companyRoleFormGroup.get('CompanyRoleID')!.valueChanges.subscribe(value => {
+      this.currentUserRoleId = value;
+    });
   }
 
   ngOnInit() {
@@ -143,6 +166,20 @@ export class UserManagementComponent implements OnInit {
     this.store
       .select(userSelector.selectCurrentUser)
       .subscribe((id) => (this.currentUserId = id?.UserID));
+
+    this.store.select(userSelector.selectCurrentUser).subscribe((currentUser) => {
+      this.currentUserId = currentUser?.UserID;
+      if (currentUser?.UserRole === 'Admin' || currentUser?.UserRole === 'Supervisor') {
+        // Lưu vai trò người dùng hiện tại để sử dụng sau này
+        this.currentUserRole = currentUser?.UserRole;
+  
+        if (this.currentUserRole === 'Admin' || this.currentUserRole === 'Supervisor') {
+          this.addUserForm.get('UserRole')?.setValue('Supervisor');
+          this.addUserForm.get('UserRole')?.disable();
+        }
+      }
+    });
+    this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
   }
 
   getPaginationRange(
@@ -261,9 +298,29 @@ export class UserManagementComponent implements OnInit {
         CreatedAt: new Date(),
         CreatedBy: this.currentUserId,
       };
-      this.store.dispatch(
-        userManagementActions.createUserRequest({ userData: formData })
-      );
+      
+      if (this.currentUserRole === 'Admin' || this.currentUserRole === 'Supervisor') {
+        const formData = {
+          ...this.addUserForm.value,
+          CreatedAt: new Date(),
+          CreatedBy: this.currentUserId,
+          UserRole: 'Supervisor',
+        };
+      
+        this.store.dispatch(
+          companyUserManagementActions.createCompanyUserRequest({
+            companyUserData: {
+              CompanyRoleID: parseInt(this.currentUserRoleId)
+            },
+            userData: formData
+          })
+        );
+      } else {
+        // Xử lý cho các vai trò người dùng khác
+        this.store.dispatch(
+          userManagementActions.createUserRequest({ userData: formData })
+        );
+      }
     } else {
       this.toastr.error('Form is not valid or user ID is not available');
     }
@@ -280,19 +337,95 @@ export class UserManagementComponent implements OnInit {
         ...this.editUserFormGroup.value,
         UpdatedBy: this.currentUserId,
       };
-
       this.store.dispatch(
         userManagementActions.updateUserRequest({
           UserID: Number(this.currentSelectedUserId),
           userData: formValue,
         })
       );
-
     } else {
       this.toastr.error('Form is invalid or user ID is not set');
     }
   }
 
+  exportToPdf() {
+    this.users$.subscribe(users => {
+      if (users.length > 0) {
+        const documentDefinition = this.getDocumentDefinition(users);
+        pdfMake.createPdf(documentDefinition).open();
+        pdfMake.createPdf(documentDefinition).download('users-report.pdf');
+      } else {
+        this.toastr.error('No users data available to export.');
+      }
+    });
+  }
+
+  getDocumentDefinition(users: User[]) {
+    const now = new Date();
+    const formattedTime = now.toLocaleString(); 
+
+    return {
+      content: [
+        {
+          text: 'Users Report',
+          style: 'header'
+        },
+        this.buildUserTable(users),
+        {
+          text: `Report generated on: ${formattedTime}`,
+          style: 'subheader'
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 20, 0, 10] as [number, number, number, number] // left, top, right, bottom
+        },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 10] as [number, number, number, number]
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black'
+        }
+      }
+    };
+  }
+
+  buildUserTable(users: User[]) {
+    return {
+      table: {
+        headerRows: 1,
+        widths: [30, 'auto', 'auto', '*', 'auto', '*', 'auto'],
+        body: [
+          [
+            { text: '#', style: 'tableHeader' },
+            { text: 'Username', style: 'tableHeader' },
+            { text: 'First Name', style: 'tableHeader' },
+            { text: 'Last Name', style: 'tableHeader' },
+            { text: 'Email', style: 'tableHeader' },
+            { text: 'Role', style: 'tableHeader' },
+            { text: 'Active', style: 'tableHeader' },
+          ],
+          ...users.map((user, index) => [
+            (index + 1).toString(),
+            user.Username,
+            user.FirstName,
+            user.LastName,
+            user.Email,
+            user.UserRole,
+            user.IsActive ? 'Yes' : 'No',
+          ])
+        ]
+      },
+      layout: 'auto'
+    };
+  }
+  
   private toggleModal(modalId: string): void {
     const action = { show: true, id: modalId };
     this.modalService.toggle(action);

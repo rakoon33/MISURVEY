@@ -288,12 +288,10 @@ router
   .route("/")
   .post(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     companyRoleController.createCompanyRoleController
   )
   .get(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     companyRoleController.getAllCompanyRolesController
   );
 
@@ -511,17 +509,14 @@ router
   .route("/:CompanyRoleID")
   .delete(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     companyRoleController.deleteCompanyRoleController
   )
   .put(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     companyRoleController.updateCompanyRoleController
   )
   .get(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     companyRoleController.getOneCompanyRoleController
   );
 
