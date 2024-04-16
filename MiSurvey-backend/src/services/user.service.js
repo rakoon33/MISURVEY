@@ -8,6 +8,7 @@ const {
   RolePermission,
   Module,
 } = require("../models");
+const db = require("../config/database");
 
 const getUserData = async (userId, userRole) => {
   try {
@@ -135,7 +136,7 @@ const updateUser = async (UserID, userData) => {
   }
 };
 
-const deleteUser = async (UserID) => {
+/*const deleteUser = async (UserID) => {
   try {
     const deletedUser = await User.findOne({ where: { UserID: UserID } });
 
@@ -162,7 +163,55 @@ const deleteUser = async (UserID) => {
       error: error?.toString(),
     };
   }
+};*/
+
+const deleteUser = async (UserID) => {
+  const transaction = await db.sequelize.transaction();
+  try {
+    const user = await User.findOne({ where: { UserID: UserID } });
+
+    if (!user) {
+      return {
+        status: false,
+        message: "User not found",
+      };
+    }
+
+    // Xóa tất cả các bản ghi CompanyUser liên quan đến UserID này
+    const deletedCompanyUsers = await CompanyUser.destroy({
+      where: { UserID: UserID },
+      transaction
+    });
+
+    // Kiểm tra xem có bản ghi CompanyUser nào được xóa không
+    console.log(`Deleted ${deletedCompanyUsers} CompanyUser records.`);
+
+    // Xóa người dùng sau khi đã xóa các bản ghi CompanyUser liên quan
+    const deletedUser = await User.destroy({
+      where: { UserID: UserID },
+      transaction
+    });
+
+    // Kiểm tra xem người dùng có được xóa không
+    if (deletedUser) {
+      await transaction.commit();
+      return {
+        status: true,
+        message: "User and related CompanyUser records deleted successfully",
+      };
+    } else {
+      throw new Error("User deletion failed");
+    }
+  } catch (error) {
+    await transaction.rollback();
+    return {
+      status: false,
+      message: error.message || "Failed to delete user and related company user records",
+      error: error.toString(),
+    };
+  }
 };
+
 
 const getOneUser = async (UserID) => {
   try {
