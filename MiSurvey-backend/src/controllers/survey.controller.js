@@ -23,6 +23,16 @@ const createSurveyController = async (req, res) => {
   }
 };
 
+const sendSurveyEmailController = async (req, res) => {
+  try {
+    const { SurveyID, EmailData } = req.body;
+    const result = await surveyService.sendEmail(SurveyID,EmailData,req.user.companyID);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
 const getOneSurveyWithDataController = async (req, res) => {
   try {
     const result = await surveyService.getOneSurveyWithData(
@@ -114,4 +124,5 @@ module.exports = {
   deleteSurveyController,
   searchSurveyController,
   getOneSurveyWithDataByLinkController,
+  sendSurveyEmailController
 };

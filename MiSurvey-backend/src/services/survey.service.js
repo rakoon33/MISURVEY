@@ -1,5 +1,5 @@
 const db = require("../config/database");
-const { Survey, SurveyQuestion, SurveyType } = require("../models");
+const { Survey, SurveyQuestion, SurveyType, User, Company, SurveyDetail } = require("../models");
 const {
   createSurveyQuestion,
   updateSurveyQuestion,
@@ -7,6 +7,14 @@ const {
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 let nanoid;
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'propie034@gmail.com',  // Địa chỉ email của bạn
+    pass: 'ttsq hrvk lvgp aaca'  // App Password của bạn
+  }
+});
 
 const createSurvey = async (data) => {
   if (!nanoid) {
@@ -52,6 +60,65 @@ const createSurvey = async (data) => {
     return { status: true, message: "Survey created successfully", survey };
   } catch (error) {
     await transaction.rollback();
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+const sendEmail = async (surveyID, emailData, companyID) => {
+  console.log(surveyID);
+  console.log(emailData);
+  try {
+    // Truy vấn lấy thông tin khảo sát
+    const survey = await Survey.findByPk(companyID, {
+      include: [{
+        model: Company,
+        as: "Company",  // Lấy tên người dùng để sử dụng trong email
+      }]
+    });
+
+    if (!survey) {
+      return { status: false, message: "Survey not found" };
+    }
+
+    const surveylink = await Survey.findOne({
+      where: { SurveyID: surveyID }
+    });
+
+    const surveyLink = `http://localhost:8082/#/c/f/${surveylink.SurveyLink}`;
+    const surveyCreator = survey.Company.CompanyName;  // Giả sử cột tên người dùng là Username
+
+    // Cấu hình email
+    const mailOptions = {
+      from: 'propie034@gmail.com',
+      to: emailData,  // Danh sách các email được cung cấp
+      subject: 'Khảo sát từ MiSurvey',
+      text: `Xin chào,
+
+      Một khảo sát đã được tạo bởi ${surveyCreator}
+      
+      Xin hãy tham gia bằng đường dẫn sau: ${surveyLink}
+      
+      Trân trọng,
+      Đội ngũ MiSurvey`
+    };
+
+    // Gửi email
+    let info = await transporter.sendMail(mailOptions);
+
+    // Log the email send action into SurveyDetails
+    const recipientCount = emailData.split(',').length;
+    await SurveyDetail.create({
+      SurveyID: surveyID,
+      SentBy: survey.UserID, // Assuming Survey model has UserID for who created it
+      SentAt: new Date(),  // This could also default at DB level
+      RecipientCount: recipientCount,
+      Recipients: emailData,
+      CompanyID: companyID
+    });
+
+    return { status: true, message: "Emails sent successfully", info };
+  } catch (error) {
+    console.error('Error sending email:', error);
     return { status: false, message: error.message, error: error.toString() };
   }
 };
@@ -327,4 +394,5 @@ module.exports = {
   deleteSurvey,
   searchSurvey,
   getOneSurveyWithDataByLink,
+  sendEmail
 };
