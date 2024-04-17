@@ -116,6 +116,7 @@ const registerUser = async (userData) => {
       {
         UserID: newUser.UserID,
         CompanyID: newCompany.CompanyID,
+        CompanyRoleID: 1
       },
       { transaction }
     );
