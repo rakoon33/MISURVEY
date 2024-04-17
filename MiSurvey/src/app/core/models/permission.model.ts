@@ -1,5 +1,10 @@
+type PermissionID = {
+  IndividualPermissionID?: number;
+  RolePermissionID?: number;
+}
+
 export default interface Permission {
-    IndividualPermissionID: number;
+    id: PermissionID;
     CompanyUserID: number;
     ModuleID: number;
     CanView: boolean;
@@ -21,5 +26,4 @@ export default interface Permission {
       UpdatedAt: string;
       UpdatedBy: number;
     };
-  }
-  
+}

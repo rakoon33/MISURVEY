@@ -14,6 +14,7 @@ export const reducers: ActionReducerMap<AppState> = {
     feature_customer_survey: featureReducer.customerSurveyReducer,
     feature_company_roles_management: featureReducer.companyRolesManagementReducer,
     feature_module: featureReducer.moduleReducer,
+    feature_customer_feedback: featureReducer.customerFeedbackReducer,
     router: routerReducer,
 };
   

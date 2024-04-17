@@ -1,3 +1,4 @@
+import { CustomerContactComponent } from './components/survey-selector/customer-contact/customer-contact.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +14,6 @@ import { EmoticonRatingComponent } from './components/survey-selector/emoticon-r
 import { TextSurveyComponent } from './components/survey-selector/text-survey/text-survey.component';
 import { IconModule } from '@coreui/icons-angular';
 import { ThankYouMessageComponent } from './components/survey-selector/thank-you-message/thank-you-message.component';
-
 @NgModule({
   declarations: [
     CustomInputComponent,
@@ -25,7 +25,8 @@ import { ThankYouMessageComponent } from './components/survey-selector/thank-you
     ThumbsSurveyComponent,
     EmoticonRatingComponent,
     TextSurveyComponent,
-    ThankYouMessageComponent  
+    ThankYouMessageComponent,
+    CustomerContactComponent
   ],
   imports: [
     CommonModule,

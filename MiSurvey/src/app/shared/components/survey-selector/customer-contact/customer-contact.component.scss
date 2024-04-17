@@ -1,0 +1,75 @@
+.survey-question-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.survey-question-container p {
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.input-row {
+  display: flex;
+  width: 80%;
+}
+
+.text-input {
+  position: relative;
+  margin-top: 25px; /* Adjust as needed */
+}
+
+.half-width {
+  width: 50%; /* Sets width to half the container */
+  padding-right: 10px; /* Adds spacing between inputs */
+}
+
+.half-width:last-child {
+  padding-right: 0; /* Ensures last element does not have spacing on the right */
+}
+
+.full-width {
+  width: 100%; /* Sets width to full container */
+}
+
+.text-input input {
+  display: block;
+  width: 100%; /* Input field will fill the width of its parent .text-input */
+  height: 40px;
+  box-sizing: border-box;
+  outline: none;
+  border: 1px solid lightgray;
+  border-radius: 3px;
+  padding: 10px;
+  transition: all 0.1s ease-out;
+}
+
+.text-input label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 40px;
+  line-height: 40px;
+  color: white;
+  border-radius: 3px 0 0 3px;
+  padding: 0 20px;
+  transform: translateZ(0) translateX(0);
+  transition: all 0.3s ease-in;
+  transition-delay: 0.2s;
+}
+
+.text-input input:focus + label {
+  transform: translateY(-120%) translateX(0%);
+  border-radius: 3px;
+  transition: all 0.1s ease-out;
+}
+
+.text-input input:focus {
+  transition: all 0.3s ease-out;
+  transition-delay: 0.2s;
+}

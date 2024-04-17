@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
 import { customerSurveyActions } from 'src/app/core/store/actions';
 import { customerSurveySelector } from 'src/app/core/store/selectors';
+import { FeedbackResponse } from 'src/app/core/models';
+import { customerFeedbackActions } from 'src/app/core/store/actions';
+import { SurveyResponseUtil } from 'src/app/core/utils/survey-response.util';
 @Component({
   selector: 'app-customer-survey',
   templateUrl: './customer-survey.component.html',
@@ -13,10 +16,14 @@ export class CustomerSurveyComponent {
   survey: any = null;
   currentQuestionIndex: number = 0;
   surveyLink: string = '';
+
+  isSurveyCompleted = false;
+
   constructor(
     private route: ActivatedRoute,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private responseUtil: SurveyResponseUtil
   ) {}
 
   ngOnInit() {
@@ -30,29 +37,30 @@ export class CustomerSurveyComponent {
       }
     });
 
+    
     this.store
-    .select(customerSurveySelector.selectSurvey)
-    .subscribe((survey) => {
-      if (survey && survey?.SurveyQuestions) {
-        // Create a copy of the SurveyQuestions array
-        const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
-          const orderA =
-            a.PageOrder !== undefined ? a.PageOrder : Number.MAX_SAFE_INTEGER;
-          const orderB =
-            b.PageOrder !== undefined ? b.PageOrder : Number.MAX_SAFE_INTEGER;
+      .select(customerSurveySelector.selectSurvey)
+      .subscribe((survey) => {
+        if (survey && survey?.SurveyQuestions) {
+          // Create a copy of the SurveyQuestions array
+          const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
+            const orderA =
+              a.PageOrder !== undefined ? a.PageOrder : Number.MAX_SAFE_INTEGER;
+            const orderB =
+              b.PageOrder !== undefined ? b.PageOrder : Number.MAX_SAFE_INTEGER;
 
-          return orderA - orderB;
-        });
+            return orderA - orderB;
+          });
 
-        // Assign the sorted array to a new property or modify the existing survey object
-        this.survey = {
-          ...survey,
-          SurveyQuestions: sortedQuestions,
-        };
+          // Assign the sorted array to a new property or modify the existing survey object
+          this.survey = {
+            ...survey,
+            SurveyQuestions: sortedQuestions,
+          };
 
-        console.log(this.survey);
-      }
-    });
+          console.log(this.survey);
+        }
+      });
   }
 
   getSurveyTypeName(questionType: number): string {
@@ -75,14 +83,49 @@ export class CustomerSurveyComponent {
   }
 
   goToNextQuestion() {
-    if (this.currentQuestionIndex < this.survey.SurveyQuestions.length - 1) {
+    if (this.currentQuestionIndex < this.survey.SurveyQuestions.length) {
+      const currentQuestion = this.survey.SurveyQuestions[this.currentQuestionIndex];
+      const questionType = this.getSurveyTypeName(currentQuestion.QuestionType);
+  
+      // Chỉ lấy và dispatch câu trả lời nếu đây là câu hỏi kiểu text
+      if (questionType === 'text') {
+        const response = this.responseUtil.getResponse(currentQuestion.QuestionID);
+  
+        if (response) {
+          this.store.dispatch(customerFeedbackActions.addSurveyResponse({
+            response: {
+              SurveyID: this.survey.SurveyID,
+              QuestionID: currentQuestion.QuestionID,
+              ResponseValue: response
+            }
+          }));
+        }
+      }
+  
+      // Sau đó mới tăng index để hiển thị câu hỏi tiếp theo
       this.currentQuestionIndex++;
     }
   }
+  
 
   goToPreviousQuestion() {
     if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
     }
+  }
+
+  submitSurvey() {
+    this.isSurveyCompleted = true;
+    this.currentQuestionIndex++;
+  }
+
+  submitContactInfo() {
+    this.currentQuestionIndex++;
+  }
+
+  handleAnswerSelected(response: FeedbackResponse) {
+    this.store.dispatch(
+      customerFeedbackActions.addSurveyResponse({ response })
+    );
   }
 }

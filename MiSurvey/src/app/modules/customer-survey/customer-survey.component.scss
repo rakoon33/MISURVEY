@@ -6,11 +6,13 @@
   background-color: white;
 }
 
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
 button {
   padding: 10px 15px;
-  margin-right: 10px; /* Space between buttons */
   border: none;
-  border-radius: 5px;
   background-color: #2f3c54; /* Default color, can be overridden */
   color: white;
   font-size: 1rem;
