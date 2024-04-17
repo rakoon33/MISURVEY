@@ -3,7 +3,9 @@ const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 
 const createCompanyRole = async (roleData, permissionsData) => {
-  const transaction = await sequelize.transaction();
+  roleData.CompanyID = req.user.companyID;
+  console.log(roleData);
+  /*const transaction = await sequelize.transaction();
 
   try {
     const newRole = await CompanyRole.create(roleData, { transaction });
@@ -31,7 +33,7 @@ const createCompanyRole = async (roleData, permissionsData) => {
       message: error.message || "Company Role creation failed",
       error: error?.toString(),
     };
-  }
+  }*/
 };
 
 const updateCompanyRole = async (id, roleData, permissionsData) => {
