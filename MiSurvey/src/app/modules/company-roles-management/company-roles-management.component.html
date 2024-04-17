@@ -7,9 +7,9 @@
     >
       Create a new role
     </button>
-    <!-- <button *ngIf="permissions.CanExport" class="btn-action">
+    <button *ngIf="permissions.CanExport" class="btn-action">
       Export Data
-    </button> -->
+    </button>
   </div>
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>

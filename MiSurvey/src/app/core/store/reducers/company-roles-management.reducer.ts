@@ -12,44 +12,44 @@ export const initialCompanyRoleState: CompanyRolesManagementState = {
 
 export const companyRolesManagementReducer = createReducer(
   initialCompanyRoleState,
-  on(
-    companyRoleManagementActions.createCompanyRoleRequest,
-    (state, { roleData, permissionsData }) => {
-      const newRoleWithPermissions = {
-        ...roleData,
-        permissions: permissionsData,
-      };
-
-      return {
-        ...state,
-        companyRoles: [...state.companyRoles, newRoleWithPermissions],
-        loading: false,
-      };
-    }
-  ),
+  on(companyRoleManagementActions.createCompanyRoleRequest, (state) => {
+    return {
+      ...state,
+      loading: false,
+    };
+  }),
   on(companyRoleManagementActions.createCompanyRoleSuccess, (state) => ({
     ...state,
     loading: false,
   })),
 
-  on(companyRoleManagementActions.createCompanyRoleFailure, (state, { error }) => ({
-    ...state,
-    error: error,
-    loading: false,
-  })),
+  on(
+    companyRoleManagementActions.createCompanyRoleFailure,
+    (state, { error }) => ({
+      ...state,
+      error: error,
+      loading: false,
+    })
+  ),
 
   on(companyRoleManagementActions.loadCompanyRolesRequest, (state) => ({
     ...state,
     loading: true,
   })),
-  on(companyRoleManagementActions.loadCompanyRolesSuccess, (state, { roles }) => ({
-    ...state,
-    companyRoles: roles,
-    loading: false,
-  })),
-  on(companyRoleManagementActions.loadCompanyRolesFailure, (state, { error }) => ({
-    ...state,
-    error: error,
-    loading: false,
-  }))
+  on(
+    companyRoleManagementActions.loadCompanyRolesSuccess,
+    (state, { roles }) => ({
+      ...state,
+      companyRoles: roles,
+      loading: false,
+    })
+  ),
+  on(
+    companyRoleManagementActions.loadCompanyRolesFailure,
+    (state, { error }) => ({
+      ...state,
+      error: error,
+      loading: false,
+    })
+  )
 );

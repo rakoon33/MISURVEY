@@ -9,6 +9,7 @@ import { CustomerSurveyEffects } from './customer-survey.effects';
 import { CompanyRolesManagementEffects } from './company-roles-management.effects';
 import { ModuleEffects } from './module.effects';
 import { CompanyUserManagementEffects } from './company-user-management.effects';
+import { CustomerFeedbackEffects } from './customer-feedback.effects';
 export {
   AuthEffects,
   UserEffects,
@@ -19,5 +20,6 @@ export {
   CustomerSurveyEffects,
   CompanyRolesManagementEffects,
   ModuleEffects,
-  CompanyUserManagementEffects
+  CompanyUserManagementEffects,
+  CustomerFeedbackEffects
 };

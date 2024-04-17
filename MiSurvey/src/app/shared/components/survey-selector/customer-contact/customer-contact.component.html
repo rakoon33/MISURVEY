@@ -2,18 +2,44 @@
   <p>{{ message }}</p>
   <div class="input-row">
     <div class="text-input half-width">
-      <input type="text" id="full-name" name="full-name" />
-      <label for="full-name" [ngStyle]="{'background-color': backgroundColor}">Your full name</label>
+      <input
+        type="text"
+        id="full-name"
+        name="full-name"
+        [(ngModel)]="fullName"
+        (ngModelChange)="updateContactInfo()"
+      />
+      <label for="full-name" [ngStyle]="{ 'background-color': backgroundColor }"
+        >Your full name</label
+      >
     </div>
     <div class="text-input half-width">
-      <input type="tel" id="phone-number" name="phone-number" />
-      <label for="phone-number" [ngStyle]="{'background-color': backgroundColor}">Phone number</label>
+      <input
+        type="tel"
+        id="phone-number"
+        name="phone-number"
+        [(ngModel)]="phoneNumber"
+        (ngModelChange)="updateContactInfo()"
+      />
+      <label
+        for="phone-number"
+        [ngStyle]="{ 'background-color': backgroundColor }"
+        >Phone number</label
+      >
     </div>
   </div>
   <div class="input-row">
     <div class="text-input w-100">
-      <input type="email" id="email" name="email" />
-      <label for="email" [ngStyle]="{'background-color': backgroundColor}">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        [(ngModel)]="email"
+        (ngModelChange)="updateContactInfo()"
+      />
+      <label for="email" [ngStyle]="{ 'background-color': backgroundColor }"
+        >Email</label
+      >
     </div>
   </div>
 </div>

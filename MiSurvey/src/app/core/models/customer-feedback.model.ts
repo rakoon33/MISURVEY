@@ -9,11 +9,9 @@ interface FeedbackResponse {
 }
 
 interface ContactInfo {
-  FirstName: string;
-  LastName: string;
+  FullName: string;
   Email: string;
   PhoneNumber: string;
-  Address: string;
 }
 
 export { CustomerFeedback, FeedbackResponse, ContactInfo };
