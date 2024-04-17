@@ -35,5 +35,15 @@ export const customerFeedbackReducer = createReducer(
     ...state,
     surveyResponses: [],
     contactInfo: null
+  })),
+  on(customerFeedbackActions.submitSurveyResponsesSuccess, state => ({
+    ...state,
+    loading: false,
+    error: null
+  })),
+  on(customerFeedbackActions.submitSurveyResponsesFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
   }))
 );

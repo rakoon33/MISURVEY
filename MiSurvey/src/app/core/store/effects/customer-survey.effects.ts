@@ -16,7 +16,6 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class CustomerSurveyEffects {
- 
 
   loadCustomerSurveyDetail$ = createEffect(() =>
     this.actions$.pipe(

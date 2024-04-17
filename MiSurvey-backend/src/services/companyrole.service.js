@@ -4,6 +4,8 @@ const { Op } = require("sequelize");
 
 const createCompanyRole = async (roleData, permissionsData, companyID) => {
   roleData.CompanyID = companyID;
+  console.log(roleData);
+  console.log(permissionsData);
   const transaction = await sequelize.transaction();
 
   try {
@@ -14,7 +16,7 @@ const createCompanyRole = async (roleData, permissionsData, companyID) => {
       await RolePermission.create(permission, { transaction });
     }
 
-    await transaction.commit(); // Commit the transaction if all goes well.
+    await transaction.commit(); 
 
     return {
       status: true,
