@@ -34,6 +34,10 @@ const CompanyRole = db.sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    CompanyID: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "CompanyRoles",
