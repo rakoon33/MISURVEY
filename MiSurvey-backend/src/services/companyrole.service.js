@@ -2,10 +2,9 @@ const { CompanyRole, RolePermission } = require("../models");
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 
-const createCompanyRole = async (roleData, permissionsData) => {
-  roleData.CompanyID = req.user.companyID;
-  console.log(roleData);
-  /*const transaction = await sequelize.transaction();
+const createCompanyRole = async (roleData, permissionsData, companyID) => {
+  roleData.CompanyID = companyID;
+  const transaction = await sequelize.transaction();
 
   try {
     const newRole = await CompanyRole.create(roleData, { transaction });
@@ -33,7 +32,7 @@ const createCompanyRole = async (roleData, permissionsData) => {
       message: error.message || "Company Role creation failed",
       error: error?.toString(),
     };
-  }*/
+  }
 };
 
 const updateCompanyRole = async (id, roleData, permissionsData) => {
@@ -128,10 +127,11 @@ const deleteCompanyRole = async (id) => {
   }
 };
 
-const getAllCompanyRoles = async () => {
+const getAllCompanyRoles = async (companyId) => {
   try {
     const roles = await CompanyRole.findAll({
       where: {
+        companyId: companyId,
         CompanyRoleName: {
           [Op.ne]: "Admin",
         },

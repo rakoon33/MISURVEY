@@ -6,7 +6,8 @@ const createCompanyRoleController = async (req, res) => {
   try {
     const newRole = await companyRoleService.createCompanyRole(
       roleData,
-      permissionsData
+      permissionsData, 
+      req.user.companyID,
     );
     res.json(newRole);
   } catch (error) {
@@ -61,7 +62,7 @@ const deleteCompanyRoleController = async (req, res) => {
 
 const getAllCompanyRolesController = async (req, res) => {
   try {
-    const result = await companyRoleService.getAllCompanyRoles();
+    const result = await companyRoleService.getAllCompanyRoles(req.user.companyID);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
