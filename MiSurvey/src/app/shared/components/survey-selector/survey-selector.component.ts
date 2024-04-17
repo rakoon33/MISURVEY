@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FeedbackResponse } from 'src/app/core/models';
 
 @Component({
   selector: 'app-survey-selector',
@@ -14,4 +15,14 @@ export class SurveySelectorComponent {
   @Input() buttonTextColor: string = '#000000';
   @Input() selectedImage: string | ArrayBuffer | null = null; 
   @Input() message: string = '';
+  @Input() surveyId: number | undefined;
+  @Input() questionId: number | undefined;
+  
+  @Output() answerSelected = new EventEmitter<FeedbackResponse>();
+
+
+  handleAnswer(response: FeedbackResponse) {
+    this.answerSelected.emit(response);
+  }
+  
 }

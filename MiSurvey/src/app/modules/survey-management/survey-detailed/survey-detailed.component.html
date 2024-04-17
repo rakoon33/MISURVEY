@@ -8,7 +8,7 @@
   class="question-container"
 >
   <app-survey-selector
-    [borderTopColor]="survey?.Customizations?.topBarColor || '#2f3c54' "
+    [borderTopColor]="survey?.Customizations?.topBarColor || '#2f3c54'"
     [question]="question.QuestionText"
     [title]="survey.Title"
     [selectedSurveyType]="getSurveyTypeName(question.QuestionType)"
@@ -38,6 +38,19 @@
   </div>
 </div>
 
+<div class="question-container">
+  <app-survey-selector
+    [selectedSurveyType]="'customer-contact'"
+    [borderTopColor]="survey.Customizations.topBarColor || '#2f3c54'"
+    [buttonTextColor]="survey?.Customizations?.buttonTextColor || '#2f3c54'"
+  >
+  </app-survey-selector>
+  <div class="controls">
+    <button class="control-btn invisible">
+      &#9998;
+    </button>
+    </div>
+</div>
 <div class="question-container">
   <app-survey-selector
     [selectedSurveyType]="'thank-message'"

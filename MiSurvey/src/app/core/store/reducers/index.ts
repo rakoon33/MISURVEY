@@ -8,7 +8,7 @@ import { companyManagementReducer } from './company-management.reducer';
 import { surveyManagementReducer } from './survey-management.reducer';
 import { customerSurveyReducer } from './customer-survey.reducer';
 import { moduleReducer } from './module.reducer';
-
+import { customerFeedbackReducer } from './customer-feedback.reducer';
 export {
   authReducer,
   userReducer,
@@ -19,5 +19,6 @@ export {
   customerSurveyReducer,
   companyRolesManagementReducer,
   moduleReducer,
-  companyUserManagementReducer
+  companyUserManagementReducer,
+  customerFeedbackReducer
 };

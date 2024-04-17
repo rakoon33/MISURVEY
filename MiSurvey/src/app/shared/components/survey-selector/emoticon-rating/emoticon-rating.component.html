@@ -1,20 +1,11 @@
 <div class="survey-question-container-emo">
   <p>{{ question }}</p>
   <div class="emoticon-rating" [style.color]="buttonTextColor">
-    <div class="emoticon-wrapper" (click)="setEmoticonRating('veryBad')">
-      <c-icon name="cil-mood-very-bad"></c-icon>
-    </div>
-    <div class="emoticon-wrapper" (click)="setEmoticonRating('bad')">
-      <c-icon name="cil-mood-bad"></c-icon>
-    </div>
-    <div class="emoticon-wrapper" (click)="setEmoticonRating('meh')">
-      <c-icon name="cil-meh"></c-icon>
-    </div>
-    <div class="emoticon-wrapper" (click)="setEmoticonRating('good')">
-      <c-icon name="cil-mood-good"></c-icon>
-    </div>
-    <div class="emoticon-wrapper" (click)="setEmoticonRating('veryGood')">
-      <c-icon name="cil-mood-very-good"></c-icon>
+    <div *ngFor="let score of ['very-bad', 'bad', 'meh', 'good', 'very-good']"
+         [class.emoticon-wrapper]="true"
+         [class.selected]="emoticonRating === score"
+         (click)="setScore(score)">
+      <c-icon [name]="score === 'meh' ? 'cil-meh' : 'cil-mood-' + score"></c-icon>
     </div>
   </div>
 </div>

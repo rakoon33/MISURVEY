@@ -2,7 +2,7 @@
   <p>{{ question }}</p>
   <div class="star-rating">
     <span *ngFor="let star of [1,2,3,4,5]" 
-          (click)="setRating(star)"
+          (click)="setScore(star)"
           [class.selected]="star <= (starRating ?? 0)"
           [ngStyle]="star <= (starRating ?? 0) ? {'color': selectedStarColor} : {}">
       ★
