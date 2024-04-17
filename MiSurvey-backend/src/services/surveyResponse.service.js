@@ -11,14 +11,23 @@ const createSurveyResponses = async (data) => {
   try {
     let customerID = null;
 
-    // Check if customer information is provided and create customer record
-    if (data.FirstName && data.Email) {
-      // Simple check to determine if customer data is provided
-      const customerResult = await createCustomer(data);
-      if (!customerResult.status) {
-        throw new Error(customerResult.message);
+    // Check if customer information is provided
+    if (data.FullName && data.Email) {
+      // Check for existing customer first
+      const existingCustomer = await Customer.findOne({
+        where: { Email: data.Email } // Assumed unique
+      });
+
+      if (existingCustomer) {
+        customerID = existingCustomer.CustomerID;
+      } else {
+        // Create new customer if not found
+        const customerResult = await createCustomer(data);
+        if (!customerResult.status) {
+          throw new Error(customerResult.message);
+        }
+        customerID = customerResult.CustomerID;
       }
-      customerID = customerResult.CustomerID;
     }
 
     // Process each survey response
@@ -168,11 +177,9 @@ const getAllResponsesFromSurvey = async (surveyID) => {
 const createCustomer = async (customerData) => {
   try {
     const newCustomer = await Customer.create({
-      FirstName: customerData.FirstName,
-      LastName: customerData.LastName,
       Email: customerData.Email,
       PhoneNumber: customerData.PhoneNumber,
-      Address: customerData.Address,
+      FullName: customerData.FullName,
     });
 
     return {

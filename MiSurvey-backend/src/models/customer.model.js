@@ -9,14 +9,6 @@ const Customer = db.sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    FirstName: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    LastName: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
     Email: {
       type: DataTypes.STRING(100),
       allowNull: false,
@@ -26,14 +18,13 @@ const Customer = db.sequelize.define(
       type: DataTypes.STRING(15),
       allowNull: true,
     },
-    Address: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
     CreatedAt: {
       type: DataTypes.DATE,
-      allowNull: false,
       defaultValue: DataTypes.NOW,
+    },
+    FullName: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
     },
   },
   {
