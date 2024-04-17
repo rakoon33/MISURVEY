@@ -1,7 +1,7 @@
 <div class="survey-question-container-text">
     <p>{{ question }}</p>
-    <div>
-      <input type="text" [(ngModel)]="textResponse" [style.borderColor]="buttonTextColor" placeholder="Your answer here...">
+    <div class="w-100">
+      <input type="text" [(ngModel)]="textResponse" (ngModelChange)="updateResponse()" [style.borderColor]="buttonTextColor" placeholder="Your answer here...">
     </div>
   </div>
   

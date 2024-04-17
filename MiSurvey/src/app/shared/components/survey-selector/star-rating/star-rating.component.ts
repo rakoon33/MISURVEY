@@ -1,10 +1,14 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   Input,
+  Output,
   Renderer2,
   SimpleChanges,
 } from '@angular/core';
+import { FeedbackResponse } from 'src/app/core/models';
+import { customerFeedbackSelectors } from 'src/app/core/store/selectors';
 
 @Component({
   selector: 'app-star-rating',
@@ -16,6 +20,8 @@ export class StarRatingComponent {
 
   @Input() question: string = '';
   @Input() buttonTextColor: string = '';
+  @Input() surveyId: number | undefined;
+  @Input() questionId: number | undefined;
 
   starRating: number | null = null;
   selectedStarColor: string = '';
@@ -25,7 +31,17 @@ export class StarRatingComponent {
       this.selectedStarColor = changes['buttonTextColor'].currentValue;
     }
   }
-  setRating(rating: number) {
-    this.starRating = rating;
+
+  @Output() answerSelected = new EventEmitter<FeedbackResponse>();
+
+  setScore(score: number) {
+    this.starRating = score;
+    const response: FeedbackResponse = {
+      SurveyID: this.surveyId,
+      QuestionID: this.questionId,
+      ResponseValue: this.starRating.toString(),
+    };
+
+    this.answerSelected.emit(response);
   }
 }

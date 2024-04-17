@@ -7,6 +7,7 @@ import CompanyManagementState from './company-management.state';
 import CustomerSurveyState from './customer-survey.state';
 import CompanyRolesManagementState from './company-roles-management.state';
 import ModuleState from './module.state';
+import CustomerFeedbackState from './customer-feedback.state';
 export {
     UserState, 
     AuthState, 
@@ -16,5 +17,6 @@ export {
     SurveyState,
     CustomerSurveyState,
     CompanyRolesManagementState,
-    ModuleState
+    ModuleState,
+    CustomerFeedbackState
 };

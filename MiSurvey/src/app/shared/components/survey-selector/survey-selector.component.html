@@ -20,6 +20,9 @@
           : question
       "
       [buttonTextColor]="buttonTextColor"
+      [surveyId]="surveyId"
+      [questionId]="questionId"
+      (answerSelected)="handleAnswer($event)"
     ></app-nps-survey>
 
     <app-csat-survey
@@ -30,6 +33,9 @@
           : question
       "
       [buttonTextColor]="buttonTextColor"
+      [surveyId]="surveyId"
+      [questionId]="questionId"
+      (answerSelected)="handleAnswer($event)"
     ></app-csat-survey>
 
     <app-star-rating
@@ -40,6 +46,9 @@
           : question
       "
       [buttonTextColor]="buttonTextColor"
+      [surveyId]="surveyId"
+      [questionId]="questionId"
+      (answerSelected)="handleAnswer($event)"
     ></app-star-rating>
 
     <app-emoticon-rating
@@ -50,6 +59,9 @@
           : question
       "
       [buttonTextColor]="buttonTextColor"
+      [surveyId]="surveyId"
+      [questionId]="questionId"
+      (answerSelected)="handleAnswer($event)"
     ></app-emoticon-rating>
 
     <app-thumbs-survey
@@ -60,6 +72,9 @@
           : question
       "
       [buttonTextColor]="buttonTextColor"
+      [surveyId]="surveyId"
+      [questionId]="questionId"
+      (answerSelected)="handleAnswer($event)"
     ></app-thumbs-survey>
 
     <app-text-survey
@@ -70,12 +85,20 @@
           : question
       "
       [buttonTextColor]="buttonTextColor"
+      [surveyId]="surveyId"
+      [questionId]="questionId"
     ></app-text-survey>
 
     <app-thank-you-message
       *ngSwitchCase="'thank-message'"
       [message]="message === '' ? 'Thank you for your response!' : message"
     ></app-thank-you-message>
+
+    <app-customer-contact
+    *ngSwitchCase="'customer-contact'"
+    [message]="message === '' ? 'Would you please leave your contact information there, our customer service will contact to you at right time?' : message"
+    [backgroundColor]="buttonTextColor"
+  ></app-customer-contact>
   </div>
   <div class="powered-by">Powered by MiSurvey</div>
 </div>

@@ -8,6 +8,7 @@ import surveyManagementSelector from './survey-management.selectors';
 import customerSurveySelector from './customer-survey.selectors';
 import companyRolesManagementSelectors from './company-roles-management.selectors';
 import moduleSelectors from './module.selectors';
+import customerFeedbackSelectors from './customer-feedback.selectors';
 export { 
     userSelector, 
     authSelector,
@@ -18,5 +19,6 @@ export {
     surveyManagementSelector,
     customerSurveySelector,
     companyRolesManagementSelectors,
-    moduleSelectors
+    moduleSelectors,
+    customerFeedbackSelectors
 };
