@@ -125,6 +125,18 @@ SurveyQuestion.belongsTo(Survey, {
   as: "Survey",
 });
 
+// Company has many Surveys
+Company.hasMany(Survey, {
+  foreignKey: 'CompanyID',
+  as: 'Surveys'  // This alias is used when accessing the association
+});
+
+// Survey belongs to Company
+Survey.belongsTo(Company, {
+  foreignKey: 'CompanyID',
+  as: 'Company'  // This alias helps to retrieve the Company associated with a Survey
+});
+
 module.exports = {
   User,
   Company,

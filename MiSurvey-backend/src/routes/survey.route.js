@@ -272,6 +272,13 @@ router
     surveyController.searchSurveyController
   );
 
+router
+  .route("/send")
+  .post(
+    authMiddleware.tokenVerification,
+    surveyController.sendSurveyEmailController
+  );
+
 /**
  * @swagger
  * /api/survey/c/f/{SurveyLink}:

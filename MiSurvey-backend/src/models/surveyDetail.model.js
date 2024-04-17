@@ -28,6 +28,7 @@ const SurveyDetail = db.sequelize.define(
     SentAt: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     RecipientCount: {
       type: DataTypes.INTEGER,
