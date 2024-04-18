@@ -92,8 +92,9 @@ const sendEmail = async (surveyID, emailData, companyID) => {
       from: 'propie034@gmail.com',
       to: emailData,  // Danh sách các email được cung cấp
       subject: 'Khảo sát từ MiSurvey',
-      text: `Xin chào,
-
+      text: 
+      `Xin chào,
+      
       Một khảo sát đã được tạo bởi ${surveyCreator}
       
       Xin hãy tham gia bằng đường dẫn sau: ${surveyLink}
@@ -138,7 +139,6 @@ const getOneSurveyWithData = async (surveyID) => {
         exclude: [
           "SurveyDescription",
           "SurveyImages",
-          "InvitationMethod",
           "StartDate",
           "EndDate",
           "CreatedAt",
@@ -177,7 +177,6 @@ const getOneSurveyWithDataByLink = async (link) => {
         exclude: [
           "SurveyDescription",
           "SurveyImages",
-          "InvitationMethod",
           "StartDate",
           "EndDate",
           "CreatedAt",

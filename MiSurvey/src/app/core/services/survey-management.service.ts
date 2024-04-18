@@ -64,4 +64,18 @@ export class SurveyManagementService {
         })
       );
   }
+
+  sendSurveyEmail(surveyID: string, emailData: string): Observable<any> {
+    const url = `${this.apiUrl}/send`; 
+    const payload = {
+      SurveyID: surveyID,
+      EmailData: emailData
+    };
+    return this.http.post<any>(url, payload, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
+  }
 }

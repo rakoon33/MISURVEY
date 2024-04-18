@@ -14,6 +14,12 @@ import { EmoticonRatingComponent } from './components/survey-selector/emoticon-r
 import { TextSurveyComponent } from './components/survey-selector/text-survey/text-survey.component';
 import { IconModule } from '@coreui/icons-angular';
 import { ThankYouMessageComponent } from './components/survey-selector/thank-you-message/thank-you-message.component';
+import { EmailModalComponent } from './components/email-modal/email-modal.component';
+
+import { ReactiveFormsModule } from '@angular/forms';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 @NgModule({
   declarations: [
     CustomInputComponent,
@@ -26,13 +32,17 @@ import { ThankYouMessageComponent } from './components/survey-selector/thank-you
     EmoticonRatingComponent,
     TextSurveyComponent,
     ThankYouMessageComponent,
-    CustomerContactComponent
+    CustomerContactComponent,
+    EmailModalComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     LottieModule,
-    IconModule
+    IconModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   exports: [
     CustomInputComponent,
