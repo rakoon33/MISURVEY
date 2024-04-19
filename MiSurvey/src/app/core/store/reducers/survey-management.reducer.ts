@@ -75,32 +75,43 @@ export const surveyManagementReducer = createReducer(
   on(
     surveyManagementActions.addSurveyQuestionType,
     (state, { questionText, questionType }) => {
-      // Ensure that the survey and its questions are defined
       if (!state.survey || !state.survey.SurveyQuestions) {
         return state;
       }
-
-      // Map through the survey questions to find and update the question type
-      const updatedQuestions = state.survey.SurveyQuestions.map((question) => {
+  
+      const updatedQuestions = [...state.survey.SurveyQuestions];
+      let foundExisting = false;
+  
+      // First, check if we should update an existing question
+      const questionsWithUpdates = updatedQuestions.map((question) => {
         if (question.QuestionText === questionText) {
-          return {
-            ...question,
-            QuestionType: questionType, // Update the question type
-          };
+          if (question.QuestionType === undefined) {
+            foundExisting = true;
+            return { ...question, QuestionType: questionType };
+          }
         }
         return question;
       });
-
+  
+      // If no existing question was suitable for update, add a new one
+      if (!foundExisting && !updatedQuestions.some(q => q.QuestionText === questionText && q.QuestionType === questionType)) {
+        questionsWithUpdates.push({
+          QuestionText: questionText,
+          QuestionType: questionType,
+          PageOrder: updatedQuestions.length + 1
+        });
+      }
+  
       return {
         ...state,
         survey: {
           ...state.survey,
-          SurveyQuestions: updatedQuestions, // Update the survey questions array
+          SurveyQuestions: questionsWithUpdates,
         },
       };
     }
-  ),
-
+  )
+  ,  
   on(surveyManagementActions.clearUnsavedQuestionText, (state) => {
     // Ensure that the survey and its questions are defined
     if (
