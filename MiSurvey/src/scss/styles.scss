@@ -40,6 +40,9 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.table-responsive {
+  overflow: visible !important;
+}
 // Email component
 
 .email-component-style {
@@ -121,4 +124,6 @@ body {
     background-color: rgba(0, 0, 0, 0.12); /* Màu nền nhạt hơn */
     cursor: not-allowed; /* Thay đổi con trỏ để người dùng biết không thể nhấp */
   }
+  
+
   

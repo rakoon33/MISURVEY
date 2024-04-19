@@ -16,7 +16,7 @@ export class UserEffects {
         this.userService.getUserData().pipe(
           map(response => {
             if (response.status) {
-              this.router.navigate(['/dashboard']);
+
               return userActions.getUserDataSuccess({
                 user: response.userDetails,
                 permissions: response.permissions

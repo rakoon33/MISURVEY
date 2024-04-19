@@ -1,5 +1,5 @@
 const db = require("../config/database");
-const { Survey, SurveyQuestion, SurveyType, User, Company, SurveyDetail } = require("../models");
+const { Survey, SurveyQuestion, SurveyType, User, Company, SurveyDetail, SurveyResponse, Customer } = require("../models");
 const {
   createSurveyQuestion,
   updateSurveyQuestion,
@@ -384,6 +384,91 @@ const searchSurvey = async (column, searchTerm) => {
   }
 };
 
+
+const evaluateResponse = (responseValue, surveyType) => {
+  switch (surveyType) {
+    case 'Stars':
+      if (responseValue <= 2) return 'Bad';
+      if (responseValue === 3) return 'Acceptable';
+      return 'Good';
+    case 'Thumbs':
+      return responseValue === 'false' ? 'Bad' : 'Good';
+    case 'Emoticons':
+      if (['very-bad', 'bad'].includes(responseValue)) return 'Bad';
+      if (responseValue === 'meh') return 'Acceptable';
+      return 'Good';
+    case 'NPS':
+      if (responseValue <= 6) return 'Bad';
+      if (responseValue === 7) return 'Acceptable';
+      return 'Good';
+    case 'CSAT':
+      if (responseValue <= 2) return 'Bad';
+      if (responseValue === 3) return 'Acceptable';
+      return 'Good';
+    default:
+      return 'Undefined';
+  }
+};
+
+const getSurveySummary = async (surveyID) => {
+  try {
+    // Fetch all questions and their responses for the survey
+    const questions = await SurveyQuestion.findAll({
+      where: { SurveyID: surveyID },
+      include: [
+        {
+          model: SurveyType,
+          as: 'SurveyType'
+        },
+        {
+          model: SurveyResponse,
+          as: 'Responses',
+          include: [
+            {
+              model: Customer,
+              as: 'Customer'
+            }
+          ]
+        }
+      ],
+      order: [['PageOrder', 'ASC']]
+    });
+
+    if (!questions || questions.length === 0) {
+      return { status: false, message: "No questions found for this survey." };
+    }
+
+    // Process each question to calculate its summary
+    const summary = questions.map((question) => {
+      let averageScore = null;
+      let countResponses = question.Responses.length; // Đếm số lượng phản hồi cho mỗi câu hỏi
+
+      if (question.SurveyType.ResponseType !== 'Text') {
+        averageScore = question.Responses.reduce((acc, { ResponseValue }) => acc + parseFloat(ResponseValue), 0) / countResponses;
+      }
+
+      return {
+        question: question.QuestionText,
+        type: question.SurveyType.SurveyTypeName,
+        averageScore: averageScore,
+        countResponses: countResponses, // Sử dụng countResponses để lưu số lượng phản hồi
+        responses: question.Responses.map(response => ({
+          customerID: response.Customer.CustomerID,
+          customerName: response.Customer.FullName,
+          responseValue: response.ResponseValue,
+          evaluation: evaluateResponse(response.ResponseValue, question.SurveyType.SurveyTypeName)
+        }))
+      };
+    });
+
+    return { status: true, summary: summary };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+
+
 module.exports = {
   createSurvey,
   getOneSurveyWithData,
@@ -393,5 +478,6 @@ module.exports = {
   deleteSurvey,
   searchSurvey,
   getOneSurveyWithDataByLink,
-  sendEmail
+  sendEmail,
+  getSurveySummary
 };

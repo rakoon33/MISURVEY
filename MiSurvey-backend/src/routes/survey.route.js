@@ -614,6 +614,13 @@ router
  *                   type: string
  *                   example: 'Error occurred while deleting survey'
  */
+
+router.route('/summary/:surveyID/')
+  .get(
+    authMiddleware.tokenVerification, 
+    surveyController.getSurveySummaryController
+  );
+  
 router
   .route("/:SurveyID")
   .get(

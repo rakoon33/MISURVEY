@@ -86,7 +86,6 @@ const router = express.Router();
 router
   .route("/")
   .post(
-    authMiddleware.tokenVerification,
     surveyResponseController.createSurveyResponseController
   );
 

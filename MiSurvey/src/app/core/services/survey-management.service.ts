@@ -78,4 +78,15 @@ export class SurveyManagementService {
       })
     );
   }
+  
+  getSurveySummaryById(surveyId: number): Observable<any> {
+    const url = `${this.apiUrl}/summary/${surveyId}`;
+    return this.http.get<any>(url, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
 }

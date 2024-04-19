@@ -16,16 +16,7 @@ const Ticket = db.sequelize.define(
         isIn: [["Open", "Closed"]],
       },
     },
-    CreatedBy: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
     CreatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    UpdatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
