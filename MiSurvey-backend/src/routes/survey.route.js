@@ -343,7 +343,6 @@ router
 router
   .route("/c/f/:SurveyLink")
   .get(
-    authMiddleware.tokenVerification,
     surveyController.getOneSurveyWithDataByLinkController
   );
 

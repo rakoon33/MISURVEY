@@ -12,6 +12,10 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { ToastrModule } from 'ngx-toastr';
 import { ShareModule } from './shared/share.module';
 
+import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
+// Import other modules and components needed
+
 // Import routing module
 import { AppRoutingModule } from './app-routing.module';
 
@@ -141,6 +145,8 @@ const APP_CONTAINERS = [
     MatDatepickerModule,
     MatNativeDateModule,
     ShareModule,
+    MatDialogModule,
+    CommonModule,
     LottieModule.forRoot({ player: playerFactory }),
     ToastrModule.forRoot({
       positionClass: 'toast-top-right',

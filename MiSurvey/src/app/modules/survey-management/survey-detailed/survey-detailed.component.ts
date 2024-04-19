@@ -5,6 +5,9 @@ import { Store } from '@ngrx/store';
 import { SurveyQuestion } from 'src/app/core/models';
 import { surveyManagementActions } from 'src/app/core/store/actions';
 import { surveyManagementSelector } from 'src/app/core/store/selectors';
+import { MatDialog } from '@angular/material/dialog';
+import { EmailModalComponent } from 'src/app/shared/components/email-modal/email-modal.component';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-survey-detailed',
   templateUrl: './survey-detailed.component.html',
@@ -16,7 +19,9 @@ export class SurveyDetailedComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
+    private toastrService: ToastrService
   ) {}
 
   ngOnInit() {
@@ -150,4 +155,25 @@ export class SurveyDetailedComponent implements OnInit {
   addThankYouMessage() {
     // Logic để xoá câu hỏi
   }
+
+  openEmailModal() {
+    const currentSurveyId = this.survey?.SurveyID;
+    this.toastrService.success('hhhh');
+    if (currentSurveyId) {
+      const dialogRef = this.dialog.open(EmailModalComponent, {
+        width: '700px',
+        data: { surveyId: currentSurveyId } 
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        // Kiểm tra nếu result có thuộc tính status
+        if (result?.status) {
+          this.toastrService.success(result.message);
+        } else if (result) {
+          this.toastrService.error(result.message);
+        }
+      });
+    }
+  }
+  
 }

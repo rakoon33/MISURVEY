@@ -1,0 +1,19 @@
+<div class="email-component-style">
+    <h2 class="email-form-title">Enter Emails</h2>
+    <form [formGroup]="emailForm" (ngSubmit)="onSubmit()" class="email-form">
+      <mat-form-field appearance="fill" class="email-input-container">
+        <mat-label>Enter emails separated by commas</mat-label>
+        <textarea matInput placeholder="Example: a@gmail.com, b@gmail.com" formControlName="emails" class="email-input" rows="3"></textarea>
+        <mat-error *ngIf="emailForm.controls['emails'].hasError('required')" class="email-error">
+          This field is required.
+        </mat-error>
+        <mat-error *ngIf="emailForm.controls['emails'].hasError('invalidEmailList')" class="email-error">
+          Please enter a valid list of emails, separated by commas.
+        </mat-error>
+        <mat-error *ngIf="emailForm.controls['emails'].hasError('duplicateEmails')" class="email-error">
+          Duplicate emails detected. Please remove duplicates.
+        </mat-error>
+      </mat-form-field>
+      <button type="submit" mat-raised-button color="primary" class="send-emails-button" [disabled]="!emailForm.valid">Send Emails</button>
+    </form>
+</div>
