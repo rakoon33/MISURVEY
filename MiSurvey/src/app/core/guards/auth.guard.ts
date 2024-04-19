@@ -10,12 +10,10 @@ import { companyActions } from '../store/actions';
 export class AuthGuard implements CanActivate {
   constructor(private router: Router, private store: Store) {}
 
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(): boolean {
     if (this.doesHttpOnlyCookieExist('jwt')) {
       // If the HttpOnly JWT cookie exists, dispatch user data request and allow access
       this.store.dispatch(userActions.getUserDataRequest());
-
-      userActions.getUserDataSuccess({ user: null, permissions: [] })
 
       return true;
     } else {

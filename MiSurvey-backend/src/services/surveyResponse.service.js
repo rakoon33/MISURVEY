@@ -59,25 +59,54 @@ const evaluateResponse = async (response) => {
     include: { model: SurveyType, as: "SurveyType" },
   });
 
+  if (!question) {
+    // If there is no question found, we cannot evaluate the response
+    return false;
+  }
+
+  let isBadResponse = false; // Flag to determine if the response is bad
+
+  const responseValue = response.ResponseValue;
+  const surveyType = question.SurveyType.SurveyTypeName;
+
   if (question.SurveyType.SurveyTypeName === "Text") {
     // Automatically pass text responses
     return false;
   }
 
-  const responseValue = parseInt(response.ResponseValue, 10);
-  switch (question.SurveyType.SurveyTypeName) {
+  // Determine if the response is bad based on the survey type
+  switch (surveyType) {
     case "NPS":
-      return responseValue < 5;
+      isBadResponse = parseInt(responseValue, 10) < 7;
+      break;
     case "Emoticons":
-    case "CSAT":
+      isBadResponse = ["very-bad", "bad"].includes(responseValue);
+      break;
     case "Stars":
-      return responseValue < 3;
+      isBadResponse = parseInt(responseValue, 10) < 3;
+      break;
     case "Thumb":
-      return responseValue === 0;
+      isBadResponse = responseValue === "false";
+      break;
+    case "CSAT":
+      isBadResponse = parseInt(responseValue, 10) < 3;
+      break;
     default:
-      return false;
+      isBadResponse = false;
+      break;
   }
+
+  return isBadResponse;
 };
+
+// Helper function to determine negativity in text responses
+const isNegativeText = (textResponse) => {
+  // Placeholder for actual text analysis logic
+  // For now, simply returns false
+  // TODO: Implement actual sentiment analysis to determine negativity
+  return false;
+};
+
 
 const insertIntoSurveyResponses = async (response) => {
   const insertedResponse = await SurveyResponse.create({
@@ -90,7 +119,6 @@ const insertIntoSurveyResponses = async (response) => {
 const createTicket = async (response) => {
   return await Ticket.create({
     TicketStatus: "Open",
-    CreatedBy: null,
     SurveyID: response.SurveyID,
     ResponseID: response.ResponseID,
   });

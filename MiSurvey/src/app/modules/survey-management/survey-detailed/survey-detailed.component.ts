@@ -158,7 +158,6 @@ export class SurveyDetailedComponent implements OnInit {
 
   openEmailModal() {
     const currentSurveyId = this.survey?.SurveyID;
-    this.toastrService.success('hhhh');
     if (currentSurveyId) {
       const dialogRef = this.dialog.open(EmailModalComponent, {
         width: '700px',

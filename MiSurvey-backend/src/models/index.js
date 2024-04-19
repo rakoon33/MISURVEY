@@ -137,6 +137,27 @@ Survey.belongsTo(Company, {
   as: 'Company'  // This alias helps to retrieve the Company associated with a Survey
 });
 
+SurveyResponse.belongsTo(SurveyQuestion, {
+  foreignKey: "QuestionID",
+  as: "SurveyQuestion"  // Alias used here
+});
+
+// In your SurveyQuestion model setup, if you need the reverse association
+SurveyQuestion.hasMany(SurveyResponse, {
+  foreignKey: "QuestionID",
+  as: "Responses"  // Alias for the reverse association
+});
+
+
+SurveyResponse.belongsTo(Customer, {
+  foreignKey: 'CustomerID',
+  as: 'Customer' // This alias is used when including the model in queries
+});
+
+Customer.hasMany(SurveyResponse, {
+  foreignKey: 'CustomerID',
+  as: 'Responses' // This alias is used when including the model in queries
+});
 module.exports = {
   User,
   Company,

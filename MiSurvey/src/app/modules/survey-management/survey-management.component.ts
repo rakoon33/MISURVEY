@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { surveyManagementActions } from 'src/app/core/store/actions';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/internal/Observable';
 import { surveyManagementSelector } from 'src/app/core/store/selectors';
+import { SurveyManagementService } from 'src/app/core/services';
+import { ModalService } from '@coreui/angular';
+
 @Component({
   selector: 'app-survey-management',
   templateUrl: './survey-management.component.html',
@@ -14,9 +17,29 @@ import { surveyManagementSelector } from 'src/app/core/store/selectors';
 export class SurveyManagementComponent implements OnInit {
   surveys$: Observable<any[]>;
 
+  selectedSurveySummary: any[] = [];
+  selectedSurveyQuestion: any = {
+    "question": "Chúng tôi nên làm gì để cải thiện trải nghiệm của bạn?",
+    "type": "Text",
+    "averageScore": null,
+    "countResponses": 1,
+    "responses": [
+        {
+            "customerID": 7,
+            "customerName": "3333",
+            "responseValue": "tăng cường",
+            "evaluation": "Undefined"
+        }
+    ]
+};
+  currentQuestionIndex: number = 0;
+
+
   constructor(
     private router: Router,
-    private store: Store
+    private store: Store,
+    private surveyManagementService: SurveyManagementService,
+    private modalService: ModalService
   ) {
 
     this.surveys$ = this.store.select(surveyManagementSelector.selectAllSurveys);
@@ -47,6 +70,47 @@ export class SurveyManagementComponent implements OnInit {
   navigateToSurveyDetails(surveyId: number, event: Event): void {
     event.stopPropagation();
     this.router.navigate(['/survey-management/survey-detailed', surveyId]);
+  }
+
+
+  openModal(surveyId: number) {
+    this.surveyManagementService.getSurveySummaryById(surveyId).subscribe({
+      next: (response) => {
+        if (response && response.status) {
+          this.selectedSurveySummary = response.summary;
+          this.currentQuestionIndex = 0;
+          console.log(this.selectedSurveySummary);
+          this.showCurrentQuestion();
+        }
+      },
+      error: (error) => console.error('Error fetching survey summary:', error)
+    });
+  }
+
+  showCurrentQuestion() {
+    this.selectedSurveyQuestion = this.selectedSurveySummary[this.currentQuestionIndex];
+    console.log(this.selectedSurveyQuestion);
+    console.log(this.currentQuestionIndex);
+    this.toggleModal('seeResponsesModal', true);
+  }
+
+  nextQuestion() {
+    if (this.currentQuestionIndex < this.selectedSurveySummary.length - 1) {
+      this.currentQuestionIndex++;
+      this.showCurrentQuestion();
+    } else {
+      this.toggleModal('seeResponsesModal', false);
+    }
+  }
+
+  previousQuestion() {
+    if (this.currentQuestionIndex > 0) {
+        this.currentQuestionIndex--;
+        this.showCurrentQuestion();
+    }
+}
+  toggleModal(modalId: string, show: boolean) {
+    this.modalService.toggle({ id: modalId, show: show });
   }
 
 }
