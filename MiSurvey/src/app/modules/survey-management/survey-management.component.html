@@ -78,7 +78,13 @@
         <b>Evaluation: </b><span class="evaluation-value">{{ selectedSurveyQuestion.evaluation }}</span>
       </div>
       <div *ngIf="selectedSurveyQuestion.averageScore !== null" class="modal-score">
-        <b>Score:</b> {{ selectedSurveyQuestion.averageScore | number:'1.0-2' }}%
+        <b>Score:</b>
+        <ng-container *ngIf="selectedSurveyQuestion.type === 'Stars'; else withPercentage">
+          {{ selectedSurveyQuestion.averageScore | number:'1.0-2' }}
+        </ng-container>
+        <ng-template #withPercentage>
+          {{ selectedSurveyQuestion.averageScore | number:'1.0-2' }}%
+        </ng-template>
       </div>
       <div class="modal-count">
         <b>Count:</b> {{ selectedSurveyQuestion.countResponses }}

@@ -77,14 +77,12 @@ const sendEmail = async (surveyID, emailData, companyID) => {
   console.log(surveyID);
   console.log(emailData);
   try {
-    // Truy vấn lấy thông tin khảo sát
-    const survey = await Survey.findByPk(companyID, {
-      include: [
-        {
-          model: Company,
-          as: "Company", // Lấy tên người dùng để sử dụng trong email
-        },
-      ],
+    const survey = await Survey.findOne({
+      where: { CompanyID: companyID },
+      include: [{
+        model: Company,
+        as: 'Company'
+      }]
     });
 
     if (!survey) {
@@ -96,24 +94,21 @@ const sendEmail = async (surveyID, emailData, companyID) => {
     });
 
     const surveyLink = `http://localhost:8082/#/c/f/${surveylink.SurveyLink}`;
-    const surveyCreator = survey.Company.CompanyName; // Giả sử cột tên người dùng là Username
-
-    // Cấu hình email
+    const surveyCreator = survey.Company.CompanyName;
     const mailOptions = {
       from: "propie034@gmail.com",
-      to: emailData, // Danh sách các email được cung cấp
-      subject: "Khảo sát từ MiSurvey",
-      text: `Xin chào,
-      
-      Một khảo sát đã được tạo bởi ${surveyCreator}
-      
-      Xin hãy tham gia bằng đường dẫn sau: ${surveyLink}
-      
-      Trân trọng,
-      Đội ngũ MiSurvey`,
+      to: emailData,
+      subject: "Survey from MiSurvey",
+      text: `Hello 👬,
+    
+      A survey has been created by ${surveyCreator}. 🌈🌈🌈
+    
+      Please participate using the following link: ${surveyLink} 🔗🔗🔗
+    
+      Sincerely, 
+      The MiSurvey Team`,
     };
 
-    // Gửi email
     let info = await transporter.sendMail(mailOptions);
 
     // Log the email send action into SurveyDetails
