@@ -1,16 +1,25 @@
-
 <div class="header">
   <h1>Surveys</h1>
-  <button class="create-survey-btn" (click)="navigateToCreateSurvey()">Create survey</button>
+  <button class="create-survey-btn" (click)="navigateToCreateSurvey()">
+    Create survey
+  </button>
 </div>
 
 <div class="survey-container">
-  <div class="survey-card" *ngFor="let survey of surveys$ | async" >
+  <div class="survey-card" *ngFor="let survey of surveys$ | async">
     <c-dropdown>
-      <button class="btn-survey ellipsis" cButton cDropdownToggle>&#x2026;</button>
+      <button class="btn-survey ellipsis" cButton cDropdownToggle>
+        &#x2026;
+      </button>
       <ul cDropdownMenu>
         <li>
-          <button cDropdownItem [cModalToggle]="seeResponsesModal.id" (click)="openModal(survey.SurveyID)">View Responses</button>
+          <button
+            cDropdownItem
+            [cModalToggle]="seeResponsesModal.id"
+            (click)="openModal(survey.SurveyID)"
+          >
+            View Responses
+          </button>
         </li>
         <li>
           <button cDropdownItem>Delete</button>
@@ -20,47 +29,111 @@
         </li>
       </ul>
     </c-dropdown>
-    <h3 (click)="navigateToSurveyDetails(survey.SurveyID, $event)">{{ survey.Title }}</h3>
-    <div class="description-wrapper" (click)="navigateToSurveyDetails(survey.SurveyID, $event)">
-      <p class="survey-description">{{ survey.SurveyDescription || 'No description' }}</p>
+    <h3 (click)="navigateToSurveyDetails(survey.SurveyID, $event)">
+      {{ survey.Title }}
+    </h3>
+    <div
+      class="description-wrapper"
+      (click)="navigateToSurveyDetails(survey.SurveyID, $event)"
+    >
+      <p class="survey-description">
+        {{ survey.SurveyDescription || "No description" }}
+      </p>
     </div>
     <div class="status-container">
-      <p class="survey-status" (click)="navigateToSurveyDetails(survey.SurveyID, $event)">{{ survey.SurveyStatus || 'Unpublished' }}</p>
-      <a href="" class="copy-link" (click)="copySurveyLink(survey.SurveyLink, $event)">
+      <p
+        class="survey-status"
+        (click)="navigateToSurveyDetails(survey.SurveyID, $event)"
+      >
+        {{ survey.SurveyStatus || "Unpublished" }}
+      </p>
+      <a
+        href=""
+        class="copy-link"
+        (click)="copySurveyLink(survey.SurveyLink, $event)"
+      >
         Copy survey's link
       </a>
     </div>
   </div>
 </div>
 
-<c-modal size="lg" alignment="center" scrollable #seeResponsesModal id="seeResponsesModal">
-  <c-modal-header *ngIf="selectedSurveyQuestion" class="modal-header">
-    <h5 cModalTitle class="modal-title">Question {{ currentQuestionIndex + 1 }}: {{ selectedSurveyQuestion.question }}</h5>
-    <div class="modal-info">
-        <span class="modal-type"><b>Type:</b> {{ selectedSurveyQuestion.type }}</span>
-        <span class="modal-score" *ngIf="selectedSurveyQuestion.averageScore !== null">
-            <b>Score:</b> {{ selectedSurveyQuestion.averageScore | number:'1.0-2' }}
-        </span>
-        <span class="modal-count"><b>Count:</b> {{ selectedSurveyQuestion.countResponses }}</span>
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #seeResponsesModal
+  id="seeResponsesModal"
+>
+<c-modal-header *ngIf="selectedSurveyQuestion" class="modal-header">
+  <h5 cModalTitle class="modal-title">
+    Question {{ currentQuestionIndex + 1 }}: {{ selectedSurveyQuestion.question }}
+  </h5>
+  <div class="modal-info">
+    <div class="info-container">
+      <div class="modal-type">
+        <b>Type:</b> {{ selectedSurveyQuestion.type }}
+      </div>
+      <div *ngIf="selectedSurveyQuestion.type != 'Text' " class="question-evaluation">
+        <b>Evaluation: </b><span class="evaluation-value">{{ selectedSurveyQuestion.evaluation }}</span>
+      </div>
+      <div *ngIf="selectedSurveyQuestion.averageScore !== null" class="modal-score">
+        <b>Score:</b> {{ selectedSurveyQuestion.averageScore | number:'1.0-2' }}%
+      </div>
+      <div class="modal-count">
+        <b>Count:</b> {{ selectedSurveyQuestion.countResponses }}
+      </div>
     </div>
-    <button class="btn-close" (click)="toggleModal('seeResponsesModal', false)" cButtonClose></button>
+  </div>
+  <button class="btn-close" (click)="toggleModal('seeResponsesModal', false)" cButtonClose></button>
 </c-modal-header>
   <c-modal-body *ngIf="selectedSurveyQuestion" class="modal-body">
-    <div *ngFor="let response of selectedSurveyQuestion.responses" [ngClass]="{
-          'bad-response': response.evaluation === 'Bad', 
-          'good-response': response.evaluation === 'Good', 
-          'acceptable-response': response.evaluation === 'Acceptable',
-          'text-response': response.evaluation === 'Undefined'
-        }" class="response-row">
-      <div>{{ response.customerName }}</div>
-      <div>{{ response.responseValue }}</div>
+    <div
+      *ngFor="let response of selectedSurveyQuestion.responses"
+      [ngClass]="{
+        'bad-response': response.evaluation === 'Bad',
+        'good-response': response.evaluation === 'Good',
+        'neutral-response': response.evaluation === 'Neutral',
+        'very-good-response': response.evaluation === 'Very Good',
+        'text-response': response.evaluation === 'Received',
+      }"
+      class="response-row"
+    >
+    <div>{{ response.customerName }}</div>
+    <div class="res-value">{{ response.responseValue }}</div>
+    <a href="mailto:{{ response.customerEmail }}" class="email-icon" title="Send email to {{ response.customerEmail }}">
+      <p>Send</p>
+      <c-icon name="cil-envelope-closed"></c-icon>
+    </a>
     </div>
   </c-modal-body>
   <c-modal-footer *ngIf="selectedSurveyQuestion" class="modal-footer">
-    <button class="btn-seeResponses-footer" *ngIf="currentQuestionIndex > 0" (click)="previousQuestion()" cButton color="primary">Back</button>
-    <button class="btn-seeResponses-footer" (click)="toggleModal('seeResponsesModal', false)" cButton color="secondary">Close</button>
+    <button
+      class="btn-seeResponses-footer"
+      *ngIf="currentQuestionIndex > 0"
+      (click)="previousQuestion()"
+      cButton
+      color="primary"
+    >
+      Back
+    </button>
+    <button
+      class="btn-seeResponses-footer"
+      (click)="toggleModal('seeResponsesModal', false)"
+      cButton
+      color="secondary"
+    >
+      Close
+    </button>
     <!-- Only show the Next button if there are more questions -->
-    <button class="btn-seeResponses-footer" *ngIf="currentQuestionIndex < selectedSurveySummary.length - 1" (click)="nextQuestion()" cButton color="primary">Next</button>
-</c-modal-footer>
-
+    <button
+      class="btn-seeResponses-footer"
+      *ngIf="currentQuestionIndex < selectedSurveySummary.length - 1"
+      (click)="nextQuestion()"
+      cButton
+      color="primary"
+    >
+      Next
+    </button>
+  </c-modal-footer>
 </c-modal>

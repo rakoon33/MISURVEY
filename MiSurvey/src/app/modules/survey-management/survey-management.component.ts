@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { surveyManagementSelector } from 'src/app/core/store/selectors';
 import { SurveyManagementService } from 'src/app/core/services';
 import { ModalService } from '@coreui/angular';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-survey-management',
@@ -19,21 +20,20 @@ export class SurveyManagementComponent implements OnInit {
 
   selectedSurveySummary: any[] = [];
   selectedSurveyQuestion: any = {
-    "question": "Chúng tôi nên làm gì để cải thiện trải nghiệm của bạn?",
-    "type": "Text",
-    "averageScore": null,
-    "countResponses": 1,
-    "responses": [
-        {
-            "customerID": 7,
-            "customerName": "3333",
-            "responseValue": "tăng cường",
-            "evaluation": "Undefined"
-        }
-    ]
-};
+    question: 'Chúng tôi nên làm gì để cải thiện trải nghiệm của bạn?',
+    type: 'Text',
+    averageScore: null,
+    countResponses: 1,
+    responses: [
+      {
+        customerID: 7,
+        customerName: '3333',
+        responseValue: 'tăng cường',
+        evaluation: 'Undefined',
+      },
+    ],
+  };
   currentQuestionIndex: number = 0;
-
 
   constructor(
     private router: Router,
@@ -41,8 +41,9 @@ export class SurveyManagementComponent implements OnInit {
     private surveyManagementService: SurveyManagementService,
     private modalService: ModalService
   ) {
-
-    this.surveys$ = this.store.select(surveyManagementSelector.selectAllSurveys);
+    this.surveys$ = this.store.select(
+      surveyManagementSelector.selectAllSurveys
+    );
   }
 
   ngOnInit(): void {
@@ -50,13 +51,13 @@ export class SurveyManagementComponent implements OnInit {
   }
 
   copySurveyLink(link: string, event: MouseEvent) {
-    event.preventDefault();   
-    link = 'http://localhost:8082/#/c/f/' + link
+    event.preventDefault();
+    link = 'http://localhost:8082/#/c/f/' + link;
     navigator.clipboard.writeText(link).then(
       () => {
         console.log('Link copied to clipboard!');
       },
-      err => {
+      (err) => {
         console.error('Error copying link: ', err);
       }
     );
@@ -72,7 +73,6 @@ export class SurveyManagementComponent implements OnInit {
     this.router.navigate(['/survey-management/survey-detailed', surveyId]);
   }
 
-
   openModal(surveyId: number) {
     this.surveyManagementService.getSurveySummaryById(surveyId).subscribe({
       next: (response) => {
@@ -83,12 +83,13 @@ export class SurveyManagementComponent implements OnInit {
           this.showCurrentQuestion();
         }
       },
-      error: (error) => console.error('Error fetching survey summary:', error)
+      error: (error) => console.error('Error fetching survey summary:', error),
     });
   }
 
   showCurrentQuestion() {
-    this.selectedSurveyQuestion = this.selectedSurveySummary[this.currentQuestionIndex];
+    this.selectedSurveyQuestion =
+      this.selectedSurveySummary[this.currentQuestionIndex];
     console.log(this.selectedSurveyQuestion);
     console.log(this.currentQuestionIndex);
     this.toggleModal('seeResponsesModal', true);
@@ -105,12 +106,14 @@ export class SurveyManagementComponent implements OnInit {
 
   previousQuestion() {
     if (this.currentQuestionIndex > 0) {
-        this.currentQuestionIndex--;
-        this.showCurrentQuestion();
+      this.currentQuestionIndex--;
+      this.showCurrentQuestion();
     }
-}
+  }
   toggleModal(modalId: string, show: boolean) {
     this.modalService.toggle({ id: modalId, show: show });
   }
-
+  isValidEmail(email: string): boolean {
+    return new FormControl(email, Validators.email).valid;
+  }
 }

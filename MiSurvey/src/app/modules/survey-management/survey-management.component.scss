@@ -198,6 +198,21 @@ div.survey-card.ng-star-inserted {
   color: #333333;
   font-size: 16px;
   font-weight: 300;
+  flex-direction: column;
+}
+
+.info-container {
+  display: flex; /* Kích hoạt flexbox */
+  align-items: center; /* Căn giữa các items theo chiều dọc */
+  flex-wrap: wrap; /* Cho phép items bọc nếu không đủ không gian */
+}
+
+.modal-type,
+.question-evaluation,
+.modal-score,
+.modal-count {
+  margin-right: 10px; /* Thêm khoảng cách giữa các thông tin */
+  white-space: nowrap; /* Giữ thông tin không bị bọc dòng */
 }
 
 .modal-type,
@@ -217,7 +232,7 @@ div.survey-card.ng-star-inserted {
 }
 
 .modal-body {
-  height: 400px; // Set this to the desired fixed height.
+  height: 400px;
   overflow-y: auto; // Enables vertical scrolling when necessary.
   padding: 15px 20px;
 }
@@ -235,6 +250,7 @@ div.survey-card.ng-star-inserted {
   display: flex;
   justify-content: space-between;
   align-items: center; 
+  cursor: pointer;
 }
 
 .bad-response {
@@ -247,9 +263,18 @@ div.survey-card.ng-star-inserted {
   color: #155724; 
 }
 
-.acceptable-response {
-  background-color: #fff3cd; /* Light yellow for acceptable responses */
+.neutral-response {
+  background-color: #fff3cd; /* Light yellow for neutral responses */
   color: #856404; 
+}
+
+.very-good-response {
+  background-color: #c3e6cb; /* Lighter green for very good responses */
+  color: #155724; 
+}
+
+.evaluation-text {
+  font-weight: bold;
 }
 
 .text-response {
@@ -271,4 +296,32 @@ div.survey-card.ng-star-inserted {
 
 .btn-seeResponses-footer:hover {
   background-color: #e2e6ea;
+}
+
+.response-row:hover {
+  opacity: 0.8;
+}
+
+.email-icon {
+  display: none;
+  position: relative;
+  text-decoration: none !important;
+  flex-basis: 0.2;
+  color: #2485c4;
+}
+
+.email-icon p {
+  margin: 0;
+  margin-right: 5px;
+}
+
+
+.response-row:hover .email-icon {
+  display: flex !important;
+  
+}
+
+.res-value {
+  padding-left: 15px;
+  padding-right: 15px;
 }
