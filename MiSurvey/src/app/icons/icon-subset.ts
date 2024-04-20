@@ -97,7 +97,8 @@ import {
   cilMoodGood,
   cilMoodVeryBad,
   cilMoodVeryGood,
-  cilContact
+  cilContact,
+
 } from '@coreui/icons';
 
 export const iconSubset = {

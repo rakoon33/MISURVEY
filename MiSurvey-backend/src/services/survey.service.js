@@ -1,5 +1,14 @@
 const db = require("../config/database");
-const { Survey, SurveyQuestion, SurveyType, User, Company, SurveyDetail, SurveyResponse, Customer } = require("../models");
+const {
+  Survey,
+  SurveyQuestion,
+  SurveyType,
+  User,
+  Company,
+  SurveyDetail,
+  SurveyResponse,
+  Customer,
+} = require("../models");
 const {
   createSurveyQuestion,
   updateSurveyQuestion,
@@ -7,13 +16,13 @@ const {
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 let nanoid;
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
-    user: 'propie034@gmail.com',  // Địa chỉ email của bạn
-    pass: 'ttsq hrvk lvgp aaca'  // App Password của bạn
-  }
+    user: "propie034@gmail.com", // Địa chỉ email của bạn
+    pass: "ttsq hrvk lvgp aaca", // App Password của bạn
+  },
 });
 
 const createSurvey = async (data) => {
@@ -70,10 +79,12 @@ const sendEmail = async (surveyID, emailData, companyID) => {
   try {
     // Truy vấn lấy thông tin khảo sát
     const survey = await Survey.findByPk(companyID, {
-      include: [{
-        model: Company,
-        as: "Company",  // Lấy tên người dùng để sử dụng trong email
-      }]
+      include: [
+        {
+          model: Company,
+          as: "Company", // Lấy tên người dùng để sử dụng trong email
+        },
+      ],
     });
 
     if (!survey) {
@@ -81,45 +92,44 @@ const sendEmail = async (surveyID, emailData, companyID) => {
     }
 
     const surveylink = await Survey.findOne({
-      where: { SurveyID: surveyID }
+      where: { SurveyID: surveyID },
     });
 
     const surveyLink = `http://localhost:8082/#/c/f/${surveylink.SurveyLink}`;
-    const surveyCreator = survey.Company.CompanyName;  // Giả sử cột tên người dùng là Username
+    const surveyCreator = survey.Company.CompanyName; // Giả sử cột tên người dùng là Username
 
     // Cấu hình email
     const mailOptions = {
-      from: 'propie034@gmail.com',
-      to: emailData,  // Danh sách các email được cung cấp
-      subject: 'Khảo sát từ MiSurvey',
-      text: 
-      `Xin chào,
+      from: "propie034@gmail.com",
+      to: emailData, // Danh sách các email được cung cấp
+      subject: "Khảo sát từ MiSurvey",
+      text: `Xin chào,
       
       Một khảo sát đã được tạo bởi ${surveyCreator}
       
       Xin hãy tham gia bằng đường dẫn sau: ${surveyLink}
       
       Trân trọng,
-      Đội ngũ MiSurvey`
+      Đội ngũ MiSurvey`,
     };
 
     // Gửi email
     let info = await transporter.sendMail(mailOptions);
 
     // Log the email send action into SurveyDetails
-    const recipientCount = emailData.split(',').length;
+    const recipientCount = emailData.split(",").length;
     await SurveyDetail.create({
       SurveyID: surveyID,
       SentBy: survey.UserID, // Assuming Survey model has UserID for who created it
-      SentAt: new Date(),  // This could also default at DB level
+      SentAt: new Date(), // This could also default at DB level
       RecipientCount: recipientCount,
       Recipients: emailData,
-      CompanyID: companyID
+      CompanyID: companyID,
     });
 
     return { status: true, message: "Emails sent successfully", info };
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error("Error sending email:", error);
     return { status: false, message: error.message, error: error.toString() };
   }
 };
@@ -384,80 +394,195 @@ const searchSurvey = async (column, searchTerm) => {
   }
 };
 
+const getEmoticonsEvaluation = (responses) => {
+  const ratingCounts = responses.reduce((acc, { ResponseValue }) => {
+    acc[ResponseValue] = (acc[ResponseValue] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalRatings = responses.length;
+  const positiveRatings =
+    (ratingCounts["good"] || 0) + (ratingCounts["very-good"] || 0);
+  const negativeRatings =
+    (ratingCounts["bad"] || 0) + (ratingCounts["very-bad"] || 0);
+
+  if (positiveRatings / totalRatings > 0.6) return "Good"; // ví dụ: hơn 60% là phản hồi tích cực
+  if (negativeRatings / totalRatings > 0.6) return "Bad"; // ví dụ: hơn 60% là phản hồi tiêu cực
+  return "Neutral"; // nếu không có tỷ lệ áp đảo nào
+};
+
+const calculateNPS = (responses) => {
+  let promoters = 0;
+  let detractors = 0;
+  responses.forEach((response) => {
+    const value = parseInt(response.ResponseValue, 10);
+    if (value >= 9) promoters++;
+    if (value <= 6) detractors++;
+  });
+  return ((promoters - detractors) / responses.length) * 100; // Trả về giá trị phần trăm NPS
+};
+
+const calculateCSAT = (responses) => {
+  const satisfiedCustomers = responses.filter(
+    (response) => parseInt(response.ResponseValue, 10) >= 4
+  ).length;
+  return (satisfiedCustomers / responses.length) * 100; // Trả về giá trị phần trăm CSAT
+};
+
+const getEvaluationForStars = (averageScore) => {
+  if (averageScore <= 2) return "Bad";
+  if (averageScore <= 3) return "Neutral";
+  if (averageScore < 4) return "Good";
+  return "Very Good";
+};
+
+const getNPSClassification = (npsScore) => {
+  if (npsScore <= 0) return "Bad";
+  if (npsScore <= 50) return "Neutral";
+  if (npsScore <= 70) return "Good";
+  return "Very Good";
+};
+
+const getCSATClassification = (csatScore) => {
+  if (csatScore <= 40) return "Bad";
+  if (csatScore <= 60) return "Neutral";
+  if (csatScore <= 80) return "Good";
+  return "Very Good";
+};
 
 const evaluateResponse = (responseValue, surveyType) => {
-  switch (surveyType) {
-    case 'Stars':
-      if (responseValue <= 2) return 'Bad';
-      if (responseValue === 3) return 'Acceptable';
-      return 'Good';
-    case 'Thumbs':
-      return responseValue === 'false' ? 'Bad' : 'Good';
-    case 'Emoticons':
-      if (['very-bad', 'bad'].includes(responseValue)) return 'Bad';
-      if (responseValue === 'meh') return 'Acceptable';
-      return 'Good';
-    case 'NPS':
-      if (responseValue <= 6) return 'Bad';
-      if (responseValue === 7) return 'Acceptable';
-      return 'Good';
-    case 'CSAT':
-      if (responseValue <= 2) return 'Bad';
-      if (responseValue === 3) return 'Acceptable';
-      return 'Good';
-    default:
-      return 'Undefined';
+  // Xử lý cho Emoticons
+  if (surveyType === "Emoticons") {
+    switch (responseValue) {
+      case "very-bad":
+      case "bad":
+        return "Bad";
+      case "meh":
+        return "Neutral";
+      case "good":
+      case "very-good":
+        return "Good";
+      default:
+        return "Undefined";
+    }
   }
+  // Xử lý cho Stars
+  if (surveyType === "Stars") {
+    const value = parseInt(responseValue, 10);
+    if (value <= 2) return "Bad";
+    if (value === 3) return "Neutral";
+    if (value >= 4) return "Good";
+  }
+
+  // Xử lý cho Thumbs
+  if (surveyType === "Thumbs") {
+    return responseValue === "true" ? "Good" : "Bad";
+  }
+
+  // Xử lý cho NPS
+  if (surveyType === "NPS") {
+    const value = parseInt(responseValue, 10);
+    if (value >= 0 && value <= 6) return "Bad";
+    if (value === 7 || value === 8) return "Neutral";
+    if (value === 9 || value === 10) return "Good";
+  }
+
+  // Xử lý cho CSAT
+  if (surveyType === "CSAT") {
+    const value = parseInt(responseValue, 10);
+    if (value >= 1 && value <= 2) return "Bad";
+    if (value === 3) return "Neutral";
+    if (value >= 4) return "Good";
+  }
+
+  // Xử lý cho Text
+  if (surveyType === "Text") {
+    return "Received"; // Phản hồi dạng văn bản không cần đánh giá
+  }
+
+  return "Undefined"; // Nếu không khớp với bất kỳ loại khảo sát nào
 };
 
 const getSurveySummary = async (surveyID) => {
   try {
-    // Fetch all questions and their responses for the survey
     const questions = await SurveyQuestion.findAll({
       where: { SurveyID: surveyID },
       include: [
         {
           model: SurveyType,
-          as: 'SurveyType'
+          as: "SurveyType",
         },
         {
           model: SurveyResponse,
-          as: 'Responses',
+          as: "Responses",
           include: [
             {
               model: Customer,
-              as: 'Customer'
-            }
-          ]
-        }
+              as: "Customer",
+            },
+          ],
+        },
       ],
-      order: [['PageOrder', 'ASC']]
+      order: [["PageOrder", "ASC"]],
     });
 
     if (!questions || questions.length === 0) {
       return { status: false, message: "No questions found for this survey." };
     }
 
-    // Process each question to calculate its summary
     const summary = questions.map((question) => {
-      let averageScore = null;
-      let countResponses = question.Responses.length; // Đếm số lượng phản hồi cho mỗi câu hỏi
+      const countResponses = question.Responses.length;
+      let averageScore = null; // Default to null
+      let evaluation = "Undefined"; // Default evaluation
 
-      if (question.SurveyType.ResponseType !== 'Text') {
-        averageScore = question.Responses.reduce((acc, { ResponseValue }) => acc + parseFloat(ResponseValue), 0) / countResponses;
+      switch (question.SurveyType.SurveyTypeName) {
+        case "Stars":
+          averageScore =
+            question.Responses.reduce(
+              (acc, { ResponseValue }) => acc + parseInt(ResponseValue, 10),
+              0
+            ) / countResponses;
+          evaluation = getEvaluationForStars(averageScore);
+          break;
+        case "Emoticons":
+          evaluation = getEmoticonsEvaluation(question.Responses);
+          break;
+        case "Thumbs":
+          const thumbsUpCount = question.Responses.filter(
+            ({ ResponseValue }) => ResponseValue === "true"
+          ).length;
+          evaluation = thumbsUpCount > countResponses / 2 ? "Good" : "Bad";
+          break;
+        case "NPS":
+          averageScore = calculateNPS(question.Responses); // Tính giá trị trung bình NPS
+          evaluation = getNPSClassification(averageScore); // Lấy đánh giá NPS dựa trên giá trị phần trăm
+          break;
+
+        case "CSAT":
+          averageScore = calculateCSAT(question.Responses); // Tính giá trị trung bình CSAT
+          evaluation = getCSATClassification(averageScore); // Lấy đánh giá CSAT dựa trên giá trị phần trăm
+          break;
+        case "Text":
+          evaluation = "Received"; // Evaluation for text responses
+          break;
       }
 
       return {
         question: question.QuestionText,
         type: question.SurveyType.SurveyTypeName,
-        averageScore: averageScore,
-        countResponses: countResponses, // Sử dụng countResponses để lưu số lượng phản hồi
-        responses: question.Responses.map(response => ({
+        averageScore: averageScore, // Now defined and scoped correctly
+        countResponses,
+        evaluation,
+        responses: question.Responses.map((response) => ({
           customerID: response.Customer.CustomerID,
           customerName: response.Customer.FullName,
+          customerEmail: response.Customer.Email,
           responseValue: response.ResponseValue,
-          evaluation: evaluateResponse(response.ResponseValue, question.SurveyType.SurveyTypeName)
-        }))
+          evaluation: evaluateResponse(
+            response.ResponseValue,
+            question.SurveyType.SurveyTypeName
+          ),
+        })),
       };
     });
 
@@ -466,8 +591,6 @@ const getSurveySummary = async (surveyID) => {
     return { status: false, message: error.message, error: error.toString() };
   }
 };
-
-
 
 module.exports = {
   createSurvey,
@@ -479,5 +602,5 @@ module.exports = {
   searchSurvey,
   getOneSurveyWithDataByLink,
   sendEmail,
-  getSurveySummary
+  getSurveySummary,
 };
