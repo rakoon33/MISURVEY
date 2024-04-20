@@ -8,6 +8,7 @@ const companyUserController = require("./companyUser.controller");
 const surveyController = require("./survey.controller");
 const surveyResponseController = require("./surveyResponse.controller");
 const surveyQuestionController = require("./surveyQuestion.controller");
+const customerController = require("./customer.controller");
 module.exports = {
   authController,
   companyController,
@@ -19,4 +20,5 @@ module.exports = {
   surveyController,
   surveyResponseController,
   surveyQuestionController,
+  customerController
 };
