@@ -115,8 +115,7 @@ const registerUser = async (userData) => {
     await CompanyUser.create(
       {
         UserID: newUser.UserID,
-        CompanyID: newCompany.CompanyID,
-        CompanyRoleID: 1
+        CompanyID: newCompany.CompanyID
       },
       { transaction }
     );

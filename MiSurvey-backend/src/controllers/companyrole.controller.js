@@ -18,6 +18,7 @@ const createCompanyRoleController = async (req, res) => {
 const updateCompanyRoleController = async (req, res) => {
   const { roleData, permissionsData } = req.body;
 
+  console.log(req.body);
   if (!roleData || !permissionsData) {
     return res.status(400).json({
       status: false,

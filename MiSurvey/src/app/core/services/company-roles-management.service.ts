@@ -21,9 +21,35 @@ export class CompanyRolesManagementService {
     );
   }
 
+  updateCompanyRole(
+    roleId: number,
+    roleData: CompanyRole,
+    permissionsData: Permission[]
+  ): Observable<any> {
+    return this.http.put(
+      `${apiConstants.BACKEND_API.BASE_API_URL}/companyRoles/${roleId}`,
+      { roleData, permissionsData },
+      { withCredentials: true }
+    );
+  }
+
+  deleteCompanyRole(roleId: number): Observable<any> {
+    return this.http.delete(
+      `${apiConstants.BACKEND_API.BASE_API_URL}/companyRoles/${roleId}`,
+      { withCredentials: true }
+    );
+  }
+
   getAllCompanyRoles(): Observable<any> {
     return this.http.get(
       `${apiConstants.BACKEND_API.BASE_API_URL}/companyRoles`,
+      { withCredentials: true }
+    );
+  }
+
+  getOneCompanyRole(roleId: number): Observable<any> {
+    return this.http.get(
+      `${apiConstants.BACKEND_API.BASE_API_URL}/companyRoles/${roleId}`,
       { withCredentials: true }
     );
   }

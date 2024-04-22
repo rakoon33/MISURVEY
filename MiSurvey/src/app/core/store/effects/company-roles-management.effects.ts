@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { companyRoleManagementActions } from '../actions';
 import { CompanyRolesManagementService } from '../../services';
@@ -39,6 +39,43 @@ export class CompanyRolesManagementEffects {
       )
     )
   );
+
+  updateCompanyRole$ = createEffect(() =>
+    this.actions$.pipe(
+        ofType(companyRoleManagementActions.updateCompanyRoleRequest),
+        mergeMap((action) =>
+            this.companyRoleService.updateCompanyRole(action.roleId, action.roleData, action.permissionsData).pipe(
+                map(() => {
+                    this.toastrService.success('Role updated successfully!');
+                    return companyRoleManagementActions.updateCompanyRoleSuccess();
+                }),
+                catchError(error => {
+                    this.toastrService.error('Failed to update role');
+                    return of(companyRoleManagementActions.updateCompanyRoleFailure({ error }));
+                })
+            )
+        )
+    )
+);
+
+deleteCompanyRole$ = createEffect(() =>
+    this.actions$.pipe(
+        ofType(companyRoleManagementActions.deleteCompanyRoleRequest),
+        mergeMap((action) =>
+            this.companyRoleService.deleteCompanyRole(action.roleId).pipe(
+                map(() => {
+                    this.toastrService.success('Role deleted successfully!');
+                    return companyRoleManagementActions.deleteCompanyRoleSuccess();
+                }),
+                catchError(error => {
+                    this.toastrService.error('Failed to delete role');
+                    return of(companyRoleManagementActions.deleteCompanyRoleFailure({ error }));
+                })
+            )
+        )
+    )
+);
+
 
   loadCompanyRoles$ = createEffect(() =>
     this.actions$.pipe(

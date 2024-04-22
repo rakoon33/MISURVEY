@@ -95,7 +95,7 @@
                 <button
                   *ngIf="permissions.CanUpdate"
                   cDropdownItem
-                  (click)="editRole(role.CompanyRoleID)"
+                  (click)="openEditModal(role.CompanyRoleID)"
                 >
                   Edit
                 </button>
@@ -190,3 +190,50 @@
     </c-modal-footer>
   </c-modal>
 </div>
+
+<c-modal size="lg" [scrollable]="true" alignment="center" #editRoleModal id="editRoleModal">
+  <c-modal-header>
+    <h5 cModalTitle>Edit Role</h5>
+    <button class="btn-close" type="button" cButtonClose [cModalToggle]="editRoleModal.id"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="roleFormEdit">
+      <div formGroupName="roleData" class="mb-3">
+        <label for="roleName">Role Name</label>
+        <input type="text" class="form-control" id="roleName" formControlName="CompanyRoleName" placeholder="Role Name" required />
+        <label for="roleDescription">Role Description</label>
+        <input type="text" class="form-control" id="roleDescription" formControlName="CompanyRoleDescription" placeholder="Role Description" />
+      </div>
+      <div *ngIf="modules$ | async as modules">
+        <table class="table permissions-table">
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Can View</th>
+              <th>Can Add</th>
+              <th>Can Update</th>
+              <th>Can Delete</th>
+              <th>Can Export</th>
+              <th>Can View Data</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="permissionsDataEdit">
+            <tr *ngFor="let permissionControl of permissionsDataEdit.controls; let i = index" [formGroupName]="i">
+              <td>{{ modules[i].name }}</td>
+              <td><input type="checkbox" formControlName="CanView" /></td>
+              <td><input type="checkbox" formControlName="CanAdd" /></td>
+              <td><input type="checkbox" formControlName="CanUpdate" /></td>
+              <td><input type="checkbox" formControlName="CanDelete" /></td>
+              <td><input type="checkbox" formControlName="CanExport" /></td>
+              <td><input type="checkbox" formControlName="CanViewData" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button type="button" cButton [cModalToggle]="editRoleModal.id">Close</button>
+    <button type="button" cButton (click)="submitEditRole()">Update Role</button>
+  </c-modal-footer>
+</c-modal>
