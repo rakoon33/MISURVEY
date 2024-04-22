@@ -82,27 +82,24 @@
           <c-dropdown class="d-flex justify-content-center">
             <span class="action-management" cButton cDropdownToggle> </span>
             <ul cDropdownMenu>
-              <li>
+              <li *ngIf="permissions.CanViewData">
                 <button
-                  *ngIf="permissions.CanViewData"
                   cDropdownItem
                   (click)="viewRole(role.CompanyRoleID)"
                 >
                   View
                 </button>
               </li>
-              <li>
+              <li *ngIf="permissions.CanUpdate">
                 <button
-                  *ngIf="permissions.CanUpdate"
                   cDropdownItem
                   (click)="openEditModal(role.CompanyRoleID)"
                 >
                   Edit
                 </button>
               </li>
-              <li>
-                <button
-                  *ngIf="permissions.CanDelete"
+              <li *ngIf="permissions.CanDelete">
+                <button                 
                   cDropdownItem
                   [cModalToggle]="deleteRoleModal.id"
                 >
@@ -144,7 +141,7 @@
             </thead>
             <tbody formArrayName="permissionsData">
               <tr *ngFor="let permissionControl of permissionsData.controls; let i = index" [formGroupName]="i">
-                <td>{{ modules[i].name }}</td>
+                <td>{{ modules && modules.length > i ? modules[i].name : 'Loading...' }}</td>
                 <td><input type="checkbox" formControlName="CanView" /></td>
                 <td><input type="checkbox" formControlName="CanAdd" /></td>
                 <td><input type="checkbox" formControlName="CanUpdate" /></td>
@@ -219,7 +216,7 @@
           </thead>
           <tbody formArrayName="permissionsDataEdit">
             <tr *ngFor="let permissionControl of permissionsDataEdit.controls; let i = index" [formGroupName]="i">
-              <td>{{ modules[i].name }}</td>
+              <td>{{ modules && modules.length > i ? modules[i].name : 'Loading...' }}</td>
               <td><input type="checkbox" formControlName="CanView" /></td>
               <td><input type="checkbox" formControlName="CanAdd" /></td>
               <td><input type="checkbox" formControlName="CanUpdate" /></td>

@@ -5,7 +5,7 @@ router.get("/", (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect("/dashboard");
   } else {
-    res.redirect("/admin/login");
+    res.redirect("login");
   }
 });
 
