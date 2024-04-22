@@ -19,20 +19,7 @@ export class SurveyManagementComponent implements OnInit {
   surveys$: Observable<any[]>;
 
   selectedSurveySummary: any[] = [];
-  selectedSurveyQuestion: any = {
-    question: 'Chúng tôi nên làm gì để cải thiện trải nghiệm của bạn?',
-    type: 'Text',
-    averageScore: null,
-    countResponses: 1,
-    responses: [
-      {
-        customerID: 7,
-        customerName: '3333',
-        responseValue: 'tăng cường',
-        evaluation: 'Undefined',
-      },
-    ],
-  };
+  selectedSurveyQuestion: any = {};
   currentQuestionIndex: number = 0;
 
   constructor(

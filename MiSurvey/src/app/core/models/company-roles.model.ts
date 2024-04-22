@@ -1,3 +1,5 @@
+import Permission from "./permission.model";
+
 export default interface CompanyRole {
     CompanyRoleID?: number;
     CompanyRoleName: string;
@@ -6,4 +8,5 @@ export default interface CompanyRole {
     CreatedBy?: number;
     UpdatedAt?: Date;
     UpdatedBy?: number;
+    permissions?: Permission[];
   }

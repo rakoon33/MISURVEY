@@ -1,11 +1,9 @@
-const { CompanyRole, RolePermission } = require("../models");
+const { CompanyRole, RolePermission, CompanyUser, User } = require("../models");
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 
 const createCompanyRole = async (roleData, permissionsData, companyID) => {
   roleData.CompanyID = companyID;
-  console.log(roleData);
-  console.log(permissionsData);
   const transaction = await sequelize.transaction();
 
   try {
@@ -38,39 +36,64 @@ const createCompanyRole = async (roleData, permissionsData, companyID) => {
 };
 
 const updateCompanyRole = async (id, roleData, permissionsData) => {
-  const transaction = await sequelize.transaction();
-
   try {
-    const [updatedRoleRows] = await CompanyRole.update(roleData, {
-      where: { CompanyRoleID: id },
-      transaction,
-    });
-
-    if (updatedRoleRows === 0) {
-      await transaction.rollback();
+    if (!id) {
       return {
         status: false,
-        message: "Company Role not found or data unchanged",
+        message: "Company Role not found",
       };
     }
 
+    // Check if another role with the same name exists and has a different ID
+    const existingRole = await CompanyRole.findOne({
+      where: {
+        CompanyRoleName: roleData.CompanyRoleName,
+        CompanyRoleID: { [Op.ne]: id } // Exclude the current record
+      }
+    });
+
+    if (existingRole) {
+      return {
+        status: false,
+        message: `Another role with the name ${roleData.CompanyRoleName} already exists. Please choose a different name.`,
+      };
+    }
+
+    // Update company role
+    await CompanyRole.update(roleData, {
+      where: { CompanyRoleID: id }
+    });
+
+    // Update permissions
     for (const permission of permissionsData) {
-      await RolePermission.update(permission, {
+      const existingPermission = await RolePermission.findOne({
         where: {
           CompanyRoleID: id,
           ModuleID: permission.ModuleID,
         },
-        transaction,
       });
+
+      if (!existingPermission) {
+        throw new Error(`Permission with ModuleID ${permission.ModuleID} not found.`);
+      }
+
+      // Update only if there's a change in any of the permission fields
+      const isPermissionChanged = Object.keys(permission).some(key => permission[key] !== existingPermission[key]);
+      if (isPermissionChanged) {
+        await RolePermission.update(permission, {
+          where: {
+            CompanyRoleID: id,
+            ModuleID: permission.ModuleID,
+          },
+        });
+      }
     }
 
-    await transaction.commit();
-
     const updatedRole = await CompanyRole.findByPk(id, {
-      include: {
+      include: [{
         model: RolePermission,
         as: "permissions",
-      },
+      }],
     });
 
     return {
@@ -81,7 +104,12 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
       },
     };
   } catch (error) {
-    await transaction.rollback();
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return {
+        status: false,
+        message: "A company role with this name already exists. Please use a different name."
+      };
+    }
     return {
       status: false,
       message: error.message || "Company Role update failed",
@@ -90,11 +118,11 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
   }
 };
 
-const deleteCompanyRole = async (id) => {
+const deleteCompanyRole = async (roleId) => {
   const transaction = await sequelize.transaction();
 
   try {
-    const role = await CompanyRole.findByPk(id, { transaction });
+    const role = await CompanyRole.findByPk(roleId, { transaction });
     if (!role) {
       await transaction.rollback();
       return {
@@ -103,13 +131,35 @@ const deleteCompanyRole = async (id) => {
       };
     }
 
+    // Delete Role Permissions associated with this role
     await RolePermission.destroy({
-      where: { CompanyRoleID: id },
+      where: { CompanyRoleID: roleId },
       transaction,
     });
 
+    // Find all users associated with this role
+    const companyUsers = await CompanyUser.findAll({
+      where: { CompanyRoleID: roleId },
+      transaction
+    });
+
+    // Delete all CompanyUser entries associated with this role
+    for (const companyUser of companyUsers) {
+      // Optionally, delete the user records as well from User table
+      await User.destroy({
+        where: { UserID: companyUser.UserID },
+        transaction
+      });
+
+      await CompanyUser.destroy({
+        where: { CompanyUserID: companyUser.CompanyUserID },
+        transaction
+      });
+    }
+
+    // Finally, delete the company role
     await CompanyRole.destroy({
-      where: { CompanyRoleID: id },
+      where: { CompanyRoleID: roleId },
       transaction,
     });
 
@@ -117,7 +167,7 @@ const deleteCompanyRole = async (id) => {
 
     return {
       status: true,
-      message: "Company Role and its permissions deleted successfully",
+      message: "Company Role and all associated data deleted successfully",
     };
   } catch (error) {
     await transaction.rollback();

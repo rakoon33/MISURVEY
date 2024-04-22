@@ -1,15 +1,15 @@
 const { CompanyUser, User, Company, CompanyRole } = require("../models");
 const { createUser } = require("./user.service");
 const db = require("../config/database");
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 // Cấu hình transporter sử dụng Gmail SMTP với App Password
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
-    user: 'propie034@gmail.com',  // Thay thế bằng địa chỉ Gmail của bạn
-    pass: 'ttsq hrvk lvgp aaca'      // Thay thế bằng App Password của bạn
-  }
+    user: "propie034@gmail.com", // Thay thế bằng địa chỉ Gmail của bạn
+    pass: "ttsq hrvk lvgp aaca", // Thay thế bằng App Password của bạn
+  },
 });
 
 const createCompanyUser = async (companyUserData, userData) => {
@@ -18,7 +18,6 @@ const createCompanyUser = async (companyUserData, userData) => {
   try {
     const { CompanyID, CompanyRoleID } = companyUserData;
 
-    console.log(userData);
     if (!CompanyID || !CompanyRoleID) {
       throw new Error("CompanyID and CompanyRoleID are required");
     }
@@ -37,11 +36,11 @@ const createCompanyUser = async (companyUserData, userData) => {
       },
       { transaction }
     );
-// Cấu hình và gửi email
+    // Cấu hình và gửi email
     const mailOptions = {
-      from: 'propie034@gmail.com',
+      from: "propie034@gmail.com",
       to: userData.Email, // Email người dùng mới
-      subject: 'Chào mừng bạn đến với MiSurvey!',
+      subject: "Chào mừng bạn đến với MiSurvey!",
       text: `Xin chào,
 
       Cảm ơn bạn đã đăng ký tài khoản MiSurvey! Chúng tôi rất vui mừng được chào đón bạn đến với cộng đồng người dùng ngày càng phát triển của chúng tôi.
@@ -67,7 +66,7 @@ const createCompanyUser = async (companyUserData, userData) => {
       
       Trân trọng,
       
-      Đội ngũ MiSurvey`
+      Đội ngũ MiSurvey`,
     };
 
     await transporter.sendMail(mailOptions);

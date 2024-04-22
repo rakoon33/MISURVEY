@@ -51,5 +51,29 @@ export const companyRolesManagementReducer = createReducer(
       error: error,
       loading: false,
     })
+  ),
+  on(companyRoleManagementActions.updateCompanyRoleSuccess, (state) => ({
+    ...state,
+    loading: false,
+  })),
+  on(
+    companyRoleManagementActions.updateCompanyRoleFailure,
+    (state, { error }) => ({
+      ...state,
+      error: error,
+      loading: false,
+    })
+  ),
+  on(companyRoleManagementActions.deleteCompanyRoleSuccess, (state) => ({
+    ...state,
+    loading: false,
+  })),
+  on(
+    companyRoleManagementActions.deleteCompanyRoleFailure,
+    (state, { error }) => ({
+      ...state,
+      error: error,
+      loading: false,
+    })
   )
 );
