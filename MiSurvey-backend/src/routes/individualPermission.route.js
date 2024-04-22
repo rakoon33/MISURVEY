@@ -8,7 +8,7 @@ const router = express.Router();
  * /api/permissions/search/{companyUserId}:
  *   get:
  *     tags: [Permission]
- *     summary: Search individual permissions for a company user (only super admin can use this API)
+ *     summary: Search individual permissions for a company user
  *     parameters:
  *       - in: path
  *         name: companyUserId
@@ -62,7 +62,6 @@ router
   .route("/search/:companyUserId")
   .get(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     individualPermissionController.searchIndividualPermissionsController
   );
 
@@ -71,7 +70,7 @@ router
  * /api/permissions:
  *   post:
  *     tags: [Permission]
- *     summary: Create a new individual permission (only super admin can use this API)
+ *     summary: Create a new individual permission
  *     requestBody:
  *       required: true
  *       content:
@@ -144,7 +143,7 @@ router
  *                   example: 'Error occurred while creating individual permission'
  *   get:
  *     tags: [Permission]
- *     summary: Retrieve all individual permissions (only super admin can use this API)
+ *     summary: Retrieve all individual permissions
  *     responses:
  *       200:
  *         description: Individual Permissions fetched successfully.
@@ -197,12 +196,10 @@ router
   .route("/")
   .post(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     individualPermissionController.createIndividualPermissionController
   )
   .get(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     individualPermissionController.getAllIndividualPermissionsController
   );
 
@@ -211,7 +208,7 @@ router
  * /api/permissions/{companyUserId}/{moduleId}:
  *   delete:
  *     tags: [Permission]
- *     summary: Delete an individual permission (only super admin can use this API)
+ *     summary: Delete an individual permission 
  *     parameters:
  *       - in: path
  *         name: companyUserId
@@ -254,7 +251,7 @@ router
  *                   example: 'Error occurred while deleting individual permission'
  *   get:
  *     tags: [Permission]
- *     summary: Retrieve a specific individual permission (only super admin can use this API)
+ *     summary: Retrieve a specific individual permission
  *     parameters:
  *       - in: path
  *         name: companyUserId
@@ -312,7 +309,7 @@ router
  *                   example: 'Individual Permission not found'
  *   put:
  *     tags: [Permission]
- *     summary: Update an individual permission (only super admin can use this API)
+ *     summary: Update an individual permission
  *     parameters:
  *       - in: path
  *         name: companyUserId
@@ -383,17 +380,14 @@ router
   .route("/:companyUserId/:moduleId")
   .delete(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     individualPermissionController.deleteIndividualPermissionController
   )
   .get(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     individualPermissionController.getOneIndividualPermissionController
   )
   .put(
     authMiddleware.tokenVerification,
-    authMiddleware.isSuperAdmin,
     individualPermissionController.updateIndividualPermissionController
   );
 

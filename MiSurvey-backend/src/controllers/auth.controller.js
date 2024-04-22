@@ -42,7 +42,7 @@ const registerUserController = async (req, res) => {
   }
 };
 
-const checkPermissionsController = async (req, res) => {
+const getPermissionsController = async (req, res) => {
   const userId = req.params.userId;
 
   if (!userId) {
@@ -50,7 +50,7 @@ const checkPermissionsController = async (req, res) => {
   }
 
   try {
-    const result = await authService.checkUserPermissions(userId);
+    const result = await authService.getUserPermissions(userId);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -61,5 +61,5 @@ module.exports = {
   loginController,
   logoutController,
   registerUserController,
-  checkPermissionsController,
+  getPermissionsController,
 };

@@ -384,3 +384,41 @@ button:active {
   background: none;
   border: none;
 }
+
+
+
+
+
+.permissions-table {
+  /* Styles for the permissions table */
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.permissions-table th,
+.permissions-table td {
+  /* Styles for table headers and cells */
+  text-align: left;
+  padding: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.permissions-table th {
+  /* Styles for table headers */
+  background-color: #f8f9fa;
+}
+
+.permissions-table td {
+  /* Styles for table cells */
+  text-align: center;
+}
+
+.permissions-table input[type="checkbox"] {
+  /* Styles for checkboxes within table cells */
+  margin: 0;
+}
+
+th {
+  text-align: center;
+}

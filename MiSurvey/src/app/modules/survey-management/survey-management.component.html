@@ -45,7 +45,7 @@
         class="survey-status"
         (click)="navigateToSurveyDetails(survey.SurveyID, $event)"
       >
-        {{ survey.SurveyStatus || "Unpublished" }}
+        {{ survey.SurveyStatus || "Close" }} | {{ survey.Approve == "Yes" ? "Approve" : "Pending" }}
       </p>
       <a
         href=""
