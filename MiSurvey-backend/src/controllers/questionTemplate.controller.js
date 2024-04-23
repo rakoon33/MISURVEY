@@ -1,7 +1,7 @@
 const { questionTemplateService } = require("../services");
 
 const createQuestionTemplateController = async (req, res) => {
-  const result = await questionTemplateService.createQuestionTemplate(req.body);
+  const result = await questionTemplateService.createQuestionTemplate(req.body, req.user);
   res.status(result.status ? 200 : 400).json(result);
 };
 
@@ -14,7 +14,8 @@ const updateQuestionTemplateController = async (req, res) => {
   const { templateID } = req.params;
   const result = await questionTemplateService.updateQuestionTemplate(
     templateID,
-    req.body
+    req.body,
+    req.user
   );
   res.status(result.status ? 200 : 400).json(result);
 };
@@ -22,7 +23,8 @@ const updateQuestionTemplateController = async (req, res) => {
 const deleteQuestionTemplateController = async (req, res) => {
   const { templateID } = req.params;
   const result = await questionTemplateService.deleteQuestionTemplate(
-    templateID
+    templateID,
+    req.user
   );
   res.status(result.status ? 200 : 400).json(result);
 };

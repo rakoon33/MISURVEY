@@ -9,6 +9,7 @@ const {
 } = require("../models");
 const { tokenFunctions } = require("../utils");
 const db = require("../config/database");
+const {createLogActivity} = require ("./userActivityLog.service");
 
 const loginUser = async (res, username, password) => {
   try {
@@ -121,6 +122,7 @@ const registerUser = async (userData) => {
     );
 
     await transaction.commit();
+    await createLogActivity(newUser.UserID, 'INSERT', `A new user has been created`, 'Users', newCompany.CompanyID);
     return {
       status: true,
       message: "Registration successful",

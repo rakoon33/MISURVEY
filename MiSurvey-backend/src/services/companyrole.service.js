@@ -1,8 +1,9 @@
 const { CompanyRole, RolePermission, CompanyUser, User } = require("../models");
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
+const {createLogActivity} = require ("./userActivityLog.service");
 
-const createCompanyRole = async (roleData, permissionsData, companyID) => {
+const createCompanyRole = async (roleData, permissionsData, companyID, udata) => {
   roleData.CompanyID = companyID;
   const transaction = await sequelize.transaction();
 
@@ -15,6 +16,7 @@ const createCompanyRole = async (roleData, permissionsData, companyID) => {
     }
 
     await transaction.commit(); 
+    await createLogActivity(udata.id, 'INSERT', `CompanyRole created with ID: ${newRole.CompanyRoleID}`, 'CompanyRoles', udata.companyID);
 
     return {
       status: true,
@@ -35,7 +37,7 @@ const createCompanyRole = async (roleData, permissionsData, companyID) => {
   }
 };
 
-const updateCompanyRole = async (id, roleData, permissionsData) => {
+const updateCompanyRole = async (id, roleData, permissionsData, udata) => {
   try {
     if (!id) {
       return {
@@ -96,6 +98,8 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
       }],
     });
 
+    await createLogActivity(udata.id, 'UPDATE', `CompanyRole updated with ID: ${id}`, 'CompanyRoles', udata.companyID);
+
     return {
       status: true,
       message: "Company Role and Permissions updated successfully",
@@ -118,7 +122,7 @@ const updateCompanyRole = async (id, roleData, permissionsData) => {
   }
 };
 
-const deleteCompanyRole = async (roleId) => {
+const deleteCompanyRole = async (roleId, udata) => {
   const transaction = await sequelize.transaction();
 
   try {
@@ -164,6 +168,7 @@ const deleteCompanyRole = async (roleId) => {
     });
 
     await transaction.commit();
+    await createLogActivity(udata.id, 'DELETE', `CompanyRole deleted with ID: ${roleId}`, 'CompanyRoles', udata.companyID);
 
     return {
       status: true,

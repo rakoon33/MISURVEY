@@ -15,7 +15,8 @@ const createSurveyController = async (req, res) => {
       Approve: req.user.role === "Supervisor" ? "Pending" : "Yes",
     };
 
-    const newSurvey = await surveyService.createSurvey(surveyData);
+    const userdata = req.user;
+    const newSurvey = await surveyService.createSurvey(surveyData, userdata);
 
     res.json(newSurvey);
   } catch (error) {
@@ -80,7 +81,8 @@ const updateSurveyController = async (req, res) => {
   try {
     const result = await surveyService.updateSurvey(
       req.params.SurveyID,
-      req.body
+      req.body,
+      req.user
     );
     res.json(result);
   } catch (error) {
@@ -90,7 +92,7 @@ const updateSurveyController = async (req, res) => {
 
 const deleteSurveyController = async (req, res) => {
   try {
-    const result = await surveyService.deleteSurvey(req.params.SurveyID);
+    const result = await surveyService.deleteSurvey(req.params.SurveyID, req.user);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

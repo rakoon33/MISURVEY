@@ -27,6 +27,7 @@ const CompanyUser = db.sequelize.define(
     },
     CompanyRoleID: {
       type: DataTypes.INTEGER,
+      allowNull: true,
       references: {
         model: "CompanyRole",
         key: "CompanyRoleID",

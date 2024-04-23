@@ -1,5 +1,9 @@
 const { DataTypes } = require("sequelize");
 const db = require("../config/database");
+const { namespace } = require('../middlewares/cls');  // Đảm bảo namespace đã được cấu hình
+const { UserActivityLog } = require("./userActivityLog.model");
+
+
 
 const Survey = db.sequelize.define(
   "Survey",

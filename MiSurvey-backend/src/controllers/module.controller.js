@@ -3,7 +3,7 @@ const { moduleService } = require("../services");
 const createModuleController = async (req, res) => {
   console.log(req.body);
   try {
-    const newUser = await moduleService.createModule(req.body);
+    const newUser = await moduleService.createModule(req.body, req.user);
     res.json(newUser);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -14,7 +14,8 @@ const updateModuleController = async (req, res) => {
   try {
     const result = await moduleService.updateModule(
       req.params.ModuleID,
-      req.body
+      req.body,
+      req.user
     );
     res.json(result);
   } catch (error) {
@@ -24,7 +25,7 @@ const updateModuleController = async (req, res) => {
 
 const deleteModuleController = async (req, res) => {
   try {
-    const result = await moduleService.deleteModule(req.params.ModuleID);
+    const result = await moduleService.deleteModule(req.params.ModuleID, req.user);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

@@ -32,10 +32,6 @@ const UserActivityLog = db.sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    RecordID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     CreatedAt: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -8,6 +8,7 @@ const createCompanyRoleController = async (req, res) => {
       roleData,
       permissionsData, 
       req.user.companyID,
+      req.user
     );
     res.json(newRole);
   } catch (error) {
@@ -39,7 +40,8 @@ const updateCompanyRoleController = async (req, res) => {
     const result = await companyRoleService.updateCompanyRole(
       CompanyRoleID,
       roleData,
-      permissionsData
+      permissionsData,
+      req.user
     );
     res.json(result);
   } catch (error) {
@@ -53,7 +55,8 @@ const updateCompanyRoleController = async (req, res) => {
 const deleteCompanyRoleController = async (req, res) => {
   try {
     const result = await companyRoleService.deleteCompanyRole(
-      req.params.CompanyRoleID
+      req.params.CompanyRoleID,
+      req.user
     );
     res.json(result);
   } catch (error) {

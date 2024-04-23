@@ -22,8 +22,8 @@ const getUserDataController = async (req, res) => {
 
 const createUserController = async (req, res) => {
   try {
-    console.log(req.body);
-    const newUser = await userService.createUser(req.body);
+    console.log(req.user);
+    const newUser = await userService.createUser(req.body, req.user);
     res.json(newUser);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -35,7 +35,7 @@ const updateUserController = async (req, res) => {
   try {
     console.log(req.params.UserID);
     console.log(req.body);
-    const result = await userService.updateUser(req.params.UserID, req.body);
+    const result = await userService.updateUser(req.params.UserID, req.body, req.user);
     console.log(result);
     res.json(result);
   } catch (error) {
@@ -45,7 +45,7 @@ const updateUserController = async (req, res) => {
 
 const deleteUserController = async (req, res) => {
   try {
-    const result = await userService.deleteUser(req.params.UserID);
+    const result = await userService.deleteUser(req.params.UserID, req.user);
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

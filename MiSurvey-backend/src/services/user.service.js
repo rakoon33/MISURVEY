@@ -7,8 +7,10 @@ const {
   IndividualPermission,
   RolePermission,
   Module,
+  UserActivityLog
 } = require("../models");
 const db = require("../config/database");
+const {createLogActivity} = require ("./userActivityLog.service");
 
 const getUserData = async (userId, userRole) => {
   try {
@@ -83,10 +85,11 @@ const getUserData = async (userId, userRole) => {
   }
 };
 
-const createUser = async (userData) => {
+const createUser = async (userData, udata) => {
   try {
     userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); // Hash password before saving
     const newUser = await User.create(userData);
+    await createLogActivity(udata.id, 'INSERT', `User created with ID: ${newUser.UserID}`, 'Users', udata.companyID);
     return {
       status: true,
       message: "User created successfully",
@@ -104,7 +107,7 @@ const createUser = async (userData) => {
   }
 };
 
-const updateUser = async (UserID, userData) => {
+const updateUser = async (UserID, userData, udata) => {
   try {
     console.log(UserID);
     console.log(userData);
@@ -119,6 +122,7 @@ const updateUser = async (UserID, userData) => {
     }
 
     const updatedUser = await User.findOne({ where: { UserID: UserID } });
+    await createLogActivity(udata.id, 'UPDATE', `User updated with ID: ${UserID}`, 'Users', udata.companyID);
 
     return {
       status: true,
@@ -165,52 +169,66 @@ const updateUser = async (UserID, userData) => {
   }
 };*/
 
-const deleteUser = async (UserID) => {
+const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
   try {
-    const user = await User.findOne({ where: { UserID: UserID } });
-
-    if (!user) {
-      return {
-        status: false,
-        message: "User not found",
-      };
-    }
-
-    // Xóa tất cả các bản ghi CompanyUser liên quan đến UserID này
-    const deletedCompanyUsers = await CompanyUser.destroy({
-      where: { UserID: UserID },
+    // Find companies administered by the given admin ID
+    const companies = await Company.findAll({
+      where: { AdminID: UserID },
       transaction
     });
 
-    // Kiểm tra xem có bản ghi CompanyUser nào được xóa không
-    console.log(`Deleted ${deletedCompanyUsers} CompanyUser records.`);
+    for (const company of companies) {
+      // Delete related entries in UserActivityLogs
+      await UserActivityLog.destroy({
+        where: { CompanyID: company.CompanyID },
+        transaction
+      });
 
-    // Xóa người dùng sau khi đã xóa các bản ghi CompanyUser liên quan
+      // Delete related CompanyUser records
+      await CompanyUser.destroy({
+        where: { CompanyID: company.CompanyID },
+        transaction
+      });
+
+      // Delete the company
+      await Company.destroy({
+        where: { CompanyID: company.CompanyID },
+        transaction
+      });
+    }
+
     const deletedUser = await User.destroy({
       where: { UserID: UserID },
       transaction
     });
 
-    // Kiểm tra xem người dùng có được xóa không
+    // Commit all deletions if successful
     if (deletedUser) {
       await transaction.commit();
+      await createLogActivity(udata.id, 'DELETE', `User deleted with ID: ${UserID}`, 'Users', udata.companyID);
       return {
         status: true,
-        message: "User and related CompanyUser records deleted successfully",
+        message: "User and all related records deleted successfully",
       };
     } else {
       throw new Error("User deletion failed");
     }
   } catch (error) {
+    // Rollback if any deletions fail
     await transaction.rollback();
     return {
       status: false,
-      message: error.message || "Failed to delete user and related company user records",
-      error: error.toString(),
+      message: "Failed to delete companies and related data.",
+      error: error.toString()
     };
   }
 };
+
+
+
+
+
 
 
 const getOneUser = async (UserID) => {
