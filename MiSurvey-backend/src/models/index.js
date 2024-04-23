@@ -18,7 +18,7 @@ const UserPackage = require("./userPackage.model");
 const UserActivityLog = require("./userActivityLog.model");
 const SurveyReport = require("./surveyReport.model");
 const SurveyType = require("./surveyType.model");
-
+const QuestionTemplate = require("./questionTemplate.model");
 // Set up the association
 
 Module.hasMany(IndividualPermission, {
@@ -158,6 +158,29 @@ Customer.hasMany(SurveyResponse, {
   foreignKey: 'CustomerID',
   as: 'Responses' // This alias is used when including the model in queries
 });
+
+// Adding cascade deletes and indexing
+QuestionTemplate.belongsTo(SurveyType, {
+  foreignKey: 'SurveyTypeID',
+  as: 'SurveyType',
+  onDelete: 'SET NULL', // Or 'CASCADE' if you want to delete all templates when a SurveyType is deleted
+  indexes: [{ fields: ['SurveyTypeID'] }]
+});
+
+QuestionTemplate.belongsTo(User, {
+  foreignKey: 'CreatedBy',
+  as: 'Creator',
+  onDelete: 'SET NULL', // Consider what should happen if a user is deleted
+  indexes: [{ fields: ['CreatedBy'] }]
+});
+
+QuestionTemplate.belongsTo(User, {
+  foreignKey: 'UpdatedBy',
+  as: 'Updater',
+  onDelete: 'SET NULL', // Consider what should happen if a user is deleted
+  indexes: [{ fields: ['UpdatedBy'] }]
+});
+
 module.exports = {
   User,
   Company,
@@ -178,5 +201,6 @@ module.exports = {
   UserActivityLog,
   SurveyReport,
   SurveyType,
+  QuestionTemplate
   // ...other models
 };

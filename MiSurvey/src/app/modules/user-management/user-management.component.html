@@ -8,7 +8,11 @@
     >
       Create a new user
     </button>
-    <button *ngIf="permissions.CanExport" class="btn-action" (click)="exportToPdf()">
+    <button
+      *ngIf="permissions.CanExport"
+      class="btn-action"
+      (click)="exportToPdf()"
+    >
       Export Data
     </button>
     <!-- <button *ngIf="permissions$ | async as permissions" (click)="exportToPdf()" class="btn btn-primary" *ngIf="permissions.CanExport">
@@ -98,30 +102,26 @@
           <c-dropdown class="d-flex justify-content-center">
             <span class="action-management" cButton cDropdownToggle> </span>
             <ul cDropdownMenu>
-              <li>
-                <button
-                  *ngIf="user.UserID !== undefined && permissions.CanViewData"
-                  cDropdownItem
-                  (click)="viewUser(user.UserID)"
-                >
+              <li *ngIf="user.UserID !== undefined && permissions.CanViewData">
+                <button cDropdownItem (click)="viewUser(user.UserID)">
                   View
                 </button>
               </li>
-              <li>
+              <li *ngIf="permissions.CanViewData && user.UserRole !== 'Admin'">
                 <button
-                  *ngIf="user.UserID !== undefined && permissions.CanUpdate"
                   cDropdownItem
-                  (click)="editUser(user.UserID)"
+                  (click)="openPermissionsModal(user.UserID)"
                 >
+                  View Permissions
+                </button>
+              </li>
+              <li *ngIf="user.UserID !== undefined && permissions.CanUpdate">
+                <button cDropdownItem (click)="editUser(user.UserID)">
                   Edit
                 </button>
               </li>
-              <li>
-                <button
-                  *ngIf="permissions.CanDelete"
-                  cDropdownItem
-                  [cModalToggle]="deleteUserModal.id"
-                >
+              <li *ngIf="permissions.CanDelete">
+                <button cDropdownItem [cModalToggle]="deleteUserModal.id">
                   Delete
                 </button>
               </li>
@@ -589,3 +589,132 @@
     </c-modal-footer>
   </c-modal>
 </div>
+
+<c-modal
+  size="lg"
+  [scrollable]="true"
+  alignment="center"
+  #permissionsModal
+  id="permissionsModal"
+>
+  <c-modal-header>
+    <h5 cModalTitle>User Permissions</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="permissionsModal.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="permissions-modal-body">
+    <form [formGroup]="permissionsForm">
+      <table class="permissions-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Can View</th>
+            <th>Can Add</th>
+            <th>Can Update</th>
+            <th>Can Delete</th>
+            <th>Can Export</th>
+            <th>Can View Data</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="permissions">
+          <tr
+            *ngFor="let permissionGroup of permissionsControls; let i = index"
+            [formGroupName]="i"
+          >
+            <td>
+              {{ ((IndividualPermissions$ | async)?.[i]?.module?.ModuleName) || 'Loading...' }}
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                formControlName="CanView"
+                id="canView{{ i }}"
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                formControlName="CanAdd"
+                id="canAdd{{ i }}"
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                formControlName="CanUpdate"
+                id="canUpdate{{ i }}"
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                formControlName="CanDelete"
+                id="canDelete{{ i }}"
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                formControlName="CanExport"
+                id="canExport{{ i }}"
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                formControlName="CanViewData"
+                id="canViewData{{ i }}"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </c-modal-body>
+  <c-modal-footer class="permissions-modal-footer">
+    <button cButton color="danger" (click)="deleteAllPermissionsModal()">
+      Delete All Individual Access
+    </button>
+    <button cButton color="primary" (click)="updatePermissions()">
+      Save Changes
+    </button>
+    <button [cModalToggle]="permissionsModal.id" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- Delete ALL Individual permissions -->
+<c-modal
+  size="lg"
+  [scrollable]="true"
+  alignment="center"
+  #deleteIndividualPermissions
+  id="deleteIndividualPermissions"
+  scrollable
+>
+  <c-modal-header>
+    <h5 cModalTitle>Confirm User Deletion</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="deleteIndividualPermissions.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body>
+    Are you sure you want to delete all individual permissions? This action cannot be undone.
+  </c-modal-body>
+  <c-modal-footer>
+    <button
+      [cModalToggle]="deleteIndividualPermissions.id"
+      cButton
+      color="secondary"
+    >
+      Cancel
+    </button>
+    <button cButton color="danger" (click)="deleteAllPermissions()">Confirm</button>
+  </c-modal-footer>
+</c-modal>

@@ -226,8 +226,8 @@ router.post("/register", authController.registerUserController);
  *                   description: Error message explaining why the request failed
  */
 router.get(
-  "/checkpermissions/:userId",
-  authController.checkPermissionsController
+  "/getPermissions/:userId",
+  authController.getPermissionsController
 );
 
 module.exports = router;

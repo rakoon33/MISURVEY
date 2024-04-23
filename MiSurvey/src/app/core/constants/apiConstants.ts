@@ -9,7 +9,8 @@ const BACKEND_API = {
     COMPANY: '/companies',
     SURVEY: '/survey',
     CUSTOMER_SURVEY: '/c/f',
-    FEEDBACK_RESPONSE: '/responses'
+    FEEDBACK_RESPONSE: '/responses',
+    QUESTION_TEMPLATE: '/questionTemplate'
 };
 
 export default {BACKEND_API};

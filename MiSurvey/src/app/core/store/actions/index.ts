@@ -9,6 +9,7 @@ import * as companyRoleManagementActions from './company-roles-management.action
 import * as moduleActions from './module.actions';
 import * as companyUserManagementActions from './company-user-management.actions';
 import * as customerFeedbackActions from './customer-feedback.actions';
+import * as questionTemplateActions from './question-template.actions'; 
 export {
   authActions,
   userActions,
@@ -20,5 +21,6 @@ export {
   companyRoleManagementActions,
   moduleActions,
   companyUserManagementActions,
-  customerFeedbackActions
+  customerFeedbackActions,
+  questionTemplateActions
 };

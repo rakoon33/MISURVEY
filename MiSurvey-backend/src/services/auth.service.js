@@ -153,16 +153,9 @@ const logoutUser = (res) => {
   };
 };
 
-const checkUserPermissions = async (userId) => {
-  try {
-    const userDetails = await User.findByPk(userId);
-    if (!userDetails) {
-      throw new Error("User not found");
-    }
 
-    // Destructure to separate the UserPassword and the rest of the userDetails
-    const { UserPassword, ...userDetailsWithoutPassword } =
-      userDetails.dataValues;
+const getUserPermissions = async (userId) => {
+  try {
 
     const companyUser = await CompanyUser.findOne({
       where: { UserID: userId },
@@ -206,6 +199,7 @@ const checkUserPermissions = async (userId) => {
     const mergedPermissions = Object.values(permissionsMap);
 
     return {
+      companyUserId: companyUser.CompanyUserID,
       permissions: mergedPermissions,
     };
   } catch (error) {
@@ -217,5 +211,5 @@ module.exports = {
   loginUser,
   logoutUser,
   registerUser,
-  checkUserPermissions,
+  getUserPermissions,
 };

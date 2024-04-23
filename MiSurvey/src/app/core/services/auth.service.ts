@@ -55,4 +55,13 @@ export class AuthService {
         })
       );
   }
+
+  getPermissions(userId: number): Observable<any> {
+    return this.http.get(`${apiConstants.BACKEND_API.BASE_API_URL}/getPermissions/${userId}`, { withCredentials: true }).pipe(
+      catchError((error) => {
+        console.error('Error during registration:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }

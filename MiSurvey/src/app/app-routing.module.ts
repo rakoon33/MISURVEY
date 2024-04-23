@@ -61,6 +61,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'question-template',
+        loadChildren: () =>
+          import('./modules/question-template/question-template.module').then(
+            (m) => m.QuestionTemplateModule
+          ),
+      },
+      {
         path: 'survey-management/survey-method',
         loadChildren: () =>
           import(
