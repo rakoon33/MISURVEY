@@ -13,6 +13,7 @@ const {
   createSurveyQuestion,
   updateSurveyQuestion,
 } = require("./surveyQuestion.service");
+const {createLogActivity} = require ("./userActivityLog.service");
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 let nanoid;
@@ -25,7 +26,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const createSurvey = async (data) => {
+const createSurvey = async (data, udata) => {
   if (!nanoid) {
     nanoid = (await import("nanoid")).nanoid;
   }
@@ -64,7 +65,7 @@ const createSurvey = async (data) => {
       questionData.SurveyID = survey.SurveyID;
       await createSurveyQuestion(questionData, transaction);
     }
-
+    await createLogActivity(udata.id, 'INSERT', `Survey created with ID: ${survey.SurveyID}`, 'Surveys', udata.companyID);
     await transaction.commit();
     return { status: true, message: "Survey created successfully", survey };
   } catch (error) {
@@ -246,7 +247,7 @@ const getAllSurvey = async (user) => {
   }
 };
 
-const updateSurvey = async (surveyID, updateData) => {
+const updateSurvey = async (surveyID, updateData, udata) => {
   const transaction = await sequelize.transaction();
 
   try {
@@ -276,6 +277,7 @@ const updateSurvey = async (surveyID, updateData) => {
         // Create new question
         questionData.SurveyID = surveyID;
         await createSurveyQuestion(questionData, transaction);
+        await createLogActivity(udata.id, 'UPDATE', `Survey updated with ID: ${surveyID}`, 'Surveys', udata.companyID);
       }
     }
 
@@ -287,7 +289,7 @@ const updateSurvey = async (surveyID, updateData) => {
   }
 };
 
-const deleteSurvey = async (surveyID) => {
+const deleteSurvey = async (surveyID, udata) => {
   const transaction = await sequelize.transaction();
 
   try {
@@ -308,6 +310,7 @@ const deleteSurvey = async (surveyID) => {
       where: { SurveyID: surveyID },
       transaction,
     });
+    await createLogActivity(udata.id, 'DELETE', `Survey deleted with ID: ${surveyID}`, 'Surveys', udata.companyID);
 
     await transaction.commit();
     return { status: true, message: "Survey deleted successfully" };
