@@ -145,8 +145,6 @@ const getOneSurveyWithData = async (surveyID) => {
         exclude: [
           "SurveyDescription",
           "SurveyImages",
-          "StartDate",
-          "EndDate",
           "CreatedAt",
           "ResponseRate",
           "CreatedBy",
@@ -183,8 +181,6 @@ const getOneSurveyWithDataByLink = async (link) => {
         exclude: [
           "SurveyDescription",
           "SurveyImages",
-          "StartDate",
-          "EndDate",
           "CreatedAt",
           "ResponseRate",
           "CreatedBy",
