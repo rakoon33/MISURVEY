@@ -9,7 +9,7 @@ const surveyService = require("./survey.service");
 const surveyQuestionService = require("./surveyQuestion.service");
 const surveyResponseService = require("./surveyResponse.service");
 const customerService = require("./customer.service");
-
+const questionTemplateService = require("./questionTemplate.service");
 module.exports = {
   authService,
   companyService,
@@ -21,6 +21,7 @@ module.exports = {
   surveyService,
   surveyQuestionService,
   surveyResponseService,
-  customerService
+  customerService,
+  questionTemplateService
   // ...other services
 };
