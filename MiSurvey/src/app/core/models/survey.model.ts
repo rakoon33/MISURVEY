@@ -7,8 +7,6 @@ interface Survey {
     SurveyImages?: string;
     InvitationMethod?: string;
     SurveyStatus?: string;
-    StartDate?: Date;
-    EndDate?: Date;
     Customizations?: any;
     CreatedAt?: Date;
     ResponseRate?: number;
