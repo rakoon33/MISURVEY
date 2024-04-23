@@ -6,10 +6,10 @@ const createQuestionTemplateController = async (req, res) => {
 };
 
 const getAllQuestionTemplatesController = async (req, res) => {
-  const result = await questionTemplateService.getAllQuestionTemplates();
-  res.status(result.status ? 200 : 400).json(result);
-};
-
+    const { page, pageSize } = req.query;
+    const result = await questionTemplateService.getAllQuestionTemplates(page, pageSize);
+    res.status(result.status ? 200 : 400).json(result);
+  };
 const updateQuestionTemplateController = async (req, res) => {
   const { templateID } = req.params;
   const result = await questionTemplateService.updateQuestionTemplate(
