@@ -1,12 +1,13 @@
 const express = require('express');
 const { questionTemplateController } = require('../controllers');
+const { authMiddleware } = require('../middlewares');
 const router = express.Router();
 
-router.post('/', questionTemplateController.createQuestionTemplateController);
-router.get('/', questionTemplateController.getAllQuestionTemplatesController);
-router.get('/search', questionTemplateController.searchQuestionTemplatesController);
-router.put('/:templateID', questionTemplateController.updateQuestionTemplateController);
-router.delete('/:templateID', questionTemplateController.deleteQuestionTemplateController);
-router.get('/:templateId', questionTemplateController.getQuestionTemplateController);
+router.post('/', authMiddleware.tokenVerification,questionTemplateController.createQuestionTemplateController);
+router.get('/', authMiddleware.tokenVerification,questionTemplateController.getAllQuestionTemplatesController);
+router.get('/search', authMiddleware.tokenVerification,questionTemplateController.searchQuestionTemplatesController);
+router.put('/:templateID', authMiddleware.tokenVerification,questionTemplateController.updateQuestionTemplateController);
+router.delete('/:templateID', authMiddleware.tokenVerification,questionTemplateController.deleteQuestionTemplateController);
+router.get('/:templateId', authMiddleware.tokenVerification,questionTemplateController.getQuestionTemplateController);
 
 module.exports = router;

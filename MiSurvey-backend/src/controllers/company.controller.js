@@ -2,7 +2,7 @@ const { companyService } = require("../services");
 
 const createCompanyController = async (req, res) => {
   try {
-    const result = await companyService.createCompany(req.body);
+    const result = await companyService.createCompany(req.body, req.user);
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -14,7 +14,7 @@ const updateCompanyController = async (req, res) => {
   const updatedData = req.body;
 
   try {
-    const result = await companyService.updateCompany(CompanyID, updatedData);
+    const result = await companyService.updateCompany(CompanyID, updatedData, req.user);
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -24,7 +24,7 @@ const updateCompanyController = async (req, res) => {
 const deleteCompanyController = async (req, res) => {
   try {
     const { CompanyID } = req.params;
-    const result = await companyService.deleteCompany(CompanyID);
+    const result = await companyService.deleteCompany(CompanyID, req.user);
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });

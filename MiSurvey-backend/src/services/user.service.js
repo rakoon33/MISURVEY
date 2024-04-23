@@ -172,67 +172,41 @@ const updateUser = async (UserID, userData, udata) => {
 const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
   try {
-    const user = await User.findOne({ where: { UserID: UserID } });
-
-    if (!user) {
-      await transaction.rollback();
-      return {
-        status: false,
-        message: "User not found",
-      };
-    }
-
-    // Find companies administered by the user
+    // Find companies administered by the given admin ID
     const companies = await Company.findAll({
       where: { AdminID: UserID },
       transaction
     });
 
     for (const company of companies) {
-      // Delete user activity logs for each company
+      // Delete related entries in UserActivityLogs
       await UserActivityLog.destroy({
         where: { CompanyID: company.CompanyID },
         transaction
       });
 
-      // Delete related CompanyUser records for each company
+      // Delete related CompanyUser records
       await CompanyUser.destroy({
+        where: { CompanyID: company.CompanyID },
+        transaction
+      });
+
+      // Delete the company
+      await Company.destroy({
         where: { CompanyID: company.CompanyID },
         transaction
       });
     }
 
-    // Log the number of companies handled
-    console.log(`Handled ${companies.length} companies where user was Admin.`);
-
-    // Delete the companies after clearing out related records
-    const deletedCompanies = await Company.destroy({
-      where: { AdminID: UserID },
-      transaction
-    });
-
-    // Log the number of companies deleted
-    console.log(`Deleted ${deletedCompanies} Company records where user was Admin.`);
-
-    // Delete all related CompanyUser records by user ID
-    const deletedCompanyUsers = await CompanyUser.destroy({
-      where: { UserID: UserID },
-      transaction
-    });
-
-    // Log the number of CompanyUser records deleted
-    console.log(`Deleted ${deletedCompanyUsers} CompanyUser records.`);
-
-    // Finally, delete the user
     const deletedUser = await User.destroy({
       where: { UserID: UserID },
       transaction
     });
 
-    await createLogActivity(udata.id, 'DELETE', `User deleted with ID: ${UserID}`, 'Users', udata.companyID);
-
+    // Commit all deletions if successful
     if (deletedUser) {
       await transaction.commit();
+      await createLogActivity(udata.id, 'DELETE', `User deleted with ID: ${UserID}`, 'Users', udata.companyID);
       return {
         status: true,
         message: "User and all related records deleted successfully",
@@ -241,14 +215,18 @@ const deleteUser = async (UserID, udata) => {
       throw new Error("User deletion failed");
     }
   } catch (error) {
+    // Rollback if any deletions fail
     await transaction.rollback();
     return {
       status: false,
-      message: error.message || "Failed to delete user and related records",
-      error: error.toString(),
+      message: "Failed to delete companies and related data.",
+      error: error.toString()
     };
   }
 };
+
+
+
 
 
 

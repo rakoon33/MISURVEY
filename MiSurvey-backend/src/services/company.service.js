@@ -5,7 +5,6 @@ const {
   IndividualPermission,
   SurveyDetail,
   Survey,
-  SurveyPage,
   SurveyQuestion,
   SurveyResponse,
   RolePermission,
@@ -13,8 +12,9 @@ const {
 } = require("../models");
 const { Op } = require("sequelize");
 const db = require("../config/database");
+const {createLogActivity} = require ("./userActivityLog.service");
 
-const createCompany = async (companyData) => {
+const createCompany = async (companyData, udata) => {
   const transaction = await db.sequelize.transaction();
 
   try {
@@ -38,28 +38,26 @@ const createCompany = async (companyData) => {
     // Create the company
     const newCompany = await Company.create(companyData, { transaction });
 
-    // Set the CompanyRoleID for Admin as 1
-    const adminRoleID = 1;
 
     // Add Admin as a CompanyUser
     await CompanyUser.create(
       {
         UserID: AdminID,
-        CompanyID: newCompany.CompanyID,
-        CompanyRoleID: adminRoleID,
+        CompanyID: newCompany.CompanyID
       },
       { transaction }
     );
 
     await transaction.commit();
 
+    await createLogActivity(udata.id, 'INSERT', `Company created with ID: ${newCompany.CompanyID}`, 'Company', udata.companyID);
     return {
       status: true,
       message: "Company and Admin CompanyUser created successfully",
       data: newCompany,
     };
   } catch (error) {
-    await transaction.rollback();
+    /*await transaction.rollback();*/
     return {
       status: false,
       message: error.message || "Failed to create company",
@@ -68,14 +66,14 @@ const createCompany = async (companyData) => {
   }
 };
 
-const updateCompany = async (CompanyID, updatedData) => {
+const updateCompany = async (CompanyID, updatedData, udata) => {
   try {
     const company = await Company.findByPk(CompanyID);
 
     if (!company) {
       return {
         status: false,
-        message: "Company not fo",
+        message: "Company not found",
       };
     }
 
@@ -97,6 +95,7 @@ const updateCompany = async (CompanyID, updatedData) => {
     }
 
     await company.update(updatedData);
+    await createLogActivity(udata.id, 'UPDATE', `Company updated with ID: ${CompanyID}`, 'Company', udata.companyID);
 
     return {
       status: true,
@@ -112,7 +111,7 @@ const updateCompany = async (CompanyID, updatedData) => {
   }
 };
 
-const deleteCompany = async (CompanyID) => {
+const deleteCompany = async (CompanyID, udata) => {
   try {
     const company = await Company.findByPk(CompanyID);
 
@@ -175,6 +174,7 @@ const deleteCompany = async (CompanyID) => {
 
     // 8. Finally, delete the company itself
     await company.destroy();
+    await createLogActivity(udata.id, 'DELETE', `Company deleted with ID: ${CompanyID}`, 'Company', udata.companyID);
 
     return {
       status: true,

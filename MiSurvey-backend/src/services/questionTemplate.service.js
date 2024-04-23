@@ -1,9 +1,11 @@
 const { QuestionTemplate, SurveyType } = require("../models");
 const { Op } = require("sequelize");
+const {createLogActivity} = require ("./userActivityLog.service");
 
-const createQuestionTemplate = async (data) => {
+const createQuestionTemplate = async (data, udata) => {
   try {
     const template = await QuestionTemplate.create(data);
+    await createLogActivity(udata.id, 'INSERT', `Question Template created with ID: ${template.TemplateID}`, 'QuestionTemplates', udata.companyID);
     return { status: true, message: 'Create question successfully', template };
   } catch (error) {
     return { status: false, message: error.message };
@@ -34,20 +36,21 @@ const getAllQuestionTemplates = async (page, pageSize) => {
   };
   
 
-const updateQuestionTemplate = async (templateID, updates) => {
+const updateQuestionTemplate = async (templateID, updates, udata) => {
   try {
     const template = await QuestionTemplate.findByPk(templateID);
     if (!template) {
       return { status: false, message: "Template not found" };
     }
     await template.update(updates);
+    await createLogActivity(udata.id, 'UPDATE', `Question Template updated with ID: ${templateID}`, 'QuestionTemplates', udata.companyID);
     return { status: true, message: 'Update question successfully', template };
   } catch (error) {
     return { status: false, message: error.message };
   }
 };
 
-const deleteQuestionTemplate = async (templateID) => {
+const deleteQuestionTemplate = async (templateID, udata) => {
   try {
     const result = await QuestionTemplate.destroy({
       where: { TemplateID: templateID },
@@ -55,6 +58,7 @@ const deleteQuestionTemplate = async (templateID) => {
     if (result === 0) {
       return { status: false, message: "Template not found" };
     }
+    await createLogActivity(udata.id, 'DELETE', `Question Template deleted with ID: ${templateID}`, 'QuestionTemplates', udata.companyID);
     return { status: true, message: "Template deleted successfully" };
   } catch (error) {
     return { status: false, message: error.message };
