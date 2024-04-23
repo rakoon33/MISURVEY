@@ -44,14 +44,6 @@ const Survey = db.sequelize.define(
       type: DataTypes.STRING(50),
       allowNull: true,
     },
-    StartDate: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    EndDate: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
     Customizations: {
       type: DataTypes.JSON,
     },
