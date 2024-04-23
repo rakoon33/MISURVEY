@@ -9,6 +9,7 @@ import customerSurveySelector from './customer-survey.selectors';
 import companyRolesManagementSelectors from './company-roles-management.selectors';
 import moduleSelectors from './module.selectors';
 import customerFeedbackSelectors from './customer-feedback.selectors';
+import questionTemplateSelectors from './question-template.selectors';
 export { 
     userSelector, 
     authSelector,
@@ -20,5 +21,6 @@ export {
     customerSurveySelector,
     companyRolesManagementSelectors,
     moduleSelectors,
-    customerFeedbackSelectors
+    customerFeedbackSelectors,
+    questionTemplateSelectors
 };

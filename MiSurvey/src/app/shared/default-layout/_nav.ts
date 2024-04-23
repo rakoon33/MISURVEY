@@ -35,6 +35,11 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-spreadsheet' }
   },
   {
+    name: 'Question Management',
+    url: '/question-template',
+    iconComponent: { name: 'cil-spreadsheet' }
+  },
+  {
     name: 'Components',
     title: true
   },

@@ -4,27 +4,35 @@ const { Op } = require("sequelize");
 const createQuestionTemplate = async (data) => {
   try {
     const template = await QuestionTemplate.create(data);
-    return { status: true, template };
+    return { status: true, message: 'Create question successfully', template };
   } catch (error) {
     return { status: false, message: error.message };
   }
 };
 
-const getAllQuestionTemplates = async () => {
-  try {
-    const templates = await QuestionTemplate.findAll({
-      include: [
-        {
-          model: SurveyType,
-          as: "SurveyType",
-        },
-      ],
-    });
-    return { status: true, templates };
-  } catch (error) {
-    return { status: false, message: error.message };
-  }
-};
+const getAllQuestionTemplates = async (page, pageSize) => {
+    try {
+      // Include Sequelize's "limit" and "offset" options to fetch the paginated data
+      const limit = pageSize ? parseInt(pageSize, 10) : 10; // default page size to 10
+      const offset = page ? (parseInt(page, 10) - 1) * limit : 0; // default page to first
+  
+      const { count, rows: templates } = await QuestionTemplate.findAndCountAll({
+        include: [
+          {
+            model: SurveyType,
+            as: "SurveyType",
+          },
+        ],
+        limit,
+        offset,
+      });
+  
+      return { status: true, templates, total: count };
+    } catch (error) {
+      return { status: false, message: error.message };
+    }
+  };
+  
 
 const updateQuestionTemplate = async (templateID, updates) => {
   try {
@@ -33,7 +41,7 @@ const updateQuestionTemplate = async (templateID, updates) => {
       return { status: false, message: "Template not found" };
     }
     await template.update(updates);
-    return { status: true, template };
+    return { status: true, message: 'Update question successfully', template };
   } catch (error) {
     return { status: false, message: error.message };
   }

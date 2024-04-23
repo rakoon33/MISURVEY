@@ -20,7 +20,7 @@ export class DefaultLayoutComponent implements OnInit {
         this.navItems = originalNavItems.filter(item => item.name !== 'Survey Management' && item.name !== 'Company Role Management');
       } else {
         // Nếu người dùng không phải là 'SuperAdmin', hiển thị tất cả mục
-        this.navItems = originalNavItems;
+        this.navItems = originalNavItems.filter(item => item.name !== 'Question Management');;
       }
     });
   }

@@ -1,0 +1,238 @@
+<div *ngIf="isLoading$ | async" class="loading-indicator">
+  <!-- Loading indicator when templates are being fetched -->
+  Loading...
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+  <!-- List of question templates -->
+  <div class="d-flex justify-content-start">
+    <button class="btn-action me-2" (click)="openCreateQuestionModal()">Create New Question Template</button>
+    <button class="btn-action">Export Data</button>
+  </div>
+
+  <table
+    class="table"
+    [hover]="true"
+    [responsive]="true"
+    [striped]="true"
+    cTable
+    class="mb-0 border"
+  >
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Text</th>
+        <th>Survey Type</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let template of questionTemplates$ | async; let i = index">
+        <td>{{ template.TemplateCategory }}</td>
+        <td>{{ template.TemplateText }}</td>
+        <td>{{ template.SurveyType.SurveyTypeName }}</td>
+        <td>
+          <c-dropdown class="d-flex justify-content-center">
+            <span class="action-management" cDropdownToggle> </span>
+            <ul cDropdownMenu>
+              <li>
+                <button cDropdownItem (click)="openViewModal(template.TemplateID)">View</button>
+              </li>
+              <li>
+                <button cDropdownItem (click)="openEditModal(template.TemplateID)">
+                  Edit
+                </button>
+              </li>
+              <li>
+                <button
+                  cDropdownItem
+                  (click)="openDeleteQuestionTemplate(template.TemplateID)"
+                >
+                  Delete
+                </button>
+              </li>
+            </ul>
+          </c-dropdown>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button
+      class="pagination-button"
+      (click)="onPageChangePrevious()"
+      [disabled]="currentPage === 1"
+    >
+      &lt;&lt; Previous
+    </button>
+    <div
+      *ngFor="
+        let page of getPaginationRange(currentPage, totalPages);
+        let i = index
+      "
+      class="page-item"
+    >
+      <button
+        *ngIf="page !== '...'"
+        (click)="onPageChange(page)"
+        [class.active]="currentPage === page"
+      >
+        {{ page }}
+      </button>
+      <span *ngIf="page === '...'">{{ page }}</span>
+    </div>
+    <button
+      class="pagination-button"
+      (click)="onPageChangeNext()"
+      [disabled]="currentPage === totalPages"
+    >
+      Next &gt;&gt;
+    </button>
+  </div>
+
+  <c-modal
+    alignment="center"
+    size="lg"
+    #addQuestionModal
+    id="addQuestionModal"
+    scrollable
+  >
+    <c-modal-header>
+      <h5 cModalTitle>Add Question Template</h5>
+      <button
+        class="btn-close"
+        cButtonClose
+        [cModalToggle]="addQuestionModal.id"
+      ></button>
+    </c-modal-header>
+    <c-modal-body>
+      <form [formGroup]="questionTemplateForm">
+        <div class="form-group">
+          <label for="templateCategory" class="form-label">Category</label>
+          <select class="form-control" id="templateCategory" formControlName="TemplateCategory">
+            <option value="Sentiment">Sentiment</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Product">Product</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="surveyType" class="form-label">Survey Type</label>
+          <select class="form-control" id="surveyType" formControlName="SurveyTypeID">
+            <option *ngFor="let type of surveyTypes" [value]="type.SurveyTypeID">
+              {{ type.SurveyTypeName }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="templateText">Text</label>
+          <textarea
+            id="templateText"
+            class="form-control"
+            formControlName="TemplateText"
+          ></textarea>
+        </div>
+      </form>
+    </c-modal-body>
+    <c-modal-footer>
+      <button cButton color="secondary" [cModalToggle]="addQuestionModal.id">
+        Cancel
+      </button>
+      <button cButton color="primary" (click)="createQuestionTemplate()">Save</button>
+    </c-modal-footer>
+  </c-modal>
+</div>
+
+<!-- Edit Question Template Modal -->
+<c-modal size="lg" alignment="center" #editTemplateModal id="editTemplateModal">
+  <c-modal-header>
+    <h5 cModalTitle>Edit Question Template</h5>
+    <button class="btn-close" [cModalToggle]="editTemplateModal.id"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="editTemplateForm">
+      <div class="mb-3">
+        <label for="templateCategory" class="form-label">Category</label>
+        <select class="form-control" id="templateCategory" formControlName="TemplateCategory">
+          <option value="Sentiment">Sentiment</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Product">Product</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="templateText" class="form-label">Text</label>
+        <textarea id="templateText" class="form-control" formControlName="TemplateText"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="surveyType" class="form-label">Survey Type</label>
+        <select class="form-control" id="surveyType" formControlName="SurveyTypeID">
+          <option *ngFor="let type of surveyTypes" [value]="type.SurveyTypeID">
+            {{ type.SurveyTypeName }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Created At</label>
+        <input type="text" class="form-control" formControlName="CreatedAt">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Created By</label>
+        <input type="text" class="form-control" formControlName="CreatedBy">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Updated At</label>
+        <input type="text" class="form-control" formControlName="UpdatedAt">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Updated By</label>
+        <input type="text" class="form-control" formControlName="UpdatedBy">
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="editTemplateModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" (click)="saveTemplateChanges()">Save Changes</button>
+  </c-modal-footer>
+</c-modal>
+
+
+<!-- Delete Question Template Modal -->
+<c-modal size="lg" alignment="center" #deleteQuestionModal id="deleteQuestionModal">
+  <c-modal-header>
+    <h5 cModalTitle>Confirm Template Deletion</h5>
+    <button class="btn-close" [cModalToggle]="deleteQuestionModal.id"></button>
+  </c-modal-header>
+  <c-modal-body>
+    Are you sure you want to delete this template? This action cannot be undone.
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="deleteQuestionModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="danger" (click)="deleteQuestionTemplate()">Confirm</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal size="lg" alignment="center" #viewTemplateModal id="viewTemplateModal">
+  <c-modal-header>
+    <h5 cModalTitle>View Question Template</h5>
+    <button class="btn-close" [cModalToggle]="viewTemplateModal.id"></button>
+  </c-modal-header>
+  <c-modal-body>
+  <div class="question-info-container">
+    <div class="question-box">
+      <p><strong>TemplateID:</strong> {{ viewTemplateData?.TemplateID }}</p>
+      <p><strong>Category:</strong> {{ viewTemplateData?.TemplateCategory }}</p>
+      <p><strong>Text:</strong> {{ viewTemplateData?.TemplateText }}</p>
+      <p><strong>Survey Type:</strong> {{ viewTemplateData.SurveyType?.SurveyTypeName }}</p>
+    </div>
+    <div class="question-box">
+      <p><strong>CreatedAt:</strong> {{ viewTemplateData?.CreatedAt }}</p>
+      <p><strong>CreatedBy:</strong> {{ viewTemplateData?.CreatedBy || 'null'}}</p>
+      <p><strong>UpdatedAt:</strong> {{ viewTemplateData?.UpdatedAt || 'null'}}</p>
+      <p><strong>UpdatedBy:</strong> {{ viewTemplateData.SurveyType?.UpdatedBy || 'null'}}</p>
+    </div>
+  </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" [cModalToggle]="deleteQuestionModal.id">Close</button>
+  </c-modal-footer>
+</c-modal>

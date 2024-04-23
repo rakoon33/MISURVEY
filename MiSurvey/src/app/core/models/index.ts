@@ -14,6 +14,7 @@ import {
 } from './customer-feedback.model';
 import CompanyRole from './company-roles.model';
 import Module from './module.model';
+import QuestionTemplate from './question-template.model';
 export {
   User,
   Company,
@@ -27,4 +28,5 @@ export {
   CustomerFeedback,
   FeedbackResponse,
   ContactInfo,
+  QuestionTemplate
 };
