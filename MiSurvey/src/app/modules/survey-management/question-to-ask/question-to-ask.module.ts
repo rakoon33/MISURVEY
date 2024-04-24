@@ -5,6 +5,22 @@ import { QuestionToAskRoutingModule } from './question-to-ask-routing.module';
 import { QuestionToAskComponent } from './question-to-ask.component';
 import { FormsModule } from '@angular/forms'; // Đảm bảo rằng đã nhập module này
 
+
+import {
+  AvatarModule,
+  ButtonGroupModule,
+  ButtonModule,
+  DropdownModule,
+  FormModule,
+  ModalModule,
+  ProgressModule,
+  TableModule,
+  CardModule,
+  GridModule,
+  NavModule,
+  UtilitiesModule,
+  TabsModule,
+} from '@coreui/angular';
 @NgModule({
   declarations: [
     QuestionToAskComponent
@@ -12,7 +28,20 @@ import { FormsModule } from '@angular/forms'; // Đảm bảo rằng đã nhập
   imports: [
     CommonModule,
     QuestionToAskRoutingModule,
-    FormsModule
+    FormsModule,
+    AvatarModule,
+    ButtonGroupModule,
+    ButtonModule,
+    DropdownModule,
+    FormModule,
+    ModalModule,
+    ProgressModule,
+    TableModule,
+    CardModule,
+    GridModule,
+    NavModule,
+    UtilitiesModule,
+    TabsModule,
   ]
 })
 export class QuestionToAskModule { }

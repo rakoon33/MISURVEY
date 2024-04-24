@@ -1,8 +1,13 @@
 <div class="survey-container">
-
   <svg cIcon name="cilThumbUp" size="lg"></svg>
   <h2 class="survey-title">
-    {{ (questionCount$ | async) === 0 ? 'No questions yet. What is the first question you\'d like to ask?' : 'You have ' + (questionCount$ | async) + ' questions so far. Any more questions?' }}
+    {{
+      (questionCount$ | async) === 0
+        ? "No questions yet. What is the first question you'd like to ask?"
+        : "You have " +
+          (questionCount$ | async) +
+          " questions so far. Any more questions?"
+    }}
   </h2>
   <div class="question-input-container">
     <input
@@ -13,5 +18,92 @@
     />
     <button class="next-button" (click)="addQuestion()">Next</button>
   </div>
-  <button class="recommended-questions">Recommended questions</button>
+  <button
+    class="recommended-questions"
+    (click)="openRecommendedQuestionsModal()"
+  >
+    Recommended questions
+  </button>
 </div>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  #recommendedQuestionsModal
+  id="recommendedQuestionsModal"
+  class="modal-header"
+>
+  <c-modal-header class="recommended-modal-header">
+    <h5>Recommended Questions</h5>
+  </c-modal-header>
+  <c-modal-body class="modal-body">
+    <div class="categories-container">
+      <button class="category-btn" (click)="filterQuestionsByCategory('ALL')">
+        ALL
+      </button>
+      <button
+        class="category-btn"
+        (click)="filterQuestionsByCategory('Product')"
+      >
+        Product
+      </button>
+      <button
+        class="category-btn"
+        (click)="filterQuestionsByCategory('Sentiment')"
+      >
+        Sentiment
+      </button>
+      <button
+        class="category-btn"
+        (click)="filterQuestionsByCategory('Marketing')"
+      >
+        Marketing
+      </button>
+    </div>
+
+    <div class="questions-container">
+      <div
+        *ngFor="let question of filteredQuestionTemplates$ | async"
+        class="question-item"
+        (click)="selectQuestion(question)"
+      >
+        <div class="question-text">
+          {{ question.TemplateText }}
+        </div>
+        <div class="question-type">
+          {{ question.SurveyType.SurveyTypeName }}
+        </div>
+      </div>
+    </div>
+  </c-modal-body>
+</c-modal>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #confirmSelectionModal
+  id="confirmSelectionModal"
+  class="modal-header"
+>
+  <c-modal-header class="confirm-selection-header">
+    <h5>Confirm Selection</h5>
+  </c-modal-header>
+  <c-modal-body class="confirm-selection-body">
+    <p>Are you sure you want to use this question?</p>
+    <input type="text" class="question-input" [(ngModel)]="questionText" />
+  </c-modal-body>
+  <c-modal-footer>
+    <button
+      type="button"
+      cButton
+      color="secondary"
+      [cModalToggle]="confirmSelectionModal.id"
+    >
+      Cancel
+    </button>
+    <button type="button" cButton color="primary" (click)="confirmQuestion()">
+      OK
+    </button>
+  </c-modal-footer>
+</c-modal>
