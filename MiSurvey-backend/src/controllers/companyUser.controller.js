@@ -10,20 +10,18 @@ const createCompanyUserController = async (req, res) => {
         message: "Both company user data and user data are required",
       });
     }
-
     const companyUserData2 = {
       ...companyUserData,
       CompanyID: req.user.companyID,
     };
-    console.log('company user data', req.user.companyID)
     const userData2 = {
       ...userData,
       UserAvatar: "./assets/img/avatars/avt_default.png",
     };
-    console.log(companyUserData2);
     const result = await companyUserService.createCompanyUser(
       companyUserData2,
-      userData2
+      userData2,
+      req.user
     );
 
 
@@ -39,7 +37,8 @@ const createCompanyUserController = async (req, res) => {
 const deleteCompanyUserController = async (req, res) => {
   try {
     const result = await companyUserService.deleteCompanyUser(
-      req.params.companyUserId
+      req.params.companyUserId,
+      req.user
     );
 
     if (result.status) {

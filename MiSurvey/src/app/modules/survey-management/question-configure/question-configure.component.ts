@@ -156,7 +156,7 @@ export class QuestionConfigureComponent {
           questionType,
         })
       );
-      console.log(this.addQuestionSurveyId);
+
       if (this.addQuestionSurveyId)
       {
         console.log('add question');
