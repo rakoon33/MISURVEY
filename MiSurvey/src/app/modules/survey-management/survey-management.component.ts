@@ -21,6 +21,7 @@ export class SurveyManagementComponent implements OnInit {
   selectedSurveySummary: any[] = [];
   selectedSurveyQuestion: any = {};
   currentQuestionIndex: number = 0;
+  surveyIDToDelete: number | undefined;
 
   constructor(
     private router: Router,
@@ -102,5 +103,51 @@ export class SurveyManagementComponent implements OnInit {
   }
   isValidEmail(email: string): boolean {
     return new FormControl(email, Validators.email).valid;
+  }
+
+  editSurvey(surveyId: number) {
+    this.router.navigate(['/survey-management/survey'], { queryParams: { id: surveyId } });
+  }
+
+  OpenDeleteSurvey(surveyId: number) {
+    this.surveyIDToDelete = surveyId;
+    this.modalService.toggle({ show: true, id: 'deleteSurveyModal' });
+  }
+
+  deleteSurvey() {
+    console.log(this.surveyIDToDelete)
+    if(this.surveyIDToDelete) {
+
+      this.store.dispatch(surveyManagementActions.deleteSurveyRequest({ surveyId: this.surveyIDToDelete }));
+      this.modalService.toggle({ show: false, id: 'deleteSurveyModal' });
+    }
+  }
+
+  approveSurvey(surveyId: number, approve: boolean) {
+    const updateData = { Approve: approve ? 'Yes' : 'No' };
+    this.surveyManagementService.updateSurvey(surveyId, updateData).subscribe({
+      next: (response) => {
+        console.log('Survey updated successfully:', response);
+        alert(`Survey has been ${approve ? 'approved' : 'unapproved'}.`);
+      },
+      error: (error) => {
+        console.error('Error updating survey:', error);
+        alert('Failed to update survey status.');
+      }
+    });
+  }
+
+  toggleSurveyStatus(surveyId: number, isOpen: boolean) {
+    const updateData = { SurveyStatus: isOpen ? 'Open' : 'Close' };
+    this.surveyManagementService.updateSurvey(surveyId, updateData).subscribe({
+      next: (response) => {
+        console.log('Survey status updated successfully:', response);
+        alert(`Survey has been ${isOpen ? 'opened' : 'closed'}.`);
+      },
+      error: (error) => {
+        console.error('Error updating survey status:', error);
+        alert('Failed to toggle survey status.');
+      }
+    });
   }
 }

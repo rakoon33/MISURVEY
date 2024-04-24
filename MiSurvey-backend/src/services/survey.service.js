@@ -289,25 +289,37 @@ const deleteSurvey = async (surveyID, udata) => {
   const transaction = await sequelize.transaction();
 
   try {
-    // Check if the survey exists
     const survey = await Survey.findByPk(surveyID);
     if (!survey) {
       return { status: false, message: "Survey not found" };
     }
 
-    // Delete associated questions
+    // First, delete responses linked to each question in the survey
+    const questions = await SurveyQuestion.findAll({
+      where: { SurveyID: surveyID },
+      transaction
+    });
+
+    for (const question of questions) {
+      await SurveyResponse.destroy({
+        where: { QuestionID: question.QuestionID },
+        transaction
+      });
+    }
+
+    // Now, delete the questions
     await SurveyQuestion.destroy({
       where: { SurveyID: surveyID },
-      transaction,
+      transaction
     });
 
-    // Delete the survey
+    // Finally, delete the survey
     await Survey.destroy({
       where: { SurveyID: surveyID },
-      transaction,
+      transaction
     });
-    await createLogActivity(udata.id, 'DELETE', `Survey deleted with ID: ${surveyID}`, 'Surveys', udata.companyID);
 
+    await createLogActivity(udata.id, 'DELETE', `Survey deleted with ID: ${surveyID}`, 'Surveys', udata.companyID);
     await transaction.commit();
     return { status: true, message: "Survey deleted successfully" };
   } catch (error) {

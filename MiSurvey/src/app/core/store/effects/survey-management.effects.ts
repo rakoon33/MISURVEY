@@ -28,7 +28,10 @@ export class SurveyManagementEffects {
           map((response) => {
             if (response.status) {
               this.toastrService.success('Survey created successfully');
-              this.router.navigate(['/survey-management/survey-detailed', response.survey?.SurveyID]);
+              this.router.navigate([
+                '/survey-management/survey-detailed',
+                response.survey?.SurveyID,
+              ]);
               return surveyManagementActions.createSurveySuccess();
             } else {
               console.log(response.message);
@@ -126,13 +129,38 @@ export class SurveyManagementEffects {
     )
   );
 
+  deleteSurvey$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(surveyManagementActions.deleteSurveyRequest),
+      mergeMap((action) =>
+        this.surveyService.deleteSurvey(action.surveyId).pipe(
+          map((response) => {
+            if (response.status) {
+              this.toastrService.success('Survey deleted successfully');
+              return surveyManagementActions.deleteSurveySuccess({
+                surveyId: action.surveyId,
+              });
+            } else {
+              this.toastrService.success('Survey deleted failed');
+              return surveyManagementActions.deleteSurveyFailure(
+                response.message
+              );
+            }
+          }),
+          catchError((error) => {
+            this.toastrService.error('Failed to delete survey');
+            return of(surveyManagementActions.deleteSurveyFailure({ error }));
+          })
+        )
+      )
+    )
+  );
 
-  
   constructor(
     private actions$: Actions,
     private toastrService: ToastrService,
     private surveyService: SurveyManagementService,
     private store: Store,
-    private router: Router,
+    private router: Router
   ) {}
 }

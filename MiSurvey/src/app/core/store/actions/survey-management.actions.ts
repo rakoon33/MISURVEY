@@ -83,11 +83,23 @@ export const updateSurveyFailure = createAction(
   props<{ error: any }>()
 );
 
-
-
 // update questions
-// Action to initiate an update to a survey question
 export const updateSurveyQuestion = createAction(
   '[Survey] Update Survey Question',
   props<{ questionId: number; questionText: string, questionType: number }>()
+);
+
+export const deleteSurveyRequest = createAction(
+  '[Survey] Delete Survey Request',
+  props<{ surveyId: number }>()
+);
+
+export const deleteSurveySuccess = createAction(
+  '[Survey] Delete Survey Success',
+  props<{ surveyId: number }>()
+);
+
+export const deleteSurveyFailure = createAction(
+  '[Survey] Delete Survey Failure',
+  props<{ error: any }>()
 );
