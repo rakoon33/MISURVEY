@@ -25,5 +25,4 @@ export class CustomerContactComponent {
       Email: this.email
     });
   }
-
 }
