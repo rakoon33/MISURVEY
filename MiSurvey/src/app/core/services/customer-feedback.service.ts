@@ -18,8 +18,6 @@ export class CustomerFeedbackService {
       ...contactInfo,
       SurveyResponses: surveyResponses
     };
-    console.log(payload);
-    console.log('surveyResponses payload');
     return this.http.post(this.apiUrl, payload, { withCredentials: true });
   }
 }

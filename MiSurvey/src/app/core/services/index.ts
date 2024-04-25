@@ -11,7 +11,7 @@ import { CustomerSurveyService } from './customer-survey.service';
 import { CompanyRolesManagementService } from './company-roles-management.service';
 import {CompanyUserManagementService} from './company-user-management.service';
 import { IndividualPermissionsService } from './individual-permission-management.service';
-
+import { ReportService } from './report.service';
 export {
   UserService,
   AuthService,
@@ -25,5 +25,6 @@ export {
   CompanyUserManagementService,
   CustomerFeedbackService,
   IndividualPermissionsService,
-  QuestionTemplateService
+  QuestionTemplateService,
+  ReportService
 };
