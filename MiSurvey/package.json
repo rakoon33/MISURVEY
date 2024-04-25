@@ -42,6 +42,7 @@
     "@ngrx/router-store": "^17.0.1",
     "@ngrx/store": "^16.3.0",
     "@ngrx/store-devtools": "^16.3.0",
+    "angularx-qrcode": "^16.0.2",
     "chart.js": "^3.9.1",
     "lodash-es": "^4.17.21",
     "lottie-web": "^5.12.2",

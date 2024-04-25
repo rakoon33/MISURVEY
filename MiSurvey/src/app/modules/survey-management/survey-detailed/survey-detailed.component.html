@@ -1,3 +1,6 @@
+<div class="title-container">
+  <p class="survey-title">{{survey?.Title}}</p>
+</div>
 <div
   *ngFor="
     let question of survey?.SurveyQuestions;
@@ -74,7 +77,7 @@
 
 
 <div class="additional-controls">
-  <button style="margin-top: 0 !important; margin-bottom: 20px !important;" *ngIf="survey?.InvitationMethod === 'email'" class="send-email" (click)="openEmailModal()">
+  <button class="send-email" style="margin-top: 0 !important; margin-bottom: 20px !important;" *ngIf="survey?.InvitationMethod === 'email'" class="send-email" (click)="openEmailModal()">
     Send Survey to Email
   </button>
 </div>

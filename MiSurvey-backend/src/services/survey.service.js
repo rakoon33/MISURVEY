@@ -47,6 +47,7 @@ const createSurvey = async (data, udata) => {
         Customizations: data.Customizations,
         CreatedBy: data.CreatedBy,
         Approve: data.Approve,
+        SurveyStatus: data.SurveyStatus
       },
       { transaction }
     );
@@ -150,9 +151,6 @@ const getOneSurveyWithData = async (surveyID) => {
           "CreatedBy",
           "UpdatedAt",
           "UpdatedBy",
-          "Approve",
-          "SurveyStatus",
-          "SurveyLink",
         ],
       },
     });
@@ -186,9 +184,6 @@ const getOneSurveyWithDataByLink = async (link) => {
           "CreatedBy",
           "UpdatedAt",
           "UpdatedBy",
-          "Approve",
-          "SurveyStatus",
-          "SurveyLink",
         ],
       },
     });

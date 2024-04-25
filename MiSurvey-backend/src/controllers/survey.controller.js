@@ -13,6 +13,7 @@ const createSurveyController = async (req, res) => {
       CreatedBy: req.user.id,
       CreatedAt: new Date(),
       Approve: req.user.role === "Supervisor" ? "Pending" : "Yes",
+      SurveyStatus: 'Closed'
     };
 
     const userdata = req.user;

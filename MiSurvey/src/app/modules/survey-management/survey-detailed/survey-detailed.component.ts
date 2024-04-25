@@ -55,8 +55,6 @@ export class SurveyDetailedComponent implements OnInit {
           };
         }
       });
-
-    console.log(this.survey);
   }
 
   getSurveyTypeName(questionType: number): string {

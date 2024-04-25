@@ -41,3 +41,13 @@ button:disabled {
   height: 3rem !important;
   font-size: 3rem !important;
 }
+
+.error-message {
+  color: #D8000C; /* Red color for errors */
+  background-color: #FFD2D2; /* Light red background */
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-size: 1rem;
+  text-align: center;
+}
