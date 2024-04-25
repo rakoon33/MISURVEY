@@ -1,5 +1,5 @@
 <div class="survey-question-container">
-  <p>{{ message }}</p>
+  <p class="message-styles">{{ message }}</p>
   <div class="input-row">
     <div class="text-input half-width">
       <input
@@ -9,7 +9,7 @@
         [(ngModel)]="fullName"
         (ngModelChange)="updateContactInfo()"
       />
-      <label for="full-name" [ngStyle]="{ 'background-color': backgroundColor }"
+      <label for="full-name" [ngStyle]="{ 'background-color': backgroundColor, 'opacity': fullName ? '0' : '1' } "
         >Your full name</label
       >
     </div>
@@ -23,7 +23,7 @@
       />
       <label
         for="phone-number"
-        [ngStyle]="{ 'background-color': backgroundColor }"
+        [ngStyle]="{ 'background-color': backgroundColor, 'opacity': phoneNumber ? '0' : '1' }"
         >Phone number</label
       >
     </div>
@@ -37,7 +37,7 @@
         [(ngModel)]="email"
         (ngModelChange)="updateContactInfo()"
       />
-      <label for="email" [ngStyle]="{ 'background-color': backgroundColor }"
+      <label for="email" [ngStyle]="{ 'background-color': backgroundColor, 'opacity': email ? '0' : '1' }"
         >Email</label
       >
     </div>

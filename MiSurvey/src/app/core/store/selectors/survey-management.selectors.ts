@@ -59,5 +59,6 @@ export default {
   selectLastQuestionText,
   selectQuestionsCount,
   selectSurveyValue,
-  selectAllSurveys
+  selectAllSurveys,
+  selectCurrentSurvey
 };

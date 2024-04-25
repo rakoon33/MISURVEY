@@ -1,4 +1,4 @@
-<div class="survey-container" *ngIf="survey">
+<div class="survey-container" *ngIf="survey; else errorContent">
   <ng-container *ngFor="let question of survey?.SurveyQuestions; let i = index">
     <!-- Question Display -->
     <div
@@ -63,3 +63,7 @@
     </button>
   </div>
 </div>
+
+<ng-template #errorContent>
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+</ng-template>

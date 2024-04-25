@@ -1,6 +1,8 @@
 const { CompanyUser, User, Company, CompanyRole } = require("../models");
 const { createUser } = require("./user.service");
 const db = require("../config/database");
+const {createLogActivity} = require ("./userActivityLog.service");
+
 const nodemailer = require("nodemailer");
 
 // Cấu hình transporter sử dụng Gmail SMTP với App Password
@@ -12,7 +14,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const createCompanyUser = async (companyUserData, userData) => {
+
+
+const createCompanyUser = async (companyUserData, userData, udata) => {
+
   const anotherstore = userData.UserPassword;
   const transaction = await db.sequelize.transaction();
   try {
@@ -21,8 +26,7 @@ const createCompanyUser = async (companyUserData, userData) => {
     if (!CompanyID || !CompanyRoleID) {
       throw new Error("CompanyID and CompanyRoleID are required");
     }
-
-    const newUser = await createUser(userData);
+    const newUser = await createUser(userData, udata);
 
     if (!newUser.status) {
       throw new Error(newUser.message);
@@ -50,17 +54,17 @@ const createCompanyUser = async (companyUserData, userData) => {
       Tên người dùng: ${userData.Username}
       Mật khẩu: ${anotherstore}
       
-      Vui lòng truy cập trang web MiSurvey tại http://www.conti-creations.com/MIS.htm và đăng nhập bằng thông tin đăng nhập được cung cấp ở trên.
+      Vui lòng truy cập trang web MiSurvey tại [....] và đăng nhập bằng thông tin đăng nhập được cung cấp ở trên.
       
       Tại MiSurvey, bạn có thể:
       
-      Tạo khảo sát: Thiết kế khảo sát trực tuyến một cách dễ dàng với nhiều loại câu hỏi, logic nhánh và tùy chỉnh giao diện.
-      Thu thập dữ liệu: Phân phối khảo sát của bạn qua nhiều kênh khác nhau và thu thập phản hồi từ đối tượng mục tiêu của bạn.
-      Phân tích dữ liệu: Xem xét kết quả khảo sát của bạn một cách chi tiết với các biểu đồ, bảng biểu và công cụ phân tích chuyên sâu.
-      Xuất báo cáo: Tạo báo cáo tùy chỉnh để chia sẻ thông tin chi tiết của bạn với các bên liên quan.
-      MiSurvey cung cấp nhiều tính năng và nguồn lực để giúp bạn tạo và phân tích khảo sát một cách hiệu quả. Hãy truy cập http://www.conti-creations.com/MIS.htm để tìm hiểu thêm về các tính năng của chúng tôi và bắt đầu tạo khảo sát đầu tiên của bạn ngay hôm nay!
+        - Tạo khảo sát: Thiết kế khảo sát trực tuyến một cách dễ dàng với nhiều loại câu hỏi, logic nhánh và tùy chỉnh giao diện.
+        - Thu thập dữ liệu: Phân phối khảo sát của bạn qua nhiều kênh khác nhau và thu thập phản hồi từ đối tượng mục tiêu của bạn.
+        - Phân tích dữ liệu: Xem xét kết quả khảo sát của bạn một cách chi tiết với các biểu đồ, bảng biểu và công cụ phân tích chuyên sâu.
+        - Xuất báo cáo: Tạo báo cáo tùy chỉnh để chia sẻ thông tin chi tiết của bạn với các bên liên quan.
+        - MiSurvey cung cấp nhiều tính năng và nguồn lực để giúp bạn tạo và phân tích khảo sát một cách hiệu quả. 
       
-      Nếu bạn gặp bất kỳ vấn đề nào khi đăng nhập hoặc sử dụng MiSurvey, vui lòng liên hệ với bộ phận hỗ trợ khách hàng của chúng tôi qua email https://www.reddit.com/r/MonsterHunter/comments/vppax2/whats_the_difference_between_support_surveys_and/ hoặc qua điện thoại [Số điện thoại].
+      Nếu bạn gặp bất kỳ vấn đề nào khi đăng nhập hoặc sử dụng MiSurvey, vui lòng liên hệ với bộ phận hỗ trợ khách hàng của chúng tôi qua email hoặc qua điện thoại.
       
       Chúng tôi rất mong nhận được phản hồi của bạn và giúp bạn tận dụng tối đa MiSurvey!
       
@@ -71,12 +75,13 @@ const createCompanyUser = async (companyUserData, userData) => {
 
     await transporter.sendMail(mailOptions);
     await transaction.commit();
-
+    await createLogActivity(udata.id, 'INSERT', `Company User inserted with ID: ${newCompanyUser.CompanyUserID}`, 'CompanyUsers', udata.companyID);
     return {
       status: true,
       message: "Company User and associated User account created successfully",
       companyUser: newCompanyUser,
     };
+
   } catch (error) {
     await transaction.rollback();
     return {
@@ -89,7 +94,7 @@ const createCompanyUser = async (companyUserData, userData) => {
   }
 };
 
-const deleteCompanyUser = async (companyUserId) => {
+const deleteCompanyUser = async (companyUserId, udata) => {
   try {
     const companyUser = await CompanyUser.findByPk(companyUserId);
 
@@ -98,10 +103,12 @@ const deleteCompanyUser = async (companyUserId) => {
     }
 
     await companyUser.destroy();
+    await createLogActivity(udata.id, 'DELETE', `Company User deleted with ID: ${companyUserId}`, 'CompanyUsers', udata.companyID);
     return { status: true, message: "Company User deleted successfully" };
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }
+  
 };
 
 const getOneCompanyUser = async (companyUserId) => {

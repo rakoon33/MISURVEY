@@ -84,8 +84,7 @@
         <td>
           <c-avatar
             size="md"
-            [src]="company.CompanyLogo || './assets/img/avt_default.png'"
-            status="success"
+            [src]="company.CompanyLogo != null ? company.CompanyLogo : './assets/images/company_avt_default.png'"
           ></c-avatar>
         </td>
 

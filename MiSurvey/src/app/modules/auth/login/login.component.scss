@@ -1,5 +1,8 @@
 @import "../../../../scss/colors.scss";
 
+h1 {
+    margin-bottom: 10px;
+}
 /* Global Styles */
 .bg-light {
     background-color: #f8f9fa;  /* Slight shade to the light background for a softer look */
@@ -16,7 +19,7 @@
 .login-logo {
     width: 250px;  /* Slight reduction in size */
     height: 140px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     transition: all 0.3s;  /* Smooth hover transition */
 }
 
@@ -31,12 +34,12 @@
 
 .btn-login-color {
     background-color: $main_color_1;
-    border-radius: 5px;  /* Rounded corners for the button */
+    border-radius: 4px;  /* Rounded corners for the button */
     transition: all 0.3s;  /* Smooth hover transition */
 }
 
 .btn-login-color:hover {
-    background-color: darken($main_color_1, 10%);  /* Darkens the button slightly on hover */
+    background-color: darken($main_color_4, 10%);  /* Darkens the button slightly on hover */
 }
 
 /* Graphic Card Styles */
@@ -75,12 +78,12 @@
     }
     
     .input-group .form-control {
-        border: 1px solid $main_color_1;
+        border: 1px solid $main_color_3;
         border-radius: 0;
     }
     
     .btn-login-color {
-        background-color: $main_color_1;
+        background-color: $main_color_3;
         border: none;
         border-radius: 5px;
         padding: 12px 20px;

@@ -8,6 +8,8 @@ import { surveyManagementSelector } from 'src/app/core/store/selectors';
 import { SurveyManagementService } from 'src/app/core/services';
 import { ModalService } from '@coreui/angular';
 import { FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-survey-management',
@@ -21,12 +23,14 @@ export class SurveyManagementComponent implements OnInit {
   selectedSurveySummary: any[] = [];
   selectedSurveyQuestion: any = {};
   currentQuestionIndex: number = 0;
+  surveyIDToDelete: number | undefined;
 
   constructor(
     private router: Router,
     private store: Store,
     private surveyManagementService: SurveyManagementService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private toastr: ToastrService
   ) {
     this.surveys$ = this.store.select(
       surveyManagementSelector.selectAllSurveys
@@ -102,5 +106,66 @@ export class SurveyManagementComponent implements OnInit {
   }
   isValidEmail(email: string): boolean {
     return new FormControl(email, Validators.email).valid;
+  }
+
+  editSurvey(surveyId: number) {
+    this.router.navigate(['/survey-management/survey'], {
+      queryParams: { id: surveyId },
+    });
+  }
+
+  openDeleteSurvey(surveyId: number) {
+    this.surveyIDToDelete = surveyId;
+    this.modalService.toggle({ show: true, id: 'deleteSurveyModal' });
+  }
+
+  deleteSurvey() {
+    console.log(this.surveyIDToDelete);
+    if (this.surveyIDToDelete) {
+      this.store.dispatch(
+        surveyManagementActions.deleteSurveyRequest({
+          surveyId: this.surveyIDToDelete,
+        })
+      );
+      this.modalService.toggle({ show: false, id: 'deleteSurveyModal' });
+    }
+  }
+
+  toggleApproval(surveyId: number, surveyApproval: string) {
+    this.surveyManagementService.getSurveyById(surveyId).subscribe({
+      next: (response) => {
+        if (response.status) {
+          response.survey.Approve =
+            surveyApproval === 'Yes' ? 'Pending' : 'Yes';
+          this.updateSurvey(surveyId, response.survey);
+        }
+      },
+      error: (error) => this.toastr.error('Failed to fetch survey', error),
+    });
+  }
+
+  toggleStatus(surveyId: number, surveyApproval: string) {
+    this.surveyManagementService.getSurveyById(surveyId).subscribe({
+      next: (response) => {
+        if (response.status) {
+          response.survey.SurveyStatus =
+            surveyApproval === 'Open' ? 'Closed' : 'Open';
+          this.updateSurvey(surveyId, response.survey);
+        }
+      },
+      error: (error) => this.toastr.error('Failed to fetch survey', error),
+    });
+  }
+
+  updateSurvey(surveyId: number, updateData: any) {
+    this.surveyManagementService.updateSurvey(surveyId, updateData).subscribe({
+      next: (response) => {
+        if (response.status) {
+          this.toastr.success('Survey updated successfully:');
+          this.store.dispatch(surveyManagementActions.fetchSurveysRequest());
+        }
+      },
+      error: (error) => this.toastr.error('Error updating survey', error),
+    });
   }
 }

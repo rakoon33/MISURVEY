@@ -25,7 +25,10 @@ import {
   moduleSelectors,
 } from 'src/app/core/store/selectors';
 
-import { companyRoleManagementActions, moduleActions } from 'src/app/core/store/actions';
+import {
+  companyRoleManagementActions,
+  moduleActions,
+} from 'src/app/core/store/actions';
 
 import { CompanyRolesManagementService } from '../../core/services';
 
@@ -44,6 +47,8 @@ export class CompanyRolesManagementComponent implements OnInit {
   );
 
   modules$: Observable<{ ModuleID: number; name: string }[]>;
+
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +73,7 @@ export class CompanyRolesManagementComponent implements OnInit {
         CompanyRoleName: ['', Validators.required],
         CompanyRoleDescription: [''],
       }),
-      permissionsDataEdit: this.fb.array([])
+      permissionsDataEdit: this.fb.array([]),
     });
 
     this.userPermissions$ = combineLatest([
@@ -95,13 +100,13 @@ export class CompanyRolesManagementComponent implements OnInit {
     );
 
     this.modules$ = this.store.select(moduleSelectors.selectAllModules).pipe(
-      map(modules => modules.map(module => ({
-        ModuleID: module.ModuleID,
-        name: module.ModuleName
-      })))
+      map((modules) =>
+        modules.map((module) => ({
+          ModuleID: module.ModuleID,
+          name: module.ModuleName,
+        }))
+      )
     );
-
-      console.log(this.store.select(moduleSelectors.selectAllModules))
   }
 
   get permissionsData(): FormArray {
@@ -112,14 +117,14 @@ export class CompanyRolesManagementComponent implements OnInit {
     return this.roleFormEdit.get('permissionsDataEdit') as FormArray;
   }
 
-  
   ngOnInit() {
     this.store.dispatch(moduleActions.loadModulesRequest());
     this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
 
     // Subscribe to modules$ to dynamically create form groups
-    this.modules$.subscribe(modules => {
-      modules.forEach(module => {
+    const subscription = this.modules$.subscribe((modules) => {
+      this.permissionsData.clear(); // Clear existing form controls first
+      modules.forEach((module) => {
         const control = this.fb.group({
           ModuleID: module.ModuleID,
           CanView: false,
@@ -132,12 +137,12 @@ export class CompanyRolesManagementComponent implements OnInit {
         this.permissionsData.push(control);
       });
     });
+    this.subscriptions.add(subscription);
   }
 
   submitRole() {
     if (this.roleForm.valid) {
       const formData = this.roleForm.getRawValue();
-      console.log(formData);
       this.store.dispatch(
         companyRoleManagementActions.createCompanyRoleRequest(formData)
       );
@@ -151,77 +156,81 @@ export class CompanyRolesManagementComponent implements OnInit {
       this.toastr.error('Invalid role ID');
       return;
     }
-
     this.currentRoleId = roleId;
-  
+
     this.companyRolesManagementService.getOneCompanyRole(roleId).subscribe({
       next: (response) => {
         if (response.status) {
           this.populateFormEdit(response.data);
-          this.toggleModal(true, "editRoleModal");
+          this.toggleModal(true, 'editRoleModal');
         } else {
-          this.toastr.error('Failed to fetch role details: ' + response.message);
+          this.toastr.error(
+            'Failed to fetch role details: ' + response.message
+          );
         }
       },
       error: (err) => {
         this.toastr.error('Error fetching role details');
         console.error(err);
-      }
+      },
     });
   }
-  
 
   populateFormEdit(data: any) {
     this.roleFormEdit.patchValue({
       roleData: {
         CompanyRoleName: data.CompanyRoleName,
         CompanyRoleDescription: data.CompanyRoleDescription,
-      }
+      },
     });
     this.setPermissionsEdit(data.permissions);
   }
 
   setPermissionsEdit(permissions: any[]) {
-    const permissionsArray = this.permissionsDataEdit; // Using the getter here
+    this.permissionsDataEdit.clear();
+    const permissionsArray = this.permissionsDataEdit;
     permissionsArray.clear();
-    permissions.forEach(permission => {
-      permissionsArray.push(this.fb.group({
-        ModuleID: permission.ModuleID,
-        CanView: permission.CanView,
-        CanAdd: permission.CanAdd,
-        CanUpdate: permission.CanUpdate,
-        CanDelete: permission.CanDelete,
-        CanExport: permission.CanExport,
-        CanViewData: permission.CanViewData
-      }));
+    permissions.forEach((permission) => {
+      permissionsArray.push(
+        this.fb.group({
+          ModuleID: permission.ModuleID,
+          CanView: permission.CanView,
+          CanAdd: permission.CanAdd,
+          CanUpdate: permission.CanUpdate,
+          CanDelete: permission.CanDelete,
+          CanExport: permission.CanExport,
+          CanViewData: permission.CanViewData,
+        })
+      );
     });
   }
-  
+
   submitEditRole() {
     if (this.roleFormEdit.valid) {
-        if (typeof this.currentRoleId === 'number') {
-            const formData = this.roleFormEdit.getRawValue();
-            // Dispatch the update action with form data
-            this.store.dispatch(
-                companyRoleManagementActions.updateCompanyRoleRequest({
-                    roleId: this.currentRoleId,
-                    roleData: formData.roleData,
-                    permissionsData: formData.permissionsDataEdit
-                })
-            );
-            this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
+      if (typeof this.currentRoleId === 'number') {
+        const formData = this.roleFormEdit.getRawValue();
+        // Dispatch the update action with form data
+        this.store.dispatch(
+          companyRoleManagementActions.updateCompanyRoleRequest({
+            roleId: this.currentRoleId,
+            roleData: formData.roleData,
+            permissionsData: formData.permissionsDataEdit,
+          })
+        );
+        this.store.dispatch(
+          companyRoleManagementActions.loadCompanyRolesRequest()
+        );
 
-            this.toggleModal(false, "editRoleModal");
-            // Modal close and toast are now managed by the effects and reducers
-        } else {
-            this.toastr.error('Role ID is undefined');
-        }
+        this.toggleModal(false, 'editRoleModal');
+        // Modal close and toast are now managed by the effects and reducers
+      } else {
+        this.toastr.error('Role ID is undefined');
+      }
     } else {
-        this.toastr.error('Please fill all required fields.');
+      this.toastr.error('Please fill all required fields.');
     }
-}
-  
-  
+  }
+
   viewRole(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -235,4 +244,8 @@ export class CompanyRolesManagementComponent implements OnInit {
     this.modalService.toggle(action);
   }
 
+  ngOnDestroy() {
+    // Unsubscribe all subscriptions to prevent memory leaks
+    this.subscriptions.unsubscribe();
+  }
 }

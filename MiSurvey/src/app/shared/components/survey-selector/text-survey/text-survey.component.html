@@ -1,5 +1,5 @@
 <div class="survey-question-container-text">
-    <p>{{ question }}</p>
+    <p class="question-styles">{{ question }}</p>
     <div class="w-100">
       <input type="text" [(ngModel)]="textResponse" (ngModelChange)="updateResponse()" [style.borderColor]="buttonTextColor" placeholder="Your answer here...">
     </div>

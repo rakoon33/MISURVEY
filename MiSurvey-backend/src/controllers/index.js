@@ -10,6 +10,7 @@ const surveyResponseController = require("./surveyResponse.controller");
 const surveyQuestionController = require("./surveyQuestion.controller");
 const customerController = require("./customer.controller");
 const questionTemplateController = require("./questionTemplate.controller");
+const reportController = require("./report.controller");
 module.exports = {
   authController,
   companyController,
@@ -22,5 +23,6 @@ module.exports = {
   surveyResponseController,
   surveyQuestionController,
   customerController,
-  questionTemplateController
+  questionTemplateController,
+  reportController
 };
