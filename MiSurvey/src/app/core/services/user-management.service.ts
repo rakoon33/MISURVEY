@@ -54,4 +54,12 @@ export class UserManagementService {
       })
     );
   }
+
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${userId}`, { withCredentials: true })
+        .pipe(
+            map(response => response),
+            catchError(error => throwError(() => error))
+        );
+}
 }

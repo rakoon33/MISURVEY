@@ -11,7 +11,7 @@ const surveyResponseService = require("./surveyResponse.service");
 const customerService = require("./customer.service");
 const questionTemplateService = require("./questionTemplate.service");
 const userActivityLogService = require("./userActivityLog.service");
-
+const reportService = require("./report.service");
 module.exports = {
   authService,
   companyService,
@@ -25,6 +25,7 @@ module.exports = {
   surveyResponseService,
   customerService,
   questionTemplateService,
-  userActivityLogService
+  userActivityLogService,
+  reportService
   // ...other services
 };

@@ -1,9 +1,20 @@
+.configure-container {
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  height: 80vh; 
+  padding: 20px; 
+}
+
 .survey-container {
-  max-width: 100%;
+  width: 100%;
   margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
+  background-color: white !important;
+  border-bottom: 2px solid #ccc; /* A subtle bottom border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
 }
 
 .question-container {
@@ -52,12 +63,18 @@ p.config-text-style {
   display: inline-block;
   margin: 10px;
   padding: 20px 20px 0px 20px;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 10px;
   cursor: pointer;
   box-sizing: border-box;
+  font-size: 15px;
 }
 
+.survey-type {
+  font-size: 16px !important;
+  margin-top: 5px;
+  font-weight: 400;
+}
 .card:hover {
   background-color: #f0f0f0;
 }
@@ -149,19 +166,56 @@ input[type="text"]::placeholder {
   margin: 0;
 }
 ::ng-deep .emoticon-rating .emoticon-wrapper svg.icon.ng-star-inserted {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   display: inline;
   cursor: pointer;
   transition: transform 0.2s;
 }
 
+::ng-deep .emoticon-rating .emoticon-wrapper:nth-child(1) svg.icon.ng-star-inserted {
+  color: #932c33 !important; /* Green */
+  margin-right: 10px;
+}
+
+/* Targeting the second svg icon in each .thumb-wrapper */
+::ng-deep .emoticon-rating .emoticon-wrapper:nth-child(2) svg.icon.ng-star-inserted {
+  color: #ea3a4d !important; /* Red */
+  margin-right: 10px;
+}
+
+::ng-deep .emoticon-rating .emoticon-wrapper:nth-child(3) svg.icon.ng-star-inserted {
+  color: #eec01b !important; /* Red */
+  margin-right: 10px;
+}
+
+/* Targeting the second svg icon in each .thumb-wrapper */
+::ng-deep .emoticon-rating .emoticon-wrapper:nth-child(4) svg.icon.ng-star-inserted {
+  color: #0fc265 !important; /* Red */
+  margin-right: 10px;
+}
+
+::ng-deep .emoticon-rating .emoticon-wrapper:nth-child(5) svg.icon.ng-star-inserted {
+  color: #46b423 !important; /* Green */
+}
+
+
 ::ng-deep .thumb-rating .thumb-wrapper svg.icon.ng-star-inserted {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   display: inline;
   cursor: pointer;
   transition: transform 0.2s;
+}
+
+::ng-deep .thumb-rating .thumb-wrapper:nth-child(1) svg.icon.ng-star-inserted {
+  color: #46b423 !important; /* Green */
+  margin-right: 10px;
+}
+
+/* Targeting the second svg icon in each .thumb-wrapper */
+::ng-deep .thumb-rating .thumb-wrapper:nth-child(2) svg.icon.ng-star-inserted {
+  color: #f00 !important; /* Red */
 }
 
 .selected {
@@ -186,4 +240,59 @@ input[type="text"]::placeholder {
 
 .save-button-container button:hover {
   background-color: #0056b3; 
+}
+
+.stars {
+  margin-top: 10px;
+  color: #fecf1b;
+}
+
+
+
+
+.save-button-container button {
+  align-items: center;
+  background-color: #0A66C2;
+  border: 0;
+  border-radius: 100px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 18px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 22px;
+  max-width: 480px;
+  min-height: 45px;
+  min-width: 150px;
+  width: 30%;
+  overflow: hidden;
+  padding: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: center;
+  touch-action: manipulation;
+  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  
+}
+
+.save-button-container:hover button,
+.save-button-container:focus button { 
+  background-color: #16437E;
+  color: #ffffff;
+}
+
+.save-button-container:active button {
+  background: #09223b;
+  color: rgb(255, 255, 255, .7);
+}
+
+.save-button-container:disabled button{ 
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, .08);
+  color: rgba(0, 0, 0, .3);
 }

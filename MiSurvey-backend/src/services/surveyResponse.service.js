@@ -11,23 +11,33 @@ const createSurveyResponses = async (data) => {
   try {
     let customerID = null;
 
-    // Check if customer information is provided
-    if (data.FullName && data.Email) {
-      // Check for existing customer first
+    // Use 'Anonymous' if FullName is empty or not provided
+    const fullName = data.FullName && data.FullName.trim() ? data.FullName : `Anonymous_${Date.now()}`;
+
+    // Always check for or create a customer regardless of whether email is provided
+    if (data.Email) {
+      // Check for existing customer by email first
       const existingCustomer = await Customer.findOne({
-        where: { Email: data.Email } // Assumed unique
+        where: { Email: data.Email } // Email assumed unique
       });
 
       if (existingCustomer) {
         customerID = existingCustomer.CustomerID;
       } else {
-        // Create new customer if not found
-        const customerResult = await createCustomer(data);
+        // Create new customer with provided email
+        const customerResult = await createCustomer({ ...data, FullName: fullName });
         if (!customerResult.status) {
           throw new Error(customerResult.message);
         }
         customerID = customerResult.CustomerID;
       }
+    } else {
+      // Create new customer with 'Anonymous' and no email
+      const customerResult = await createCustomer({ Email: '', FullName: fullName });
+      if (!customerResult.status) {
+        throw new Error(customerResult.message);
+      }
+      customerID = customerResult.CustomerID;
     }
 
     // Process each survey response
@@ -36,9 +46,7 @@ const createSurveyResponses = async (data) => {
       const responseWithCustomer = { ...response, CustomerID: customerID };
 
       // Insert the survey response
-      const insertedResponse = await insertIntoSurveyResponses(
-        responseWithCustomer
-      );
+      const insertedResponse = await insertIntoSurveyResponses(responseWithCustomer);
 
       // Evaluate the response
       const isBadResponse = await evaluateResponse(insertedResponse);
@@ -53,6 +61,7 @@ const createSurveyResponses = async (data) => {
     return { status: false, message: error.message, error: error.toString() };
   }
 };
+
 
 const evaluateResponse = async (response) => {
   const question = await SurveyQuestion.findByPk(response.QuestionID, {
@@ -97,14 +106,6 @@ const evaluateResponse = async (response) => {
   }
 
   return isBadResponse;
-};
-
-// Helper function to determine negativity in text responses
-const isNegativeText = (textResponse) => {
-  // Placeholder for actual text analysis logic
-  // For now, simply returns false
-  // TODO: Implement actual sentiment analysis to determine negativity
-  return false;
 };
 
 

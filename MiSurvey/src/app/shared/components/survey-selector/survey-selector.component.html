@@ -2,9 +2,6 @@
   class="survey-container"
   [style.--custom-border-top-color]="borderTopColor"
 >
-  <h3 [ngStyle]="selectedImage ? { 'background-color': '#f6f6f6' } : {}">
-    {{ title === "" ? "Dear Customer!" : title }}
-  </h3>
   <img
     *ngIf="selectedImage"
     [src]="selectedImage"

@@ -214,4 +214,13 @@ export const surveyManagementReducer = createReducer(
       return state;
     }
   }),
+  on(surveyManagementActions.deleteSurveySuccess, (state, { surveyId }) => ({
+    ...state,
+    surveys: state.surveys.filter(survey => survey.SurveyID !== surveyId)
+  })),
+  on(surveyManagementActions.deleteSurveyFailure, (state, { error }) => ({
+    ...state,
+    error: error
+  }))
+
 );

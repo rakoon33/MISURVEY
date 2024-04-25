@@ -5,12 +5,7 @@
     justify-content: center;
     flex: 1;
   
-    p {
-      font-size: 18px;
-      color: #333; // Example text color
-      text-align: center;
-      margin-bottom: 15px;
-    }
+
   
     img {
       max-width: 200px;
@@ -19,3 +14,12 @@
     }
   }
   
+
+  .message-styles {
+      font-size: 20px;
+      font-weight: 400;
+      color: #333; // Example text color
+      text-align: center;
+      margin: 20px 0px 10px 0px;
+
+  }

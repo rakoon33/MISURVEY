@@ -115,15 +115,14 @@ body {
   padding-bottom: 0.25em;
 }
 
-.mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: #f6f6f6 !important;
-}
-
 .send-emails-button:disabled {
     color: rgba(0, 0, 0, 0.38); /* Màu chữ nhạt hơn */
     background-color: rgba(0, 0, 0, 0.12); /* Màu nền nhạt hơn */
     cursor: not-allowed; /* Thay đổi con trỏ để người dùng biết không thể nhấp */
   }
   
+
+  
+
 
   

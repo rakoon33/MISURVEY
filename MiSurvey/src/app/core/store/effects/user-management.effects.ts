@@ -61,12 +61,11 @@ export class UserManagementEffects {
     )
   );
 
-  
   updateUser$ = createEffect(() =>
     this.actions$.pipe(
       ofType(userManagementActions.updateUserRequest),
       switchMap((action) =>
-      // store.store.select(routerSelector.selectCurrentRoute) to get page=?&pageSize=? in route to get list users again when update successful
+        // store.store.select(routerSelector.selectCurrentRoute) to get page=?&pageSize=? in route to get list users again when update successful
         this.store.select(routerSelector.selectCurrentRoute).pipe(
           take(1), // Take only the first emitted value
           switchMap((route) => {
@@ -106,41 +105,69 @@ export class UserManagementEffects {
   );
 
   createUser$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(userManagementActions.createUserRequest),
-    switchMap((action) => 
-      this.store.select(routerSelector.selectCurrentRoute).pipe(
-        take(1), // Take only the first emitted value
-        switchMap(route => {
-          const page = route.root.queryParams['page'] || '1'; // Default page is 1 if not available
-          const pageSize = route.root.queryParams['pageSize'] || '10'; // Default pageSize is 10 if not available
+    this.actions$.pipe(
+      ofType(userManagementActions.createUserRequest),
+      switchMap((action) =>
+        this.store.select(routerSelector.selectCurrentRoute).pipe(
+          take(1), // Take only the first emitted value
+          switchMap((route) => {
+            const page = route.root.queryParams['page'] || '1'; // Default page is 1 if not available
+            const pageSize = route.root.queryParams['pageSize'] || '10'; // Default pageSize is 10 if not available
 
-          return this.userManagementService.createUser(action.userData).pipe(
-            map((response) => {
-              if (response.status) {
-                this.toastrService.success('User created successfully');
-                this.store.dispatch(
-                  userManagementActions.loadUsersRequest({
-                    page: Number(page),
-                    pageSize: Number(pageSize),
-                  })
-                );
-                return userManagementActions.createUserSuccess(response.userID);
-              } else {
-                this.toastrService.error(response.message || 'Creation failed');
-                return userManagementActions.createUserFailure();
-              }
-            }),
-            catchError((error) => {
-              this.toastrService.error('An error occurred');
-              return of(userManagementActions.createUserFailure());
-            })
-          )
-        })
+            return this.userManagementService.createUser(action.userData).pipe(
+              map((response) => {
+                if (response.status) {
+                  this.toastrService.success('User created successfully');
+                  this.store.dispatch(
+                    userManagementActions.loadUsersRequest({
+                      page: Number(page),
+                      pageSize: Number(pageSize),
+                    })
+                  );
+                  return userManagementActions.createUserSuccess(
+                    response.userID
+                  );
+                } else {
+                  this.toastrService.error(
+                    response.message || 'Creation failed'
+                  );
+                  return userManagementActions.createUserFailure();
+                }
+              }),
+              catchError((error) => {
+                this.toastrService.error('An error occurred');
+                return of(userManagementActions.createUserFailure());
+              })
+            );
+          })
+        )
       )
     )
-  )
-);
+  );
+
+  deleteUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(userManagementActions.deleteUserRequest),
+      switchMap((action) =>
+        this.userManagementService.deleteUser(action.userId).pipe(
+          map((response) => {
+            if(response.status) {
+              this.toastrService.success('User deleted successfully');
+              return userManagementActions.deleteUserSuccess({ userId: action.userId });
+            }
+            else {
+              this.toastrService.error(response.message);
+              return userManagementActions.deleteUserFailure();
+            }
+          }),
+          catchError((error) => {
+            this.toastrService.error('Failed to delete user');
+            return of(userManagementActions.deleteUserFailure());
+          })
+        )
+      )
+    )
+  );
 
   constructor(
     private actions$: Actions,

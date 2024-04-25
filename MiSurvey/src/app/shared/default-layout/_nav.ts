@@ -25,7 +25,7 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-building' }
   },
   {
-    name: 'Company Role Management',
+    name: 'Role Management',
     url: '/company-role-management',
     iconComponent: { name: 'cil-contact' }
   },

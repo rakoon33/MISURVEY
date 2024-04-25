@@ -7,7 +7,7 @@ const {
   IndividualPermission,
   RolePermission,
   Module,
-  UserActivityLog,
+  UserActivityLog,,
   Survey,
   SurveyDetail,
   SurveyReport,
@@ -15,8 +15,9 @@ const {
   Notification,
   SurveyQuestion
 } = require("../models");
+const companyService = require("../services");
 const db = require("../config/database");
-const {createLogActivity} = require ("./userActivityLog.service");
+const { createLogActivity } = require("./userActivityLog.service");
 
 const getUserData = async (userId, userRole) => {
   try {
@@ -95,7 +96,13 @@ const createUser = async (userData, udata) => {
   try {
     userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); // Hash password before saving
     const newUser = await User.create(userData);
-    await createLogActivity(udata.id, 'INSERT', `User created with ID: ${newUser.UserID}`, 'Users', udata.companyID);
+    await createLogActivity(
+      udata.id,
+      "INSERT",
+      `User created with ID: ${newUser.UserID}`,
+      "Users",
+      udata.companyID
+    );
     return {
       status: true,
       message: "User created successfully",
@@ -128,7 +135,13 @@ const updateUser = async (UserID, userData, udata) => {
     }
 
     const updatedUser = await User.findOne({ where: { UserID: UserID } });
-    await createLogActivity(udata.id, 'UPDATE', `User updated with ID: ${UserID}`, 'Users', udata.companyID);
+    await createLogActivity(
+      udata.id,
+      "UPDATE",
+      `User updated with ID: ${UserID}`,
+      "Users",
+      udata.companyID
+    );
 
     return {
       status: true,
@@ -145,35 +158,6 @@ const updateUser = async (UserID, userData, udata) => {
     };
   }
 };
-
-/*const deleteUser = async (UserID) => {
-  try {
-    const deletedUser = await User.findOne({ where: { UserID: UserID } });
-
-    if (!deletedUser) {
-      return {
-        status: false,
-        message: "User not found",
-      };
-    }
-
-    await User.destroy({ where: { UserID: UserID } });
-
-    return {
-      status: true,
-      message: "User deleted successfully",
-      data: {
-        user: deletedUser,
-      },
-    };
-  } catch (error) {
-    return {
-      status: false,
-      message: error.message || "User deletion failed",
-      error: error?.toString(),
-    };
-  }
-};*/
 
 const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
@@ -258,7 +242,13 @@ const deleteUser = async (UserID, udata) => {
     // Commit all deletions if successful
     if (deletedUser) {
       await transaction.commit();
-      await createLogActivity(udata.id, 'DELETE', `User deleted with ID: ${UserID}`, 'Users', udata.companyID);
+      await createLogActivity(
+        udata.id,
+        "DELETE",
+        `User deleted with ID: ${UserID}`,
+        "Users",
+        udata.companyID
+      );
       return {
         status: true,
         message: "User and all related records deleted successfully",
