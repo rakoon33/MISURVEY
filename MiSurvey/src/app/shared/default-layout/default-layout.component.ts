@@ -17,7 +17,7 @@ export class DefaultLayoutComponent implements OnInit {
     this.store.select(userSelector.selectCurrentUser).subscribe((user) => {
       if (user && user.UserRole === 'SuperAdmin') {
         // Lọc ra các mục 'Survey Management' và 'Company Role Management' nếu người dùng là 'SuperAdmin'
-        this.navItems = originalNavItems.filter(item => item.name !== 'Survey Management' && item.name !== 'Company Role Management');
+        this.navItems = originalNavItems.filter(item => item.name !== 'Survey Management' && item.name !== 'Role Management');
       } else {
         // Nếu người dùng không phải là 'SuperAdmin', hiển thị tất cả mục
         this.navItems = originalNavItems.filter(item => item.name !== 'Question Management');;

@@ -19,4 +19,10 @@ router.get(
   reportController.getSurveyTypeUsageController
 );
 
+router.get(
+  "/survey-count",
+  authMiddleware.tokenVerification,
+  reportController.getSurveyCountByDateRangeController
+);
+
 module.exports = router;
