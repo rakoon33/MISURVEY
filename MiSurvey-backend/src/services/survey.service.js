@@ -32,7 +32,6 @@ const createSurvey = async (data, udata) => {
   }
 
   const transaction = await sequelize.transaction();
-
   try {
     // Create the survey
     const survey = await Survey.create(

@@ -7,7 +7,13 @@ const {
   IndividualPermission,
   RolePermission,
   Module,
-  UserActivityLog
+  UserActivityLog,
+  Survey,
+  SurveyDetail,
+  SurveyReport,
+  UserPackage,
+  Notification,
+  SurveyQuestion
 } = require("../models");
 const db = require("../config/database");
 const {createLogActivity} = require ("./userActivityLog.service");
@@ -172,7 +178,52 @@ const updateUser = async (UserID, userData, udata) => {
 const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
   try {
-    // Find companies administered by the given admin ID
+    // Find and delete all notifications for the user
+    await Notification.destroy({
+      where: { UserID: UserID },
+      transaction
+    });
+
+    // Find and delete all survey reports created by the user
+    await SurveyReport.destroy({
+      where: { UserID: UserID },
+      transaction
+    });
+
+    // Find all surveys created by the user
+    const surveys = await Survey.findAll({
+      where: { UserID: UserID },
+      transaction
+    });
+
+    // For each survey, delete survey details and survey questions
+    for (const survey of surveys) {
+      // Delete survey details related to the survey
+      await SurveyDetail.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+
+      // Delete survey questions related to the survey
+      await SurveyQuestion.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+
+      // Now delete the survey
+      await Survey.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+    }
+
+    // Find and delete all user packages
+    await UserPackage.destroy({
+      where: { UserID: UserID },
+      transaction
+    });
+
+    // Handle company and company-related deletions
     const companies = await Company.findAll({
       where: { AdminID: UserID },
       transaction
@@ -198,6 +249,7 @@ const deleteUser = async (UserID, udata) => {
       });
     }
 
+    // Delete the user
     const deletedUser = await User.destroy({
       where: { UserID: UserID },
       transaction
@@ -219,11 +271,12 @@ const deleteUser = async (UserID, udata) => {
     await transaction.rollback();
     return {
       status: false,
-      message: "Failed to delete companies and related data.",
+      message: "Failed to delete user and related data.",
       error: error.toString()
     };
   }
 };
+
 
 
 
