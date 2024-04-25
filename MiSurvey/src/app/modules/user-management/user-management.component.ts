@@ -362,6 +362,8 @@ export class UserManagementComponent implements OnInit {
             userData: formData,
           })
         );
+
+         this.modalService.toggle({ show: false, id: 'addUserModal' });
       } else {
         // Xử lý cho các vai trò người dùng khác
         this.store.dispatch(
@@ -668,6 +670,22 @@ export class UserManagementComponent implements OnInit {
   deleteAllPermissionsModal() {
     this.modalService.toggle({ show: true, id: 'deleteIndividualPermissions' });
   }
+
+  openDeleteUserModal(userId: number|undefined) {
+    this.currentSelectedUserId = userId;
+    this.modalService.toggle({ show: true, id: 'deleteUserModal' });
+  }
+
+  deleteUser() {
+    if (this.currentSelectedUserId) {
+      this.store.dispatch(userManagementActions.deleteUserRequest({ userId: this.currentSelectedUserId }));
+      this.modalService.toggle({ show: false, id: 'deleteUserModal' });
+    } else {
+      this.toastr.error('User ID is not available');
+
+    }
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

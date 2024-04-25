@@ -13,7 +13,7 @@ const {
   createSurveyQuestion,
   updateSurveyQuestion,
 } = require("./surveyQuestion.service");
-const {createLogActivity} = require ("./userActivityLog.service");
+const { createLogActivity } = require("./userActivityLog.service");
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 let nanoid;
@@ -47,7 +47,7 @@ const createSurvey = async (data, udata) => {
         Customizations: data.Customizations,
         CreatedBy: data.CreatedBy,
         Approve: data.Approve,
-        SurveyStatus: data.SurveyStatus
+        SurveyStatus: data.SurveyStatus,
       },
       { transaction }
     );
@@ -66,7 +66,13 @@ const createSurvey = async (data, udata) => {
       questionData.SurveyID = survey.SurveyID;
       await createSurveyQuestion(questionData, transaction);
     }
-    await createLogActivity(udata.id, 'INSERT', `Survey created with ID: ${survey.SurveyID}`, 'Surveys', udata.companyID);
+    await createLogActivity(
+      udata.id,
+      "INSERT",
+      `Survey created with ID: ${survey.SurveyID}`,
+      "Surveys",
+      udata.companyID
+    );
     await transaction.commit();
     return { status: true, message: "Survey created successfully", survey };
   } catch (error) {
@@ -75,16 +81,18 @@ const createSurvey = async (data, udata) => {
   }
 };
 
-const sendEmail = async (surveyID, emailData, companyID) => {
+const sendEmail = async (surveyID, emailData, companyID, sendBy) => {
   console.log(surveyID);
   console.log(emailData);
   try {
     const survey = await Survey.findOne({
       where: { CompanyID: companyID },
-      include: [{
-        model: Company,
-        as: 'Company'
-      }]
+      include: [
+        {
+          model: Company,
+          as: "Company",
+        },
+      ],
     });
 
     if (!survey) {
@@ -117,8 +125,8 @@ const sendEmail = async (surveyID, emailData, companyID) => {
     const recipientCount = emailData.split(",").length;
     await SurveyDetail.create({
       SurveyID: surveyID,
-      SentBy: survey.UserID, // Assuming Survey model has UserID for who created it
-      SentAt: new Date(), // This could also default at DB level
+      SentBy: sendBy,
+      SentAt: new Date(),
       RecipientCount: recipientCount,
       Recipients: emailData,
       CompanyID: companyID,
@@ -268,7 +276,13 @@ const updateSurvey = async (surveyID, updateData, udata) => {
         // Create new question
         questionData.SurveyID = surveyID;
         await createSurveyQuestion(questionData, transaction);
-        await createLogActivity(udata.id, 'UPDATE', `Survey updated with ID: ${surveyID}`, 'Surveys', udata.companyID);
+        await createLogActivity(
+          udata.id,
+          "UPDATE",
+          `Survey updated with ID: ${surveyID}`,
+          "Surveys",
+          udata.companyID
+        );
       }
     }
 
@@ -292,29 +306,41 @@ const deleteSurvey = async (surveyID, udata) => {
     // First, delete responses linked to each question in the survey
     const questions = await SurveyQuestion.findAll({
       where: { SurveyID: surveyID },
-      transaction
+      transaction,
     });
 
     for (const question of questions) {
       await SurveyResponse.destroy({
         where: { QuestionID: question.QuestionID },
-        transaction
+        transaction,
       });
     }
 
     // Now, delete the questions
     await SurveyQuestion.destroy({
       where: { SurveyID: surveyID },
-      transaction
+      transaction,
+    });
+
+    // Now, delete the questions
+    await SurveyDetail.destroy({
+      where: { SurveyID: surveyID },
+      transaction,
     });
 
     // Finally, delete the survey
     await Survey.destroy({
       where: { SurveyID: surveyID },
-      transaction
+      transaction,
     });
 
-    await createLogActivity(udata.id, 'DELETE', `Survey deleted with ID: ${surveyID}`, 'Surveys', udata.companyID);
+    await createLogActivity(
+      udata.id,
+      "DELETE",
+      `Survey deleted with ID: ${surveyID}`,
+      "Surveys",
+      udata.companyID
+    );
     await transaction.commit();
     return { status: true, message: "Survey deleted successfully" };
   } catch (error) {

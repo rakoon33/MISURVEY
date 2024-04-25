@@ -17,6 +17,10 @@ enum UserManagementActionTypes {
   CREATE_USER_REQUEST = '[User Management] Create User Request',
   CREATE_USER_SUCCESS = '[User Management] Create User Success',
   CREATE_USER_FAILURE = '[User Management] Create User Failure',
+
+  DELETE_USER_REQUEST = '[User Management] Delete User Request',
+  DELETE_USER_SUCCESS = '[User Management] Delete User Success',
+  DELETE_USER_FAILURE = '[User Management] Delete User Failure',
 }
 
 export const loadUsersRequest = createAction(
@@ -70,6 +74,20 @@ export const updateUserSuccess = createAction(
 export const updateUserFailure = createAction(
   UserManagementActionTypes.UPDATE_USER_FAILURE,
 );
+export const deleteUserRequest = createAction(
+  UserManagementActionTypes.DELETE_USER_REQUEST,
+  props<{ userId: number }>()
+);
+
+export const deleteUserSuccess = createAction(
+  UserManagementActionTypes.DELETE_USER_SUCCESS,
+  props<{ userId: number }>()
+);
+
+export const deleteUserFailure = createAction(
+  UserManagementActionTypes.DELETE_USER_FAILURE
+);
+
 
 export type UserManagementActions =
   | ActionType<typeof loadUsersRequest>

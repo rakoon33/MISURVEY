@@ -6,7 +6,10 @@
 </div>
 
 <div class="survey-container">
-  <div class="survey-card" *ngFor="let survey of surveys$ | async">
+  <div class="survey-card invite-method" *ngFor="let survey of surveys$ | async">
+    <div class="invite-label" [ngClass]="{'email-invite': survey.InvitationMethod === 'Email', 'link-invite': survey.InvitationMethod === 'Link'}">
+      {{ survey.InvitationMethod }}
+    </div>
     <c-dropdown>
       <button class="btn-survey ellipsis" cButton cDropdownToggle>
         &#x2026;
