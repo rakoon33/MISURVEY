@@ -34,6 +34,8 @@ const surveyQuestionRoute = require('./src/routes/surveyQuestion.route.js');
 const customerRoute = require('./src/routes/customer.route.js');
 const questionTemplateRoute = require('./src/routes/questionTemplate.route.js');
 const reportRoute = require('./src/routes/report.route.js');
+const userActivityLogRoute = require('./src/routes/userActivityLog.route.js');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -52,6 +54,7 @@ app.use('/api/questions', surveyQuestionRoute);
 app.use('/api/customers', customerRoute);
 app.use('/api/questionTemplate', questionTemplateRoute);
 app.use('/api/dashboard', reportRoute);
+app.use('/api/useractivitylogs', userActivityLogRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

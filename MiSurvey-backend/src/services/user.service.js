@@ -7,7 +7,7 @@ const {
   IndividualPermission,
   RolePermission,
   Module,
-  UserActivityLog,,
+  UserActivityLog,
   Survey,
   SurveyDetail,
   SurveyReport,
