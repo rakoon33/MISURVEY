@@ -130,67 +130,128 @@ const getDashboardData = async (userData) => {
     }
 };
 
-
-
 const getSurveyTypeUsage = async (startDate, endDate, userData) => {
     try {
-        // Assuming SurveyQuestion has a CreatedAt or you filter through Survey
-        const surveyTypeUsage = await SurveyType.findAll({
+        let startDateParsed = new Date(startDate);
+        let endDateParsed = new Date(endDate);
+        if (isNaN(startDateParsed.getTime()) || isNaN(endDateParsed.getTime())) {
+            throw new Error("Invalid date format provided.");
+        }
+
+        console.log("User role: ", userData.role); // Log to check what role is being processed
+
+        if (userData.role === "SuperAdmin") {
+            // Truy vấn cho SuperAdmin không cần bộ lọc CompanyID
+            return await getSurveyTypeUsageForSuperAdmin(startDateParsed, endDateParsed);
+        } else {
+            // Truy vấn cho các roles khác, áp dụng bộ lọc CompanyID
+            return await getSurveyTypeUsageForNonSuperAdmin(startDateParsed, endDateParsed, userData.companyID);
+        }
+    } catch (error) {
+        console.error("Error in getSurveyTypeUsage: ", error);
+        return { status: false, message: error.message };
+    }
+};
+
+
+const getSurveyTypeUsageForSuperAdmin = async (startDate, endDate) => {
+    const surveyTypeUsage = await SurveyType.findAll({
+        include: [{
+            model: SurveyQuestion,
+            as: 'SurveyQuestions',
+            attributes: [],
             include: [{
-                model: SurveyQuestion,
-                as: 'SurveyQuestions',
-                attributes: [], // No additional attributes from SurveyQuestions
-                include: [{
-                    model: Survey,
-                    as: 'Survey', // Make sure this alias is correct
-                    where: {
-                        CreatedAt: { [Op.between]: [new Date(startDate), new Date(endDate)] }
-                    },
-                    attributes: []
-                }]
-            }],
+                model: Survey,
+                as: 'Survey',
+                where: {
+                    CreatedAt: { [Op.between]: [startDate, endDate] }
+                },
+                attributes: []
+            }]
+        }],
+        attributes: [
+            'SurveyTypeName',
+            [sequelize.fn('COUNT', sequelize.col('SurveyQuestions.QuestionID')), 'QuestionCount']
+        ],
+        group: ['SurveyTypeID', 'SurveyTypeName'],
+        raw: true
+    });
+
+    return {
+        status: true,
+        data: surveyTypeUsage
+    };
+};
+
+const getSurveyTypeUsageForNonSuperAdmin = async (startDate, endDate, companyID) => {
+    const surveyTypeUsage = await SurveyType.findAll({
+        include: [{
+            model: SurveyQuestion,
+            as: 'SurveyQuestions',
+            attributes: [],
+            include: [{
+                model: Survey,
+                as: 'Survey',
+                where: {
+                    CreatedAt: { [Op.between]: [startDate, endDate] },
+                    CompanyID: companyID 
+                },
+                attributes: []
+            }]
+        }],
+        attributes: [
+            'SurveyTypeName',
+            [sequelize.fn('COUNT', sequelize.col('SurveyQuestions.QuestionID')), 'QuestionCount']
+        ],
+        group: ['SurveyTypeID', 'SurveyTypeName'],
+        raw: true
+    });
+
+    return {
+        status: true,
+        data: surveyTypeUsage
+    };
+};
+const getSurveyCountByDateRange = async (startDate, endDate, userData) => {
+    try {
+        let startDateParsed = new Date(startDate);
+        let endDateParsed = new Date(endDate);
+        if (isNaN(startDateParsed.getTime()) || isNaN(endDateParsed.getTime())) {
+            throw new Error("Invalid date format provided.");
+        }
+
+        let whereCondition = {
+            CreatedAt: {
+                [Op.between]: [startDateParsed, endDateParsed]
+            }
+        };
+
+        // Apply the company filter for non-SuperAdmin users
+        if (userData.role !== "SuperAdmin") {
+            whereCondition.CompanyID = userData.companyID;
+        }
+
+        const dailySurveyCount = await Survey.findAll({
+            where: whereCondition,
             attributes: [
-                'SurveyTypeName',
-                [sequelize.fn('COUNT', sequelize.col('SurveyQuestions.QuestionID')), 'QuestionCount']
+                [sequelize.fn('date', sequelize.col('CreatedAt')), 'date'],
+                [sequelize.fn('COUNT', sequelize.col('SurveyID')), 'count']
             ],
-            group: ['SurveyTypeID', 'SurveyTypeName'],
+            group: [sequelize.fn('date', sequelize.col('CreatedAt'))],
             raw: true
         });
 
         return {
             status: true,
-            data: surveyTypeUsage
+            data: dailySurveyCount,
+            message: "Survey count fetched successfully for each day"
         };
     } catch (error) {
+        console.error('Error fetching daily survey count:', error);
         return { status: false, message: error.message };
     }
 };
 
-
-const getSurveyCountByDateRange = async (startDate, endDate, userData) => {
-    try {
-        const surveyCount = await Survey.count({
-            where: {
-                CreatedAt: {
-                    [Op.between]: [
-                        new Date(startDate).toISOString(),
-                        new Date(endDate).toISOString()
-                    ]
-                }
-            },
-        
-        });
-
-        return {
-            status: true,
-            data: { surveyCount },
-            message: "Survey count fetched successfully"
-        };
-    } catch (error) {
-        console.error('Error fetching survey count:', error);
-        return { status: false, message: error.message };
-    }
-};
 
 module.exports = {
     getDashboardData,

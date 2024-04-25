@@ -71,3 +71,42 @@
       </c-card>
     </c-col>
   </c-row>
+
+
+
+<c-row>
+  <c-col xs="12">
+  </c-col>
+  <c-col xs="12" lg="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        Activity Overview
+      </c-card-header>
+      <c-card-body>
+        <c-chart type="line" [data]="chartBarData2"></c-chart>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col xs="12" lg="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        Survey Type Usage
+      </c-card-header>
+      <c-card-body>
+        <c-chart type="bar" [data]="surveyTypeUsageData"></c-chart>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+<c-row>
+  <c-col xs="12" lg="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        Survey Count Over Time
+      </c-card-header>
+      <c-card-body>
+        <c-chart type="line" [data]="surveyCountData"></c-chart>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

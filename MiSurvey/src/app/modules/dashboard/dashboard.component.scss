@@ -6,7 +6,7 @@
   }
 }
 
-.card-body {
+.card-body-overview {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,4 +22,32 @@ c-card {
   border: 0px solid grey !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   margin-right: 20px;
+}
+
+
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust space between elements */
+}
+
+.input-date {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn-update {
+  padding: 0.5rem 1rem;
+  background-color: #0A66C2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-update:hover {
+  background-color: #004494;
 }

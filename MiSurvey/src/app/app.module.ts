@@ -102,6 +102,9 @@ export function playerFactory() {
 import { CustomerSurveyComponent } from './modules/customer-survey/customer-survey.component';
 
 
+import { ChartjsModule } from '@coreui/angular-chartjs';
+
+
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
@@ -150,6 +153,7 @@ const APP_CONTAINERS = [
     ShareModule,
     MatDialogModule,
     CommonModule,
+    ChartjsModule,
     LottieModule.forRoot({ player: playerFactory }),
     ToastrModule.forRoot({
       positionClass: 'toast-top-right',
@@ -194,7 +198,7 @@ const APP_CONTAINERS = [
       useClass: HashLocationStrategy,
     },
     IconSetService,
-    Title,
+    Title
   ],
   bootstrap: [AppComponent],
 })

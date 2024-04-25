@@ -36,19 +36,6 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-spreadsheet' }
   },
   {
-    name: 'Components',
-    title: true
-  },
-  {
-    name: 'Charts',
-    url: '/charts',
-    iconComponent: { name: 'cil-chart-pie' }
-  },
-  {
-    title: true,
-    name: 'Extras'
-  },
-  {
     title: true,
     name: 'Links',
     class: 'py-0'
