@@ -13,7 +13,8 @@ const {
   SurveyReport,
   UserPackage,
   Notification,
-  SurveyQuestion
+  SurveyQuestion,
+  SurveyResponse
 } = require("../models");
 const db = require("../config/database");
 const {createLogActivity} = require ("./userActivityLog.service");
@@ -146,34 +147,6 @@ const updateUser = async (UserID, userData, udata) => {
   }
 };
 
-/*const deleteUser = async (UserID) => {
-  try {
-    const deletedUser = await User.findOne({ where: { UserID: UserID } });
-
-    if (!deletedUser) {
-      return {
-        status: false,
-        message: "User not found",
-      };
-    }
-
-    await User.destroy({ where: { UserID: UserID } });
-
-    return {
-      status: true,
-      message: "User deleted successfully",
-      data: {
-        user: deletedUser,
-      },
-    };
-  } catch (error) {
-    return {
-      status: false,
-      message: error.message || "User deletion failed",
-      error: error?.toString(),
-    };
-  }
-};*/
 
 const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
@@ -200,6 +173,11 @@ const deleteUser = async (UserID, udata) => {
     for (const survey of surveys) {
       // Delete survey details related to the survey
       await SurveyDetail.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+
+      await SurveyResponse.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction
       });
