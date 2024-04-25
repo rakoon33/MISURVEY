@@ -8,6 +8,8 @@ import { surveyManagementSelector } from 'src/app/core/store/selectors';
 import { SurveyManagementService } from 'src/app/core/services';
 import { ModalService } from '@coreui/angular';
 import { FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-survey-management',
@@ -23,11 +25,14 @@ export class SurveyManagementComponent implements OnInit {
   currentQuestionIndex: number = 0;
   surveyIDToDelete: number | undefined;
 
+  qrVisible: boolean = false;
+
   constructor(
     private router: Router,
     private store: Store,
     private surveyManagementService: SurveyManagementService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private toastr: ToastrService
   ) {
     this.surveys$ = this.store.select(
       surveyManagementSelector.selectAllSurveys
@@ -106,48 +111,63 @@ export class SurveyManagementComponent implements OnInit {
   }
 
   editSurvey(surveyId: number) {
-    this.router.navigate(['/survey-management/survey'], { queryParams: { id: surveyId } });
+    this.router.navigate(['/survey-management/survey'], {
+      queryParams: { id: surveyId },
+    });
   }
 
-  OpenDeleteSurvey(surveyId: number) {
+  openDeleteSurvey(surveyId: number) {
     this.surveyIDToDelete = surveyId;
     this.modalService.toggle({ show: true, id: 'deleteSurveyModal' });
   }
 
   deleteSurvey() {
-    console.log(this.surveyIDToDelete)
-    if(this.surveyIDToDelete) {
-
-      this.store.dispatch(surveyManagementActions.deleteSurveyRequest({ surveyId: this.surveyIDToDelete }));
+    console.log(this.surveyIDToDelete);
+    if (this.surveyIDToDelete) {
+      this.store.dispatch(
+        surveyManagementActions.deleteSurveyRequest({
+          surveyId: this.surveyIDToDelete,
+        })
+      );
       this.modalService.toggle({ show: false, id: 'deleteSurveyModal' });
     }
   }
 
-  approveSurvey(surveyId: number, approve: boolean) {
-    const updateData = { Approve: approve ? 'Yes' : 'No' };
-    this.surveyManagementService.updateSurvey(surveyId, updateData).subscribe({
+  toggleApproval(surveyId: number, surveyApproval: string) {
+    this.surveyManagementService.getSurveyById(surveyId).subscribe({
       next: (response) => {
-        console.log('Survey updated successfully:', response);
-        alert(`Survey has been ${approve ? 'approved' : 'unapproved'}.`);
+        if (response.status) {
+          response.survey.Approve =
+            surveyApproval === 'Yes' ? 'Pending' : 'Yes';
+          this.updateSurvey(surveyId, response.survey);
+        }
       },
-      error: (error) => {
-        console.error('Error updating survey:', error);
-        alert('Failed to update survey status.');
-      }
+      error: (error) => this.toastr.error('Failed to fetch survey', error),
     });
   }
 
-  toggleSurveyStatus(surveyId: number, isOpen: boolean) {
-    const updateData = { SurveyStatus: isOpen ? 'Open' : 'Close' };
+  toggleStatus(surveyId: number, surveyApproval: string) {
+    this.surveyManagementService.getSurveyById(surveyId).subscribe({
+      next: (response) => {
+        if (response.status) {
+          response.survey.SurveyStatus =
+            surveyApproval === 'Open' ? 'Closed' : 'Open';
+          this.updateSurvey(surveyId, response.survey);
+        }
+      },
+      error: (error) => this.toastr.error('Failed to fetch survey', error),
+    });
+  }
+
+  updateSurvey(surveyId: number, updateData: any) {
     this.surveyManagementService.updateSurvey(surveyId, updateData).subscribe({
       next: (response) => {
-        console.log('Survey status updated successfully:', response);
-        alert(`Survey has been ${isOpen ? 'opened' : 'closed'}.`);
+        if (response.status) {
+          this.toastr.success('Survey updated successfully:');
+          this.store.dispatch(surveyManagementActions.fetchSurveysRequest());
+        }
       },
-      error: (error) => {
-        console.error('Error updating survey status:', error);
-        alert('Failed to toggle survey status.');
-      }
+      error: (error) => this.toastr.error('Error updating survey', error),
     });
   }
 }

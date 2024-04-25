@@ -27,7 +27,17 @@
           </button>
         </li>
         <li>
-          <button cDropdownItem (click)="OpenDeleteSurvey(survey.SurveyID)">
+          <button cDropdownItem (click)="toggleApproval(survey.SurveyID, survey.Approve)">
+            {{ survey.Approve === "Yes" ? "Unapprove" : "Approve" }}
+          </button>
+        </li>
+        <li>
+          <button cDropdownItem (click)="toggleStatus(survey.SurveyID, survey.SurveyStatus)">
+            {{ survey.SurveyStatus === "Open" ? "Close" : "Open" }}
+          </button>
+        </li>
+        <li>
+          <button cDropdownItem (click)="openDeleteSurvey(survey.SurveyID)">
             Delete
           </button>
         </li>
@@ -61,6 +71,7 @@
       </a>
     </div>
   </div>
+  
 </div>
 
 <c-modal
@@ -197,3 +208,4 @@
     <button cButton color="danger" (click)="deleteSurvey()">Delete</button>
   </c-modal-footer>
 </c-modal>
+

@@ -24,6 +24,7 @@ export class CustomerSurveyComponent {
   surveyLink: string = '';
 
   isSurveyCompleted = false;
+  errorMessage: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,25 +49,41 @@ export class CustomerSurveyComponent {
     this.store
       .select(customerSurveySelector.selectSurvey)
       .subscribe((survey) => {
-        if (survey && survey?.SurveyQuestions) {
-          // Create a copy of the SurveyQuestions array
-          const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
-            const orderA =
-              a.PageOrder !== undefined ? a.PageOrder : Number.MAX_SAFE_INTEGER;
-            const orderB =
-              b.PageOrder !== undefined ? b.PageOrder : Number.MAX_SAFE_INTEGER;
-
-            return orderA - orderB;
-          });
-
-          // Assign the sorted array to a new property or modify the existing survey object
-          this.survey = {
-            ...survey,
-            SurveyQuestions: sortedQuestions,
-          };
-
-          console.log(this.survey);
+console.log(survey);
+        if (survey && survey.Approve === 'Yes' && survey.SurveyStatus === 'Open') {
+          this.survey = survey;
+          if (survey?.SurveyQuestions) {
+            // Create a copy of the SurveyQuestions array
+            const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
+              const orderA =
+                a.PageOrder !== undefined ? a.PageOrder : Number.MAX_SAFE_INTEGER;
+              const orderB =
+                b.PageOrder !== undefined ? b.PageOrder : Number.MAX_SAFE_INTEGER;
+  
+              return orderA - orderB;
+            });
+  
+            // Assign the sorted array to a new property or modify the existing survey object
+            this.survey = {
+              ...survey,
+              SurveyQuestions: sortedQuestions,
+            };
+  
+          }
+        } else {
+          this.errorMessage = 'This survey is currently unavailable.';
+          if (survey!.Approve !== 'Yes') {
+            this.errorMessage = 'This survey has not been approved yet.';
+          }
+          if (survey!.SurveyStatus !== 'Open') {
+            console.log(survey!.SurveyStatus)
+            this.errorMessage += ' Additionally, the survey is not open.';
+          }
+          this.survey = null; 
         }
+
+
+
       });
   }
 

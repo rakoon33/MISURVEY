@@ -16,7 +16,7 @@
 }
 
 .create-survey-btn {
-  background-color: #007bff;
+  background-color: #0A66C2;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -38,6 +38,7 @@
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-between; /* Adjusted for equal spacing */
+  margin-bottom: 20px;
 }
 
 .survey-card {
@@ -139,7 +140,7 @@ div.survey-card.ng-star-inserted {
 }
 
 .copy-link {
-  color: #007bff;
+  color: #0A66C2;
   cursor: pointer;
   text-decoration: none;
 }
@@ -307,7 +308,7 @@ div.survey-card.ng-star-inserted {
   position: relative;
   text-decoration: none !important;
   flex-basis: 0.2;
-  color: #2485c4;
+  color: #0A66C2;
 }
 
 .email-icon p {
@@ -383,7 +384,7 @@ div.survey-card.ng-star-inserted {
 /* Buttons in the footer */
 .modal-delete-footer button {
   padding: 8px 16px;
-  background-color: #007bff;
+  background-color: #0A66C2;
   color: #ffffff;
   border: none;
   border-radius: 4px;

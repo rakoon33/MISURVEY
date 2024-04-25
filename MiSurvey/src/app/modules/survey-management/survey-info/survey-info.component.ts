@@ -55,10 +55,10 @@ export class SurveyInfoComponent {
     this.store.select(surveyManagementSelector.selectCurrentSurvey).subscribe(survey => {
       if (survey) {
         console.log(survey);
-        this.surveyTitle = survey.Title ?? 'No Title';
+        this.surveyTitle = survey.Title ?? 'Your survey title';
         this.topBarColor = survey.Customizations?.topBarColor ?? '#BA3232';
         this.buttonTextColor = survey.Customizations?.buttonTextColor ?? '#2f3c54';
-        this.surveyDescription = survey.SurveyDescription ?? 'No Description';
+        this.surveyDescription = survey.SurveyDescription ?? 'No description';
       }
     });
   }

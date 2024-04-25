@@ -1,5 +1,5 @@
 <div class="survey-question-container-emo">
-  <p>{{ question }}</p>
+  <p class="question-styles">{{ question }}</p>
   <div class="emoticon-rating" [style.color]="buttonTextColor">
     <div *ngFor="let score of ['very-bad', 'bad', 'meh', 'good', 'very-good']"
          [class.emoticon-wrapper]="true"

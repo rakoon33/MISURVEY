@@ -22,6 +22,7 @@ import {
 import { IconModule } from '@coreui/icons-angular';
 import { SurveyManagementRoutingModule } from './survey-management-routing.module';
 import { SurveyManagementComponent } from './survey-management.component';
+
 @NgModule({
   imports: [
     DropdownModule,
@@ -31,7 +32,7 @@ import { SurveyManagementComponent } from './survey-management.component';
     GridModule,
     UtilitiesModule,
     IconModule,
-    NavModule,
+    NavModule,  
     TabsModule,
     FormsModule,
     ModalModule,
@@ -39,9 +40,10 @@ import { SurveyManagementComponent } from './survey-management.component';
     TableModule, 
     AvatarModule,
     ReactiveFormsModule,
+    
   ],
   declarations: [
-    SurveyManagementComponent,
+    SurveyManagementComponent
   ]
 })
 export class SurveyManagementModule {
