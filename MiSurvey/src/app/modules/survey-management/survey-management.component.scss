@@ -39,6 +39,7 @@
   gap: 20px;
   justify-content: space-between; /* Adjusted for equal spacing */
   margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .survey-card {
@@ -393,4 +394,24 @@ div.survey-card.ng-star-inserted {
 
 .modal-footer button:hover {
   background-color: #0056b3;
+}
+
+.invite-label {
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Specific styles based on invitation method */
+.email-invite {
+  background-color: #9b59b6;
+}
+
+.link-invite {
+  background-color: #0A66C2;
 }

@@ -7,10 +7,11 @@ const {
   IndividualPermission,
   RolePermission,
   Module,
-  UserActivityLog
+  UserActivityLog,
 } = require("../models");
+const companyService = require("../services");
 const db = require("../config/database");
-const {createLogActivity} = require ("./userActivityLog.service");
+const { createLogActivity } = require("./userActivityLog.service");
 
 const getUserData = async (userId, userRole) => {
   try {
@@ -89,7 +90,13 @@ const createUser = async (userData, udata) => {
   try {
     userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); // Hash password before saving
     const newUser = await User.create(userData);
-    await createLogActivity(udata.id, 'INSERT', `User created with ID: ${newUser.UserID}`, 'Users', udata.companyID);
+    await createLogActivity(
+      udata.id,
+      "INSERT",
+      `User created with ID: ${newUser.UserID}`,
+      "Users",
+      udata.companyID
+    );
     return {
       status: true,
       message: "User created successfully",
@@ -122,7 +129,13 @@ const updateUser = async (UserID, userData, udata) => {
     }
 
     const updatedUser = await User.findOne({ where: { UserID: UserID } });
-    await createLogActivity(udata.id, 'UPDATE', `User updated with ID: ${UserID}`, 'Users', udata.companyID);
+    await createLogActivity(
+      udata.id,
+      "UPDATE",
+      `User updated with ID: ${UserID}`,
+      "Users",
+      udata.companyID
+    );
 
     return {
       status: true,
@@ -140,73 +153,46 @@ const updateUser = async (UserID, userData, udata) => {
   }
 };
 
-/*const deleteUser = async (UserID) => {
-  try {
-    const deletedUser = await User.findOne({ where: { UserID: UserID } });
-
-    if (!deletedUser) {
-      return {
-        status: false,
-        message: "User not found",
-      };
-    }
-
-    await User.destroy({ where: { UserID: UserID } });
-
-    return {
-      status: true,
-      message: "User deleted successfully",
-      data: {
-        user: deletedUser,
-      },
-    };
-  } catch (error) {
-    return {
-      status: false,
-      message: error.message || "User deletion failed",
-      error: error?.toString(),
-    };
-  }
-};*/
-
 const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
+  let companies;
   try {
     // Find companies administered by the given admin ID
-    const companies = await Company.findAll({
-      where: { AdminID: UserID },
-      transaction
-    });
 
-    for (const company of companies) {
-      // Delete related entries in UserActivityLogs
+    if (udata.role == "SuperAdmin") {
+    } else {
+      if (udata.role == "Admin") {
+        companies = await Company.findOne({
+          where: { AdminID: UserID },
+          transaction,
+        });
+
+
       await UserActivityLog.destroy({
         where: { CompanyID: company.CompanyID },
-        transaction
+        transaction,
       });
 
-      // Delete related CompanyUser records
-      await CompanyUser.destroy({
-        where: { CompanyID: company.CompanyID },
-        transaction
-      });
+      await companyService.deleteCompany(company.companyID, udata);
+      }
 
-      // Delete the company
-      await Company.destroy({
-        where: { CompanyID: company.CompanyID },
-        transaction
-      });
     }
-
+    
     const deletedUser = await User.destroy({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     // Commit all deletions if successful
     if (deletedUser) {
       await transaction.commit();
-      await createLogActivity(udata.id, 'DELETE', `User deleted with ID: ${UserID}`, 'Users', udata.companyID);
+      await createLogActivity(
+        udata.id,
+        "DELETE",
+        `User deleted with ID: ${UserID}`,
+        "Users",
+        udata.companyID
+      );
       return {
         status: true,
         message: "User and all related records deleted successfully",
@@ -220,16 +206,10 @@ const deleteUser = async (UserID, udata) => {
     return {
       status: false,
       message: "Failed to delete companies and related data.",
-      error: error.toString()
+      error: error.toString(),
     };
   }
 };
-
-
-
-
-
-
 
 const getOneUser = async (UserID) => {
   try {

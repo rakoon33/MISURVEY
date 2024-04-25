@@ -65,5 +65,18 @@ export const userManagementReducer = createReducer(
   on(userManagementActions.createUserFailure, (state) => ({
     ...state,
     loading: false,
+  })),
+  on(userManagementActions.deleteUserRequest, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(userManagementActions.deleteUserSuccess, (state, { userId }) => ({
+    ...state,
+    users: state.users.filter(user => user.UserID !== userId),
+    loading: false
+  })),
+  on(userManagementActions.deleteUserFailure, (state) => ({
+    ...state,
+    loading: false
   }))
 );

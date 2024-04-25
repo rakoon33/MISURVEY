@@ -28,7 +28,6 @@
 /* Button styles */
 
 .btn-action {
-  border-radius: 6px;
   display: inline-block;
   border-style: none;
   font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial,
@@ -48,13 +47,14 @@
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   margin-bottom: 10px;
   padding: 0 50px 0 50px;
+  border-radius: 4px;
 }
 
 .btn-management {
   display: inline-block;
   border-style: none;
-  border-top-left-radius: 8px !important;
-  border-bottom-left-radius: 8px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
   font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial,
     sans-serif;
   font-size: 14px;
@@ -104,7 +104,7 @@ c-button-group button:hover {
 }
 
 .action-management {
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: $main_color_3;
   background-image: linear-gradient(1deg, $main_color_2, $main_color_3 99%);
   background-size: calc(100% + 20px) calc(100% + 20px);
@@ -143,7 +143,7 @@ c-button-group button:hover {
 }
 
 c-modal-footer button {
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: $main_color_2;
   background-image: linear-gradient(1deg, $main_color_2, $main_color_3 99%);
   background-size: calc(100% + 20px) calc(100% + 20px);
@@ -170,13 +170,13 @@ c-modal-footer button {
 }
 
 .btn-border-right {
-  border-top-right-radius: 8px !important;
-  border-bottom-right-radius: 8px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
 }
 
 .btn-border-left {
-  border-top-left-radius: 8px !important;
-  border-bottom-left-radius: 8px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
 }
 .btn-borderStyle-left {
   border-left: 1px solid $main_color_4 !important;
@@ -242,7 +242,6 @@ button {
 button:active {
   transform: scale(0.95);
 }
-
 
 /* General modal styling */
 .modal {
@@ -318,7 +317,6 @@ button:active {
   background-color: #0056b3;
 }
 
-
 /* Modal content grid */
 .modal-content-grid {
   display: grid;
@@ -336,14 +334,11 @@ button:active {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  
 }
 
 ::ng-deep .cdk-overlay-container {
   z-index: 2000 !important;
 }
-
-
 
 .pagination {
   display: flex;
@@ -384,9 +379,6 @@ button:active {
   background: none;
   border: none;
 }
-
-
-
 
 /* Style cho modal và form */
 .modal-body {

@@ -141,7 +141,7 @@ export class SurveyManagementEffects {
                 surveyId: action.surveyId,
               });
             } else {
-              this.toastrService.success('Survey deleted failed');
+              this.toastrService.error('Survey deleted failed');
               return surveyManagementActions.deleteSurveyFailure(
                 response.message
               );

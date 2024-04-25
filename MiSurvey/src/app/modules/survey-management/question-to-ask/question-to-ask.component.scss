@@ -29,7 +29,7 @@
 
 .next-button, .recommended-questions {
   padding: 12px 18px;
-  background-color: #4f46e5;
+  background-color: #0A66C2;
   color: white;
   border: none;
   border-radius: 8px;
@@ -38,7 +38,7 @@
 }
 
 .next-button:hover, .recommended-questions:hover {
-  background-color: #3730a3;
+  background-color: #0A66C2;
 }
 
 .recommended-questions {
@@ -55,7 +55,7 @@
   margin-right: 10px;
   padding: 5px 15px;
   border: none;
-  background-color: #007bff;
+  background-color: #0A66C2;
   color: white;
   cursor: pointer;
   border-radius: 5px;
@@ -65,7 +65,7 @@
   }
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #0A66C2;
   }
 }
 
