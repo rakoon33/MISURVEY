@@ -13,7 +13,8 @@ const {
   SurveyReport,
   UserPackage,
   Notification,
-  SurveyQuestion
+  SurveyQuestion,
+  SurveyResponse
 } = require("../models");
 const companyService = require("../services");
 const db = require("../config/database");
@@ -184,6 +185,11 @@ const deleteUser = async (UserID, udata) => {
     for (const survey of surveys) {
       // Delete survey details related to the survey
       await SurveyDetail.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+
+      await SurveyResponse.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction
       });
