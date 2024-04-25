@@ -103,48 +103,10 @@ const routes: Routes = [
           ).then((m) => m.SurveyInfoModule)
       },
       {
-        path: 'base',
-        loadChildren: () =>
-          import('./modules/base/base.module').then((m) => m.BaseModule),
-      },
-      {
-        path: 'buttons',
-        loadChildren: () =>
-          import('./modules/buttons/buttons.module').then(
-            (m) => m.ButtonsModule
-          ),
-      },
-      {
-        path: 'forms',
-        loadChildren: () =>
-          import('./modules/forms/forms.module').then(
-            (m) => m.CoreUIFormsModule
-          ),
-      },
-      {
         path: 'charts',
         loadChildren: () =>
           import('./modules/charts/charts.module').then((m) => m.ChartsModule),
-      },
-      {
-        path: 'icons',
-        loadChildren: () =>
-          import('./modules/icons/icons.module').then((m) => m.IconsModule),
-      },
-      {
-        path: 'notifications',
-        loadChildren: () =>
-          import('./modules/notifications/notifications.module').then(
-            (m) => m.NotificationsModule
-          ),
-      },
-      {
-        path: 'widgets',
-        loadChildren: () =>
-          import('./modules/widgets/widgets.module').then(
-            (m) => m.WidgetsModule
-          ),
-      },
+      }
     ],
   },
   {

@@ -25,8 +25,6 @@ export class SurveyManagementComponent implements OnInit {
   currentQuestionIndex: number = 0;
   surveyIDToDelete: number | undefined;
 
-  qrVisible: boolean = false;
-
   constructor(
     private router: Router,
     private store: Store,

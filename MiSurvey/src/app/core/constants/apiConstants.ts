@@ -10,7 +10,8 @@ const BACKEND_API = {
     SURVEY: '/survey',
     CUSTOMER_SURVEY: '/c/f',
     FEEDBACK_RESPONSE: '/responses',
-    QUESTION_TEMPLATE: '/questionTemplate'
+    QUESTION_TEMPLATE: '/questionTemplate',
+    REPORTS: '/dashboard',
 };
 
 export default {BACKEND_API};

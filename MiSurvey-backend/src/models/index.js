@@ -181,6 +181,17 @@ QuestionTemplate.belongsTo(User, {
   indexes: [{ fields: ['UpdatedBy'] }]
 });
 
+// In your models setup, assuming this association setup exists
+Survey.hasMany(SurveyResponse, {
+  foreignKey: 'SurveyID',
+  as: 'Responses' // This is the alias used for accessing responses from a survey
+});
+
+SurveyResponse.belongsTo(Survey, {
+  foreignKey: 'SurveyID',
+  as: 'Survey' // This is the alias used for accessing the survey from a response
+});
+
 module.exports = {
   User,
   Company,
