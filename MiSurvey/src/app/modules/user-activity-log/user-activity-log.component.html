@@ -1,0 +1,72 @@
+<div *ngIf="isLoading">Loading activities...</div>
+
+<div *ngIf="!isLoading">
+  <div class="d-flex justify-content-start">
+    <button class="btn-action">Export Data</button>
+  </div>
+  <table
+    class="table"
+    [hover]="true"
+    [responsive]="true"
+    [striped]="true"
+    cTable
+    class="mb-0 border"
+    class="table"
+  >
+    <thead>
+      <tr>
+        <th>NO</th>
+        <th>User ID</th>
+        <th>Action</th>
+        <th>Description</th>
+        <th>Table Name</th>
+        <th>Created At</th>
+        <th>Company ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let activity of activities; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ activity.UserID }}</td>
+        <td>{{ activity.UserAction }}</td>
+        <td>{{ activity.ActivityDescription }}</td>
+        <td>{{ activity.TableName }}</td>
+        <td>{{ activity.CreatedAt | date }}</td>
+        <td>{{ activity.CompanyID }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pagination">
+  <button
+    class="pagination-button"
+    (click)="onPageChangePrevious()"
+    [disabled]="currentPage === 1"
+  >
+    &lt;&lt; Previous
+  </button>
+  <div
+    *ngFor="
+      let page of getPaginationRange(currentPage.toString(), totalPages);
+      let i = index
+    "
+    class="page-item"
+  >
+    <button
+      *ngIf="page !== '...'"
+      (click)="onPageChange(page)"
+      [class.active]="currentPage === page"
+    >
+      {{ page }}
+    </button>
+    <span *ngIf="page === '...'">{{ page }}</span>
+  </div>
+  <button
+    class="pagination-button"
+    (click)="onPageChangeNext()"
+    [disabled]="currentPage === totalPages"
+  >
+    Next &gt;&gt;
+  </button>
+</div>

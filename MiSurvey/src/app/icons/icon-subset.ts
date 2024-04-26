@@ -98,7 +98,10 @@ import {
   cilMoodVeryBad,
   cilMoodVeryGood,
   cilContact,
-
+  cilPlus,
+  cilHandshake,
+  cilBriefcase,
+  cilFolder,
 } from '@coreui/icons';
 
 export const iconSubset = {
@@ -200,7 +203,11 @@ export const iconSubset = {
   cilMoodGood,
   cilMoodVeryBad,
   cilMoodVeryGood,
-  cilContact
+  cilContact,
+  cilPlus,
+  cilHandshake,
+  cilBriefcase,
+  cilFolder,
 };
 
 export enum IconSubset {
@@ -302,5 +309,9 @@ export enum IconSubset {
   cilMoodGood = 'cilMoodGood',
   cilMoodVeryBad = 'cilMoodVeryBad',
   cilMoodVeryGood = 'cilMoodVeryGood',
-  cilContact = 'cilContact'
+  cilContact = 'cilContact',
+  cilPlus = 'cilPlus',
+  cilHandshake = 'cilHandshake',
+  cilBriefcase = 'cilBriefcase',
+  cilFolder = 'cilFolder',
 }

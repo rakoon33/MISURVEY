@@ -53,6 +53,22 @@ export class CustomerManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.router.events
+    .pipe(
+      filter(event => event instanceof NavigationStart)
+    )
+    .subscribe((event: RouterEvent) => {
+      if (event instanceof NavigationStart) {
+        if (event.url === '/customer-management') {
+          this.router.navigate(['/customer-management'], {
+            queryParams: { page: 1, pageSize: 10 },
+            replaceUrl: true 
+          });
+        }
+      }
+    });
+
     this.route.queryParams.subscribe(params => {
       this.currentPage = parseInt(params['page'], 10) || 1;
       this.pageSize = parseInt(params['pageSize'], 10) || 10;
@@ -64,7 +80,6 @@ export class CustomerManagementComponent implements OnInit {
         total => {
           this.totalCustomers = total;
           this.totalPages = Math.ceil(this.totalCustomers / this.pageSize);
-          console.log("total custmer", this.totalPages);
         }
       )
     );
@@ -77,67 +92,71 @@ export class CustomerManagementComponent implements OnInit {
     }));
   }
 
-  onPageChange(page: number | string) {
-    const pageNumber = Number(page);
-    if (
-      !isNaN(pageNumber) &&
-      pageNumber >= 1 &&
-      pageNumber <= this.totalPages
-    ) {
-      this.currentPage = pageNumber;
-      this.router.navigate(['/customer-management'], {
-        queryParams: { page: pageNumber, pageSize: this.pageSize },
-      });
-      this.loadCustomers();
-    }
-  }
 
-  onPageChangePrevious() {
-    if (this.currentPage > 1) {
-      this.onPageChange(this.currentPage - 1);
-    }
+  onPageChange(page: number | string) {
+    const pageNumber = typeof page === 'string' ? parseInt(page, 10) : page;
+    this.router.navigate(['/customer-management'], {
+      queryParams: { page: pageNumber, pageSize: this.pageSize },
+    });
+    this.currentPage = pageNumber;
+    this.loadCustomers()
   }
 
   onPageChangeNext() {
-    if (this.currentPage < this.totalPages) {
-      this.onPageChange(this.currentPage + 1);
-    }
+    this.router.navigate(['/customer-management'], {
+      queryParams: {
+        page: Number(this.currentPage) + 1,
+        pageSize: this.pageSize,
+      },
+    });
+    this.loadCustomers()
   }
 
-  getPaginationRange(currentPage: number, totalPages: number, siblingCount = 1): Array<string | number> {
-    let pages: Array<number | string> = [];
-  
-    // Xác định các trang đầu và cuối để hiển thị
-    const startPage = Math.max(2, currentPage - siblingCount);
-    const endPage = Math.min(totalPages - 1, currentPage + siblingCount);
-  
-    // Thêm trang đầu tiên
-    pages.push(1);
-  
-    // Thêm dấu ba chấm ở đầu nếu cần
-    if (startPage > 2) {
-      pages.push('...');
+  onPageChangePrevious() {
+    this.router.navigate(['/customer-management'], {
+      queryParams: {
+        page: Number(this.currentPage) - 1,
+        pageSize: this.pageSize,
+      },
+    });
+    this.loadCustomers()
+  }
+
+
+  getPaginationRange(
+    currentPageStr: string,
+    totalPages: number,
+    siblingCount = 1
+  ): Array<number | string> {
+    const currentPage = parseInt(currentPageStr, 10);
+    const range = [];
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
+
+    range.push(1);
+
+    if (shouldShowLeftDots) {
+      range.push('...');
     }
-  
-    // Thêm các trang giữa
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+      if (i !== 1 && i !== totalPages) {
+        range.push(i);
+      }
     }
-  
-    // Thêm dấu ba chấm ở cuối nếu cần
-    if (endPage < totalPages - 1) {
-      pages.push('...');
+
+    if (shouldShowRightDots) {
+      range.push('...');
     }
-  
-    // Thêm trang cuối cùng nếu nó chưa được thêm
-    if (endPage !== totalPages) {
-      pages.push(totalPages);
+
+    if (totalPages !== 1) {
+      range.push(totalPages);
     }
-  
-    // Lọc mảng để loại bỏ trùng lặp, đặc biệt nếu trang đầu tiên gần với các trang được thêm
-    pages = pages.filter((value, index, self) => self.indexOf(value) === index);
-  
-    return pages;
+
+    return range;
   }
   
 

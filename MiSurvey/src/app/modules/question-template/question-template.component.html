@@ -20,6 +20,7 @@
   >
     <thead>
       <tr>
+        <th>NO</th>
         <th>Category</th>
         <th>Text</th>
         <th>Survey Type</th>
@@ -28,6 +29,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let template of questionTemplates$ | async; let i = index">
+        <td>{{ i + 1 }}</td>
         <td>{{ template.TemplateCategory }}</td>
         <td>{{ template.TemplateText }}</td>
         <td>{{ template.SurveyType.SurveyTypeName }}</td>

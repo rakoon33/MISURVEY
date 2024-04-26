@@ -11,7 +11,7 @@
   <table class="table table-hover table-striped responsive">
     <thead>
       <tr>
-        <th>ID</th>
+        <th>NO</th>
         <th>Full Name</th>
         <th>Email</th>
         <th>Phone Number</th>
@@ -20,8 +20,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let customer of customers$ | async">
-        <td>{{ customer.CustomerID }}</td>
+      <tr *ngFor="let customer of customers$ | async; let i = index">
+        <td>{{ i + 1 }}</td>
         <td>{{ customer.FullName }}</td>
         <td>{{ customer.Email }}</td>
         <td>{{ customer.PhoneNumber }}</td>
@@ -50,7 +50,7 @@
     </button>
     <div
       *ngFor="
-        let page of getPaginationRange(currentPage, totalPages);
+        let page of getPaginationRange(currentPage.toString(), totalPages);
         let i = index
       "
       class="page-item"

@@ -1,3 +1,4 @@
+import { UserActivityLogService } from './user-activity-log.service';
 import { CustomerService } from './customer-management.service';
 import { QuestionTemplateService } from './question-template.service';
 import { CustomerFeedbackService } from './customer-feedback.service';
@@ -29,5 +30,6 @@ export {
   IndividualPermissionsService,
   QuestionTemplateService,
   ReportService,
-  CustomerService
+  CustomerService,
+  UserActivityLogService
 };
