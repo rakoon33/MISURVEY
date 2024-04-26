@@ -68,6 +68,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'customer-management',
+        loadChildren: () =>
+          import('./modules/customer-management/customer-management.module').then(
+            (m) => m.CustomerManagementModule
+          ),
+      },
+      {
         path: 'survey-management/survey-method',
         loadChildren: () =>
           import(

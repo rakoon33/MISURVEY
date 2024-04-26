@@ -9,7 +9,8 @@ import {
   CompanyRolesManagementState,
   ModuleState,
   CustomerFeedbackState,
-  QuestionTemplateState
+  QuestionTemplateState,
+  CustomerManagementState,
 } from "./states";
 
 import { RouterReducerState } from '@ngrx/router-store';
@@ -26,5 +27,6 @@ export interface AppState {
   feature_module: ModuleState;
   feature_customer_feedback: CustomerFeedbackState;
   feature_question_template: QuestionTemplateState;
+  feature_customer_management: CustomerManagementState;
   router: RouterReducerState;
 }

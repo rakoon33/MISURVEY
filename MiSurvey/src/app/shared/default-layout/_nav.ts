@@ -36,6 +36,11 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-spreadsheet' }
   },
   {
+    name: 'Customer Management',
+    url: '/customer-management',
+    iconComponent: { name: 'cil-user' }
+  },
+  {
     title: true,
     name: 'Links',
     class: 'py-0'

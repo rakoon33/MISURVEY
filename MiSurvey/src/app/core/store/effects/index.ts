@@ -11,6 +11,7 @@ import { ModuleEffects } from './module.effects';
 import { CompanyUserManagementEffects } from './company-user-management.effects';
 import { CustomerFeedbackEffects } from './customer-feedback.effects';
 import { QuestionTemplateEffects } from './question-template.effects';
+import { CustomerManagementEffects } from './customer-management.effects';
 export {
   AuthEffects,
   UserEffects,
@@ -23,5 +24,6 @@ export {
   ModuleEffects,
   CompanyUserManagementEffects,
   CustomerFeedbackEffects,
-  QuestionTemplateEffects
+  QuestionTemplateEffects,
+  CustomerManagementEffects
 };

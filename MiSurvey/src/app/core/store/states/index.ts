@@ -1,3 +1,4 @@
+import CustomerManagementState from './customer-management.state';
 import UserState from './user.state';
 import AuthState from './auth.state';
 import CompanyState from './company.state';
@@ -9,6 +10,7 @@ import CompanyRolesManagementState from './company-roles-management.state';
 import ModuleState from './module.state';
 import CustomerFeedbackState from './customer-feedback.state';
 import QuestionTemplateState from './question-template.state';
+
 export {
     UserState, 
     AuthState, 
@@ -20,5 +22,6 @@ export {
     CompanyRolesManagementState,
     ModuleState,
     CustomerFeedbackState,
-    QuestionTemplateState
+    QuestionTemplateState,
+    CustomerManagementState
 };

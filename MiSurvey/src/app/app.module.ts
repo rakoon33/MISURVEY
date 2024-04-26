@@ -80,7 +80,8 @@ import {
   ModuleEffects,
   CompanyUserManagementEffects,
   CustomerFeedbackEffects, 
-  QuestionTemplateEffects
+  QuestionTemplateEffects,
+  CustomerManagementEffects
 } from './core/store/effects';
 
 import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
@@ -184,7 +185,8 @@ const APP_CONTAINERS = [
       ModuleEffects,
       CompanyUserManagementEffects,
       CustomerFeedbackEffects,
-      QuestionTemplateEffects
+      QuestionTemplateEffects,
+      CustomerManagementEffects
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

@@ -10,6 +10,7 @@ import { customerSurveyReducer } from './customer-survey.reducer';
 import { moduleReducer } from './module.reducer';
 import { customerFeedbackReducer } from './customer-feedback.reducer';
 import {questionTemplateReducer } from './question-template.reducer';
+import {customerManagementReducer} from './customer-management.reducer';
 export {
   authReducer,
   userReducer,
@@ -22,5 +23,6 @@ export {
   moduleReducer,
   companyUserManagementReducer,
   customerFeedbackReducer,
-  questionTemplateReducer
+  questionTemplateReducer,
+  customerManagementReducer
 };
