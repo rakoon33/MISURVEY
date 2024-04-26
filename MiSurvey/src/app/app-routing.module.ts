@@ -1,3 +1,4 @@
+import { UserActivityLogRoutingModule } from './modules/user-activity-log/user-activity-log-routing.module';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -72,6 +73,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./modules/customer-management/customer-management.module').then(
             (m) => m.CustomerManagementModule
+          ),
+      },
+      {
+        path: 'user-activity',
+        loadChildren: () =>
+          import('./modules/user-activity-log/user-activity-log.module').then(
+            (m) => m.UserActivityLogModule
           ),
       },
       {

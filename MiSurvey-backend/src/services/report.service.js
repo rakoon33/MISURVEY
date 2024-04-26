@@ -38,7 +38,7 @@ const getDashboardData = async (userData) => {
             CompanyID: userData.companyID
           }
         });
-        const customerCount = await Customer.count({
+        const customers = await Customer.findAll({
           include: [{
             model: SurveyResponse,
             as: 'Responses', // Ensuring to use the correct alias
@@ -53,7 +53,7 @@ const getDashboardData = async (userData) => {
             }]
           }]
         });
-  
+        customerCount = customers.length;
         return {
           status: true,
           data: {

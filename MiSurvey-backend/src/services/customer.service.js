@@ -52,26 +52,6 @@ const getAllCustomers = async (page, pageSize, userData) => {
     const offset = (page - 1) * pageSize;
     const limit = pageSize;
 
-    const customerCount = await Customer.count({
-      include: [
-        {
-          model: SurveyResponse,
-          as: "Responses",
-          required: true,
-          include: [
-            {
-              model: Survey,
-              as: "Survey",
-              required: true,
-              where: {
-                CompanyID: userData.companyID,
-              },
-            },
-          ],
-        },
-      ],
-    });
-
     const customers = await Customer.findAll({
       include: [
         {
@@ -91,6 +71,7 @@ const getAllCustomers = async (page, pageSize, userData) => {
       offset: offset,
     });
 
+    customerCount = customers.length;
     return {
       status: true,
       message: "Customers fetched successfully",

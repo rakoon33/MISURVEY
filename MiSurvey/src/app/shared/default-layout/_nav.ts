@@ -33,12 +33,17 @@ export const navItems: INavData[] = [
   {
     name: 'Question Management',
     url: '/question-template',
-    iconComponent: { name: 'cil-spreadsheet' }
+    iconComponent: { name: 'cilBriefcase' }
   },
   {
     name: 'Customer Management',
     url: '/customer-management',
-    iconComponent: { name: 'cil-user' }
+    iconComponent: { name: 'cilHandshake' }
+  },
+  {
+    name: 'User Activity',
+    url: '/user-activity',
+    iconComponent: { name: 'cilFolder' }
   },
   {
     title: true,

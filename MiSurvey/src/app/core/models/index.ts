@@ -16,6 +16,7 @@ import CompanyRole from './company-roles.model';
 import Module from './module.model';
 import QuestionTemplate from './question-template.model';
 import Customer from './customer.model';
+import UserActivityLog from './user-activity-log.model';
 export {
   User,
   Company,
@@ -30,5 +31,6 @@ export {
   FeedbackResponse,
   ContactInfo,
   QuestionTemplate,
-  Customer
+  Customer,
+  UserActivityLog
 };
