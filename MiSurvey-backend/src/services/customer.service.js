@@ -1,4 +1,4 @@
-const { Customer } = require("../models");
+const { Customer, SurveyResponse, Survey } = require("../models");
 const { Op } = require("sequelize");
 
 const createCustomer = async (customerData) => {
@@ -47,11 +47,58 @@ const deleteCustomer = async (id) => {
   }
 };
 
-const getAllCustomers = async () => {
+const getAllCustomers = async (page, pageSize, userData) => {
   try {
-    const customers = await Customer.findAll();
-    return { status: true, message: "Customers fetched successfully", customers };
+    const offset = (page - 1) * pageSize;
+    const limit = pageSize;
+
+    const customerCount = await Customer.count({
+      include: [
+        {
+          model: SurveyResponse,
+          as: "Responses",
+          required: true,
+          include: [
+            {
+              model: Survey,
+              as: "Survey",
+              required: true,
+              where: {
+                CompanyID: userData.companyID,
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const customers = await Customer.findAll({
+      include: [
+        {
+          model: SurveyResponse,
+          as: "Responses",
+          include: [
+            {
+              model: Survey,
+              as: "Survey",
+              where: { CompanyID: userData.companyID },
+            },
+          ],
+        },
+      ],
+      order: [["CreatedAt", "DESC"]],
+      limit: limit,
+      offset: offset,
+    });
+
+    return {
+      status: true,
+      message: "Customers fetched successfully",
+      customers,
+      total: customerCount,
+    };
   } catch (error) {
+    console.error("Error fetching customers: ", error);
     return { status: false, message: error.message, error: error.toString() };
   }
 };
@@ -84,7 +131,11 @@ const searchCustomers = async (query) => {
       return { status: false, message: "No customers found" };
     }
 
-    return { status: true, message: "Customers fetched successfully", customers };
+    return {
+      status: true,
+      message: "Customers fetched successfully",
+      customers,
+    };
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }

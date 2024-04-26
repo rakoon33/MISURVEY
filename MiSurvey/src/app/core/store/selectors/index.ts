@@ -10,6 +10,7 @@ import companyRolesManagementSelectors from './company-roles-management.selector
 import moduleSelectors from './module.selectors';
 import customerFeedbackSelectors from './customer-feedback.selectors';
 import questionTemplateSelectors from './question-template.selectors';
+import customerManagementSelectors from './customer-management.selectors';
 export { 
     userSelector, 
     authSelector,
@@ -22,5 +23,6 @@ export {
     companyRolesManagementSelectors,
     moduleSelectors,
     customerFeedbackSelectors,
-    questionTemplateSelectors
+    questionTemplateSelectors,
+    customerManagementSelectors
 };
