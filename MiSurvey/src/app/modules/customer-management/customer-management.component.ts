@@ -1,12 +1,12 @@
 import { CustomerService } from './../../core/services/customer-management.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable, Subscription, filter } from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
-import { Customer } from '../../core/models';
-import { customerManagementSelectors } from '../../core/store/selectors';
+import { Customer, Permission } from '../../core/models';
+import { customerManagementSelectors, userSelector } from '../../core/store/selectors';
 import { customerManagementActions } from '../../core/store/actions';
 import {
   ActivatedRoute,
@@ -32,6 +32,10 @@ export class CustomerManagementComponent implements OnInit {
   selectedCustomerId: number = 0;
   editCustomerForm: FormGroup;
 
+  viewedCustomer: Customer | null = null;
+
+  userPermissions$: Observable<Permission | undefined> | undefined;
+
   private subscriptions: Subscription = new Subscription();
 
   constructor(
@@ -45,6 +49,26 @@ export class CustomerManagementComponent implements OnInit {
     this.customers$ = this.store.select(customerManagementSelectors.selectAllCustomers);
     this.isLoading$ = this.store.select(customerManagementSelectors.selectCustomerLoading);
 
+    this.userPermissions$ = combineLatest([
+      this.store.select(userSelector.selectCurrentUser),
+      this.store.select(userSelector.selectPermissionByModuleName('Customer Management'))
+    ]).pipe(
+      map(([currentUser, permissions]) => {
+        if (currentUser?.UserRole === 'Supervisor') {
+          return permissions;
+        }
+        return {
+          CanViewData: true,
+          CanView: true,
+          CanAdd: true,
+          CanUpdate: true,
+          CanDelete: true,
+          CanExport: true,
+        } as Permission;
+      })
+    );
+
+    
     this.editCustomerForm = new FormGroup({
       FullName: new FormControl('', Validators.required),
       Email: new FormControl('', [Validators.required, Validators.email]),
@@ -161,10 +185,28 @@ export class CustomerManagementComponent implements OnInit {
   
 
   openEditModal(customerId: number): void {
-    // Logic to load customer data into edit form
     this.selectedCustomerId = customerId;
-    // Open the modal window
-    this.modalService.toggle({ show: true, id: 'editCustomerModal' });
+    this.customerService.getCustomerById(customerId).subscribe({
+      next: (response) => {
+        if (response.status) {
+          const customer = response.customer;
+          this.editCustomerForm.patchValue({
+            FullName: customer.FullName,
+            Email: customer.Email,
+            PhoneNumber: customer.PhoneNumber
+          });
+
+          // Open the modal window
+          this.modalService.toggle({ show: true, id: 'editCustomerModal' });
+        } else {
+          this.toastr.error(response.message || 'Failed to fetch customer details');
+        }
+      },
+      error: (err) => {
+        this.toastr.error('Error fetching customer details');
+        console.error(err);
+      }
+    });
   }
 
   saveCustomerChanges(): void {
@@ -174,15 +216,28 @@ export class CustomerManagementComponent implements OnInit {
         customerID: this.selectedCustomerId,
         update: updatedCustomer
       }));
+      this.loadCustomers(); 
+      this.modalService.toggle({ show: false, id: 'editCustomerModal' });
     } else {
       this.toastr.error('Please check the form fields.');
     }
   }
 
-  openViewModal(customer: number) {
-    // view customer detailed
-   }
- 
+  openViewModal(customerId: number): void {
+    this.customerService.getCustomerById(customerId).subscribe({
+      next: (response) => {
+        if (response.status) {
+          this.viewedCustomer = response.customer;
+          this.modalService.toggle({ show: true, id: 'viewCustomerModal' });
+        } else {
+          this.toastr.error(response.message || 'Failed to fetch customer details');
+        }
+      },
+      error: (err) => {
+        this.toastr.error('Failed to fetch customer details');
+      }
+    });
+  }
 
   openDeleteModal(customerId: number): void {
     this.selectedCustomerId = customerId;
@@ -191,6 +246,7 @@ export class CustomerManagementComponent implements OnInit {
 
   deleteCustomer(): void {
     this.store.dispatch(customerManagementActions.deleteCustomer({ customerID: this.selectedCustomerId }));
+    this.loadCustomers(); 
     this.modalService.toggle({ show: false, id: 'deleteCustomerModal' });
   }
 

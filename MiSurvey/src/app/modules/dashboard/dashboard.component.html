@@ -1,114 +1,158 @@
-<div class="dashboard-container">
-  <c-card class="mb-6" [ngStyle]="{ 'max-width.px': 200 }">
-    <c-row class="g-0">
-      <c-col [md]="6">
-        <img [cCardImg] src="./assets/images/dashboard_user.jpg" />
-      </c-col>
-      <c-card-body cCol [md]="6" class="card-body-overview">
-        <p cCardText>User count: {{ userCount }}</p>
-      </c-card-body>
-    </c-row>
-  </c-card>
+<div *ngIf="userPermissions$ | async as permissions">
+  <div class="dashboard-container">
+    <c-card
+      class="mb-6"
+      *ngIf="permissions.CanView"
+      [ngStyle]="{ 'max-width.px': 200, 'min-width.px': 200, }"
+    >
+      <c-row class="g-0">
+        <c-col [md]="6">
+          <img [cCardImg] src="./assets/images/dashboard_user.jpg" />
+        </c-col>
+        <c-card-body cCol [md]="6" class="card-body-overview">
+          <p cCardText>User count: {{ userCount }}</p>
+        </c-card-body>
+      </c-row>
+    </c-card>
 
-  <c-card
-    *ngIf="this.currentUser.UserRole == 'SuperAdmin'"
-    class="mb-6"
-    [ngStyle]="{ 'max-width.px': 200 }"
-  >
-    <c-row class="g-0">
-      <c-col [md]="6">
-        <img [cCardImg] src="./assets/images/dashboard_company.jpg" />
-      </c-col>
-      <c-card-body cCol [md]="6" class="card-body-overview">
-        <p cCardText>Company count: {{ companyCount }}</p>
-      </c-card-body>
-    </c-row>
-  </c-card>
+    <c-card
+      *ngIf="permissions.CanView && this.currentUser.UserRole == 'SuperAdmin'"
+      class="mb-6"
+      [ngStyle]="{ 'max-width.px': 200, 'min-width.px': 200, }"
+    >
+      <c-row class="g-0">
+        <c-col [md]="6">
+          <img [cCardImg] src="./assets/images/dashboard_company.jpg" />
+        </c-col>
+        <c-card-body cCol [md]="6" class="card-body-overview">
+          <p cCardText>Company count: {{ companyCount }}</p>
+        </c-card-body>
+      </c-row>
+    </c-card>
 
-  <c-card class="mb-6" [ngStyle]="{ 'max-width.px': 200 }">
-    <c-row class="g-0">
-      <c-col [md]="6">
-        <img [cCardImg] src="./assets/images/dashboard_survey.jpg" />
-      </c-col>
-      <c-card-body cCol [md]="6" class="card-body-overview">
-        <p cCardText>Survey count: {{ surveyCount }}</p>
-      </c-card-body>
-    </c-row>
-  </c-card>
+    <c-card
+      *ngIf="permissions.CanView"
+      class="mb-6"
+      [ngStyle]="{ 'max-width.px': 200, 'min-width.px': 200, }"
+    >
+      <c-row class="g-0">
+        <c-col [md]="6">
+          <img [cCardImg] src="./assets/images/dashboard_survey.jpg" />
+        </c-col>
+        <c-card-body cCol [md]="6" class="card-body-overview">
+          <p cCardText>Survey count: {{ surveyCount }}</p>
+        </c-card-body>
+      </c-row>
+    </c-card>
 
-  <c-card
-    *ngIf="this.currentUser.UserRole != 'SuperAdmin'"
-    class="mb-6"
-    [ngStyle]="{ 'max-width.px': 200 }"
-  >
-    <c-row class="g-0">
-      <c-col [md]="6">
-        <img [cCardImg] src="./assets/images/dashboard_roles.jpg" />
-      </c-col>
-      <c-card-body cCol [md]="6" class="card-body-overview">
-        <p cCardText>Company role count: {{ companyRoleCount }}</p>
-      </c-card-body>
-    </c-row>
-  </c-card>
+    <c-card
+      *ngIf="permissions.CanView && this.currentUser.UserRole != 'SuperAdmin'"
+      class="mb-6"
+      [ngStyle]="{ 'max-width.px': 200, 'min-width.px': 200, }"
+    >
+      <c-row class="g-0">
+        <c-col [md]="6">
+          <img [cCardImg] src="./assets/images/dashboard_roles.jpg" />
+        </c-col>
+        <c-card-body cCol [md]="6" class="card-body-overview">
+          <p cCardText>Company role count: {{ companyRoleCount }}</p>
+        </c-card-body>
+      </c-row>
+    </c-card>
 
-  <c-card
-    *ngIf="this.currentUser.UserRole != 'SuperAdmin'"
-    class="mb-6"
-    [ngStyle]="{ 'max-width.px': 200 }"
-  >
-    <c-row class="g-0">
-      <c-col [md]="6">
-        <img [cCardImg] src="./assets/images/dashboard_customer.jpg" />
-      </c-col>
-      <c-card-body cCol [md]="6" class="card-body-overview">
-        <p cCardText>Customer count: {{ customerCount }}</p>
-      </c-card-body>
-    </c-row>
-  </c-card>
+    <c-card
+      *ngIf="permissions.CanView && this.currentUser.UserRole != 'SuperAdmin'"
+      class="mb-6"
+      [ngStyle]="{ 'max-width.px': 200, 'min-width.px': 200,  }"
+    >
+      <c-row class="g-0">
+        <c-col [md]="6">
+          <img [cCardImg] src="./assets/images/dashboard_customer.jpg" />
+        </c-col>
+        <c-card-body cCol [md]="6" class="card-body-overview">
+          <p cCardText>Customer count: {{ customerCount }}</p>
+        </c-card-body>
+      </c-row>
+    </c-card>
+  </div>
+
+  <c-row class="pt-4">
+    <c-col xs="12" lg="6">
+      <c-card *ngIf="permissions.CanView" class="mb-4">
+        <c-card-header>Activity Overview</c-card-header>
+        <c-card-body class="chart-card-body">
+          <div class="form-group">
+            Start:
+            <input
+              class="input-date"
+              type="date"
+              [(ngModel)]="activityStartDate"
+            />
+            End:
+            <input
+              class="input-date"
+              type="date"
+              [(ngModel)]="activityEndDate"
+            />
+            <button class="btn-update" (click)="loadActivityOverviewData()">
+              Update
+            </button>
+          </div>
+          <c-chart type="line" [data]="chartActivityData"></c-chart>
+        </c-card-body>
+      </c-card>
+    </c-col>
+    <c-col xs="12" lg="6">
+      <c-card *ngIf="permissions.CanView" class="mb-4">
+        <c-card-header>Survey Count Over Time</c-card-header>
+        <c-card-body class="chart-card-body">
+          <div class="form-group">
+            Start:
+            <input
+              class="input-date"
+              type="date"
+              [(ngModel)]="surveyCountStartDate"
+            />
+            End:
+            <input
+              class="input-date"
+              type="date"
+              [(ngModel)]="surveyCountEndDate"
+            />
+            <button class="btn-update" (click)="loadSurveyCountByDateRangeData()">
+              Update
+            </button>
+          </div>
+          <c-chart type="line" [data]="surveyCountData"></c-chart>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+  <c-row>
+    <c-col xs="12" lg="12">
+      <c-card *ngIf="permissions.CanView" class="mb-4">
+        <c-card-header>Survey Type Usage</c-card-header>
+        <c-card-body class="chart-card-body">
+          <div class="form-group">
+            Start:
+            <input
+              class="input-date"
+              type="date"
+              [(ngModel)]="surveyTypeStartDate"
+            />
+            End:
+            <input
+              class="input-date"
+              type="date"
+              [(ngModel)]="surveyTypeEndDate"
+            />
+            <button class="btn-update" (click)="loadSurveyTypeUsageData()">
+              Update
+            </button>
+          </div>
+          <c-chart type="bar" [data]="surveyTypeUsageData"></c-chart>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
 </div>
-
-
-<c-row class="pt-4">
-  <c-col xs="12" lg="6">
-    <c-card class="mb-4">
-      <c-card-header>Activity Overview</c-card-header>
-      <c-card-body class="chart-card-body">
-        <div class="form-group">
-          Start: <input class="input-date" type="date" [(ngModel)]="activityStartDate">
-          End: <input class="input-date" type="date" [(ngModel)]="activityEndDate">
-          <button class="btn-update" (click)="loadActivityOverviewData()">Update</button>
-        </div>
-        <c-chart type="line" [data]="chartActivityData"></c-chart>
-      </c-card-body>
-    </c-card>
-  </c-col>
-  <c-col xs="12" lg="6">
-    <c-card class="mb-4">
-      <c-card-header>Survey Count Over Time</c-card-header>
-      <c-card-body class="chart-card-body">
-        <div class="form-group">
-          Start: <input class="input-date" type="date" [(ngModel)]="surveyCountStartDate">
-          End: <input class="input-date" type="date" [(ngModel)]="surveyCountEndDate">
-          <button class="btn-update" (click)="loadSurveyTypeUsageData()">Update</button>
-        </div>
-        <c-chart type="line" [data]="surveyCountData"></c-chart>
-      </c-card-body>
-    </c-card>
-  </c-col>
-
-</c-row>
-<c-row>
-  <c-col xs="12" lg="12">
-    <c-card class="mb-4">
-      <c-card-header>Survey Type Usage</c-card-header>
-      <c-card-body class="chart-card-body">
-        <div class="form-group">
-          Start: <input class="input-date" type="date" [(ngModel)]="surveyTypeStartDate">
-          End: <input class="input-date" type="date" [(ngModel)]="surveyTypeEndDate">
-          <button class="btn-update" (click)="loadSurveyTypeUsageData()">Update</button>
-        </div>
-        <c-chart type="bar" [data]="surveyTypeUsageData"></c-chart>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>

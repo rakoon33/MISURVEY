@@ -18,16 +18,16 @@ export class CustomerService {
     return this.http.get<{ customers: Customer[], total: number }>(this.apiUrl, { params, withCredentials: true });
   }
 
-  getCustomerById(customerId: number): Observable<Customer> {
-    return this.http.get<Customer>(`${this.apiUrl}/${customerId}`, { withCredentials: true });
+  getCustomerById(customerId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${customerId}`, { withCredentials: true });
   }
 
-  createCustomer(customer: Customer): Observable<Customer> {
-    return this.http.post<Customer>(this.apiUrl, customer, { withCredentials: true });
+  createCustomer(customer: Customer): Observable<any> {
+    return this.http.post<any>(this.apiUrl, customer, { withCredentials: true });
   }
 
-  updateCustomer(customerId: number, customer: Customer): Observable<Customer> {
-    return this.http.put<Customer>(`${this.apiUrl}/${customerId}`, customer, { withCredentials: true });
+  updateCustomer(customerId: number, customer: Customer): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${customerId}`, customer, { withCredentials: true });
   }
 
   deleteCustomer(customerId: number): Observable<{ status: boolean, message: string }> {

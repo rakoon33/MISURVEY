@@ -48,7 +48,7 @@ export class CompanyRolesManagementComponent implements OnInit {
   roleIdToDelete: number | undefined;
 
   modules$: Observable<{ ModuleID: number; name: string }[]>;
-
+  roleFormView: FormGroup;
   private subscriptions: Subscription = new Subscription();
 
   constructor(
@@ -69,6 +69,14 @@ export class CompanyRolesManagementComponent implements OnInit {
       permissionsData: this.fb.array([]),
     });
 
+    this.roleFormView = this.fb.group({
+      roleData: this.fb.group({
+        CompanyRoleName: [''],
+        CompanyRoleDescription: [''],
+      }),
+      permissionsDataView: this.fb.array([]),
+    });
+
     this.roleFormEdit = this.fb.group({
       roleData: this.fb.group({
         CompanyRoleName: ['', Validators.required],
@@ -80,7 +88,7 @@ export class CompanyRolesManagementComponent implements OnInit {
     this.userPermissions$ = combineLatest([
       this.store.select(userSelector.selectCurrentUser),
       this.store.select(
-        userSelector.selectPermissionByModuleName('User Management')
+        userSelector.selectPermissionByModuleName('Company Roles Management')
       ),
     ]).pipe(
       map(([currentUser, permissions]) => {
@@ -109,13 +117,17 @@ export class CompanyRolesManagementComponent implements OnInit {
       )
     );
   }
-
+  
   get permissionsData(): FormArray {
     return this.roleForm.get('permissionsData') as FormArray;
   }
 
   get permissionsDataEdit(): FormArray {
     return this.roleFormEdit.get('permissionsDataEdit') as FormArray;
+  }
+
+  get permissionsDataView(): FormArray {
+    return this.roleFormView.get('permissionsDataView') as FormArray;
   }
 
   ngOnInit() {
@@ -139,6 +151,25 @@ export class CompanyRolesManagementComponent implements OnInit {
       });
     });
     this.subscriptions.add(subscription);
+
+    const subscription2 = this.modules$.subscribe((modules) => {
+      this.permissionsDataView.clear();
+      modules.forEach((module) => {
+        const control = this.fb.group({
+          ModuleID: module.ModuleID,
+          CanView: false,
+          CanAdd: false,
+          CanUpdate: false,
+          CanDelete: false,
+          CanExport: false,
+          CanViewData: false,
+        });
+        this.permissionsDataView.push(control);
+      });
+    });
+    this.subscriptions.add(subscription2);
+
+
   }
 
   submitRole() {
@@ -232,9 +263,55 @@ export class CompanyRolesManagementComponent implements OnInit {
     }
   }
 
-  viewRole(arg0: any) {
-    throw new Error('Method not implemented.');
+  viewRole(roleId: number | undefined) {
+    if (typeof roleId !== 'number') {
+      this.toastr.error('Invalid role ID');
+      return;
+    }
+
+    this.companyRolesManagementService.getOneCompanyRole(roleId).subscribe({
+      next: (response) => {
+        if (response.status) {
+          this.populateFormView(response.data);
+          this.modalService.toggle({ show: true, id: 'viewRoleModal' });
+        } else {
+          this.toastr.error('Failed to fetch role details: ' + response.message);
+        }
+      },
+      error: (err) => {
+        this.toastr.error('Error fetching role details');
+        console.error(err);
+      },
+    });
   }
+
+  populateFormView(data: any) {
+    this.roleFormView.patchValue({
+      roleData: {
+        CompanyRoleName: data.CompanyRoleName,
+        CompanyRoleDescription: data.CompanyRoleDescription,
+      },
+    });
+    this.setPermissionsView(data.permissions);
+  }
+
+  setPermissionsView(permissions: any[]) {
+    this.permissionsDataView.clear();
+    permissions.forEach((permission) => {
+      this.permissionsDataView.push(
+        this.fb.group({
+          ModuleID: permission.ModuleID,
+          CanView: permission.CanView,
+          CanAdd: permission.CanAdd,
+          CanUpdate: permission.CanUpdate,
+          CanDelete: permission.CanDelete,
+          CanExport: permission.CanExport,
+          CanViewData: permission.CanViewData,
+        })
+      );
+    });
+  }
+
 
   get permissionsFormArray() {
     return this.roleForm.get('permissionsData') as FormArray;

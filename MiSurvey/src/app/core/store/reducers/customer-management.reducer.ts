@@ -33,10 +33,10 @@ export const customerManagementReducer = createReducer(
   })),
   on(customerManagementActions.updateCustomerSuccess, (state, { customer }) => ({
     ...state,
-    customers: state.customers.map(c => c.CustomerID === customer.CustomerID ? customer : c)
+    customers: state.customers.map(c => c?.CustomerID === customer?.CustomerID ? customer : c)
   })),
   on(customerManagementActions.deleteCustomerSuccess, (state, { customerID }) => ({
     ...state,
-    customers: state.customers.filter(c => c.CustomerID !== customerID)
+    customers: state.customers.filter(c => c?.CustomerID !== customerID) 
   }))
 );

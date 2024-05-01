@@ -17,18 +17,18 @@ const selectIsUserLoading = createSelector(
   selectUserLoading
 );
 
-export const selectCurrentUserPermissions = createSelector(
+const selectCurrentUserPermissions = createSelector(
   selectUserState,
   selectUserPermissions
 );
 
-export const selectPermissionByModuleId = (moduleId: number) => createSelector(
+const selectPermissionByModuleId = (moduleId: number) => createSelector(
   selectUserState,
   (selectUserPermissions) => selectUserPermissions.permissions.find(selectUserPermissions => selectUserPermissions.ModuleID === moduleId)
 );
 
-export const selectPermissionByModuleName = (moduleName: string) => createSelector(
+const selectPermissionByModuleName = (moduleName: string) => createSelector(
   selectUserState,
   (selectUserPermissions) => selectUserPermissions.permissions.find(selectUserPermissions => selectUserPermissions.module.ModuleName === moduleName)
 );
-export default { selectCurrentUser, selectIsUserLoading, selectPermissionByModuleId, selectPermissionByModuleName};
+export default { selectCurrentUser, selectIsUserLoading, selectCurrentUserPermissions, selectPermissionByModuleId, selectPermissionByModuleName};
