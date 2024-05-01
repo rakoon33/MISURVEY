@@ -17,57 +17,75 @@ enum CompanyManagementActionTypes {
   CREATE_COMPANY_REQUEST = '[Company Management] Create Company Request',
   CREATE_COMPANY_SUCCESS = '[Company Management] Create Company Success',
   CREATE_COMPANY_FAILURE = '[Company Management] Create Company Failure',
+
+  DELETE_COMPANY_REQUEST = '[Company Management] Delete Company Request',
+  DELETE_COMPANY_SUCCESS = '[Company Management] Delete Company Success',
+  DELETE_COMPANY_FAILURE = '[Company Management] Delete Company Failure',
 }
 
 export const loadCompaniesRequest = createAction(
-    CompanyManagementActionTypes.LOAD_COMPANIES_REQUEST,
-    props<{ page: number, pageSize: number }>()
+  CompanyManagementActionTypes.LOAD_COMPANIES_REQUEST,
+  props<{ page: number; pageSize: number }>()
 );
 export const loadCompaniesSuccess = createAction(
-    CompanyManagementActionTypes.LOAD_COMPANIES_SUCCESS,
-    props<{ companies: Company[], totalCompanies: number }>()
+  CompanyManagementActionTypes.LOAD_COMPANIES_SUCCESS,
+  props<{ companies: Company[]; totalCompanies: number }>()
 );
 export const loadCompaniesFailure = createAction(
-    CompanyManagementActionTypes.LOAD_COMPANIES_FAILURE,
+  CompanyManagementActionTypes.LOAD_COMPANIES_FAILURE
 );
 
 export const loadCompanyByIdRequest = createAction(
-    CompanyManagementActionTypes.LOAD_COMPANY_BY_ID_REQUEST,
-    props<{ CompanyID: number }>()
+  CompanyManagementActionTypes.LOAD_COMPANY_BY_ID_REQUEST,
+  props<{ CompanyID: number }>()
 );
 
 export const loadCompanyByIdSuccess = createAction(
-    CompanyManagementActionTypes.LOAD_COMPANY_BY_ID_SUCCESS,
-    props<{ company: Company }>()
+  CompanyManagementActionTypes.LOAD_COMPANY_BY_ID_SUCCESS,
+  props<{ company: Company }>()
 );
 
 export const loadCompanyByIdFailure = createAction(
-    CompanyManagementActionTypes.LOAD_COMPANY_BY_ID_FAILURE,
+  CompanyManagementActionTypes.LOAD_COMPANY_BY_ID_FAILURE
 );
 
 export const createCompanyRequest = createAction(
-    CompanyManagementActionTypes.CREATE_COMPANY_REQUEST,
-    props<{ companyData: Company }>()
+  CompanyManagementActionTypes.CREATE_COMPANY_REQUEST,
+  props<{ companyData: Company }>()
 );
 
 export const createCompanySuccess = createAction(
-    CompanyManagementActionTypes.CREATE_COMPANY_SUCCESS
+  CompanyManagementActionTypes.CREATE_COMPANY_SUCCESS
 );
 
 export const createCompanyFailure = createAction(
-    CompanyManagementActionTypes.CREATE_COMPANY_FAILURE,
+  CompanyManagementActionTypes.CREATE_COMPANY_FAILURE
 );
 
 export const updateCompanyRequest = createAction(
-    CompanyManagementActionTypes.UPDATE_COMPANY_REQUEST,
-    props<{ CompanyID: number; updatedData: Company }>()
+  CompanyManagementActionTypes.UPDATE_COMPANY_REQUEST,
+  props<{ CompanyID: number; updatedData: Company }>()
 );
 export const updateCompanySuccess = createAction(
-    CompanyManagementActionTypes.UPDATE_COMPANY_SUCCESS,
-    props<{ company: Company }>() 
+  CompanyManagementActionTypes.UPDATE_COMPANY_SUCCESS,
+  props<{ company: Company }>()
 );
 export const updateCompanyFailure = createAction(
-    CompanyManagementActionTypes.UPDATE_COMPANY_FAILURE,
+  CompanyManagementActionTypes.UPDATE_COMPANY_FAILURE
+);
+
+export const deleteCompanyRequest = createAction(
+  CompanyManagementActionTypes.DELETE_COMPANY_REQUEST,
+  props<{ CompanyID: number }>()
+);
+
+export const deleteCompanySuccess = createAction(
+  CompanyManagementActionTypes.DELETE_COMPANY_SUCCESS,
+  props<{ CompanyID: number }>()
+);
+
+export const deleteCompanyFailure = createAction(
+  CompanyManagementActionTypes.DELETE_COMPANY_FAILURE
 );
 
 export type CompanyManagementActions =
@@ -79,4 +97,7 @@ export type CompanyManagementActions =
   | ActionType<typeof loadCompanyByIdFailure>
   | ActionType<typeof updateCompanyRequest>
   | ActionType<typeof updateCompanySuccess>
-  | ActionType<typeof updateCompanyFailure>;
+  | ActionType<typeof updateCompanyFailure>
+  | ActionType<typeof deleteCompanyRequest>
+  | ActionType<typeof deleteCompanySuccess>
+  | ActionType<typeof deleteCompanyFailure>;

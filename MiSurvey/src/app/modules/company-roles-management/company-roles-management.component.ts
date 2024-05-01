@@ -45,6 +45,7 @@ export class CompanyRolesManagementComponent implements OnInit {
   roles$: Observable<CompanyRole[]> = this.store.select(
     companyRolesManagementSelectors.selectAllCompanyRoles
   );
+  roleIdToDelete: number | undefined;
 
   modules$: Observable<{ ModuleID: number; name: string }[]>;
 
@@ -243,6 +244,30 @@ export class CompanyRolesManagementComponent implements OnInit {
     const action = { show: show, id: modalId };
     this.modalService.toggle(action);
   }
+
+
+deleteRole(roleId: number | undefined) {
+  if (typeof roleId !== 'number') {
+    this.toastr.error('Invalid role ID');
+    return;
+  }
+
+  this.roleIdToDelete = roleId;
+  this.modalService.toggle({ show: true, id: 'deleteRoleModal' });
+}
+
+confirmDeleteRole() {
+  if (typeof this.roleIdToDelete === 'number') {
+    // Dispatch the delete action
+    this.store.dispatch(companyRoleManagementActions.deleteCompanyRoleRequest({ roleId: this.roleIdToDelete }));
+    // Hide the modal
+    this.modalService.toggle({ show: false, id: 'deleteRoleModal' });
+    // Optionally refresh the roles list
+    this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
+  } else {
+    this.toastr.error('Role ID is undefined');
+  }
+}
 
   ngOnDestroy() {
     // Unsubscribe all subscriptions to prevent memory leaks

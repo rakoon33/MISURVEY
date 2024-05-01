@@ -54,4 +54,11 @@ export class CompanyManagementService {
       })
     );
   }
+  deleteCompany(CompanyID: number): Observable<any> {
+    return this.http
+      .delete<any>(`${this.apiUrl}/${CompanyID}`, { withCredentials: true })
+      .pipe(
+        catchError((error) => throwError(() => error))
+      );
+  }
 }

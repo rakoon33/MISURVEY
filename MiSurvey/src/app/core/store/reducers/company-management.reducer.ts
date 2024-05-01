@@ -68,5 +68,18 @@ export const companyManagementReducer = createReducer(
   on(companyManagementActions.createCompanyFailure, (state) => ({
     ...state,
     loading: false,
+  })),
+  on(companyManagementActions.deleteCompanyRequest, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(companyManagementActions.deleteCompanySuccess, (state, { CompanyID }) => ({
+    ...state,
+    companies: state.companies.filter(company => company.CompanyID !== CompanyID),
+    loading: false,
+  })),
+  on(companyManagementActions.deleteCompanyFailure, (state) => ({
+    ...state,
+    loading: false,
   }))
 );

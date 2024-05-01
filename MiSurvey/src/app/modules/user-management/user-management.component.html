@@ -15,9 +15,6 @@
     >
       Export Data
     </button>
-    <!-- <button *ngIf="permissions$ | async as permissions" (click)="exportToPdf()" class="btn btn-primary" *ngIf="permissions.CanExport">
-      Export to PDF
-    </button> -->
   </div>
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>
@@ -106,7 +103,13 @@
                   View
                 </button>
               </li>
-              <li *ngIf="permissions.CanViewData && user.UserRole !== 'Admin'">
+              <li
+                *ngIf="
+                  permissions.CanViewData &&
+                  user.UserRole !== 'Admin' &&
+                  currentUserRole == 'SuperAdmin'
+                "
+              >
                 <button
                   cDropdownItem
                   (click)="openPermissionsModal(user.UserID)"
@@ -120,7 +123,10 @@
                 </button>
               </li>
               <li *ngIf="permissions.CanDelete">
-                <button cDropdownItem (click)="openDeleteUserModal(user.UserID)">
+                <button
+                  cDropdownItem
+                  (click)="openDeleteUserModal(user.UserID)"
+                >
                   Delete
                 </button>
               </li>
@@ -704,7 +710,8 @@
     ></button>
   </c-modal-header>
   <c-modal-body>
-    Are you sure you want to delete all individual permissions? This action cannot be undone.
+    Are you sure you want to delete all individual permissions? This action
+    cannot be undone.
   </c-modal-body>
   <c-modal-footer>
     <button
@@ -714,6 +721,8 @@
     >
       Cancel
     </button>
-    <button cButton color="danger" (click)="deleteAllPermissions()">Confirm</button>
+    <button cButton color="danger" (click)="deleteAllPermissions()">
+      Confirm
+    </button>
   </c-modal-footer>
 </c-modal>
