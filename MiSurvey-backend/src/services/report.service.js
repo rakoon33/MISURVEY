@@ -74,12 +74,16 @@ const getDashboardData = async (userData) => {
     try {
         let startDateParsed = new Date(startDate);
         let endDateParsed = new Date(endDate);
+        endDateParsed.setDate(endDateParsed.getDate() + 1);
         if (isNaN(startDateParsed.getTime()) || isNaN(endDateParsed.getTime())) {
             throw new Error("Invalid date format provided.");
         }
 
         let whereCondition = {
-            '$User.CreatedAt$': { [Op.between]: [startDateParsed, endDateParsed] }  // Explicitly specify the table alias for CreatedAt
+            '$User.CreatedAt$': {
+                [Op.gte]: startDateParsed, 
+                [Op.lte]: endDateParsed 
+            }  
         };
 
         if (userData.role !== "SuperAdmin") {
@@ -134,12 +138,11 @@ const getSurveyTypeUsage = async (startDate, endDate, userData) => {
     try {
         let startDateParsed = new Date(startDate);
         let endDateParsed = new Date(endDate);
+        endDateParsed.setDate(endDateParsed.getDate() + 1);
         if (isNaN(startDateParsed.getTime()) || isNaN(endDateParsed.getTime())) {
             throw new Error("Invalid date format provided.");
         }
-
-        console.log("User role: ", userData.role); // Log to check what role is being processed
-
+        
         if (userData.role === "SuperAdmin") {
             // Truy vấn cho SuperAdmin không cần bộ lọc CompanyID
             return await getSurveyTypeUsageForSuperAdmin(startDateParsed, endDateParsed);
@@ -164,7 +167,10 @@ const getSurveyTypeUsageForSuperAdmin = async (startDate, endDate) => {
                 model: Survey,
                 as: 'Survey',
                 where: {
-                    CreatedAt: { [Op.between]: [startDate, endDate] }
+                    CreatedAt: {
+                        [Op.gte]: startDate, 
+                        [Op.lte]: endDate 
+                    }  
                 },
                 attributes: []
             }]
@@ -193,7 +199,10 @@ const getSurveyTypeUsageForNonSuperAdmin = async (startDate, endDate, companyID)
                 model: Survey,
                 as: 'Survey',
                 where: {
-                    CreatedAt: { [Op.between]: [startDate, endDate] },
+                    CreatedAt: {
+                        [Op.gte]: startDate, 
+                        [Op.lte]: endDate 
+                    }  ,
                     CompanyID: companyID 
                 },
                 attributes: []
@@ -216,14 +225,16 @@ const getSurveyCountByDateRange = async (startDate, endDate, userData) => {
     try {
         let startDateParsed = new Date(startDate);
         let endDateParsed = new Date(endDate);
+        endDateParsed.setDate(endDateParsed.getDate() + 1);
         if (isNaN(startDateParsed.getTime()) || isNaN(endDateParsed.getTime())) {
             throw new Error("Invalid date format provided.");
         }
 
         let whereCondition = {
             CreatedAt: {
-                [Op.between]: [startDateParsed, endDateParsed]
-            }
+                [Op.gte]: startDateParsed, 
+                [Op.lte]: endDateParsed 
+            }  
         };
 
         // Apply the company filter for non-SuperAdmin users

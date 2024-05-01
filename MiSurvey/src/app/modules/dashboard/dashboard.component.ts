@@ -3,6 +3,8 @@ import { Store } from '@ngrx/store';
 import { ReportService } from 'src/app/core/services/report.service';
 import { userSelector } from 'src/app/core/store/selectors';
 import { DatePipe } from '@angular/common';
+import { Observable, combineLatest, map } from 'rxjs';
+import { Permission } from 'src/app/core/models';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -17,6 +19,8 @@ export class DashboardComponent {
   customerCount: number = 0;
   currentUser: any;
 
+  userPermissions$: Observable<Permission | undefined> | undefined;
+  
   months = [
     'January',
     'February',
@@ -76,8 +80,28 @@ export class DashboardComponent {
   constructor(
     private reportService: ReportService,
     private store: Store,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
   ) {
+
+    this.userPermissions$ = combineLatest([
+      this.store.select(userSelector.selectCurrentUser),
+      this.store.select(userSelector.selectPermissionByModuleName('Dashboard'))
+    ]).pipe(
+      map(([currentUser, permissions]) => {
+        if (currentUser?.UserRole === 'Supervisor') {
+          return permissions;
+        }
+        return {
+          CanViewData: true,
+          CanView: true,
+          CanAdd: true,
+          CanUpdate: true,
+          CanDelete: true,
+          CanExport: true,
+        } as Permission;
+      })
+    );
+    
     const today = new Date();
     const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
     this.surveyTypeStartDate = this.formatDate(sevenDaysAgo);
@@ -173,6 +197,7 @@ export class DashboardComponent {
         this.surveyCountEndDate
       )
       .subscribe((response) => {
+        console.log(response);
         this.surveyCountData = {
           labels: response.data.map((item: { date: any }) => item.date),
           datasets: [

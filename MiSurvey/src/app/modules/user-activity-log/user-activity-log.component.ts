@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { UserActivityLogService } from '../../core/services';
-import { UserActivityLog } from '../../core/models';
+import { Permission, UserActivityLog } from '../../core/models';
 import {
   ActivatedRoute,
   NavigationStart,
   Router,
   Event as RouterEvent,
 } from '@angular/router';
-import { filter } from 'rxjs';
+import { Observable, combineLatest, filter, map } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { userSelector } from 'src/app/core/store/selectors';
 
 @Component({
   selector: 'app-user-activity-log',
@@ -21,12 +23,34 @@ export class UserActivityLogComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 10;
   totalPages: number = 0;
-
+  userPermissions$: Observable<Permission | undefined> | undefined;
+  
   constructor(
     private userActivityLogService: UserActivityLogService,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private store: Store,
+  ) {
+
+    this.userPermissions$ = combineLatest([
+      this.store.select(userSelector.selectCurrentUser),
+      this.store.select(userSelector.selectPermissionByModuleName('User Activity Log'))
+    ]).pipe(
+      map(([currentUser, permissions]) => {
+        if (currentUser?.UserRole === 'Supervisor') {
+          return permissions;
+        }
+        return {
+          CanViewData: true,
+          CanView: true,
+          CanAdd: true,
+          CanUpdate: true,
+          CanDelete: true,
+          CanExport: true,
+        } as Permission;
+      })
+    );
+  }
 
   ngOnInit(): void {
     this.router.events

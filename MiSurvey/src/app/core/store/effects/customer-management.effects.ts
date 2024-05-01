@@ -63,11 +63,18 @@ export class CustomerManagementEffects {
         this.customerService
           .updateCustomer(action.customerID, action.update)
           .pipe(
-            map((customer) => {
-              this.toastr.success('Customer updated successfully');
-              return customerManagementActions.updateCustomerSuccess({
-                customer,
-              });
+            map((response) => {
+              if (response.status) {
+                this.toastr.success('Customer updated successfully');
+                return customerManagementActions.updateCustomerSuccess({
+                  customer: response.customer,
+                });
+              } else {
+                this.toastr.error(response.message || 'Failed to update customer');
+                return customerManagementActions.updateCustomerFailure({
+                  error: response.message || 'Failed to update customer',
+                });
+              }
             }),
             catchError((error) => {
               this.toastr.error('Failed to update customer');
@@ -79,7 +86,7 @@ export class CustomerManagementEffects {
       )
     )
   );
-  
+
   deleteCustomer$ = createEffect(() =>
     this.actions$.pipe(
       ofType(customerManagementActions.deleteCustomer),

@@ -51,3 +51,22 @@ c-card {
 .btn-update:hover {
   background-color: #004494;
 }
+
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép các card tự động chuyển hàng */
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card-container c-card {
+  flex: 1 0 200px;
+  max-width: 200px;
+  min-width: 200px;
+
+}
+

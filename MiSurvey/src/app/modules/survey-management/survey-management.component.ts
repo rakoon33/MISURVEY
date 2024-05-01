@@ -4,12 +4,14 @@ import { Router } from '@angular/router';
 import { surveyManagementActions } from 'src/app/core/store/actions';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/internal/Observable';
-import { surveyManagementSelector } from 'src/app/core/store/selectors';
+import { surveyManagementSelector, userSelector } from 'src/app/core/store/selectors';
 import { SurveyManagementService } from 'src/app/core/services';
 import { ModalService } from '@coreui/angular';
 import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { SafeUrl } from '@angular/platform-browser';
+import { Permission } from 'src/app/core/models';
+import { combineLatest, map } from 'rxjs';
 
 @Component({
   selector: 'app-survey-management',
@@ -25,6 +27,8 @@ export class SurveyManagementComponent implements OnInit {
   currentQuestionIndex: number = 0;
   surveyIDToDelete: number | undefined;
 
+  userPermissions$: Observable<Permission | undefined> | undefined;
+  
   constructor(
     private router: Router,
     private store: Store,
@@ -34,6 +38,29 @@ export class SurveyManagementComponent implements OnInit {
   ) {
     this.surveys$ = this.store.select(
       surveyManagementSelector.selectAllSurveys
+    );
+
+    this.userPermissions$ = combineLatest([
+      this.store.select(userSelector.selectCurrentUser),
+      this.store.select(
+        userSelector.selectPermissionByModuleName('Survey Management')
+      ),
+    ]).pipe(
+      map(([currentUser, permissions]) => {
+        // If the current user is a Supervisor, return their actual permissions
+        if (currentUser?.UserRole === 'Supervisor') {
+          return permissions;
+        }
+        // If not, return an object with all permissions set to true
+        return {
+          CanView: true,
+          CanAdd: true,
+          CanUpdate: true,
+          CanDelete: true,
+          CanExport: true,
+          CanViewData: true,
+        } as Permission;
+      })
     );
   }
 
@@ -59,9 +86,13 @@ export class SurveyManagementComponent implements OnInit {
     this.router.navigate(['/survey-management/survey-method']);
   }
 
-  navigateToSurveyDetails(surveyId: number, event: Event): void {
+  navigateToSurveyDetails(surveyId: number, event: Event, permissions: Permission | undefined): void {
     event.stopPropagation();
-    this.router.navigate(['/survey-management/survey-detailed', surveyId]);
+    if (permissions?.CanViewData) {
+      this.router.navigate(['/survey-management/survey-detailed', surveyId]);
+    } else {
+      this.toastr.error('You do not have permission to view survey details.');
+    }
   }
 
   openModal(surveyId: number) {

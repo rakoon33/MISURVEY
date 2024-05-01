@@ -300,7 +300,10 @@
 </div>
 
 
-<div class="admin-company">
+<div class="admin-company" *ngIf="userPermissions$ | async as permissions">
+  <div style="flex: 1" *ngIf="!permissions.CanView">
+    <p>You not has permissions to view anything!</p>
+  </div>
   <div *ngIf="currentUserRole === 'Admin'" class="admin-company-container">
     <div class="admin-company-content" *ngIf="adminCompany$ | async as adminCompany">
       <div class="admin-company-info">

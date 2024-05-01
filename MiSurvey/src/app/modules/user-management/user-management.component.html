@@ -106,8 +106,7 @@
               <li
                 *ngIf="
                   permissions.CanViewData &&
-                  user.UserRole !== 'Admin' &&
-                  currentUserRole == 'SuperAdmin'
+                  user.UserRole !== 'Admin'
                 "
               >
                 <button
