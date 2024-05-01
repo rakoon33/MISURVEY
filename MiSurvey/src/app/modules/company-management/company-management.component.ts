@@ -3,7 +3,7 @@ import { Permission, Company, User } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
-import { companyManagementActions } from 'src/app/core/store/actions';
+import { companyManagementActions, companyActions } from 'src/app/core/store/actions';
 import { companyManagementSelector, companySelector, userSelector } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -27,6 +27,8 @@ export class CompanyManagementComponent implements OnInit {
   currentAction: 'view' | 'edit' | null = null;
   currentSelectedCompanyId: number | undefined;
   currentUserId: number | undefined;
+  currentUserRole: string | undefined;
+  currentCompanyId: number | undefined;
   editCompanyFormGroup: FormGroup;
   addCompanyForm: FormGroup;
 
@@ -40,7 +42,8 @@ export class CompanyManagementComponent implements OnInit {
     companyManagementSelector.selectCurrentCompany
   );
   userPermissions$: Observable<Permission | undefined> | undefined;
-
+  adminCompany$: Observable<Company | null> = this.store.select(companySelector.selectCurrentCompany);
+  private selectedLogoFile: File | null = null;
   constructor(
     private store: Store,
     private toastr: ToastrService,
@@ -103,6 +106,14 @@ export class CompanyManagementComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.store.select(userSelector.selectCurrentUser).subscribe((currentUser) => {
+      this.currentUserId = currentUser?.UserID;
+      this.currentUserRole = currentUser?.UserRole;
+      
+    });
+    if (this.currentUserRole === 'Admin') {
+      this.store.dispatch(companyActions.getCompanyProfileRequest());
+    }
     this.router.events
     .pipe(
       filter(event => event instanceof NavigationStart)
@@ -123,9 +134,7 @@ export class CompanyManagementComponent implements OnInit {
       this.loadCompanies();
     });
     this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
-    this.store
-      .select(userSelector.selectCurrentUser)
-      .subscribe((id) => (this.currentUserId = id?.UserID));
+   
   }
 
   getPaginationRange(
@@ -251,11 +260,21 @@ export class CompanyManagementComponent implements OnInit {
     this.store.dispatch(companyManagementActions.loadCompanyByIdRequest({ CompanyID }));
   }
 
+  onLogoChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input?.files?.length) {
+      this.selectedLogoFile = input.files[0];
+    }
+  }
+
+  
   saveChanges() {
+
     if (this.editCompanyFormGroup.valid && this.currentUserId) {
       const formValue = {
         ...this.editCompanyFormGroup.value,
         UpdatedBy: this.currentUserId,
+        CompanyLogo:  this.selectedLogoFile
       };
 
       this.store.dispatch(
@@ -265,6 +284,9 @@ export class CompanyManagementComponent implements OnInit {
         })
       );
 
+      if(this.currentUserRole==='Admin') {
+        this.store.dispatch(companyActions.getCompanyProfileRequest());
+      }
     } else {
       this.toastr.error('Form is invalid or company ID is not set');
     }
@@ -353,6 +375,25 @@ export class CompanyManagementComponent implements OnInit {
     this.modalService.toggle(action);
   }
 
+  deleteCompany() {
+    if (this.currentSelectedCompanyId) {
+      this.store.dispatch(
+        companyManagementActions.deleteCompanyRequest({
+          CompanyID: this.currentSelectedCompanyId,
+        })
+      );
+      this.modalService.toggle({ show: false, id: 'deleteCompanyModal' });
+    } else {
+      this.toastr.error('Company ID is not available');
+    }
+  }
+  
+  openDeleteCompanyModal(CompanyID: number | undefined){
+    this.currentSelectedCompanyId = CompanyID;
+    this.modalService.toggle({ show: true, id: 'deleteCompanyModal' });
+  }
+
+  
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

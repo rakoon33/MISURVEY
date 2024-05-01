@@ -47,6 +47,10 @@ const loginUser = async (res, username, password) => {
           sameSite: "strict", // Prevent CSRF attacks
           maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
+
+        await user.update({ LastLogin: new Date() });
+
+        
         return {
           status: true,
           message: "User login successful",

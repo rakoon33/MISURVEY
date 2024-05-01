@@ -32,7 +32,7 @@
         <td>{{ activity.ActivityDescription }}</td>
         <td>{{ activity.TableName }}</td>
         <td>{{ activity.CreatedAt | date }}</td>
-        <td>{{ activity.CompanyID }}</td>
+        <td>{{ activity.CompanyID != null ? activity.CompanyID : "SuperAdmin" }}</td>
       </tr>
     </tbody>
   </table>

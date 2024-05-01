@@ -16,10 +16,8 @@ export class DefaultLayoutComponent implements OnInit {
   ngOnInit(): void {
     this.store.select(userSelector.selectCurrentUser).subscribe((user) => {
       if (user && user.UserRole === 'SuperAdmin') {
-        // Lọc ra các mục 'Survey Management' và 'Company Role Management' nếu người dùng là 'SuperAdmin'
-        this.navItems = originalNavItems.filter(item => item.name !== 'Survey Management' && item.name !== 'Role Management' && item.name !== 'User Management');
+        this.navItems = originalNavItems.filter(item => item.name !== 'Survey Management' && item.name !== 'Role Management' && item.name !== 'Customer Management');
       } else {
-        // Nếu người dùng không phải là 'SuperAdmin'
         this.navItems = originalNavItems.filter(item => item.name !== 'Question Management');;
       }
     });

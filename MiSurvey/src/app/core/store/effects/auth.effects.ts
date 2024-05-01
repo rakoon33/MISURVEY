@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, concatMap, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { AuthService } from '../../services';
 import { authActions } from '../actions';
 import { userActions } from '../actions';
@@ -17,33 +17,32 @@ export class AuthEffects {
       ofType(authActions.loginRequest),
       switchMap((action) =>
         this.authService.login(action.username, action.password).pipe(
-          concatMap((response) => {
+          switchMap((response) => {
             if (response.status) {
-              // Trigger success toast notification
               this.toastrService.success('Login successful');
-              // Return an array of actions
-              return [
-                authActions.loginSuccess(),
-                userActions.getUserDataRequest(),
-                companyActions.getCompanyDataRequest(),
-              ];
+              // Initiating the user data request and waiting for its success before dispatching login success
+              return this.actions$.pipe(
+                ofType(userActions.getUserDataSuccess), // Listening for the getUserDataSuccess action
+                take(1), // Taking only one occurrence of getUserDataSuccess
+                map(() => authActions.loginSuccess()), // Mapping to login success
+                startWith(userActions.getUserDataRequest()) // Starting with the getUserDataRequest action
+              );
             } else {
-              // Trigger error toast notification
               this.toastrService.error(response.message || 'Login failed');
-              return [authActions.loginFailure()];
+              return of(authActions.loginFailure());
             }
           }),
           catchError((error) => {
-            // Trigger error toast notification
             this.toastrService.error(
               error.message || 'An error occurred during login'
             );
-            return [authActions.loginFailure()];
+            return of(authActions.loginFailure());
           })
         )
       )
     )
   );
+  
 
   logout$ = createEffect(() =>
   this.actions$.pipe(

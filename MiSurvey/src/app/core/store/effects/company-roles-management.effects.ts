@@ -59,21 +59,26 @@ export class CompanyRolesManagementEffects {
 );
 
 deleteCompanyRole$ = createEffect(() =>
-    this.actions$.pipe(
-        ofType(companyRoleManagementActions.deleteCompanyRoleRequest),
-        mergeMap((action) =>
-            this.companyRoleService.deleteCompanyRole(action.roleId).pipe(
-                map(() => {
-                    this.toastrService.success('Role deleted successfully!');
-                    return companyRoleManagementActions.deleteCompanyRoleSuccess();
-                }),
-                catchError(error => {
-                    this.toastrService.error('Failed to delete role');
-                    return of(companyRoleManagementActions.deleteCompanyRoleFailure({ error }));
-                })
-            )
-        )
-    )
+  this.actions$.pipe(
+      ofType(companyRoleManagementActions.deleteCompanyRoleRequest),
+      mergeMap((action) =>
+          this.companyRoleService.deleteCompanyRole(action.roleId).pipe(
+              map((response) => {
+                  if (response.status) {
+                      this.toastrService.success('Role deleted successfully!');
+                      return companyRoleManagementActions.deleteCompanyRoleSuccess();
+                  } else {
+                      this.toastrService.error(response.message || 'Deletion failed');
+                      return companyRoleManagementActions.deleteCompanyRoleFailure({ error: response.message });
+                  }
+              }),
+              catchError(error => {
+                  this.toastrService.error('Failed to delete role');
+                  return of(companyRoleManagementActions.deleteCompanyRoleFailure({ error }));
+              })
+          )
+      )
+  )
 );
 
 

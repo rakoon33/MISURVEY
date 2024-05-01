@@ -30,8 +30,8 @@ export class CustomerService {
     return this.http.put<Customer>(`${this.apiUrl}/${customerId}`, customer, { withCredentials: true });
   }
 
-  deleteCustomer(customerId: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/${customerId}`, { withCredentials: true });
+  deleteCustomer(customerId: number): Observable<{ status: boolean, message: string }> {
+    return this.http.delete<{ status: boolean, message: string }>(`${this.apiUrl}/${customerId}`, { withCredentials: true });
   }
 
   searchCustomers(searchTerm: string): Observable<Customer[]> {

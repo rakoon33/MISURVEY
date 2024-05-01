@@ -5,7 +5,6 @@ import { companyActions } from './../actions';
 export const initialState: CompanyState = {
   company: null,
   loading: false,
-  permissions: [],
 };
 
 export const companyReducer = createReducer(
@@ -21,7 +20,6 @@ export const companyReducer = createReducer(
       ...state,
       company,
       loading: false,
-      permissions: permissions
     };
   }),
   on(companyActions.getCompanyDataFailure, (state) => {
@@ -31,4 +29,17 @@ export const companyReducer = createReducer(
       loading: false
     };
   }),
+  on(companyActions.getCompanyProfileRequest, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(companyActions.getCompanyProfileSuccess, (state, { company }) => ({
+    ...state,
+    company,
+    loading: false,
+  })),
+  on(companyActions.getCompanyProfileFailure, (state) => ({
+    ...state,
+    loading: false,
+  }))
 );

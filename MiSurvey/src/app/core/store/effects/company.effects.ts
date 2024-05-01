@@ -35,6 +35,26 @@ export class CompanyEffects {
     )
   );
 
+  getCompanyProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(companyActions.getCompanyProfileRequest),
+      switchMap(() =>
+        this.companyService.getCompanyProfile().pipe(
+          map((response) => {
+            console.log(response);
+            return companyActions.getCompanyProfileSuccess({ company: response.data });
+          }),
+          catchError((error) => {
+            this.toastrService.error(
+              error.message || 'Failed to fetch company profile'
+            );
+            return of(companyActions.getCompanyProfileFailure());
+          })
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private companyService: CompanyService,

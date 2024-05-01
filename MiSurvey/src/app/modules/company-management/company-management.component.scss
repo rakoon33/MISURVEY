@@ -384,3 +384,83 @@ button:active {
   background: none;
   border: none;
 }
+
+
+.admin-company {
+
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  height: 80vh; 
+  padding: 20px; 
+}
+
+.admin-company-container {
+  margin: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  width: 100%;
+}
+
+.admin-company-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-company-info {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  text-align: left;
+}
+
+.admin-company-info p {
+  margin: 10px 0;
+}
+
+.update-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #28a745;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.update-btn:hover {
+  background-color: #218838;
+}
+
+.admin-company-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+}
+
+.company-logo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.edit-logo-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-logo-btn:hover {
+  background-color: #0056b3;
+}

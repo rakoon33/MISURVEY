@@ -151,9 +151,6 @@ const deleteCompany = async (CompanyID, udata) => {
         // 3.1.3 After deleting all associated responses, delete the question
         await SurveyQuestion.destroy({ where: { PageID: page.PageID } });
       }
-
-      // 3.2 Then delete the survey pages themselves
-      await SurveyPage.destroy({ where: { SurveyID: survey.SurveyID } });
     }
 
     // 4. Delete related surveys

@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ReportService } from 'src/app/core/services/report.service';
 import { userSelector } from 'src/app/core/store/selectors';
+import { DatePipe } from '@angular/common';
+
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
+  providers: [DatePipe],
 })
 export class DashboardComponent {
   userCount: number = 0;
@@ -70,15 +73,21 @@ export class DashboardComponent {
       }
     | undefined;
 
-  constructor(private reportService: ReportService, private store: Store) {
-
+  constructor(
+    private reportService: ReportService,
+    private store: Store,
+    private datePipe: DatePipe
+  ) {
     const today = new Date();
-    const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7)).toISOString();
+    const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
+    this.surveyTypeStartDate = this.formatDate(sevenDaysAgo);
+    this.surveyCountStartDate = this.formatDate(sevenDaysAgo);
+    this.activityStartDate = this.formatDate(sevenDaysAgo); 
 
-    this.activityStartDate = sevenDaysAgo;
-    this.surveyTypeStartDate = sevenDaysAgo;
-    this.surveyCountStartDate = sevenDaysAgo;
-    
+    this.activityEndDate = this.formatDate(new Date());
+    this.surveyCountEndDate = this.formatDate(new Date());
+    this.surveyTypeEndDate = this.formatDate(new Date());
+
     this.loadDashboardData();
     this.loadActivityOverviewData();
     this.loadSurveyTypeUsageData();
@@ -89,7 +98,12 @@ export class DashboardComponent {
     this.store
       .select(userSelector.selectCurrentUser)
       .subscribe((user) => (this.currentUser = user));
+
     this.loadDashboardData();
+  }
+
+  private formatDate(date: Date): string {
+    return this.datePipe.transform(date, 'yyyy-MM-dd') || '';
   }
 
   loadDashboardData(): void {
@@ -154,7 +168,10 @@ export class DashboardComponent {
 
   loadSurveyCountByDateRangeData(): void {
     this.reportService
-      .getSurveyCountByDateRange(this.surveyCountStartDate, this.surveyCountEndDate)
+      .getSurveyCountByDateRange(
+        this.surveyCountStartDate,
+        this.surveyCountEndDate
+      )
       .subscribe((response) => {
         this.surveyCountData = {
           labels: response.data.map((item: { date: any }) => item.date),
