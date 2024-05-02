@@ -1,4 +1,3 @@
-import { SurveyManagementService } from './../../../core/services/survey-management.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -8,6 +7,8 @@ import { surveyManagementSelector } from 'src/app/core/store/selectors';
 import { MatDialog } from '@angular/material/dialog';
 import { EmailModalComponent } from 'src/app/shared/components/email-modal/email-modal.component';
 import { ToastrService } from 'ngx-toastr';
+import { ModalService } from '@coreui/angular';
+import { SurveyManagementService } from './../../../core/services/survey-management.service';
 @Component({
   selector: 'app-survey-detailed',
   templateUrl: './survey-detailed.component.html',
@@ -15,13 +16,18 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class SurveyDetailedComponent implements OnInit {
   survey: any;
+  questionIDToDelete: number = 0;
+
+  public thankYouMessage: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private store: Store,
     private router: Router,
     private dialog: MatDialog,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private surveyManagementService: SurveyManagementService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -138,8 +144,63 @@ export class SurveyDetailedComponent implements OnInit {
     });
   }
 
+  openDeleteQuestionModal(questionId: number) {
+    this.questionIDToDelete = questionId;
+    this.modalService.toggle({ show: true, id: 'deleteQuestionModal' });
+  }
+
   deleteQuestion() {
-    // Logic để xoá câu hỏi
+    // Call backend service to delete the question
+    this.surveyManagementService
+      .deleteSurveyQuestion(this.questionIDToDelete)
+      .subscribe(
+        (response) => {
+          if (response.status) {
+            // Remove the question from the local survey data
+            const questions = this.survey.SurveyQuestions.filter(
+              (q: { QuestionID: number }) =>
+                q.QuestionID !== this.questionIDToDelete
+            );
+
+            // Optionally re-index the remaining questions for PageOrder
+            questions.forEach((q: { PageOrder: any }, i: number) => {
+              q.PageOrder = i + 1;
+            });
+
+            // Update the local survey object with the updated questions array
+            this.survey = {
+              ...this.survey,
+              SurveyQuestions: questions,
+            };
+
+            // Dispatch an action to update the store
+            this.store.dispatch(
+              surveyManagementActions.updateSurveyRequest({
+                surveyId: this.survey.SurveyID,
+                surveyData: this.survey,
+              })
+            );
+
+            // Display success message
+            this.toastrService.success('Question deleted successfully');
+            this.modalService.toggle({
+              show: false,
+              id: 'deleteQuestionModal',
+            });
+          } else {
+            // Handle error response from backend
+            this.toastrService.error(
+              response.message || 'Failed to delete question'
+            );
+          }
+        },
+        (error) => {
+          // Handle any network errors
+          this.toastrService.error(
+            'An error occurred while deleting the question'
+          );
+        }
+      );
   }
 
   addNewQuestion() {
@@ -148,21 +209,47 @@ export class SurveyDetailedComponent implements OnInit {
     });
   }
 
-  editThankMessage() {}
-
-  addThankYouMessage() {
-    // Logic để xoá câu hỏi
+  editThankMessage() {
+    this.thankYouMessage = this.survey?.ThankYouMessage || '';
+    this.modalService.toggle({ show: true, id: 'editThankMessageModal' });
   }
 
+  saveThankMessage() {
+    // Create an updated Customizations object by merging the existing properties
+    const updatedCustomizations = {
+      ...this.survey.Customizations, // Include existing properties
+      topBarColor: this.survey.Customizations.topBarColor, // Preserve topBarColor
+      buttonTextColor: this.survey.Customizations.buttonTextColor, // Preserve buttonTextColor
+      thankMessage: this.thankYouMessage // Add the updated thankMessage
+    };
+  
+    // Update the survey object with the modified Customizations object
+    this.survey = {
+      ...this.survey,
+      Customizations: updatedCustomizations
+    };
+  
+    // Optionally: Call the backend to save the updated survey
+    this.store.dispatch(
+      surveyManagementActions.updateSurveyRequest({
+        surveyId: this.survey.SurveyID,
+        surveyData: this.survey
+      })
+    );
+  
+    // Close the modal
+    this.modalService.toggle({ show: false, id: 'editThankMessageModal' });
+  }
+  
   openEmailModal() {
     const currentSurveyId = this.survey?.SurveyID;
     if (currentSurveyId) {
       const dialogRef = this.dialog.open(EmailModalComponent, {
         width: '700px',
-        data: { surveyId: currentSurveyId } 
+        data: { surveyId: currentSurveyId },
       });
-  
-      dialogRef.afterClosed().subscribe(result => {
+
+      dialogRef.afterClosed().subscribe((result) => {
         // Kiểm tra nếu result có thuộc tính status
         if (result?.status) {
           this.toastrService.success(result.message);
@@ -172,5 +259,4 @@ export class SurveyDetailedComponent implements OnInit {
       });
     }
   }
-  
 }
