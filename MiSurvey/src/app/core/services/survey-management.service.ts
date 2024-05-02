@@ -89,4 +89,8 @@ export class SurveyManagementService {
     );
   }
 
+  deleteSurveyQuestion(questionId: number): Observable<any> {
+    return this.http.delete<any>(`${apiConstants.BACKEND_API.BASE_API_URL}/questions/${questionId}`, { withCredentials: true });
+  }
+
 }
