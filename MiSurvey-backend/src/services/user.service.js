@@ -14,7 +14,9 @@ const {
   UserPackage,
   Notification,
   SurveyQuestion,
-  SurveyResponse
+  SurveyResponse,
+  CompanyRole,
+  Ticket
 } = require("../models");
 const companyService = require("../services");
 const db = require("../config/database");
@@ -183,17 +185,32 @@ const deleteUser = async (UserID, udata) => {
 
     // For each survey, delete survey details and survey questions
     for (const survey of surveys) {
-      await SurveyDetail.destroy({
+      const questions = await SurveyQuestion.findAll({
         where: { SurveyID: survey.SurveyID },
-        transaction
+        transaction,
       });
-
-      await SurveyResponse.destroy({
-        where: { SurveyID: survey.SurveyID },
-        transaction
-      });
-
+      for (const question of questions) {
+        await Ticket.destroy({
+          where: { SurveyID: question.SurveyID },
+          transaction,
+        });
+  
+        await SurveyResponse.destroy({
+          where: { QuestionID: question.QuestionID },
+          transaction,
+        });
+      }
       await SurveyQuestion.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+
+      await SurveyReport.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction,
+      });
+
+      await SurveyDetail.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction
       });
@@ -216,15 +233,15 @@ const deleteUser = async (UserID, udata) => {
       transaction
     });
 
+    // Delete related entries in UserActivityLogs
+    await UserActivityLog.destroy({
+      where: { UserID: UserID },
+      transaction
+    });
+
     for (const companyUser of companyUsers) {
       const companyID = companyUser.CompanyID;
       const companyUserID = companyUser.CompanyUserID;
-
-      // Delete related entries in UserActivityLogs
-      await UserActivityLog.destroy({
-        where: { CompanyID: companyID },
-        transaction
-      });
 
       // Delete related records in IndividualPermission
       await IndividualPermission.destroy({
@@ -246,8 +263,15 @@ const deleteUser = async (UserID, udata) => {
 
       // If the user is an admin, delete the company and its associated records
       if (company) {
+        const companyroles = await CompanyRole.findAll({ where: { CompanyID: companyID } });
+        for (const companyrole of companyroles) {
+          await RolePermission.destroy({
+            where: { CompanyRoleID: companyrole.CompanyRoleID },
+          });
+        }
+        await CompanyRole.destroy({ where: { CompanyID: companyID } });
         await Company.destroy({
-          where: { CompanyID: companyID },
+          where: { AdminID: UserID },
           transaction
         });
       }
