@@ -200,7 +200,7 @@ const getUserPermissions = async (userId) => {
       });
     }
 
-    const mergedPermissions = Object.values(permissionsMap);
+    const mergedPermissions = Object.values(permissionsMap).sort((a, b) => a.module.ModuleID - b.module.ModuleID);
 
     return {
       companyUserId: companyUser.CompanyUserID,

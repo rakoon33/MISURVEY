@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { User, Permission, CompanyRole } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
-import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, map, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import {
   FormGroup,
@@ -31,6 +31,10 @@ import {
 } from 'src/app/core/store/actions';
 
 import { CompanyRolesManagementService } from '../../core/services';
+
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-user-management',
@@ -117,7 +121,7 @@ export class CompanyRolesManagementComponent implements OnInit {
       )
     );
   }
-  
+
   get permissionsData(): FormArray {
     return this.roleForm.get('permissionsData') as FormArray;
   }
@@ -168,8 +172,6 @@ export class CompanyRolesManagementComponent implements OnInit {
       });
     });
     this.subscriptions.add(subscription2);
-
-
   }
 
   submitRole() {
@@ -275,7 +277,9 @@ export class CompanyRolesManagementComponent implements OnInit {
           this.populateFormView(response.data);
           this.modalService.toggle({ show: true, id: 'viewRoleModal' });
         } else {
-          this.toastr.error('Failed to fetch role details: ' + response.message);
+          this.toastr.error(
+            'Failed to fetch role details: ' + response.message
+          );
         }
       },
       error: (err) => {
@@ -312,7 +316,6 @@ export class CompanyRolesManagementComponent implements OnInit {
     });
   }
 
-
   get permissionsFormArray() {
     return this.roleForm.get('permissionsData') as FormArray;
   }
@@ -322,29 +325,108 @@ export class CompanyRolesManagementComponent implements OnInit {
     this.modalService.toggle(action);
   }
 
+  deleteRole(roleId: number | undefined) {
+    if (typeof roleId !== 'number') {
+      this.toastr.error('Invalid role ID');
+      return;
+    }
 
-deleteRole(roleId: number | undefined) {
-  if (typeof roleId !== 'number') {
-    this.toastr.error('Invalid role ID');
-    return;
+    this.roleIdToDelete = roleId;
+    this.modalService.toggle({ show: true, id: 'deleteRoleModal' });
   }
 
-  this.roleIdToDelete = roleId;
-  this.modalService.toggle({ show: true, id: 'deleteRoleModal' });
-}
-
-confirmDeleteRole() {
-  if (typeof this.roleIdToDelete === 'number') {
-    // Dispatch the delete action
-    this.store.dispatch(companyRoleManagementActions.deleteCompanyRoleRequest({ roleId: this.roleIdToDelete }));
-    // Hide the modal
-    this.modalService.toggle({ show: false, id: 'deleteRoleModal' });
-    // Optionally refresh the roles list
-    this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
-  } else {
-    this.toastr.error('Role ID is undefined');
+  confirmDeleteRole() {
+    if (typeof this.roleIdToDelete === 'number') {
+      // Dispatch the delete action
+      this.store.dispatch(
+        companyRoleManagementActions.deleteCompanyRoleRequest({
+          roleId: this.roleIdToDelete,
+        })
+      );
+      // Hide the modal
+      this.modalService.toggle({ show: false, id: 'deleteRoleModal' });
+      // Optionally refresh the roles list
+      this.store.dispatch(
+        companyRoleManagementActions.loadCompanyRolesRequest()
+      );
+    } else {
+      this.toastr.error('Role ID is undefined');
+    }
   }
-}
+
+  exportToPdf() {
+    const rolesToExport = this.roles$; // Assuming this.roles$ contains the data
+
+    // Fetch the observable data synchronously
+    rolesToExport.pipe(take(1)).subscribe((roles) => {
+      if (roles.length > 0) {
+        const documentDefinition = this.getDocumentDefinition(roles);
+        pdfMake.createPdf(documentDefinition).download('company-roles.pdf');
+      } else {
+        this.toastr.error('No roles data available to export.');
+      }
+    });
+  }
+
+  getDocumentDefinition(roles: CompanyRole[]) {
+    const now = new Date();
+    const formattedTime = now.toLocaleString();
+
+    return {
+      content: [
+        {
+          text: 'Company Roles Report',
+          style: 'header',
+        },
+        this.buildRoleTable(roles),
+        {
+          text: `Report generated on: ${formattedTime}`,
+          style: 'subheader',
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 20, 0, 10] as [number, number, number, number],
+        },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 10] as [number, number, number, number],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black',
+        },
+      },
+    };
+  }
+
+  buildRoleTable(roles: CompanyRole[]) {
+    return {
+      table: {
+        headerRows: 1,
+        widths: [30, '*', '*', '*'],
+        body: [
+          [
+            { text: '#', style: 'tableHeader' },
+            { text: 'Role Name', style: 'tableHeader' },
+            { text: 'Description', style: 'tableHeader' },
+            { text: 'Created At', style: 'tableHeader' },
+          ],
+          ...roles.map((role, index) => [
+            (index + 1).toString(),
+            role.CompanyRoleName || '', 
+            role.CompanyRoleDescription || '',
+            role.CreatedAt ? new Date(role.CreatedAt).toLocaleDateString() : '', 
+          ]),
+        ],
+      },
+      layout: 'auto',
+    };
+  }
 
   ngOnDestroy() {
     // Unsubscribe all subscriptions to prevent memory leaks

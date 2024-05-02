@@ -6,7 +6,7 @@
   </div>
   <div *ngIf="permissions.CanView">
     <div class="d-flex justify-content-start">
-      <button *ngIf="permissions.CanExport" class="btn-action">Export Data</button>
+      <button *ngIf="permissions.CanExport" (click)="exportToPdf()" class="btn-action">Export Data</button>
     </div>
     <table class="table table-hover table-striped responsive">
       <thead>

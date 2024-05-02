@@ -1,7 +1,7 @@
 import { CustomerService } from './../../core/services/customer-management.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, map, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
@@ -14,6 +14,11 @@ import {
   Router,
   Event as RouterEvent,
 } from '@angular/router';
+
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 
 @Component({
   selector: 'app-customer-management',
@@ -250,7 +255,81 @@ export class CustomerManagementComponent implements OnInit {
     this.modalService.toggle({ show: false, id: 'deleteCustomerModal' });
   }
 
+  exportToPdf() {
+    this.customers$.pipe(take(1)).subscribe((customers) => {
+      if (customers.length > 0) {
+        const documentDefinition = this.getDocumentDefinition(customers);
+        pdfMake.createPdf(documentDefinition).download('customers-report.pdf');
+      } else {
+        this.toastr.error('No customers data available to export.');
+      }
+    });
+  }
+
+  getDocumentDefinition(customers: Customer[]) {
+    const now = new Date();
+    const formattedTime = now.toLocaleString();
+
+    return {
+      content: [
+        {
+          text: 'Customer Report',
+          style: 'header',
+        },
+        this.buildCustomerTable(customers),
+        {
+          text: `Report generated on: ${formattedTime}`,
+          style: 'subheader',
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 20, 0, 10] as [number, number, number, number],
+        },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 10] as [number, number, number, number],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black',
+        },
+      },
+    };
+  }
+
+  buildCustomerTable(customers: Customer[]) {
+    return {
+      table: {
+        headerRows: 1,
+        widths: [30, 150, 150, 100, 'auto'],
+        body: [
+          [
+            { text: 'NO', style: 'tableHeader' },
+            { text: 'Full Name', style: 'tableHeader' },
+            { text: 'Email', style: 'tableHeader' },
+            { text: 'Phone Number', style: 'tableHeader' },
+            { text: 'Created At', style: 'tableHeader' },
+          ],
+          ...customers.map((customer, index) => [
+            (index + 1).toString(),
+            customer.FullName || '',
+            customer.Email || '',
+            customer.PhoneNumber || '',
+            customer.CreatedAt ? new Date(customer.CreatedAt).toLocaleDateString() : '',
+          ]),
+        ],
+      },
+      layout: 'auto',
+    };
+  }
+  
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
+
 }
