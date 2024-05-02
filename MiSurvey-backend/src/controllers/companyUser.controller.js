@@ -3,7 +3,7 @@ const { companyUserService } = require("../services");
 const createCompanyUserController = async (req, res) => {
   try {
     const { companyUserData, userData } = req.body;
-
+    
     if (!companyUserData || !userData) {
       return res.status(400).json({
         status: false,
