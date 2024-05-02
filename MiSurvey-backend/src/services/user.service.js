@@ -222,7 +222,7 @@ const deleteUser = async (UserID, udata) => {
 
       // Delete related entries in UserActivityLogs
       await UserActivityLog.destroy({
-        where: { UserID: companyUserID },
+        where: { CompanyID: companyID },
         transaction
       });
 
