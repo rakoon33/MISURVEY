@@ -183,7 +183,6 @@ const deleteUser = async (UserID, udata) => {
 
     // For each survey, delete survey details and survey questions
     for (const survey of surveys) {
-      // Delete survey details related to the survey
       await SurveyDetail.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction
@@ -194,13 +193,11 @@ const deleteUser = async (UserID, udata) => {
         transaction
       });
 
-      // Delete survey questions related to the survey
       await SurveyQuestion.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction
       });
 
-      // Now delete the survey
       await Survey.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction
@@ -213,30 +210,47 @@ const deleteUser = async (UserID, udata) => {
       transaction
     });
 
-    // Handle company and company-related deletions
-    const companies = await Company.findAll({
-      where: { AdminID: UserID },
+    // Find all company user records associated with the user
+    const companyUsers = await CompanyUser.findAll({
+      where: { UserID: UserID },
       transaction
     });
 
-    for (const company of companies) {
+    for (const companyUser of companyUsers) {
+      const companyID = companyUser.CompanyID;
+      const companyUserID = companyUser.CompanyUserID;
+
       // Delete related entries in UserActivityLogs
       await UserActivityLog.destroy({
-        where: { CompanyID: company.CompanyID },
+        where: { UserID: companyUserID },
         transaction
       });
 
-      // Delete related CompanyUser records
+      // Delete related records in IndividualPermission
+      await IndividualPermission.destroy({
+        where: { CompanyUserID: companyUserID },
+        transaction
+      });
+
+      // Delete the company user record
       await CompanyUser.destroy({
-        where: { CompanyID: company.CompanyID },
+        where: { CompanyUserID: companyUserID },
         transaction
       });
 
-      // Delete the company
-      await Company.destroy({
-        where: { CompanyID: company.CompanyID },
+      // Check if the user is an admin of the company
+      const company = await Company.findOne({
+        where: { CompanyID: companyID, AdminID: UserID },
         transaction
       });
+
+      // If the user is an admin, delete the company and its associated records
+      if (company) {
+        await Company.destroy({
+          where: { CompanyID: companyID },
+          transaction
+        });
+      }
     }
 
     // Delete the user
