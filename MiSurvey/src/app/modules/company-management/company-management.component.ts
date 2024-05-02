@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Permission, Company, User } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
-import { Observable, Subscription, combineLatest, filter, map } from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, map, take } from 'rxjs';
 import { companyManagementActions, companyActions } from 'src/app/core/store/actions';
 import { companyManagementSelector, companySelector, userSelector } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
@@ -73,7 +73,6 @@ export class CompanyManagementComponent implements OnInit {
             } else if (this.currentAction === 'edit') {
               this.loadCompanyDataIntoForm(company);
               this.currentSelectedCompanyId = company.CompanyID;
-              this.toggleModal('editCompanyModal');
             }
           } else {
             this.toastr.error('Error fetching company with id');
@@ -250,6 +249,8 @@ export class CompanyManagementComponent implements OnInit {
       this.store.dispatch(
         companyManagementActions.createCompanyRequest({ companyData: formData })
       );
+      this.addCompanyForm.reset();
+      this.modalService.toggle({ show: false, id: 'addCompanyModal' });
     } else {
       this.toastr.error('Form is not valid or company ID is not available');
     }
@@ -257,6 +258,7 @@ export class CompanyManagementComponent implements OnInit {
 
   editCompany(CompanyID: number): void {
     this.currentAction = 'edit';
+    this.modalService.toggle({ show: true, id: 'editCompanyModal' });
     this.store.dispatch(companyManagementActions.loadCompanyByIdRequest({ CompanyID }));
   }
 
@@ -287,16 +289,17 @@ export class CompanyManagementComponent implements OnInit {
       if(this.currentUserRole==='Admin') {
         this.store.dispatch(companyActions.getCompanyProfileRequest());
       }
+
+      this.modalService.toggle({ show: false, id: 'editCompanyModal' });
     } else {
       this.toastr.error('Form is invalid or company ID is not set');
     }
   }
 
   exportToPdf() {
-    this.companies$.subscribe(companies => {
+    this.companies$.pipe(take(1)).subscribe(companies => {
       if (companies.length > 0) {
         const documentDefinition = this.getDocumentDefinition(companies);
-        pdfMake.createPdf(documentDefinition).open();
         pdfMake.createPdf(documentDefinition).download('companies-report.pdf');
       } else {
         this.toastr.error('No companies data available to export.');

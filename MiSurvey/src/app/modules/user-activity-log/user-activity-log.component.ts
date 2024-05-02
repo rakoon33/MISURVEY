@@ -9,8 +9,11 @@ import {
 } from '@angular/router';
 import { Observable, combineLatest, filter, map } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { ToastrService } from 'ngx-toastr';
 import { userSelector } from 'src/app/core/store/selectors';
-
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 @Component({
   selector: 'app-user-activity-log',
   templateUrl: './user-activity-log.component.html',
@@ -30,6 +33,7 @@ export class UserActivityLogComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
+    private toastr: ToastrService,
   ) {
 
     this.userPermissions$ = combineLatest([
@@ -152,4 +156,83 @@ export class UserActivityLogComponent implements OnInit {
 
     return range;
   }
+
+  exportToPdf() {
+    const activitiesToExport = this.activities; // Assuming this.activities contains the data
+  
+    if (activitiesToExport.length > 0) {
+      const documentDefinition = this.getDocumentDefinition(activitiesToExport);
+      pdfMake.createPdf(documentDefinition).download('user-activity-log.pdf');
+    } else {
+      this.toastr.error('No activities data available to export.');
+    }
+  }
+
+  getDocumentDefinition(activities: UserActivityLog[]) {
+    const now = new Date();
+    const formattedTime = now.toLocaleString();
+  
+    return {
+      content: [
+        {
+          text: 'User Activity Log Report',
+          style: 'header',
+        },
+        this.buildActivityTable(activities),
+        {
+          text: `Report generated on: ${formattedTime}`,
+          style: 'subheader',
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 20, 0, 10] as [number, number, number, number],
+        },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 10] as [number, number, number, number],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black',
+        },
+      },
+    };
+  }
+
+  buildActivityTable(activities: UserActivityLog[]) {
+    return {
+      table: {
+        headerRows: 1,
+        widths: [30, 'auto', 'auto', '*', 'auto', '*', '*'],
+        body: [
+          [
+            { text: '#', style: 'tableHeader' },
+            { text: 'User ID', style: 'tableHeader' },
+            { text: 'Action', style: 'tableHeader' },
+            { text: 'Description', style: 'tableHeader' },
+            { text: 'Table Name', style: 'tableHeader' },
+            { text: 'Created At', style: 'tableHeader' },
+            { text: 'Company ID', style: 'tableHeader' },
+          ],
+          ...activities.map((activity, index) => [
+            (index + 1).toString(),
+            activity.UserID,
+            activity.UserAction,
+            activity.ActivityDescription,
+            activity.TableName,
+            new Date(activity.CreatedAt).toLocaleDateString(),
+            activity.CompanyID != null ? activity.CompanyID : 'SuperAdmin',
+          ]),
+        ],
+      },
+      layout: 'auto',
+    };
+  }
+  
+  
 }

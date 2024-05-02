@@ -2,7 +2,16 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { User, Permission, CompanyRole } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
-import { Observable, Subscription, combineLatest, filter, forkJoin, map, of } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  of,
+  take,
+} from 'rxjs';
 import {
   companyRoleManagementActions,
   companyUserManagementActions,
@@ -142,7 +151,6 @@ export class UserManagementComponent implements OnInit {
             } else if (this.currentAction === 'edit') {
               this.loadUserDataIntoForm(user);
               this.currentSelectedUserId = user.UserID;
-              this.toggleModal('editUserModal');
             }
           } else {
             this.toastr.error('Error fetching user with id');
@@ -193,6 +201,7 @@ export class UserManagementComponent implements OnInit {
           }
         }
       });
+
     this.route.queryParams.subscribe((params) => {
       this.currentPage = params['page'] || 1;
       this.pageSize = params['pageSize'] || 10;
@@ -363,7 +372,9 @@ export class UserManagementComponent implements OnInit {
           })
         );
 
-         this.modalService.toggle({ show: false, id: 'addUserModal' });
+        this.addUserForm.reset();
+
+        this.modalService.toggle({ show: false, id: 'addUserModal' });
       } else {
         // Xử lý cho các vai trò người dùng khác
         this.store.dispatch(
@@ -377,11 +388,14 @@ export class UserManagementComponent implements OnInit {
 
   editUser(UserID: number): void {
     this.currentAction = 'edit';
+
+    this.modalService.toggle({ show: true, id: 'editUserModal' });
     this.store.dispatch(userManagementActions.loadUserByIdRequest({ UserID }));
   }
 
   saveChanges() {
     if (this.editUserFormGroup.valid && this.currentUserId) {
+      console.log(this.currentUserId);
       const formValue = {
         ...this.editUserFormGroup.value,
         UpdatedBy: this.currentUserId,
@@ -392,16 +406,16 @@ export class UserManagementComponent implements OnInit {
           userData: formValue,
         })
       );
+      this.modalService.toggle({ show: false, id: 'editUserModal' });
     } else {
       this.toastr.error('Form is invalid or user ID is not set');
     }
   }
 
   exportToPdf() {
-    this.users$.subscribe((users) => {
+    this.users$.pipe(take(1)).subscribe((users) => {
       if (users.length > 0) {
         const documentDefinition = this.getDocumentDefinition(users);
-        pdfMake.createPdf(documentDefinition).open();
         pdfMake.createPdf(documentDefinition).download('users-report.pdf');
       } else {
         this.toastr.error('No users data available to export.');
@@ -476,9 +490,11 @@ export class UserManagementComponent implements OnInit {
   }
 
   openPermissionsModal(userId: number | undefined) {
+    console.log(userId);
     if (userId) {
       this.authService.getPermissions(userId).subscribe(
         (response) => {
+          console.log(response);
           if (!response || !response.permissions) {
             console.error('Permissions data is missing');
             return;
@@ -598,7 +614,6 @@ export class UserManagementComponent implements OnInit {
               )
               .subscribe({
                 next: (res) => {
-                  console.log(res);
                   this.toastr.success(
                     `Permissions updated successfully for Module ID: ${currentPermission.ModuleID}`
                   );
@@ -639,50 +654,65 @@ export class UserManagementComponent implements OnInit {
   }
 
   deleteAllPermissions(): void {
-      const permissionsFormArray = this.permissionsForm.get('permissions') as FormArray;
-      
-      const deleteObservables: Observable<any>[] = [];
-      permissionsFormArray.controls.forEach((control) => {
-        const permission = control.value;
-        if (permission.IndividualPermissionID && permission.IndividualPermissionID != null && this.currentCompanyUserId) {
-          // Gọi phương thức deletePermission cho từng permission dựa trên IndividualPermissionID và CompanyUserID
-          deleteObservables.push(this.permissionsService.deletePermission(this.currentCompanyUserId, permission.ModuleID));
-        }
-      });
-  
-      if (deleteObservables.length > 0) {
-        forkJoin(deleteObservables).subscribe({
-          next: () => {
-            this.toastr.success('All permissions have been successfully deleted.');
-            this.modalService.toggle({ show: false, id: 'permissionsModal' });
-          },
-          error: (error) => {
-            console.error('Error deleting permissions:', error);
-            this.toastr.error('Failed to delete permissions.');
-          }
-        });
-      } else {
-        this.toastr.info('No permissions to delete.');
+    const permissionsFormArray = this.permissionsForm.get(
+      'permissions'
+    ) as FormArray;
+
+    const deleteObservables: Observable<any>[] = [];
+    permissionsFormArray.controls.forEach((control) => {
+      const permission = control.value;
+      if (
+        permission.IndividualPermissionID &&
+        permission.IndividualPermissionID != null &&
+        this.currentCompanyUserId
+      ) {
+        // Gọi phương thức deletePermission cho từng permission dựa trên IndividualPermissionID và CompanyUserID
+        deleteObservables.push(
+          this.permissionsService.deletePermission(
+            this.currentCompanyUserId,
+            permission.ModuleID
+          )
+        );
       }
-    
+    });
+
+    if (deleteObservables.length > 0) {
+      forkJoin(deleteObservables).subscribe({
+        next: () => {
+          this.toastr.success(
+            'All permissions have been successfully deleted.'
+          );
+          this.modalService.toggle({ show: false, id: 'permissionsModal' });
+        },
+        error: (error) => {
+          console.error('Error deleting permissions:', error);
+          this.toastr.error('Failed to delete permissions.');
+        },
+      });
+    } else {
+      this.toastr.info('No permissions to delete.');
+    }
   }
-  
+
   deleteAllPermissionsModal() {
     this.modalService.toggle({ show: true, id: 'deleteIndividualPermissions' });
   }
 
-  openDeleteUserModal(userId: number|undefined) {
+  openDeleteUserModal(userId: number | undefined) {
     this.currentSelectedUserId = userId;
     this.modalService.toggle({ show: true, id: 'deleteUserModal' });
   }
 
   deleteUser() {
     if (this.currentSelectedUserId) {
-      this.store.dispatch(userManagementActions.deleteUserRequest({ userId: this.currentSelectedUserId }));
+      this.store.dispatch(
+        userManagementActions.deleteUserRequest({
+          userId: this.currentSelectedUserId,
+        })
+      );
       this.modalService.toggle({ show: false, id: 'deleteUserModal' });
     } else {
       this.toastr.error('User ID is not available');
-
     }
   }
 

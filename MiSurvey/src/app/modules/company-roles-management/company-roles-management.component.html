@@ -11,7 +11,7 @@
       >
         Create a new role
       </button>
-      <button *ngIf="permissions.CanExport" class="btn-action">
+      <button *ngIf="permissions.CanExport" class="btn-action" (click)="exportToPdf()">
         Export Data
       </button>
     </div>

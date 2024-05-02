@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable, Subscription, filter } from 'rxjs';
+import { Observable, Subscription, filter, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
@@ -14,6 +14,9 @@ import {
   Router,
   Event as RouterEvent,
 } from '@angular/router';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-question-template',
@@ -263,7 +266,76 @@ export class QuestionTemplateManagementComponent implements OnInit {
     }
   }
   
+  exportToPdf() {
+    this.questionTemplates$.pipe(take(1)).subscribe((templates) => {
+      if (templates.length > 0) {
+        const documentDefinition = this.getDocumentDefinition(templates);
+        pdfMake.createPdf(documentDefinition).download('question-templates-report.pdf');
+      } else {
+        this.toastr.error('No question templates data available to export.');
+      }
+    });
+  }
 
+  getDocumentDefinition(templates: QuestionTemplate[]) {
+    const now = new Date();
+    const formattedTime = now.toLocaleString();
+
+    return {
+      content: [
+        {
+          text: 'Question Templates Report',
+          style: 'header',
+        },
+        this.buildQuestionTemplateTable(templates),
+        {
+          text: `Report generated on: ${formattedTime}`,
+          style: 'subheader',
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 20, 0, 10] as [number, number, number, number],
+        },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 10] as [number, number, number, number],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black',
+        },
+      },
+    };
+  }
+
+  buildQuestionTemplateTable(templates: QuestionTemplate[]) {
+    return {
+      table: {
+        headerRows: 1,
+        widths: [30, '*', '*', '*'],
+        body: [
+          [
+            { text: '#', style: 'tableHeader' },
+            { text: 'Category', style: 'tableHeader' },
+            { text: 'Text', style: 'tableHeader' },
+            { text: 'Survey Type', style: 'tableHeader' }
+          ],
+          ...templates.map((template, index) => [
+            (index + 1).toString(),
+            template.TemplateCategory || '',
+            template.TemplateText || '',
+            template.SurveyType.SurveyTypeName || ''
+          ]),
+        ],
+      },
+      layout: 'auto',
+    };
+  }
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
