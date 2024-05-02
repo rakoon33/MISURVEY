@@ -9,6 +9,10 @@ const {
   SurveyResponse,
   RolePermission,
   Module,
+  UserActivityLog,
+  Notification,
+  SurveyReport,
+  UserPackage
 } = require("../models");
 const { Op } = require("sequelize");
 const db = require("../config/database");
@@ -111,6 +115,8 @@ const updateCompany = async (CompanyID, updatedData, udata) => {
   }
 };
 
+// Assuming `deleteUser` is imported from another module
+
 const deleteCompany = async (CompanyID, udata) => {
   try {
     const company = await Company.findByPk(CompanyID);
@@ -122,69 +128,145 @@ const deleteCompany = async (CompanyID, udata) => {
       };
     }
 
-    // 1. Delete related survey details first
-    await SurveyDetail.destroy({ where: { CompanyID } });
+    // Retrieve the AdminID (UserID) associated with the company
+    const adminID = company.AdminID;
 
-    // 2. Fetch all surveys related to the company
-    const relatedSurveys = await Survey.findAll({ where: { CompanyID } });
+    const transaction = await db.sequelize.transaction();
+  try {
+    // Find and delete all notifications for the user
+    await Notification.destroy({
+      where: { UserID: adminID },
+      transaction
+    });
 
-    // 3. For each survey, first fetch its associated survey pages
-    for (const survey of relatedSurveys) {
-      const surveyPages = await SurveyPage.findAll({
+    // Find and delete all survey reports created by the user
+    await SurveyReport.destroy({
+      where: { UserID: adminID },
+      transaction
+    });
+
+    // Find all surveys created by the user
+    const surveys = await Survey.findAll({
+      where: { UserID: adminID },
+      transaction
+    });
+
+    // For each survey, delete survey details and survey questions
+    for (const survey of surveys) {
+      await SurveyDetail.destroy({
         where: { SurveyID: survey.SurveyID },
+        transaction
       });
 
-      // 3.1 For each survey page, delete associated survey questions first
-      for (const page of surveyPages) {
-        // 3.1.1 Fetch all questions for the current page
-        const questions = await SurveyQuestion.findAll({
-          where: { PageID: page.PageID },
+      await SurveyResponse.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+
+      await SurveyQuestion.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+
+      await Survey.destroy({
+        where: { SurveyID: survey.SurveyID },
+        transaction
+      });
+    }
+
+    // Find and delete all user packages
+    await UserPackage.destroy({
+      where: { UserID: adminID },
+      transaction
+    });
+
+    // Find all company user records associated with the user
+    const companyUsers = await CompanyUser.findAll({
+      where: { UserID: adminID },
+      transaction
+    });
+
+    for (const companyUser of companyUsers) {
+      const companyID = companyUser.CompanyID;
+      const companyUserID = companyUser.CompanyUserID;
+
+      // Delete related entries in UserActivityLogs
+      await UserActivityLog.destroy({
+        where: { CompanyID: companyID },
+        transaction
+      });
+
+      // Delete related records in IndividualPermission
+      await IndividualPermission.destroy({
+        where: { CompanyUserID: companyUserID },
+        transaction
+      });
+
+      // Delete the company user record
+      await CompanyUser.destroy({
+        where: { CompanyUserID: companyUserID },
+        transaction
+      });
+
+      // Check if the user is an admin of the company
+      const company = await Company.findOne({
+        where: { CompanyID: companyID, AdminID: adminID },
+        transaction
+      });
+
+      // If the user is an admin, delete the company and its associated records
+      if (company) {
+        await Company.destroy({
+          where: { CompanyID: companyID },
+          transaction
         });
-
-        // 3.1.2 For each question, delete its associated survey responses first
-        for (const question of questions) {
-          await SurveyResponse.destroy({
-            where: { QuestionID: question.QuestionID },
-          });
-        }
-
-        // 3.1.3 After deleting all associated responses, delete the question
-        await SurveyQuestion.destroy({ where: { PageID: page.PageID } });
       }
     }
 
-    // 4. Delete related surveys
-    await Survey.destroy({ where: { CompanyID } });
+    // Delete the user
+    const deletedUser = await User.destroy({
+      where: { UserID: adminID },
+      transaction
+    });
 
-    // 5. Fetch all CompanyUsers related to the company
-    const companyUsers = await CompanyUser.findAll({ where: { CompanyID } });
-
-    // 6. For each CompanyUser, delete all related IndividualPermissions
-    for (const user of companyUsers) {
-      await IndividualPermission.destroy({
-        where: { CompanyUserID: user.CompanyUserID },
-      });
+    // Commit all deletions if successful
+    if (deletedUser) {
+      await transaction.commit();
+      await createLogActivity(
+        udata.id,
+        "DELETE",
+        `User deleted with ID: ${adminID}`,
+        "Users",
+        udata.companyID
+      );
+      return {
+        status: true,
+        message: "Company and all related records deleted successfully",
+      };
+    } else {
+      throw new Error("User deletion failed");
     }
-
-    // 7. After all IndividualPermissions are deleted, delete all CompanyUsers
-    await CompanyUser.destroy({ where: { CompanyID } });
-
-    // 8. Finally, delete the company itself
-    await company.destroy();
-    await createLogActivity(udata.id, 'DELETE', `Company deleted with ID: ${CompanyID}`, 'Company', udata.companyID);
-
+  } catch (error) {
+    // Rollback if any deletions fail
+    await transaction.rollback();
     return {
-      status: true,
-      message: "Company deleted successfully",
+      status: false,
+      message: "Failed to delete user and related data.",
+      error: error.toString()
     };
+  }
   } catch (error) {
     return {
       status: false,
       message: error.message || "Delete company failed",
-      error: error?.toString(),
+      error: error.toString(),
     };
   }
 };
+
+
+
+
 
 const getAllCompanies = async (
   requestingUserRole,
