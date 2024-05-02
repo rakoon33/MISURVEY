@@ -8,6 +8,8 @@ const {
   SurveyDetail,
   SurveyResponse,
   Customer,
+  Ticket,
+  SurveyReport
 } = require("../models");
 const {
   createSurveyQuestion,
@@ -309,6 +311,11 @@ const deleteSurvey = async (surveyID, udata) => {
     });
 
     for (const question of questions) {
+      await Ticket.destroy({
+        where: { SurveyID: surveyID },
+        transaction,
+      });
+
       await SurveyResponse.destroy({
         where: { QuestionID: question.QuestionID },
         transaction,
@@ -317,6 +324,11 @@ const deleteSurvey = async (surveyID, udata) => {
 
     // Now, delete the questions
     await SurveyQuestion.destroy({
+      where: { SurveyID: surveyID },
+      transaction,
+    });
+
+    await SurveyReport.destroy({
       where: { SurveyID: surveyID },
       transaction,
     });
