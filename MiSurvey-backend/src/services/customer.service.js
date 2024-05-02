@@ -1,5 +1,6 @@
-const { Customer, SurveyResponse, Survey } = require("../models");
+const { Customer, SurveyResponse, Survey, Ticket } = require("../models");
 const { Op } = require("sequelize");
+const db = require("../config/database");
 
 const createCustomer = async (customerData) => {
   try {
@@ -39,10 +40,28 @@ const deleteCustomer = async (id) => {
       return { status: false, message: "Customer not found" };
     }
 
-    await Customer.destroy({ where: { CustomerID: id } });
+    const transaction = await db.sequelize.transaction();
+    const responses = await SurveyResponse.findAll({
+      where: { CustomerID: id },
+      transaction,
+    });
+    for (const response of responses) {
+      await Ticket.destroy({
+        where: { ResponseID: response.ResponseID },
+        transaction,
+      });
+
+      await SurveyResponse.destroy({
+        where: { ResponseID: response.ResponseID },
+        transaction,
+      });
+    }
+    await Customer.destroy({ where: { CustomerID: id }, transaction });
+    await transaction.commit();
 
     return { status: true, message: "Customer deleted successfully" };
   } catch (error) {
+    await transaction.rollback();
     return { status: false, message: error.message, error: error.toString() };
   }
 };
