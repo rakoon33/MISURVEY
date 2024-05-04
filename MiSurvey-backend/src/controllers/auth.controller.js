@@ -7,7 +7,7 @@ const loginController = async (req, res) => {
       req.body.username,
       req.body.password
     );
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -16,7 +16,7 @@ const loginController = async (req, res) => {
 const logoutController = async (req, res) => {
   try {
     const result = authService.logoutUser(res);
-    res.json(result);
+    res.status(200).json(result);;
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -51,7 +51,7 @@ const getPermissionsController = async (req, res) => {
 
   try {
     const result = await authService.getUserPermissions(userId);
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

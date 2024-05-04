@@ -459,10 +459,15 @@ describe("Company controller: createCompany", () => {
 });
 
 describe("Company controller: deleteCompany", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   // Happy case
   it("should successfully delete a company and return a success message", async () => {
     const req = {
       params: { CompanyID: "1" },
+      user: { id: "adminID", companyID: "companyID" }
     };
     const res = {
       json: jest.fn(),
@@ -476,7 +481,7 @@ describe("Company controller: deleteCompany", () => {
 
     await deleteCompanyController(req, res);
 
-    expect(companyService.deleteCompany).toHaveBeenCalledWith("1");
+    expect(companyService.deleteCompany).toHaveBeenCalledWith("1", req.user);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       status: true,
@@ -487,7 +492,8 @@ describe("Company controller: deleteCompany", () => {
   // Test for case company not found
   it("should return an error message when the company is not found", async () => {
     const req = {
-      params: { CompanyID: "2" },
+      params: { CompanyID: "nonexistent" },
+      user: { id: "adminID", companyID: "companyID" }
     };
     const res = {
       json: jest.fn(),
@@ -501,7 +507,10 @@ describe("Company controller: deleteCompany", () => {
 
     await deleteCompanyController(req, res);
 
-    expect(companyService.deleteCompany).toHaveBeenCalledWith("2");
+    expect(companyService.deleteCompany).toHaveBeenCalledWith(
+      "nonexistent",
+      req.user
+    );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       status: false,
@@ -570,11 +579,16 @@ describe("Company controller: getOneCompany", () => {
 });
 
 describe("Company controller: updateCompany", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   // Happy case
   it("should successfully update a company and return success message", async () => {
     const req = {
       params: { CompanyID: "1" },
       body: { CompanyName: "Updated Company", AdminID: "2" },
+      user: { id: "1", companyID: "1" }
     };
     const res = {
       json: jest.fn(),
@@ -589,7 +603,11 @@ describe("Company controller: updateCompany", () => {
 
     await updateCompanyController(req, res);
 
-    expect(companyService.updateCompany).toHaveBeenCalledWith("1", req.body);
+    expect(companyService.updateCompany).toHaveBeenCalledWith(
+      "1",
+      req.body,
+      req.user
+    );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       status: true,
@@ -603,6 +621,7 @@ describe("Company controller: updateCompany", () => {
     const req = {
       params: { CompanyID: "nonexistent" },
       body: { CompanyName: "Nonexistent Company" },
+      user: { id: "1", companyID: "1" }
     };
     const res = {
       json: jest.fn(),
@@ -618,7 +637,8 @@ describe("Company controller: updateCompany", () => {
 
     expect(companyService.updateCompany).toHaveBeenCalledWith(
       "nonexistent",
-      req.body
+      req.body,
+      req.user
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
