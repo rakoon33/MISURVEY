@@ -5,7 +5,7 @@ import { userSelector } from 'src/app/core/store/selectors';
 import { DatePipe } from '@angular/common';
 import { Observable, combineLatest, map } from 'rxjs';
 import { Permission } from 'src/app/core/models';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -81,6 +81,7 @@ export class DashboardComponent {
     private reportService: ReportService,
     private store: Store,
     private datePipe: DatePipe,
+    private toastr: ToastrService,
   ) {
 
     this.userPermissions$ = combineLatest([
@@ -210,6 +211,30 @@ export class DashboardComponent {
           ],
         };
       });
+  }
+
+
+  validateActivityDates() {
+    if (new Date(this.activityStartDate) > new Date(this.activityEndDate)) {
+      this.toastr.error('Start date cannot be later than end date for Activity Overview.');
+      this.activityStartDate = this.activityEndDate; // Reset to end date
+    }
+  }
+  
+  // Validates survey count start and end dates
+  validateSurveyCountDates() {
+    if (new Date(this.surveyCountStartDate) > new Date(this.surveyCountEndDate)) {
+      this.toastr.error('Start date cannot be later than end date for Survey Count.');
+      this.surveyCountStartDate = this.surveyCountEndDate; // Reset to end date
+    }
+  }
+  
+  // Validates survey type start and end dates
+  validateSurveyTypeDates() {
+    if (new Date(this.surveyTypeStartDate) > new Date(this.surveyTypeEndDate)) {
+      this.toastr.error('Start date cannot be later than end date for Survey Type Usage.');
+      this.surveyTypeStartDate = this.surveyTypeEndDate; // Reset to end date
+    }
   }
 
   get randomData() {
