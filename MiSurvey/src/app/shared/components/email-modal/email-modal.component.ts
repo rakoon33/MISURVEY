@@ -20,6 +20,7 @@ import * as XLSX from 'xlsx';
 })
 export class EmailModalComponent implements OnInit {
   emailForm!: FormGroup;
+  emailsSet: Set<string> = new Set(); // Set to accumulate emails
 
   constructor(
     private fb: FormBuilder,
@@ -60,19 +61,28 @@ export class EmailModalComponent implements OnInit {
   }
 
   onFileChange(event: Event) {
+    // Retrieve currently entered emails and add them to the set
+    const currentEmails = this.emailForm.get('emails')?.value
+      .split(',')
+      .map((email: string) => email.trim().toLowerCase())
+      .filter((email: string) => email && this.validateEmail(email));
+
+    currentEmails.forEach((email: string) => this.emailsSet.add(email));
+
     const input = event.target as HTMLInputElement;
-
     if (input.files && input.files.length) {
-      const file = input.files[0];
-      const fileType = file.type;
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        const fileType = file.type;
 
-      if (fileType === 'text/plain' || fileType === 'text/csv') {
-        this.readTextFile(file);
-      } else if (fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
-                 fileType === 'application/vnd.ms-excel') {
-        this.readExcelFile(file);
-      } else {
-        console.error('Unsupported file format');
+        if (fileType === 'text/plain' || fileType === 'text/csv') {
+          this.readTextFile(file);
+        } else if (fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                   fileType === 'application/vnd.ms-excel') {
+          this.readExcelFile(file);
+        } else {
+          console.error('Unsupported file format');
+        }
       }
     }
   }
@@ -105,7 +115,8 @@ export class EmailModalComponent implements OnInit {
     if (emails.length === 0) {
       this.toastr.error('No valid email addresses found in the imported file.');
     } else {
-      this.emailForm.get('emails')?.setValue(emails.join(', '));
+      emails.forEach((email) => this.emailsSet.add(email));
+      this.updateEmailFormControl();
     }
   }
 
@@ -129,8 +140,14 @@ export class EmailModalComponent implements OnInit {
     if (emails.length === 0) {
       this.toastr.error('No valid email addresses found in the imported file.');
     } else {
-      this.emailForm.get('emails')?.setValue(emails.join(', '));
+      emails.forEach((email) => this.emailsSet.add(email));
+      this.updateEmailFormControl();
     }
+  }
+
+  updateEmailFormControl() {
+    // Set the value of the email input to the concatenated emails
+    this.emailForm.get('emails')?.setValue(Array.from(this.emailsSet).join(', '));
   }
 
   validateEmail(email: string): boolean {
