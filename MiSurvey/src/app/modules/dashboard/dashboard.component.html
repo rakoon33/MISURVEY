@@ -87,12 +87,14 @@
               class="input-date"
               type="date"
               [(ngModel)]="activityStartDate"
+              (change)="validateActivityDates()"
             />
             End:
             <input
               class="input-date"
               type="date"
               [(ngModel)]="activityEndDate"
+              (change)="validateActivityDates()"
             />
             <button class="btn-update" (click)="loadActivityOverviewData()">
               Update
@@ -112,14 +114,19 @@
               class="input-date"
               type="date"
               [(ngModel)]="surveyCountStartDate"
+              (change)="validateSurveyCountDates()"
             />
             End:
             <input
               class="input-date"
               type="date"
               [(ngModel)]="surveyCountEndDate"
+              (change)="validateSurveyCountDates()"
             />
-            <button class="btn-update" (click)="loadSurveyCountByDateRangeData()">
+            <button
+              class="btn-update"
+              (click)="loadSurveyCountByDateRangeData()"
+            >
               Update
             </button>
           </div>
@@ -139,12 +146,14 @@
               class="input-date"
               type="date"
               [(ngModel)]="surveyTypeStartDate"
+              (change)="validateSurveyTypeDates()"
             />
             End:
             <input
               class="input-date"
               type="date"
               [(ngModel)]="surveyTypeEndDate"
+              (change)="validateSurveyTypeDates()"
             />
             <button class="btn-update" (click)="loadSurveyTypeUsageData()">
               Update

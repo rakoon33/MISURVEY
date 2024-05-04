@@ -233,6 +233,12 @@ export class UserManagementComponent implements OnInit {
         }
       });
     this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
+
+    this.roles$.subscribe((roles) => {
+      if (roles && roles.length > 0) {
+        this.companyRoleFormGroup.get('CompanyRoleID')?.setValue(roles[0].CompanyRoleID);
+      }
+    });
   }
 
   getPaginationRange(
