@@ -47,15 +47,15 @@
 
 /* CSS cho icon được chọn với thanh màu xanh dưới */
 .thumb-wrapper.selected::after {
-  content: ''; /* Tạo một phần tử giả để hiển thị thanh ngang */
+  content: ''; 
   position: absolute;
   left: 50%;
-  bottom: -10px; /* Điều chỉnh vị trí thanh ngang dưới icon */
-  transform: translateX(-50%); /* Căn giữa thanh ngang so với icon */
-  width: 70%; /* Chiều rộng của thanh ngang */
-  height: 4px; /* Độ dày của thanh ngang */
-  background-color: #007bff; /* Màu sắc của thanh ngang */
-  border-radius: 2px; /* Làm tròn các góc của thanh ngang */
+  bottom: -10px; 
+  transform: translateX(-50%);
+  width: 70%; 
+  height: 4px; 
+  background-color: #0A66C2;
+  border-radius: 2px; 
 }
 
 .question-styles {

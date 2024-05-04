@@ -121,7 +121,7 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-  border-color: #007bff;
+  border-color: #0A66C2;
   outline: none;
 }
 
@@ -229,7 +229,7 @@ input[type="text"]::placeholder {
 
 .save-button-container button {
   padding: 10px 20px; 
-  background-color: #007bff; 
+  background-color: #0A66C2;
   color: white; 
   border: none; 
   border-radius: 5px; 
@@ -239,7 +239,7 @@ input[type="text"]::placeholder {
 }
 
 .save-button-container button:hover {
-  background-color: #0056b3; 
+  background-color: #004494;
 }
 
 .stars {

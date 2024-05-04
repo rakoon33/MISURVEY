@@ -1,14 +1,27 @@
 <div *ngIf="userPermissions$ | async as permissions">
   <div class="header">
     <h1>Surveys</h1>
-    <button *ngIf="permissions.CanAdd" class="create-survey-btn" (click)="navigateToCreateSurvey()">
+    <button
+      *ngIf="permissions.CanAdd"
+      class="create-survey-btn"
+      (click)="navigateToCreateSurvey()"
+    >
       Create survey
     </button>
   </div>
-  
+
   <div class="survey-container" *ngIf="permissions.CanView">
-    <div class="survey-card invite-method"  *ngFor="let survey of surveys$ | async">
-      <div class="invite-label" [ngClass]="{'email-invite': survey.InvitationMethod === 'Email', 'link-invite': survey.InvitationMethod === 'Link'}">
+    <div
+      class="survey-card invite-method"
+      *ngFor="let survey of surveys$ | async"
+    >
+      <div
+        class="invite-label"
+        [ngClass]="{
+          'email-invite': survey.InvitationMethod === 'Email',
+          'link-invite': survey.InvitationMethod === 'Link'
+        }"
+      >
         {{ survey.InvitationMethod }}
       </div>
       <c-dropdown>
@@ -16,7 +29,7 @@
           &#x2026;
         </button>
         <ul cDropdownMenu>
-          <li  *ngIf="permissions.CanViewData">
+          <li *ngIf="permissions.CanViewData">
             <button
               cDropdownItem
               [cModalToggle]="seeResponsesModal.id"
@@ -31,12 +44,18 @@
             </button>
           </li>
           <li *ngIf="permissions.CanUpdate">
-            <button cDropdownItem (click)="toggleApproval(survey.SurveyID, survey.Approve)">
+            <button
+              cDropdownItem
+              (click)="toggleApproval(survey.SurveyID, survey.Approve)"
+            >
               {{ survey.Approve === "Yes" ? "Unapprove" : "Approve" }}
             </button>
           </li>
           <li *ngIf="permissions.CanUpdate">
-            <button cDropdownItem (click)="toggleStatus(survey.SurveyID, survey.SurveyStatus)">
+            <button
+              cDropdownItem
+              (click)="toggleStatus(survey.SurveyID, survey.SurveyStatus)"
+            >
               {{ survey.SurveyStatus === "Open" ? "Close" : "Open" }}
             </button>
           </li>
@@ -47,7 +66,9 @@
           </li>
         </ul>
       </c-dropdown>
-      <h3 (click)="navigateToSurveyDetails(survey.SurveyID, $event, permissions)">
+      <h3
+        (click)="navigateToSurveyDetails(survey.SurveyID, $event, permissions)"
+      >
         {{ survey.Title }}
       </h3>
       <div
@@ -61,21 +82,33 @@
       <div class="status-container">
         <p
           class="survey-status"
-          (click)="navigateToSurveyDetails(survey.SurveyID, $event, permissions)"
+          (click)="
+            navigateToSurveyDetails(survey.SurveyID, $event, permissions)
+          "
         >
           {{ survey.SurveyStatus || "Close" }} |
           {{ survey.Approve == "Yes" ? "Approve" : "Pending" }}
         </p>
-        <a
-          href=""
-          class="copy-link"
-          (click)="copySurveyLink(survey.SurveyLink, $event)"
-        >
-          Copy survey's link
-        </a>
+        <div class="go-to-link">
+          <a
+            href=""
+            class="copy-link"
+            (click)="copySurveyLink(survey.SurveyLink, $event)"
+          >
+            Copy survey's link
+          </a>
+          <p>|</p>
+          <a
+            href=""
+            class="copy-link"
+            (click)="openQRCodeModal(survey.SurveyLink, survey.Title, $event)"
+          >
+            Create QR code
+          </a>
+        </div>
       </div>
     </div>
-  </div>  
+  </div>
 </div>
 <c-modal
   size="lg"
@@ -212,3 +245,25 @@
   </c-modal-footer>
 </c-modal>
 
+<!-- QR Code Modal -->
+<c-modal size="lg" alignment="center" scrollable #qrCodeModal id="qrCodeModal">
+  <c-modal-header class="modal-header">
+    <h5 cModalTitle>QR Code for Survey</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="qrCodeModal.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="modal-body">
+    <div class="qr-code-wrapper">
+      <qrcode [qrdata]="qrCodeLink!" (qrCodeURL)="onChangeURL($event)"></qrcode>
+      <a [href]="qrCodeDownloadLink" [download]="sanitizedSurveyTitle + '.png'" cButton class="copy-link">Download QR Code</a>
+    </div>    
+  </c-modal-body>
+  <c-modal-footer class="modal-footer">
+    <button [cModalToggle]="qrCodeModal.id" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
