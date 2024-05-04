@@ -9,14 +9,6 @@ const UserPackage = db.sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    UserID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "User",
-        key: "UserID",
-      },
-    },
     PackageID: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -30,8 +22,7 @@ const UserPackage = db.sequelize.define(
       allowNull: false,
     },
     EndDate: {
-      type: DataTypes.DATE,
-      allowNull: false,
+      type: DataTypes.DATE
     },
     CompanyID: {
       type: DataTypes.INTEGER,

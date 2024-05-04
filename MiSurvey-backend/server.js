@@ -35,6 +35,8 @@ const customerRoute = require('./src/routes/customer.route.js');
 const questionTemplateRoute = require('./src/routes/questionTemplate.route.js');
 const reportRoute = require('./src/routes/report.route.js');
 const userActivityLogRoute = require('./src/routes/userActivityLog.route.js');
+const servicePackageRoute = require('./src/routes/servicePackage.route.js');
+const userPackageRoute = require('./src/routes/userPackage.route.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -55,6 +57,8 @@ app.use('/api/customers', customerRoute);
 app.use('/api/questionTemplate', questionTemplateRoute);
 app.use('/api/dashboard', reportRoute);
 app.use('/api/useractivitylogs', userActivityLogRoute);
+app.use('/api/servicepackages', servicePackageRoute);
+app.use('/api/userpackages', userPackageRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -12,6 +12,9 @@ const customerController = require("./customer.controller");
 const questionTemplateController = require("./questionTemplate.controller");
 const reportController = require("./report.controller");
 const userActivityLogController = require("./userActivityLog.controller");
+const servicePackageController = require("./servicePackage.controller");
+const userPackageController = require("./userPackage.controller");
+
 module.exports = {
   authController,
   companyController,
@@ -26,5 +29,7 @@ module.exports = {
   customerController,
   questionTemplateController,
   reportController,
-  userActivityLogController
+  userActivityLogController,
+  servicePackageController,
+  userPackageController
 };

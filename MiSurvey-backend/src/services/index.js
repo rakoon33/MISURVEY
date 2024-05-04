@@ -12,6 +12,9 @@ const customerService = require("./customer.service");
 const questionTemplateService = require("./questionTemplate.service");
 const userActivityLogService = require("./userActivityLog.service");
 const reportService = require("./report.service");
+const servicePackage = require("./servicePackage.service");
+const userPackage = require("./userPackage.service");
+
 module.exports = {
   authService,
   companyService,
@@ -26,6 +29,8 @@ module.exports = {
   customerService,
   questionTemplateService,
   userActivityLogService,
-  reportService
+  reportService,
+  servicePackage,
+  userPackage
   // ...other services
 };
