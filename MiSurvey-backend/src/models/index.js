@@ -192,6 +192,16 @@
     as: 'Survey' 
   });
 
+  // New association between ServicePackage and UserPackage
+ServicePackage.hasMany(UserPackage, {
+  foreignKey: "PackageID",
+  as: "userPackages",
+});
+
+UserPackage.belongsTo(ServicePackage, {
+  foreignKey: "PackageID",
+  as: "servicePackage",
+});
 
   module.exports = {
     User,

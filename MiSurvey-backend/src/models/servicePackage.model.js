@@ -14,10 +14,6 @@ const ServicePackage = db.sequelize.define(
       allowNull: false,
       unique: true,
     },
-    RequestLimit: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     Features: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -51,6 +47,18 @@ const ServicePackage = db.sequelize.define(
         model: "User",
         key: "UserID",
       },
+    },
+    QuestionLimit: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    ResponseLimit: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    ShareMethod: {
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
   },
   {

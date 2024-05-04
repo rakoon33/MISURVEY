@@ -16,7 +16,8 @@ const {
   SurveyQuestion,
   SurveyResponse,
   CompanyRole,
-  Ticket
+  Ticket,
+  ServicePackage
 } = require("../models");
 const companyService = require("../services");
 const db = require("../config/database");
@@ -34,66 +35,105 @@ const getUserData = async (userId, userRole) => {
     const { UserPassword, ...userDetailsWithoutPassword } =
       userDetails.dataValues;
 
-    if (userRole === "SuperAdmin" || userRole === "Admin") {
-      return {
-        status: true,
-        userDetails: userDetailsWithoutPassword,
-      };
-    }
-
-    const companyUser = await CompanyUser.findOne({
-      where: { UserID: userId },
-    });
-    if (!companyUser) {
-      return {
-        status: false,
-        message: "Company not found",
-      };
-    }
-
-    let permissionsMap = {};
-
-    if (companyUser.CompanyUserID) {
-      const individualPermissions = await IndividualPermission.findAll({
-        where: { CompanyUserID: companyUser.CompanyUserID },
-        include: [{ model: Module, as: "module", required: true }],
-      });
-
-      permissionsMap = individualPermissions.reduce((acc, permission) => {
-        if (permission.module) {
-          acc[permission.module.ModuleName] = permission;
-        }
-        return acc;
-      }, {});
-    }
-
-    if (companyUser.CompanyRoleID) {
-      const rolePermissions = await RolePermission.findAll({
-        where: { CompanyRoleID: companyUser.CompanyRoleID },
-        include: [{ model: Module, as: "module", required: true }],
-      });
-
-      rolePermissions.forEach((permission) => {
-        if (
-          permission.module &&
-          !permissionsMap.hasOwnProperty(permission.module.ModuleName)
-        ) {
-          permissionsMap[permission.module.ModuleName] = permission;
-        }
-      });
-    }
-
-    const mergedPermissions = Object.values(permissionsMap);
-
-    return {
+    let response = {
       status: true,
       userDetails: userDetailsWithoutPassword,
-      permissions: mergedPermissions,
     };
+
+
+    // Switch to handle different roles
+    switch (userRole) {
+      case "SuperAdmin":
+        return response;
+      case "Admin":
+        const companyUser1 = await CompanyUser.findOne({
+          where: { UserID: userId },
+        });
+        if (!companyUser1) {
+          return {
+            status: false,
+            message: "Company not found",
+          };
+        }
+        const userPackage1 = await UserPackage.findOne({
+          where: { CompanyID: companyUser1.CompanyID },
+          include: [{ model: ServicePackage, as: "servicePackage", required: true }],
+        });
+
+        if (userPackage1) {
+          response.packages = userPackage1;
+        }
+        return response;
+
+      case "Supervisor":
+        const companyUser = await CompanyUser.findOne({
+          where: { UserID: userId },
+        });
+        if (!companyUser) {
+          return {
+            status: false,
+            message: "Company not found",
+          };
+        }
+        const userPackage = await UserPackage.findOne({
+          where: { CompanyID: companyUser.CompanyID },
+          include: [{ model: ServicePackage, as: "servicePackage", required: true }],
+        });
+
+        if (userPackage) {
+          response.packages = userPackage;
+        }
+
+        let permissionsMap = {};
+
+        if (companyUser.CompanyUserID) {
+          const individualPermissions = await IndividualPermission.findAll({
+            where: { CompanyUserID: companyUser.CompanyUserID },
+            include: [{ model: Module, as: "module", required: true }],
+          });
+
+          permissionsMap = individualPermissions.reduce((acc, permission) => {
+            if (permission.module) {
+              acc[permission.module.ModuleName] = permission;
+            }
+            return acc;
+          }, {});
+        }
+
+        if (companyUser.CompanyRoleID) {
+          const rolePermissions = await RolePermission.findAll({
+            where: { CompanyRoleID: companyUser.CompanyRoleID },
+            include: [{ model: Module, as: "module", required: true }],
+          });
+
+          rolePermissions.forEach((permission) => {
+            if (
+              permission.module &&
+              !permissionsMap.hasOwnProperty(permission.module.ModuleName)
+            ) {
+              permissionsMap[permission.module.ModuleName] = permission;
+            }
+          });
+        }
+
+        const mergedPermissions = Object.values(permissionsMap);
+        response.permissions = mergedPermissions;
+        break;
+
+      // Default case to handle other roles (if any)
+      default:
+        return {
+          status: false,
+          message: "Invalid user role",
+        };
+    }
+
+    return response;
   } catch (error) {
-    throw new Error(error.message || "Failed to fetch permissions");
+    throw new Error(error.message || "Failed to fetch user data");
   }
 };
+
 
 const createUser = async (userData, udata) => {
   try {
