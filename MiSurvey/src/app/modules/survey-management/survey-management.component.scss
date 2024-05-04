@@ -205,9 +205,10 @@ div.survey-card.ng-star-inserted {
 }
 
 .info-container {
-  display: flex; /* Kích hoạt flexbox */
-  align-items: center; /* Căn giữa các items theo chiều dọc */
-  flex-wrap: wrap; /* Cho phép items bọc nếu không đủ không gian */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 10px;
 }
 
 .modal-type,
@@ -302,27 +303,6 @@ div.survey-card.ng-star-inserted {
 
 .btn-seeResponses-footer:hover {
   background-color: #e2e6ea;
-}
-
-.response-row:hover {
-  opacity: 0.8;
-}
-
-.email-icon {
-  display: none;
-  position: relative;
-  text-decoration: none !important;
-  flex-basis: 0.2;
-  color: #0a66c2;
-}
-
-.email-icon p {
-  margin: 0;
-  margin-right: 5px;
-}
-
-.response-row:hover .email-icon {
-  display: flex !important;
 }
 
 .res-value {
@@ -522,4 +502,45 @@ div.survey-card.ng-star-inserted {
 canvas {
   width: 300px !important; /* Ensure the canvas takes the wrapper's width */
   height: auto !important; /* Adjusts the height proportionally */
+}
+
+.no-responses {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-responses p {
+  margin: 0;
+  color: #333333;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.response-row:hover > div:not(.email-icon) {
+  opacity: 0.8; /* Apply opacity only to the non-email-icon divs */
+}
+
+.email-icon {
+  visibility: hidden; 
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  transform: translateY(-80%);
+  margin-bottom: 20px;
+  background-color: #0a66c2;
+  border-radius: 4px;
+  padding: 2px 4px;
+  z-index: 10;
+}
+
+.email-icon a {
+  text-decoration: none;
+  color: white;
+}
+
+.response-row:hover .email-icon {
+  visibility: visible; 
 }

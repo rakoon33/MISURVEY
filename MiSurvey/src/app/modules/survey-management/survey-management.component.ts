@@ -159,8 +159,13 @@ export class SurveyManagementComponent implements OnInit {
   toggleModal(modalId: string, show: boolean) {
     this.modalService.toggle({ id: modalId, show: show });
   }
-  isValidEmail(email: string): boolean {
-    return new FormControl(email, Validators.email).valid;
+  
+  isValidEmail(email: string | undefined): boolean {
+    if (!email) {
+      return false;
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
   }
 
   editSurvey(surveyId: number) {

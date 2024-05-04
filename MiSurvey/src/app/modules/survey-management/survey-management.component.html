@@ -110,6 +110,7 @@
     </div>
   </div>
 </div>
+
 <c-modal
   size="lg"
   alignment="center"
@@ -118,40 +119,45 @@
   id="seeResponsesModal"
 >
   <c-modal-header *ngIf="selectedSurveyQuestion" class="modal-header">
-    <h5 cModalTitle class="modal-title">
-      Question {{ currentQuestionIndex + 1 }}:
-      {{ selectedSurveyQuestion.question }}
-    </h5>
-    <div class="modal-info">
-      <div class="info-container">
-        <div class="modal-type">
-          <b>Type:</b> {{ selectedSurveyQuestion.type }}
-        </div>
-        <div
-          *ngIf="selectedSurveyQuestion.type != 'Text'"
-          class="question-evaluation"
-        >
-          <b>Evaluation: </b
-          ><span class="evaluation-value">{{
-            selectedSurveyQuestion.evaluation
-          }}</span>
-        </div>
-        <div
-          *ngIf="selectedSurveyQuestion.averageScore !== null"
-          class="modal-score"
-        >
-          <b>Score:</b>
-          <ng-container
-            *ngIf="selectedSurveyQuestion.type === 'Stars'; else withPercentage"
+    <div>
+      <h5 cModalTitle class="modal-title">
+        Question {{ currentQuestionIndex + 1 }}:
+        {{ selectedSurveyQuestion.question }}
+      </h5>
+      <div class="modal-info">
+        <div class="info-container">
+          <div class="modal-type">
+            <b>Type:</b> {{ selectedSurveyQuestion.type }}
+          </div>
+          <div
+            *ngIf="selectedSurveyQuestion.type != 'Text'"
+            class="question-evaluation"
           >
-            {{ selectedSurveyQuestion.averageScore | number : "1.0-2" }}
-          </ng-container>
-          <ng-template #withPercentage>
-            {{ selectedSurveyQuestion.averageScore | number : "1.0-2" }}%
-          </ng-template>
-        </div>
-        <div class="modal-count">
-          <b>Count:</b> {{ selectedSurveyQuestion.countResponses }}
+            <b>Evaluation: </b
+            ><span class="evaluation-value">{{
+              selectedSurveyQuestion.evaluation
+            }}</span>
+          </div>
+          <div
+            *ngIf="selectedSurveyQuestion.averageScore !== null"
+            class="modal-score"
+          >
+            <b>Score:</b>
+            <ng-container
+              *ngIf="
+                selectedSurveyQuestion.type === 'Stars';
+                else withPercentage
+              "
+            >
+              {{ selectedSurveyQuestion.averageScore | number : "1.0-2" }}
+            </ng-container>
+            <ng-template #withPercentage>
+              {{ selectedSurveyQuestion.averageScore | number : "1.0-2" }}%
+            </ng-template>
+          </div>
+          <div class="modal-count">
+            <b>Count:</b> {{ selectedSurveyQuestion.countResponses }}
+          </div>
         </div>
       </div>
     </div>
@@ -162,6 +168,24 @@
     ></button>
   </c-modal-header>
   <c-modal-body *ngIf="selectedSurveyQuestion" class="modal-body">
+    <!-- Display 'No responses yet' if there are no responses -->
+    <div
+      *ngIf="
+        !selectedSurveyQuestion.responses ||
+        selectedSurveyQuestion.responses.length === 0
+      "
+      class="no-responses"
+    >
+      <p
+        *ngIf="
+          !selectedSurveyQuestion.responses ||
+          selectedSurveyQuestion.responses.length === 0
+        "
+      >
+        No responses yet
+      </p>
+    </div>
+    <!-- Display the responses if available -->
     <div
       *ngFor="let response of selectedSurveyQuestion.responses"
       [ngClass]="{
@@ -175,14 +199,17 @@
     >
       <div>{{ response.customerName }}</div>
       <div class="res-value">{{ response.responseValue }}</div>
-      <a
+      <div  class="email-icon">
+        <a 
+        *ngIf="isValidEmail(response.customerEmail)"
         href="mailto:{{ response.customerEmail }}"
-        class="email-icon"
+       
         title="Send email to {{ response.customerEmail }}"
       >
-        <p>Send</p>
+        Send
         <c-icon name="cil-envelope-closed"></c-icon>
       </a>
+      </div>
     </div>
   </c-modal-body>
   <c-modal-footer *ngIf="selectedSurveyQuestion" class="modal-footer">
@@ -258,8 +285,14 @@
   <c-modal-body class="modal-body">
     <div class="qr-code-wrapper">
       <qrcode [qrdata]="qrCodeLink!" (qrCodeURL)="onChangeURL($event)"></qrcode>
-      <a [href]="qrCodeDownloadLink" [download]="sanitizedSurveyTitle + '.png'" cButton class="copy-link">Download QR Code</a>
-    </div>    
+      <a
+        [href]="qrCodeDownloadLink"
+        [download]="sanitizedSurveyTitle + '.png'"
+        cButton
+        class="copy-link"
+        >Download QR Code</a
+      >
+    </div>
   </c-modal-body>
   <c-modal-footer class="modal-footer">
     <button [cModalToggle]="qrCodeModal.id" cButton color="secondary">
