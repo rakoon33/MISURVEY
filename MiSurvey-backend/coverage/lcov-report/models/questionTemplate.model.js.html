@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for models/userActivityLog.model.js</title>
+    <title>Code coverage report for models/questionTemplate.model.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> userActivityLog.model.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> questionTemplate.model.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -116,8 +116,7 @@
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a>
-<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -169,62 +168,60 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { DataTypes } = require("sequelize");
-const db = require("../config/database");
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { DataTypes } = require('sequelize');
+const db = require('../config/database');
 &nbsp;
-const UserActivityLog = db.sequelize.define(
-  "UserActivityLog",
-  {
-    LogID: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    UserID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "User",
-        key: "UserID",
-      },
-    },
-    UserAction: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      validate: {
-        isIn: [["INSERT", "UPDATE", "DELETE"]],
-      },
-    },
-    ActivityDescription: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    TableName: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    CreatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    CompanyID: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Company",
-        key: "CompanyID",
-      },
-    },
+const QuestionTemplate = db.sequelize.define('QuestionTemplate', {
+  TemplateID: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
-  {
-    tableName: "UserActivityLogs",
-    timestamps: false,
+  TemplateCategory: {
+    type: DataTypes.STRING(100),
+    allowNull: false
+  },
+  TemplateText: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  SurveyTypeID: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'SurveyType',
+      key: 'SurveyTypeID'
+    }
+  },
+  CreatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  CreatedBy: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'User',
+      key: 'UserID'
+    }
+  },
+  UpdatedAt: {
+    type: DataTypes.DATE
+  },
+  UpdatedBy: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'User',
+      key: 'UserID'
+    }
   }
-);
+}, {
+  tableName: 'QuestionTemplates',
+  timestamps: false
+});
 &nbsp;
-module.exports = UserActivityLog;
+module.exports = QuestionTemplate;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
