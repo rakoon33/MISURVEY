@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "misurveysup@gmail.com", // Địa chỉ email của bạn
-    pass: "ovgi razy fnpg cfge" // App Password của bạn
+    pass: "sjbc cyxz hdka ypje" // App Password của bạn
   },
 });
 
