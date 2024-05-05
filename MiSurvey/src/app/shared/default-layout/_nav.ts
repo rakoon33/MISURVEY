@@ -41,6 +41,11 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cilHandshake' }
   },
   {
+    name: 'Subscription Plans',
+    url: '/subscription-plans',
+    iconComponent: { name: 'cibCcMastercard' }
+  },
+  {
     name: 'User Activity',
     url: '/user-activity',
     iconComponent: { name: 'cilFolder' }

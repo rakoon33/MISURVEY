@@ -4,6 +4,7 @@ import { UserState } from './../states';
 export const selectUser = (state: UserState) => state.user;
 export const selectUserLoading = (state: UserState) => state.loading;
 export const selectUserPermissions = (state: UserState) => state.permissions;
+export const selectUserPackage = (state: UserState) => state.packages;
 // Feature selector
 export const selectUserState = createFeatureSelector<UserState>('feature_user');
 
@@ -16,24 +17,23 @@ const selectCurrentUserPermissions = createSelector(
   selectUserPermissions
 );
 
-const selectPermissionByModuleId = (moduleId: number) =>
-  createSelector(selectUserState, (selectUserPermissions) =>
-    selectUserPermissions.permissions.find(
-      (selectUserPermissions) => selectUserPermissions.ModuleID === moduleId
-    )
-  );
-
-const selectPermissionByModuleName = (moduleName: string) =>
-  createSelector(selectUserState, (selectUserPermissions) =>
-    selectUserPermissions.permissions.find(
-      (selectUserPermissions) =>
-        selectUserPermissions.module.ModuleName === moduleName
-    )
-  );
-
+const selectPermissionByModuleId = (moduleId: number) => createSelector(
+  selectUserState,
+  (state: UserState) => {
+    // Safeguard against undefined permissions
+    return state.permissions ? state.permissions.find(permission => permission.ModuleID === moduleId) : undefined;
+  }
+);
+const selectPermissionByModuleName = (moduleName: string) => createSelector(
+  selectUserState,
+  (state: UserState) => {
+    // Safeguard against undefined permissions
+    return state.permissions ? state.permissions.find(permission => permission.module.ModuleName === moduleName) : undefined;
+  }
+);
 const selectCurrentUserPackages = createSelector(
   selectUserState,
-  (state: UserState) => state.packages // Add this line
+  selectUserPackage
 );
 
 export default {
