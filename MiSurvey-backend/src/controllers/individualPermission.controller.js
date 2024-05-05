@@ -2,9 +2,12 @@ const { individualPermissionService } = require("../services");
 
 const createIndividualPermissionController = async (req, res) => {
   try {
-    const newPermission =
-      await individualPermissionService.createIndividualPermission(req.body);
-    res.json(newPermission);
+    const newPermission = await individualPermissionService.createIndividualPermission(req.body);
+    if (newPermission.status) {
+      res.json(newPermission);
+    } else {
+      res.status(400).json({ message: newPermission.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -20,7 +23,11 @@ const updateIndividualPermissionController = async (req, res) => {
       moduleId,
       permissionData
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -33,7 +40,11 @@ const deleteIndividualPermissionController = async (req, res) => {
       companyUserId,
       moduleId
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -46,7 +57,11 @@ const getOneIndividualPermissionController = async (req, res) => {
       companyUserId,
       moduleId
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -54,9 +69,12 @@ const getOneIndividualPermissionController = async (req, res) => {
 
 const getAllIndividualPermissionsController = async (req, res) => {
   try {
-    const result =
-      await individualPermissionService.getAllIndividualPermissions();
-    res.json(result);
+    const result = await individualPermissionService.getAllIndividualPermissions();
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -65,11 +83,14 @@ const getAllIndividualPermissionsController = async (req, res) => {
 const searchIndividualPermissionsController = async (req, res) => {
   const { companyUserId } = req.params;
   try {
-    const result =
-      await individualPermissionService.searchIndividualPermissions(
-        companyUserId
-      );
-    res.json(result);
+    const result = await individualPermissionService.searchIndividualPermissions(
+      companyUserId
+    );
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
