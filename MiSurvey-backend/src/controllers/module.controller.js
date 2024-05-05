@@ -17,7 +17,11 @@ const updateModuleController = async (req, res) => {
       req.body,
       req.user
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -26,7 +30,11 @@ const updateModuleController = async (req, res) => {
 const deleteModuleController = async (req, res) => {
   try {
     const result = await moduleService.deleteModule(req.params.ModuleID, req.user);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -36,7 +44,11 @@ const searchModulesController = async (req, res) => {
   try {
     const { name } = req.query;
     const result = await moduleService.searchModules(name);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -45,7 +57,11 @@ const searchModulesController = async (req, res) => {
 const getOneModuleController = async (req, res) => {
   try {
     const result = await moduleService.getOneModule(req.params.ModuleID);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -54,7 +70,11 @@ const getOneModuleController = async (req, res) => {
 const getAllModulesController = async (req, res) => {
   try {
     const result = await moduleService.getAllModules();
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
