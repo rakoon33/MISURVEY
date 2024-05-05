@@ -48,7 +48,7 @@ const ServicePackage = db.sequelize.define(
         key: "UserID",
       },
     },
-    QuestionLimit: {
+    SurveyLimit: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

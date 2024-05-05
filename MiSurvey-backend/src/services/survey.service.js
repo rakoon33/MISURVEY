@@ -475,14 +475,14 @@ const getEvaluationForStars = (averageScore) => {
 };
 
 const getNPSClassification = (npsScore) => {
-  if (npsScore <= 0) return "Bad";
+  if (npsScore < 0) return "Bad";
   if (npsScore <= 50) return "Neutral";
   if (npsScore <= 70) return "Good";
   return "Very Good";
 };
 
 const getCSATClassification = (csatScore) => {
-  if (csatScore <= 40) return "Bad";
+  if (csatScore < 40) return "Bad";
   if (csatScore <= 60) return "Neutral";
   if (csatScore <= 80) return "Good";
   return "Very Good";

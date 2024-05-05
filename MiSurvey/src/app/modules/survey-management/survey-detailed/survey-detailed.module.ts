@@ -21,6 +21,7 @@ import {
 } from '@coreui/angular';
 
 import { IconModule } from '@coreui/icons-angular';
+
 @NgModule({
   declarations: [
     SurveyDetailedComponent
@@ -42,7 +43,7 @@ import { IconModule } from '@coreui/icons-angular';
     NavModule,
     UtilitiesModule,
     TabsModule,
-    FormsModule
+    FormsModule,
   ]
 })
 export class SurveyDetailedModule { }

@@ -29,6 +29,9 @@
         Duplicate emails detected. Please remove duplicates.
       </mat-error>
     </mat-form-field>
+    <label class="custom-file-label">
+      <input type="file" accept=".xlsx, .xls, .txt, .csv" (change)="onFileChange($event)" class="file-input" multiple />
+    </label>
     <button
       type="submit"
       mat-raised-button

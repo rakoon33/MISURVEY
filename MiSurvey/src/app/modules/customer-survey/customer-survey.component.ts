@@ -49,26 +49,33 @@ export class CustomerSurveyComponent {
     this.store
       .select(customerSurveySelector.selectSurvey)
       .subscribe((survey) => {
-console.log(survey);
-        if (survey && survey.Approve === 'Yes' && survey.SurveyStatus === 'Open') {
+        console.log(survey);
+        if (
+          survey &&
+          survey.Approve === 'Yes' &&
+          survey.SurveyStatus === 'Open'
+        ) {
           this.survey = survey;
           if (survey?.SurveyQuestions) {
             // Create a copy of the SurveyQuestions array
             const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
               const orderA =
-                a.PageOrder !== undefined ? a.PageOrder : Number.MAX_SAFE_INTEGER;
+                a.PageOrder !== undefined
+                  ? a.PageOrder
+                  : Number.MAX_SAFE_INTEGER;
               const orderB =
-                b.PageOrder !== undefined ? b.PageOrder : Number.MAX_SAFE_INTEGER;
-  
+                b.PageOrder !== undefined
+                  ? b.PageOrder
+                  : Number.MAX_SAFE_INTEGER;
+
               return orderA - orderB;
             });
-  
+
             // Assign the sorted array to a new property or modify the existing survey object
             this.survey = {
               ...survey,
               SurveyQuestions: sortedQuestions,
             };
-  
           }
         } else {
           this.errorMessage = 'This survey is currently unavailable.';
@@ -76,14 +83,11 @@ console.log(survey);
             this.errorMessage = 'This survey has not been approved yet.';
           }
           if (survey!.SurveyStatus !== 'Open') {
-            console.log(survey!.SurveyStatus)
+            console.log(survey!.SurveyStatus);
             this.errorMessage += ' Additionally, the survey is not open.';
           }
-          this.survey = null; 
+          this.survey = null;
         }
-
-
-
       });
   }
 
@@ -130,26 +134,29 @@ console.log(survey);
           );
         }
       }
+      this.currentQuestionIndex++;
 
-      // Select the response for the current question from the store
-      this.store
-        .select(
-          customerFeedbackSelectors.selectSurveyResponse(
-            currentQuestion.QuestionID
-          )
-        )
-        .pipe(
-          take(1) // Take 1 to complete the subscription after the first received value
-        )
-        .subscribe((response) => {
-          if (!response || !response.ResponseValue) {
-            // Check if response exists and is valid
-            this.toastrService.error('Please answer the current question before moving to the next.');
-            return;
-          } else {
-            this.currentQuestionIndex++;
-          }
-        });
+      // // Select the response for the current question from the store
+      // this.store
+      //   .select(
+      //     customerFeedbackSelectors.selectSurveyResponse(
+      //       currentQuestion.QuestionID
+      //     )
+      //   )
+      //   .pipe(
+      //     take(1) // Take 1 to complete the subscription after the first received value
+      //   )
+      //   .subscribe((response) => {
+      //     if (!response || !response.ResponseValue) {
+      //       // Check if response exists and is valid
+      //       this.toastrService.error(
+      //         'Please answer the current question before moving to the next.'
+      //       );
+      //       return;
+      //     } else {
+      //       this.currentQuestionIndex++;
+      //     }
+      //   });
     }
   }
 
@@ -160,47 +167,61 @@ console.log(survey);
   }
 
   submitSurvey() {
-    // Ensure contact info is set
-    this.contactDataUtil.getContactData().subscribe((contactInfo) => {
-      if (contactInfo) {
-        this.store.dispatch(
-          customerFeedbackActions.setContactInfo({ contactInfo })
-        );
-      }
-    });
-
-    // Fetch responses and contact info and submit them
+    // Fetch all responses
     this.store
       .select(customerFeedbackSelectors.getSurveyResponses)
       .pipe(
-        switchMap((responses) =>
-          this.store.select(customerFeedbackSelectors.getContactInfo).pipe(
-            filter((contactInfo) => contactInfo !== null), // Ensure contactInfo is not null
-            take(1),
-            map((contactInfo) => ({ response: responses, contactInfo })) // Correct property name
-          )
-        ),
-        take(1)
+        take(1) // Complete the subscription after the first value
       )
-      .subscribe(({ response, contactInfo }) => {
-        // Ensure that contactInfo is not null when dispatching
-        if (contactInfo) {
-          this.store.dispatch(
-            customerFeedbackActions.submitSurveyResponses({
-              contactInfo,
-              response, // Ensure this matches the action's expected parameter
-            })
-          );
-
-          this.isSurveyCompleted = true;
-          this.currentQuestionIndex++;
-        } else {
-          // Optionally handle the error state if contact info is missing
-          console.error('Contact information is missing.');
+      .subscribe((responses) => {
+        // Check if at least one question has been answered
+        const hasAnsweredQuestion = responses.some(
+          (response) => response.ResponseValue && response.ResponseValue.trim() !== ''
+        );
+  
+        if (!hasAnsweredQuestion) {
+          this.toastrService.error('Please answer at least one question before submitting the survey.');
+          return;
         }
+  
+        // Ensure contact info is set
+        this.contactDataUtil.getContactData().subscribe((contactInfo) => {
+          if (contactInfo) {
+            this.store.dispatch(
+              customerFeedbackActions.setContactInfo({ contactInfo })
+            );
+          }
+        });
+  
+        // Fetch contact info and submit the responses and contact info
+        this.store
+          .select(customerFeedbackSelectors.getContactInfo)
+          .pipe(
+            filter((contactInfo) => contactInfo !== null), // Ensure contact info is not null
+            take(1),
+            map((contactInfo) => ({ responses, contactInfo })) // Pass the responses and contact info
+          )
+          .subscribe(({ responses, contactInfo }) => {
+            // Ensure that contact info is not null when dispatching
+            if (contactInfo) {
+              this.store.dispatch(
+                customerFeedbackActions.submitSurveyResponses({
+                  contactInfo,
+                  response: responses // Ensure this matches the action's expected parameter
+                })
+              );
+  
+              this.isSurveyCompleted = true;
+              this.currentQuestionIndex = this.survey.SurveyQuestions.length + 1; // Move to the thank you message
+            } else {
+              // Optionally handle the error state if contact info is missing
+              console.error('Contact information is missing.');
+            }
+          });
       });
   }
 
+  
   handleAnswerSelected(response: FeedbackResponse) {
     this.store.dispatch(
       customerFeedbackActions.addSurveyResponse({ response })

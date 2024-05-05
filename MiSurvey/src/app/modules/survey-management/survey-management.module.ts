@@ -18,7 +18,7 @@ import {
   UtilitiesModule,
   TabsModule,
 } from '@coreui/angular';
-
+import { QRCodeModule } from 'angularx-qrcode';
 import { IconModule } from '@coreui/icons-angular';
 import { SurveyManagementRoutingModule } from './survey-management-routing.module';
 import { SurveyManagementComponent } from './survey-management.component';
@@ -40,7 +40,7 @@ import { SurveyManagementComponent } from './survey-management.component';
     TableModule, 
     AvatarModule,
     ReactiveFormsModule,
-    
+    QRCodeModule
   ],
   declarations: [
     SurveyManagementComponent

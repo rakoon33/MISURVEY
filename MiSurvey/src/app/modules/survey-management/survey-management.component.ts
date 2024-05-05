@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { SafeUrl } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { surveyManagementActions } from 'src/app/core/store/actions';
@@ -9,7 +10,6 @@ import { SurveyManagementService } from 'src/app/core/services';
 import { ModalService } from '@coreui/angular';
 import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { SafeUrl } from '@angular/platform-browser';
 import { Permission } from 'src/app/core/models';
 import { combineLatest, map } from 'rxjs';
 
@@ -26,8 +26,11 @@ export class SurveyManagementComponent implements OnInit {
   selectedSurveyQuestion: any = {};
   currentQuestionIndex: number = 0;
   surveyIDToDelete: number | undefined;
+  qrCodeLink: string | undefined;
 
   userPermissions$: Observable<Permission | undefined> | undefined;
+  qrCodeDownloadLink: SafeUrl | undefined;
+  sanitizedSurveyTitle: string = '';
   
   constructor(
     private router: Router,
@@ -74,13 +77,34 @@ export class SurveyManagementComponent implements OnInit {
     navigator.clipboard.writeText(link).then(
       () => {
         console.log('Link copied to clipboard!');
+        this.toastr.success('Link copied to clipboard!');
       },
       (err) => {
         console.error('Error copying link: ', err);
+        this.toastr.error('Error copying link: ', err);
       }
     );
   }
 
+  openQRCodeModal(link: string, title: string, event: Event) {
+    event.preventDefault(); 
+    this.qrCodeLink = 'http://localhost:8082/#/c/f/' + link; 
+    this.sanitizedSurveyTitle = this.sanitizeFileName(title);
+    this.modalService.toggle({ id: 'qrCodeModal', show: true });
+  }
+
+  sanitizeFileName(title: string): string {
+    return title
+      .normalize('NFD') // Normalize to decomposed form
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/[^a-zA-Z0-9]/g, '_') // Replace non-alphanumeric characters with _
+      .toLowerCase(); // Convert to lowercase
+  }
+
+  onChangeURL(url: SafeUrl) {
+    this.qrCodeDownloadLink = url;
+  }
+  
   navigateToCreateSurvey() {
     this.store.dispatch(surveyManagementActions.resetSurveyState());
     this.router.navigate(['/survey-management/survey-method']);
@@ -135,8 +159,13 @@ export class SurveyManagementComponent implements OnInit {
   toggleModal(modalId: string, show: boolean) {
     this.modalService.toggle({ id: modalId, show: show });
   }
-  isValidEmail(email: string): boolean {
-    return new FormControl(email, Validators.email).valid;
+  
+  isValidEmail(email: string | undefined): boolean {
+    if (!email) {
+      return false;
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
   }
 
   editSurvey(surveyId: number) {

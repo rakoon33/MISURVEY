@@ -103,8 +103,11 @@ export function playerFactory() {
 import { CustomerSurveyComponent } from './modules/customer-survey/customer-survey.component';
 
 
+//chart
 import { ChartjsModule } from '@coreui/angular-chartjs';
 
+//qr code
+import { QRCodeModule } from 'angularx-qrcode';
 
 const APP_CONTAINERS = [
   DefaultFooterComponent,
@@ -155,6 +158,7 @@ const APP_CONTAINERS = [
     MatDialogModule,
     CommonModule,
     ChartjsModule,
+    QRCodeModule,
     LottieModule.forRoot({ player: playerFactory }),
     ToastrModule.forRoot({
       positionClass: 'toast-top-right',

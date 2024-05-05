@@ -12,7 +12,6 @@ const CompanyRole = db.sequelize.define(
     CompanyRoleName: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
     },
     CompanyRoleDescription: {
       type: DataTypes.TEXT,
