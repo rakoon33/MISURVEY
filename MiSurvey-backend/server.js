@@ -8,7 +8,8 @@ const cookieParser = require('cookie-parser');
 const swaggerDocs = require('./src/documents/swagger.js');
 const PORT = process.env.PORT || 3000;
 const app = express();
-
+const morgan = require('morgan');
+app.use(morgan('dev'));
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ const reportRoute = require('./src/routes/report.route.js');
 const userActivityLogRoute = require('./src/routes/userActivityLog.route.js');
 const servicePackageRoute = require('./src/routes/servicePackage.route.js');
 const userPackageRoute = require('./src/routes/userPackage.route.js');
+const orderRoute = require('./src/routes/order.route');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -59,6 +61,7 @@ app.use('/api/dashboard', reportRoute);
 app.use('/api/useractivitylogs', userActivityLogRoute);
 app.use('/api/servicepackages', servicePackageRoute);
 app.use('/api/userpackages', userPackageRoute);
+app.use('/order', orderRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -68,6 +71,17 @@ app.use((err, req, res, next) => {
 
 // Set up Swagger documentation
 swaggerDocs(app, PORT);
+// Handle 404 errors (not found)
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Resource not found' });
+});
+
+// Error handling middleware for other errors
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ message: err.message || 'Something went wrong!' });
+});
+
 
 // Start the server and sync database
 app.listen(PORT, () => {

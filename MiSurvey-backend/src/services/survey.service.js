@@ -23,8 +23,8 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "propie034@gmail.com", // Địa chỉ email của bạn
-    pass: "ttsq hrvk lvgp aaca", // App Password của bạn
+    user: "misurveysup@gmail.com", // Địa chỉ email của bạn
+    pass: "ovgi razy fnpg cfge" // App Password của bạn
   },
 });
 
@@ -107,7 +107,7 @@ const sendEmail = async (surveyID, emailData, companyID, sendBy) => {
     const surveyLink = `http://localhost:8082/#/c/f/${surveylink.SurveyLink}`;
     const surveyCreator = survey.Company.CompanyName;
     const mailOptions = {
-      from: "propie034@gmail.com",
+      from: "misurveysup@gmail.com",
       to: emailData,
       subject: "Survey from MiSurvey",
       text: `Hello 👬,
