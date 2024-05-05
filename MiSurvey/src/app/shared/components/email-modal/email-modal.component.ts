@@ -12,7 +12,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { SurveyManagementService } from 'src/app/core/services';
 import * as XLSX from 'xlsx';
-
 @Component({
   selector: 'app-email-modal',
   templateUrl: './email-modal.component.html',
@@ -61,20 +60,13 @@ export class EmailModalComponent implements OnInit {
   }
 
   onFileChange(event: Event) {
-    // Retrieve currently entered emails and add them to the set
-    const currentEmails = this.emailForm.get('emails')?.value
-      .split(',')
-      .map((email: string) => email.trim().toLowerCase())
-      .filter((email: string) => email && this.validateEmail(email));
-
-    currentEmails.forEach((email: string) => this.emailsSet.add(email));
-
     const input = event.target as HTMLInputElement;
+  
     if (input.files && input.files.length) {
       for (let i = 0; i < input.files.length; i++) {
         const file = input.files[i];
         const fileType = file.type;
-
+  
         if (fileType === 'text/plain' || fileType === 'text/csv') {
           this.readTextFile(file);
         } else if (fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
