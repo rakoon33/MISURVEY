@@ -29,7 +29,11 @@ const sendSurveyEmailController = async (req, res) => {
   try {
     const { SurveyID, EmailData } = req.body;
     const result = await surveyService.sendEmail(SurveyID,EmailData,req.user.companyID, req.user.id);
-    res.json(result);
+    // if (result.status) {
+      res.json(result);
+    // } else {
+      // res.status(400).json({ message: result.message });
+    // }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -40,7 +44,11 @@ const getOneSurveyWithDataController = async (req, res) => {
     const result = await surveyService.getOneSurveyWithData(
       req.params.SurveyID
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -62,7 +70,11 @@ const getOneSurveyWithoutDataController = async (req, res) => {
     const result = await surveyService.getOneSurveyWithoutData(
       req.params.SurveyID
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -85,7 +97,11 @@ const updateSurveyController = async (req, res) => {
       req.body,
       req.user
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -139,5 +155,5 @@ module.exports = {
   searchSurveyController,
   getOneSurveyWithDataByLinkController,
   sendSurveyEmailController,
-  getSurveySummaryController
+  getSurveySummaryController,
 };

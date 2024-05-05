@@ -12,6 +12,6 @@ const getAllActivitiesController = async (req, res) => {
   }
 };
   
-  module.exports = {
-    getAllActivitiesController
-  };
+module.exports = {
+  getAllActivitiesController
+};
