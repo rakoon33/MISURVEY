@@ -6,6 +6,7 @@ export const initialState: UserState = {
   user: null,
   loading: false,
   permissions: [],
+  packages: null
 };
 
 export const userReducer = createReducer(
@@ -14,11 +15,12 @@ export const userReducer = createReducer(
     ...state,
     loading: true,
   })),
-  on(userActions.getUserDataSuccess, (state, { user, permissions = [] }) => ({
+  on(userActions.getUserDataSuccess, (state, { user, permissions, packages }) => ({
     ...state,
     user,
     loading: false,
-    permissions: permissions
+    permissions: permissions,
+    packages 
   })),
   on(userActions.getUserDataFailure, (state) => ({
     ...state,

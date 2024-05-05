@@ -54,7 +54,7 @@ export class AuthEffects {
             this.toastrService.success('Logout successful');
             return [
               authActions.logoutSuccess(),
-              userActions.getUserDataSuccess({ user: null, permissions: [] }),
+              userActions.getUserDataSuccess({ user: null, permissions: [], packages: null}),
               companyActions.getCompanyDataSuccess ({ company: null, permissions: [] }),
               surveyManagementActions.resetSurveyState(),
             ];

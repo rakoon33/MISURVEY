@@ -14,7 +14,7 @@ import { CompanyRolesManagementService } from './company-roles-management.servic
 import {CompanyUserManagementService} from './company-user-management.service';
 import { IndividualPermissionsService } from './individual-permission-management.service';
 import { ReportService } from './report.service';
-
+import {ServicePackageService} from './service-package.service'
 export {
   UserService,
   AuthService,
@@ -31,5 +31,6 @@ export {
   QuestionTemplateService,
   ReportService,
   CustomerService,
-  UserActivityLogService
+  UserActivityLogService,
+  ServicePackageService
 };

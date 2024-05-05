@@ -1,0 +1,37 @@
+<div class="subscription-plans">
+    <div
+      *ngFor="let plan of plans"
+      [ngClass]="{
+        'plan-active': isActivePlan(plan.id),
+        'plan-basic': plan.name === 'Free' && !isActivePlan(plan.id),
+        'plan-premium': plan.name === 'Premium' && !isActivePlan(plan.id)
+      }"
+      class="plan__item"
+    >
+      <div class="plan__header">{{ plan.name }}</div>
+      <div class="plan__body">
+        <ul>
+          <li class="plan__price">
+            {{ formatPrice(plan.price) }}
+          </li>
+          <li>{{ plan.description }}</li>
+          <li>Duration: {{ plan.duration }}</li>
+          <li>Survey Limit: {{ plan.surveyLimit }}</li>
+          <li>Response Limit: {{ plan.responseLimit }}</li>
+          <li>Sharing Methods: {{ plan.sharingMethods.join(', ') }}</li>
+        </ul>
+      </div>
+      <div class="plan__footer">
+        <button
+          [disabled]="isActivePlan(plan.id)"
+          [ngClass]="{
+            'disabled-button': isActivePlan(plan.id),
+            'invisible-button': !isActivePlan(plan.id) && plan.name !== 'Premium'
+          }"
+          (click)="initiatePayment(plan.id)"
+        >
+          {{ isActivePlan(plan.id) ? 'Currently Active' : 'Get Started' }}
+        </button>
+      </div>
+    </div>
+  </div>

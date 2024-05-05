@@ -22,7 +22,13 @@ const UserPackage = db.sequelize.define(
       allowNull: false,
     },
     EndDate: {
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    IsActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true, 
     },
     CompanyID: {
       type: DataTypes.INTEGER,

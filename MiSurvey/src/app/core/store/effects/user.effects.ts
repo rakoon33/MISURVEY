@@ -12,14 +12,14 @@ export class UserEffects {
   getUserData$ = createEffect(() =>
     this.actions$.pipe(
       ofType(userActions.getUserDataRequest),
-      switchMap(() => 
+      switchMap(() =>
         this.userService.getUserData().pipe(
           map(response => {
             if (response.status) {
-
               return userActions.getUserDataSuccess({
                 user: response.userDetails,
-                permissions: response.permissions
+                permissions: response.permissions,
+                packages: response.packages
               });
             } else {
               this.toastrService.error(response.message || 'Failed to fetch user data');
