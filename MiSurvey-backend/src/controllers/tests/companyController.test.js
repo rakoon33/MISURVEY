@@ -8,8 +8,8 @@ const {
   getOneCompanyController,
   updateCompanyController,
 } = require("../company.controller");
-const companyService = require("../../services/company.service");
 
+const companyService = require("../../services/company.service");
 jest.mock("../../services/company.service", () => ({
   getCompanyData: jest.fn(),
   getOneCompany: jest.fn(),

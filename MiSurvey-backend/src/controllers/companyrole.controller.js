@@ -10,7 +10,7 @@ const createCompanyRoleController = async (req, res) => {
       req.user.companyID,
       req.user
     );
-    res.json(newRole);
+    res.status(200).json(newRole);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -43,7 +43,7 @@ const updateCompanyRoleController = async (req, res) => {
       permissionsData,
       req.user
     );
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -58,7 +58,10 @@ const deleteCompanyRoleController = async (req, res) => {
       req.params.CompanyRoleID,
       req.user
     );
-    res.json(result);
+    if (!result.status) {
+      return res.status(400).json({ message: result.message });
+    }
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -67,7 +70,7 @@ const deleteCompanyRoleController = async (req, res) => {
 const getAllCompanyRolesController = async (req, res) => {
   try {
     const result = await companyRoleService.getAllCompanyRoles(req.user.companyID);
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -75,10 +78,11 @@ const getAllCompanyRolesController = async (req, res) => {
 
 const getOneCompanyRoleController = async (req, res) => {
   try {
-    const result = await companyRoleService.getOneCompanyRole(
-      req.params.CompanyRoleID
-    );
-    res.json(result);
+    const result = await companyRoleService.getOneCompanyRole(req.params.CompanyRoleID);
+    if (!result.status) {
+      return res.status(400).json({ message: result.message });
+    }
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -88,7 +92,10 @@ const searchCompanyRolesController = async (req, res) => {
   try {
     const { name } = req.query;
     const result = await companyRoleService.searchCompanyRoles(name);
-    res.json(result);
+    if (!result.status) {
+      return res.status(400).json({ message: result.message });
+    }
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
