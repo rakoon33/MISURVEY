@@ -29,11 +29,11 @@ const sendSurveyEmailController = async (req, res) => {
   try {
     const { SurveyID, EmailData } = req.body;
     const result = await surveyService.sendEmail(SurveyID,EmailData,req.user.companyID, req.user.id);
-    // if (result.status) {
+    if (result.status) {
       res.json(result);
-    // } else {
-      // res.status(400).json({ message: result.message });
-    // }
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -59,7 +59,11 @@ const getOneSurveyWithDataByLinkController = async (req, res) => {
     const result = await surveyService.getOneSurveyWithDataByLink(
       req.params.SurveyLink
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -110,7 +114,11 @@ const updateSurveyController = async (req, res) => {
 const deleteSurveyController = async (req, res) => {
   try {
     const result = await surveyService.deleteSurvey(req.params.SurveyID, req.user);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -138,7 +146,11 @@ const getSurveySummaryController = async (req, res) => {
   try {
     const surveyID = req.params.surveyID;
     const result = await surveyService.getSurveySummary(surveyID);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
