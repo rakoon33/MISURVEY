@@ -25,4 +25,9 @@ router.get(
   reportController.getSurveyCountByDateRangeController
 );
 
+router.get(
+  "/survey-report/:surveyId",
+  reportController.getSurveyQuestionDataController
+);
+
 module.exports = router;

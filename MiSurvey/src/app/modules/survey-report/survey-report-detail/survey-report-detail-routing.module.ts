@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ChartsComponent } from './charts.component';
+import { SurveyReportDetailComponent } from './survey-report-detail.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ChartsComponent,
+    component: SurveyReportDetailComponent,
     data: {
-      title: 'Charts',
+      title: 'Survey Report Detail',
     },
   },
 ];
@@ -17,5 +17,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ChartsRoutingModule {}
+export class SurveyReportDetailRoutingModule {}
 

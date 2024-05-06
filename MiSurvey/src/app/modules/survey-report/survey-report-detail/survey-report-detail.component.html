@@ -1,0 +1,187 @@
+<div class="d-flex justify-content-center align-items-start">
+  <div class="col-md-8 custom-card-container">
+    <c-row>
+      <!-- Loop through the chart data and display each chart dynamically -->
+      <c-col
+        *ngFor="let chartData of chartSurveyData"
+        xs="12"
+        lg="12"
+        class="mb-4"
+      >
+        <c-card class="mb-6 custom-card">
+          <c-card-header class="custom-header">{{
+            chartData?.questionText
+          }}</c-card-header>
+          <c-card-body class="custom-body">
+            <p><strong>Question Type:</strong> {{ chartData?.questionType }}</p>
+            <p><strong>Response Rate:</strong> {{ chartData?.responseRate }}</p>
+
+            <div *ngIf="chartData?.questionType === 'NPS'">
+              <div class="d-flex justify-content-start">
+                <div class="me-4">
+                  <p>
+                    <strong>Promoters:</strong>
+                    {{ chartData.additionalData.promoters }}
+                  </p>
+                  <p>
+                    <strong>Passives:</strong>
+                    {{ chartData.additionalData.passives }}
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <strong>Detractors:</strong>
+                    {{ chartData.additionalData.detractors }}
+                  </p>
+                  <p>
+                    <strong>Total:</strong> {{ chartData.additionalData.total }}
+                  </p>
+                </div>
+              </div>
+              <p class="formula">
+                <strong>Formula:</strong> ((promoters - detractors) / total) *
+                100
+              </p>
+            </div>
+
+            <div *ngIf="chartData?.questionType === 'CSAT'">
+              <div class="d-flex justify-content-start">
+                <div class="me-4">
+                  <p>
+                    <strong>Satisfied:</strong>
+                    {{ chartData.additionalData.satisfied }}
+                  </p>
+                  <p>
+                    <strong>Neutral:</strong>
+                    {{ chartData.additionalData.neutral }}
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <strong>Dissatisfied:</strong>
+                    {{ chartData.additionalData.dissatisfied }}
+                  </p>
+                  <p>
+                    <strong>Total:</strong> {{ chartData.additionalData.total }}
+                  </p>
+                </div>
+              </div>
+              <p class="formula">
+                <strong>Formula:</strong> (satisfied / total) * 100
+              </p>
+            </div>
+
+            <div *ngIf="chartData?.questionType === 'Emoticons'">
+              <div class="d-flex justify-content-start">
+                <div class="me-4">
+                  <p>
+                    <strong>Very Bad:</strong>
+                    {{ chartData.additionalData.veryBad }}
+                  </p>
+                  <p>
+                    <strong>Bad:</strong> {{ chartData.additionalData.bad }}
+                  </p>
+                  <p>
+                    <strong>Neutral:</strong>
+                    {{ chartData.additionalData.neutral }}
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <strong>Good:</strong> {{ chartData.additionalData.good }}
+                  </p>
+                  <p>
+                    <strong>Very Good:</strong>
+                    {{ chartData.additionalData.veryGood }}
+                  </p>
+                  <div>
+                    <p>
+                      <strong>Total:</strong>
+                      {{ chartData.additionalData.total }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p class="formula">
+                <strong>Negative Percentage Formula:</strong> ((veryBad + bad) /
+                total) * 100
+              </p>
+              <p class="formula">
+                <strong>Positive Percentage Formula:</strong> ((veryGood + good)
+                / total) * 100
+              </p>
+            </div>
+
+            <div *ngIf="chartData?.questionType === 'Thumbs'">
+              <div class="d-flex justify-content-start">
+                <div class="me-4">
+                  <p>
+                    <strong>Thumbs Up:</strong>
+                    {{ chartData.additionalData.thumbsUp }}
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <strong>Thumbs Down:</strong>
+                    {{ chartData.additionalData.thumbsDown }}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p>
+                  <strong>Total:</strong> {{ chartData.additionalData.total }}
+                </p>
+              </div>
+              <p class="formula">
+                <strong>Up Percentage Formula:</strong> (thumbsUp / total) * 100
+              </p>
+              <p class="formula">
+                <strong>Down Percentage Formula:</strong> (thumbsDown / total) *
+                100
+              </p>
+            </div>
+
+            <!-- Stars Section -->
+            <div *ngIf="chartData?.questionType === 'Stars'">
+              <div>
+                <div class="me-4">
+                  <p>
+                    <strong>Total:</strong> {{ chartData.additionalData.total }}
+                  </p>
+                </div>
+                <p class="formula">
+                  <strong>Average Rating Formula:</strong> (sum of all ratings /
+                  total)
+                </p>
+              </div>
+            </div>
+
+            <div
+              [ngClass]="{
+                'small-chart':
+                  chartData?.type == 'doughnut' || chartData?.type === 'pie'
+              }"
+            >
+              <c-chart
+                *ngIf="chartData?.type"
+                [type]="chartData?.type"
+                [data]="{
+                  labels: chartData.labels,
+                  datasets: [
+                    {
+                      label: chartData.label,
+                      data: chartData.data,
+                      backgroundColor: chartData.backgroundColor,
+                      borderColor: chartData.borderColor
+                    }
+                  ]
+                }"
+              >
+              </c-chart>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </div>
+</div>
