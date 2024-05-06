@@ -31,19 +31,20 @@ const getUserData = async (userId, userRole) => {
       return { status: false, message: "User not found" };
     }
 
-    const { UserPassword, ...userDetailsWithoutPassword } = userDetails.dataValues;
+    const { UserPassword, ...userDetailsWithoutPassword } =
+      userDetails.dataValues;
     let response = { status: true, userDetails: userDetailsWithoutPassword };
 
     let companyUser;
     let activePackage;
-    
+
     switch (userRole) {
       case "SuperAdmin":
         return response;
 
       case "Admin":
         companyUser = await CompanyUser.findOne({
-          where: { UserID: userId }
+          where: { UserID: userId },
         });
 
         if (!companyUser) {
@@ -53,35 +54,38 @@ const getUserData = async (userId, userRole) => {
         activePackage = await UserPackage.findOne({
           where: {
             CompanyID: companyUser.CompanyID,
-            IsActive: true
+            IsActive: true,
           },
           include: [
             { model: ServicePackage, as: "servicePackage", required: true },
           ],
         });
 
-        if (activePackage && activePackage.EndDate && new Date(activePackage.EndDate) < new Date()) {
+        if (
+          activePackage &&
+          activePackage.EndDate &&
+          new Date(activePackage.EndDate) < new Date()
+        ) {
           activePackage.IsActive = false;
           await activePackage.save();
-
+        } else if (!activePackage) {
           const freePackage = await UserPackage.findOne({
             where: {
               PackageID: 1, // Assuming PackageID 1 is for free packages
               CompanyID: companyUser.CompanyID,
-              IsActive: false
+              IsActive: false,
             },
             include: [
               { model: ServicePackage, as: "servicePackage", required: true },
             ],
           });
-
+          console.log(freePackage);
           if (freePackage) {
             freePackage.IsActive = true;
             await freePackage.save();
-            activePackage = freePackage; // Assign the free package as the active package
+            activePackage = freePackage; 
           }
         }
-
         if (activePackage) {
           response.packages = activePackage;
         }
@@ -89,7 +93,7 @@ const getUserData = async (userId, userRole) => {
 
       case "Supervisor":
         companyUser = await CompanyUser.findOne({
-          where: { UserID: userId }
+          where: { UserID: userId },
         });
 
         if (!companyUser) {
@@ -99,22 +103,26 @@ const getUserData = async (userId, userRole) => {
         activePackage = await UserPackage.findOne({
           where: {
             CompanyID: companyUser.CompanyID,
-            IsActive: true
+            IsActive: true,
           },
           include: [
             { model: ServicePackage, as: "servicePackage", required: true },
           ],
         });
 
-        if (activePackage && activePackage.EndDate && new Date(activePackage.EndDate) < new Date()) {
+        if (
+          activePackage &&
+          activePackage.EndDate &&
+          new Date(activePackage.EndDate) < new Date()
+        ) {
           activePackage.IsActive = false;
           await activePackage.save();
-
+        } else if (!activePackage) {
           const freePackage = await UserPackage.findOne({
             where: {
-              PackageID: 1, // Assuming PackageID 1 is for free packages
+              PackageID: 1, 
               CompanyID: companyUser.CompanyID,
-              IsActive: false
+              IsActive: false,
             },
             include: [
               { model: ServicePackage, as: "servicePackage", required: true },
@@ -138,7 +146,7 @@ const getUserData = async (userId, userRole) => {
         if (companyUser.CompanyUserID) {
           const individualPermissions = await IndividualPermission.findAll({
             where: { CompanyUserID: companyUser.CompanyUserID },
-            include: [{ model: Module, as: "module", required: true }]
+            include: [{ model: Module, as: "module", required: true }],
           });
 
           permissionsMap = individualPermissions.reduce((acc, permission) => {
@@ -152,11 +160,14 @@ const getUserData = async (userId, userRole) => {
         if (companyUser.CompanyRoleID) {
           const rolePermissions = await RolePermission.findAll({
             where: { CompanyRoleID: companyUser.CompanyRoleID },
-            include: [{ model: Module, as: "module", required: true }]
+            include: [{ model: Module, as: "module", required: true }],
           });
 
           rolePermissions.forEach((permission) => {
-            if (permission.module && !permissionsMap.hasOwnProperty(permission.module.ModuleName)) {
+            if (
+              permission.module &&
+              !permissionsMap.hasOwnProperty(permission.module.ModuleName)
+            ) {
               permissionsMap[permission.module.ModuleName] = permission;
             }
           });

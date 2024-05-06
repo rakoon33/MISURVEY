@@ -43,9 +43,19 @@ const deleteSurveyResponseController = async (req, res) => {
   }
 };
 
+const getSurveyResponseCountController = async (req, res) => {
+  try {
+    const result = await surveyResponseService.getSurveyResponseCount(req.params.surveyID);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createSurveyResponseController,
   getOneSurveyResponseController,
   deleteSurveyResponseController,
   getAllResponseController,
+  getSurveyResponseCountController
 };

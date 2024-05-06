@@ -93,4 +93,11 @@ export class SurveyManagementService {
     return this.http.delete<any>(`${apiConstants.BACKEND_API.BASE_API_URL}/questions/${questionId}`, { withCredentials: true });
   }
 
+  getSurveyResponseCount(surveyId: number): Observable<any> {
+    const url = `${apiConstants.BACKEND_API.BASE_API_URL}/responses/count/${surveyId}`; // Adjust the endpoint to match your backend API
+    return this.http.get<any>(url, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => throwError(() => error))
+    );
+  }
 }

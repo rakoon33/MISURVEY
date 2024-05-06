@@ -110,7 +110,7 @@ export class CompanyManagementComponent implements OnInit {
       this.currentUserRole = currentUser?.UserRole;
       
     });
-    if (this.currentUserRole === 'Admin') {
+    if (this.currentUserRole === 'Admin' || this.currentUserRole === 'Supervisor') {
       this.store.dispatch(companyActions.getCompanyProfileRequest());
     }
     this.router.events
