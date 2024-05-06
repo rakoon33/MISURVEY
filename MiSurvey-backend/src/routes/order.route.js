@@ -154,14 +154,16 @@ router.get("/vnpay_return", async (req, res) => { // Add middleware here
         };
 
         const userPackage = await UserPackage.create(newUserPackage);
-
-        res.sendFile(path.join(__dirname, 'public/html', 'success.html'));
+        res.redirect("http://localhost:8082/#/subscription-plans");
+        //res.sendFile(path.join(__dirname, 'public/html', 'success.html'));
       } else {
-        res.sendFile(path.join(__dirname, 'public/html', 'failure.html'));
+        //res.sendFile(path.join(__dirname, 'public/html', 'failure.html'));
+        res.redirect("http://localhost:8082/#/subscription-plans");
       }
     } else {
       console.error("Xác minh thất bại do không trùng khớp mã băm");
       res.sendFile(path.join(__dirname, 'public/html', 'failure.html'));
+      //res.redirect("http://localhost:8082/#/subscription-plans");
     }
   } catch (error) {
     console.error("Lỗi xử lý phản hồi từ VNPAY:", error.message);

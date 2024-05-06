@@ -42,8 +42,7 @@ export class SubscriptionPlansComponent implements OnInit {
     const bankCode = ''; // Customize or get from the user input if required
     const language = 'vn'; // Customize based on user preference or system settings
     this.servicePackageService.initiatePayment(planId, bankCode, language).subscribe(response => {
-      // Open the payment URL in a new tab
-      window.open(response.vnpUrl);
+      window.location.href = response.vnpUrl;
     }, error => {
       console.error('Payment initiation failed:', error);
     });
