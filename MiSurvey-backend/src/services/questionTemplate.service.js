@@ -13,29 +13,28 @@ const createQuestionTemplate = async (data, udata) => {
 };
 
 const getAllQuestionTemplates = async (page, pageSize) => {
-    try {
-      // Include Sequelize's "limit" and "offset" options to fetch the paginated data
-      const limit = pageSize ? parseInt(pageSize, 10) : 10; // default page size to 10
-      const offset = page ? (parseInt(page, 10) - 1) * limit : 0; // default page to first
-  
-      const { count, rows: templates } = await QuestionTemplate.findAndCountAll({
-        include: [
-          {
-            model: SurveyType,
-            as: "SurveyType",
-          },
-        ],
-        limit,
-        offset,
-      });
-  
-      return { status: true, templates, total: count };
-    } catch (error) {
-      return { status: false, message: error.message };
-    }
-  };
-  
+  try {
+    // Include Sequelize's "limit" and "offset" options to fetch the paginated data
+    const limit = pageSize ? parseInt(pageSize, 10) : 10; // default page size to 10
+    const offset = page ? (parseInt(page, 10) - 1) * limit : 0; // default page to first
 
+    const { count, rows: templates } = await QuestionTemplate.findAndCountAll({
+      include: [
+        {
+          model: SurveyType,
+          as: "SurveyType",
+        },
+      ],
+      limit,
+      offset,
+    });
+
+    return { status: true, templates, total: count };
+  } catch (error) {
+    return { status: false, message: error.message };
+  }
+};
+  
 const updateQuestionTemplate = async (templateID, updates, udata) => {
   try {
     const template = await QuestionTemplate.findByPk(templateID);
