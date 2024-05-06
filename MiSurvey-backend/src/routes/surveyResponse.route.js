@@ -4,6 +4,12 @@ const { authMiddleware } = require("../middlewares");
 
 const router = express.Router();
 
+router
+  .route("/count/:surveyID")
+  .get(surveyResponseController.getSurveyResponseCountController);
+
+
+
 /**
  * @swagger
  * /api/responses:

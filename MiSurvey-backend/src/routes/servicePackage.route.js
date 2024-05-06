@@ -9,6 +9,8 @@ router
   .post(
     authMiddleware.tokenVerification,
     servicePackageController.createServicePackageController
-);
+  )
+  .get(servicePackageController.getAllServicePackagesController);
 
+  
 module.exports = router;

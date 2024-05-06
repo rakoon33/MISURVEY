@@ -4,18 +4,13 @@ import { UserState } from './../states';
 export const selectUser = (state: UserState) => state.user;
 export const selectUserLoading = (state: UserState) => state.loading;
 export const selectUserPermissions = (state: UserState) => state.permissions;
+export const selectUserPackage = (state: UserState) => state.packages;
 // Feature selector
 export const selectUserState = createFeatureSelector<UserState>('feature_user');
 
-const selectCurrentUser = createSelector(
-  selectUserState,
-  selectUser
-);
+const selectCurrentUser = createSelector(selectUserState, selectUser);
 
-const selectIsUserLoading = createSelector(
-  selectUserState,
-  selectUserLoading
-);
+const selectIsUserLoading = createSelector(selectUserState, selectUserLoading);
 
 const selectCurrentUserPermissions = createSelector(
   selectUserState,
@@ -24,11 +19,28 @@ const selectCurrentUserPermissions = createSelector(
 
 const selectPermissionByModuleId = (moduleId: number) => createSelector(
   selectUserState,
-  (selectUserPermissions) => selectUserPermissions.permissions.find(selectUserPermissions => selectUserPermissions.ModuleID === moduleId)
+  (state: UserState) => {
+    // Safeguard against undefined permissions
+    return state.permissions ? state.permissions.find(permission => permission.ModuleID === moduleId) : undefined;
+  }
 );
-
 const selectPermissionByModuleName = (moduleName: string) => createSelector(
   selectUserState,
-  (selectUserPermissions) => selectUserPermissions.permissions.find(selectUserPermissions => selectUserPermissions.module.ModuleName === moduleName)
+  (state: UserState) => {
+    // Safeguard against undefined permissions
+    return state.permissions ? state.permissions.find(permission => permission.module.ModuleName === moduleName) : undefined;
+  }
 );
-export default { selectCurrentUser, selectIsUserLoading, selectCurrentUserPermissions, selectPermissionByModuleId, selectPermissionByModuleName};
+const selectCurrentUserPackages = createSelector(
+  selectUserState,
+  selectUserPackage
+);
+
+export default {
+  selectCurrentUser,
+  selectIsUserLoading,
+  selectCurrentUserPermissions,
+  selectPermissionByModuleId,
+  selectPermissionByModuleName,
+  selectCurrentUserPackages,
+};

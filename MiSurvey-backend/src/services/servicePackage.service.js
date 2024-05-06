@@ -11,6 +11,15 @@ const createServicePackage = async (packageData) => {
     }
 };
 
+const getAllServicePackages = async () => {
+  try {
+    return await ServicePackage.findAll();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
-    createServicePackage
+    createServicePackage,
+    getAllServicePackages
 };

@@ -44,7 +44,8 @@ export class DefaultLayoutComponent implements OnInit {
             (item) =>
               item.name !== 'Survey Management' &&
               item.name !== 'Role Management' &&
-              item.name !== 'Customer Management'
+              item.name !== 'Customer Management' &&
+              item.name !== 'Subscription Plans'
           );
         } else {
           this.navItems = originalNavItems.filter(

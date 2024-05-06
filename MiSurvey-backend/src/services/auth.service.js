@@ -6,6 +6,8 @@ const {
   IndividualPermission,
   RolePermission,
   Module,
+  ServicePackage,
+  UserPackage
 } = require("../models");
 const { tokenFunctions } = require("../utils");
 const db = require("../config/database");
@@ -125,6 +127,23 @@ const registerUser = async (userData) => {
       { transaction }
     );
 
+     // Tạo gói dịch vụ miễn phí cho công ty
+     const freeServicePackage = await ServicePackage.findOne({ where: { PackageName: 'Free' } });
+     if (!freeServicePackage) {
+       throw new Error("Free service package not found");
+     }
+ 
+     await UserPackage.create(
+       {
+         UserID: newUser.UserID,
+         PackageID: freeServicePackage.PackageID,
+         StartDate: new Date(),
+         CompanyID: newCompany.CompanyID,
+       },
+       { transaction }
+     );
+
+     
     await transaction.commit();
     await createLogActivity(newUser.UserID, 'INSERT', `A new user has been created`, 'Users', newCompany.CompanyID);
     return {

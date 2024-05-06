@@ -284,7 +284,7 @@
   </c-modal-header>
   <c-modal-body class="modal-body">
     <div class="qr-code-wrapper">
-      <qrcode [qrdata]="qrCodeLink!" (qrCodeURL)="onChangeURL($event)"></qrcode>
+      <qrcode [qrdata]="qrCodeLink!" [allowEmptyString]='true' (qrCodeURL)="onChangeURL($event)"></qrcode>
       <a
         [href]="qrCodeDownloadLink"
         [download]="sanitizedSurveyTitle + '.png'"

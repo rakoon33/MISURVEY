@@ -121,6 +121,11 @@ const routes: Routes = [
         path: 'charts',
         loadChildren: () =>
           import('./modules/charts/charts.module').then((m) => m.ChartsModule),
+      },
+      {
+        path: 'subscription-plans',
+        loadChildren: () =>
+          import('./modules/subscription-plans/subscription-plans.module').then((m) => m.SubscriptionPlansModule)
       }
     ],
   },
