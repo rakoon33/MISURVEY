@@ -17,6 +17,7 @@ import Module from './module.model';
 import QuestionTemplate from './question-template.model';
 import Customer from './customer.model';
 import UserActivityLog from './user-activity-log.model';
+import { ServicePackage, UserPackage } from './user-package.model';
 export {
   User,
   Company,
@@ -32,5 +33,7 @@ export {
   ContactInfo,
   QuestionTemplate,
   Customer,
-  UserActivityLog
+  UserActivityLog,
+  ServicePackage,
+  UserPackage
 };

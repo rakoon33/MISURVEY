@@ -14,10 +14,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
-
 const createCompanyUser = async (companyUserData, userData, udata) => {
-
   const anotherstore = userData.UserPassword;
   const transaction = await db.sequelize.transaction();
   try {
@@ -108,7 +105,6 @@ const deleteCompanyUser = async (companyUserId, udata) => {
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
   }
-  
 };
 
 const getOneCompanyUser = async (companyUserId) => {

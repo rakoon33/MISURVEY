@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
       return true;
     } else {
       // If the HttpOnly JWT cookie does not exist, redirect to login
-      this.store.dispatch(userActions.getUserDataSuccess({ user: null, permissions: [] }));
+      this.store.dispatch(userActions.getUserDataSuccess({ user: null, permissions: [], packages: null }));
       this.router.navigate(['/login']);
       return false;
     }

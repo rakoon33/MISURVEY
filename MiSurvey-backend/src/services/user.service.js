@@ -17,7 +17,7 @@ const {
   SurveyResponse,
   CompanyRole,
   Ticket,
-  ServicePackage
+  ServicePackage,
 } = require("../models");
 const companyService = require("../services");
 const db = require("../config/database");
@@ -25,65 +25,122 @@ const { createLogActivity } = require("./userActivityLog.service");
 
 const getUserData = async (userId, userRole) => {
   try {
+    // Fetch user details
     const userDetails = await User.findByPk(userId);
     if (!userDetails) {
-      return {
-        status: false,
-        message: "User not found",
-      };
+      return { status: false, message: "User not found" };
     }
+
     const { UserPassword, ...userDetailsWithoutPassword } =
       userDetails.dataValues;
+    let response = { status: true, userDetails: userDetailsWithoutPassword };
 
-    let response = {
-      status: true,
-      userDetails: userDetailsWithoutPassword,
-    };
+    let companyUser;
+    let activePackage;
 
-
-    // Switch to handle different roles
     switch (userRole) {
       case "SuperAdmin":
         return response;
+
       case "Admin":
-        const companyUser1 = await CompanyUser.findOne({
+        companyUser = await CompanyUser.findOne({
           where: { UserID: userId },
         });
-        if (!companyUser1) {
-          return {
-            status: false,
-            message: "Company not found",
-          };
+
+        if (!companyUser) {
+          return { status: false, message: "Company not found" };
         }
-        const userPackage1 = await UserPackage.findOne({
-          where: { CompanyID: companyUser1.CompanyID },
-          include: [{ model: ServicePackage, as: "servicePackage", required: true }],
+
+        activePackage = await UserPackage.findOne({
+          where: {
+            CompanyID: companyUser.CompanyID,
+            IsActive: true,
+          },
+          include: [
+            { model: ServicePackage, as: "servicePackage", required: true },
+          ],
         });
 
-        if (userPackage1) {
-          response.packages = userPackage1;
+        if (
+          activePackage &&
+          activePackage.EndDate &&
+          new Date(activePackage.EndDate) < new Date()
+        ) {
+          activePackage.IsActive = false;
+          await activePackage.save();
+        } else if (!activePackage) {
+          const freePackage = await UserPackage.findOne({
+            where: {
+              PackageID: 1, // Assuming PackageID 1 is for free packages
+              CompanyID: companyUser.CompanyID,
+              IsActive: false,
+            },
+            include: [
+              { model: ServicePackage, as: "servicePackage", required: true },
+            ],
+          });
+          console.log(freePackage);
+          if (freePackage) {
+            freePackage.IsActive = true;
+            await freePackage.save();
+            activePackage = freePackage; 
+          }
+        }
+        if (activePackage) {
+          response.packages = activePackage;
         }
         return response;
 
       case "Supervisor":
-        const companyUser = await CompanyUser.findOne({
+        companyUser = await CompanyUser.findOne({
           where: { UserID: userId },
         });
+
         if (!companyUser) {
-          return {
-            status: false,
-            message: "Company not found",
-          };
+          return { status: false, message: "Company not found" };
         }
-        const userPackage = await UserPackage.findOne({
-          where: { CompanyID: companyUser.CompanyID },
-          include: [{ model: ServicePackage, as: "servicePackage", required: true }],
+
+        activePackage = await UserPackage.findOne({
+          where: {
+            CompanyID: companyUser.CompanyID,
+            IsActive: true,
+          },
+          include: [
+            { model: ServicePackage, as: "servicePackage", required: true },
+          ],
         });
 
-        if (userPackage) {
-          response.packages = userPackage;
+        if (
+          activePackage &&
+          activePackage.EndDate &&
+          new Date(activePackage.EndDate) < new Date()
+        ) {
+          activePackage.IsActive = false;
+          await activePackage.save();
+        } else if (!activePackage) {
+          const freePackage = await UserPackage.findOne({
+            where: {
+              PackageID: 1, 
+              CompanyID: companyUser.CompanyID,
+              IsActive: false,
+            },
+            include: [
+              { model: ServicePackage, as: "servicePackage", required: true },
+            ],
+          });
+
+          if (freePackage) {
+            freePackage.IsActive = true;
+            await freePackage.save();
+            activePackage = freePackage; // Assign the free package as the active package
+          }
         }
 
+        if (activePackage) {
+          response.packages = activePackage;
+        }
+
+        // Permissions logic
         let permissionsMap = {};
 
         if (companyUser.CompanyUserID) {
@@ -122,10 +179,7 @@ const getUserData = async (userId, userRole) => {
 
       // Default case to handle other roles (if any)
       default:
-        return {
-          status: false,
-          message: "Invalid user role",
-        };
+        return { status: false, message: "Invalid user role" };
     }
 
     return response;
@@ -133,7 +187,6 @@ const getUserData = async (userId, userRole) => {
     throw new Error(error.message || "Failed to fetch user data");
   }
 };
-
 
 const createUser = async (userData, udata) => {
   try {
@@ -208,19 +261,19 @@ const deleteUser = async (UserID, udata) => {
     // Find and delete all notifications for the user
     await Notification.destroy({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     // Find and delete all survey reports created by the user
     await SurveyReport.destroy({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     // Find all surveys created by the user
     const surveys = await Survey.findAll({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     // For each survey, delete survey details and survey questions
@@ -234,7 +287,7 @@ const deleteUser = async (UserID, udata) => {
           where: { SurveyID: question.SurveyID },
           transaction,
         });
-  
+
         await SurveyResponse.destroy({
           where: { QuestionID: question.QuestionID },
           transaction,
@@ -242,7 +295,7 @@ const deleteUser = async (UserID, udata) => {
       }
       await SurveyQuestion.destroy({
         where: { SurveyID: survey.SurveyID },
-        transaction
+        transaction,
       });
 
       await SurveyReport.destroy({
@@ -252,31 +305,31 @@ const deleteUser = async (UserID, udata) => {
 
       await SurveyDetail.destroy({
         where: { SurveyID: survey.SurveyID },
-        transaction
+        transaction,
       });
 
       await Survey.destroy({
         where: { SurveyID: survey.SurveyID },
-        transaction
+        transaction,
       });
     }
 
     // Find and delete all user packages
     await UserPackage.destroy({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     // Find all company user records associated with the user
     const companyUsers = await CompanyUser.findAll({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     // Delete related entries in UserActivityLogs
     await UserActivityLog.destroy({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     for (const companyUser of companyUsers) {
@@ -286,24 +339,26 @@ const deleteUser = async (UserID, udata) => {
       // Delete related records in IndividualPermission
       await IndividualPermission.destroy({
         where: { CompanyUserID: companyUserID },
-        transaction
+        transaction,
       });
 
       // Delete the company user record
       await CompanyUser.destroy({
         where: { CompanyUserID: companyUserID },
-        transaction
+        transaction,
       });
 
       // Check if the user is an admin of the company
       const company = await Company.findOne({
         where: { CompanyID: companyID, AdminID: UserID },
-        transaction
+        transaction,
       });
 
       // If the user is an admin, delete the company and its associated records
       if (company) {
-        const companyroles = await CompanyRole.findAll({ where: { CompanyID: companyID } });
+        const companyroles = await CompanyRole.findAll({
+          where: { CompanyID: companyID },
+        });
         for (const companyrole of companyroles) {
           await RolePermission.destroy({
             where: { CompanyRoleID: companyrole.CompanyRoleID },
@@ -312,7 +367,7 @@ const deleteUser = async (UserID, udata) => {
         await CompanyRole.destroy({ where: { CompanyID: companyID } });
         await Company.destroy({
           where: { AdminID: UserID },
-          transaction
+          transaction,
         });
       }
     }
@@ -320,7 +375,7 @@ const deleteUser = async (UserID, udata) => {
     // Delete the user
     const deletedUser = await User.destroy({
       where: { UserID: UserID },
-      transaction
+      transaction,
     });
 
     // Commit all deletions if successful
@@ -346,17 +401,10 @@ const deleteUser = async (UserID, udata) => {
     return {
       status: false,
       message: "Failed to delete user and related data.",
-      error: error.toString()
+      error: error.toString(),
     };
   }
 };
-
-
-
-
-
-
-
 
 const getOneUser = async (UserID) => {
   try {

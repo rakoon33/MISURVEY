@@ -5,6 +5,9 @@ const {
   SurveyResponse,
   Ticket,
   Customer,
+  UserPackage,
+  ServicePackage,
+  Survey
 } = require("../models");
 
 const createSurveyResponses = async (data) => {
@@ -12,20 +15,26 @@ const createSurveyResponses = async (data) => {
     let customerID = null;
 
     // Use 'Anonymous' if FullName is empty or not provided
-    const fullName = data.FullName && data.FullName.trim() ? data.FullName : `Anonymous_${Date.now()}`;
+    const fullName =
+      data.FullName && data.FullName.trim()
+        ? data.FullName
+        : `Anonymous_${Date.now()}`;
 
     // Always check for or create a customer regardless of whether email is provided
     if (data.Email) {
       // Check for existing customer by email first
       const existingCustomer = await Customer.findOne({
-        where: { Email: data.Email } // Email assumed unique
+        where: { Email: data.Email }, // Email assumed unique
       });
 
       if (existingCustomer) {
         customerID = existingCustomer.CustomerID;
       } else {
         // Create new customer with provided email
-        const customerResult = await createCustomer({ ...data, FullName: fullName });
+        const customerResult = await createCustomer({
+          ...data,
+          FullName: fullName,
+        });
         if (!customerResult.status) {
           throw new Error(customerResult.message);
         }
@@ -33,7 +42,10 @@ const createSurveyResponses = async (data) => {
       }
     } else {
       // Create new customer with 'Anonymous' and no email
-      const customerResult = await createCustomer({ Email: '', FullName: fullName });
+      const customerResult = await createCustomer({
+        Email: "",
+        FullName: fullName,
+      });
       if (!customerResult.status) {
         throw new Error(customerResult.message);
       }
@@ -46,7 +58,9 @@ const createSurveyResponses = async (data) => {
       const responseWithCustomer = { ...response, CustomerID: customerID };
 
       // Insert the survey response
-      const insertedResponse = await insertIntoSurveyResponses(responseWithCustomer);
+      const insertedResponse = await insertIntoSurveyResponses(
+        responseWithCustomer
+      );
 
       // Evaluate the response
       const isBadResponse = await evaluateResponse(insertedResponse);
@@ -61,7 +75,6 @@ const createSurveyResponses = async (data) => {
     return { status: false, message: error.message, error: error.toString() };
   }
 };
-
 
 const evaluateResponse = async (response) => {
   const question = await SurveyQuestion.findByPk(response.QuestionID, {
@@ -108,7 +121,6 @@ const evaluateResponse = async (response) => {
   return isBadResponse;
 };
 
-
 const insertIntoSurveyResponses = async (response) => {
   const insertedResponse = await SurveyResponse.create({
     ...response,
@@ -144,7 +156,7 @@ const deleteResponse = async (responseID) => {
       // If the response doesn't exist, return the message from getOneResponse
       return getResponse;
     }
-    
+
     const transaction = await db.sequelize.transaction();
     try {
       // First, delete any tickets associated with the response
@@ -225,9 +237,79 @@ const createCustomer = async (customerData) => {
   }
 };
 
+const getSurveyResponseCount = async (surveyID) => {
+  try {
+    // Fetch the survey to get the associated CompanyID
+    const survey = await Survey.findByPk(surveyID);
+
+    if (!survey) {
+      return { status: false, message: "Survey not found" };
+    }
+
+    // Get the active package using the company ID
+    const companyID = survey.CompanyID;
+
+    let activePackage = await UserPackage.findOne({
+      where: {
+        CompanyID: companyID,
+        IsActive: true,
+      },
+      include: [{ model: ServicePackage, as: "servicePackage" }],
+    });
+
+    if (
+      activePackage &&
+      activePackage.EndDate &&
+      new Date(activePackage.EndDate) < new Date()
+    ) {
+      activePackage.IsActive = false;
+      await activePackage.save();
+      activePackage = null;
+    }
+
+    if (!activePackage) {
+      const freePackage = await UserPackage.findOne({
+        where: {
+          PackageID: 1,
+          CompanyID: companyID,
+          IsActive: false,
+        },
+        include: [{ model: ServicePackage, as: "servicePackage" }],
+      });
+
+      if (freePackage) {
+        freePackage.IsActive = true;
+        await freePackage.save();
+        activePackage = freePackage;
+      }
+    }
+
+    if (!activePackage) {
+      return { status: false, message: "No active package found" };
+    }
+
+    // Count unique customers who have submitted responses for the survey
+    const responseCount = await SurveyResponse.count({
+      where: { SurveyID: surveyID },
+      distinct: true,
+      col: 'CustomerID'
+    });
+
+    // Return both the count and the package information
+    return {
+      status: true,
+      count: responseCount,
+      responseLimit: activePackage.servicePackage.ResponseLimit
+    };
+  } catch (error) {
+    return { status: false, message: error.message };
+  }
+};
+
 module.exports = {
   createSurveyResponses,
   deleteResponse,
   getOneResponse,
   getAllResponsesFromSurvey,
+  getSurveyResponseCount,
 };

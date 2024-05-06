@@ -11,7 +11,7 @@ import { ModalService } from '@coreui/angular';
 import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Permission } from 'src/app/core/models';
-import { combineLatest, map } from 'rxjs';
+import { Subscription, combineLatest, map } from 'rxjs';
 
 @Component({
   selector: 'app-survey-management',
@@ -31,7 +31,9 @@ export class SurveyManagementComponent implements OnInit {
   userPermissions$: Observable<Permission | undefined> | undefined;
   qrCodeDownloadLink: SafeUrl | undefined;
   sanitizedSurveyTitle: string = '';
+  userPackage$: Observable<any> | undefined;
   
+  subscription: Subscription = new Subscription();
   constructor(
     private router: Router,
     private store: Store,
@@ -43,6 +45,7 @@ export class SurveyManagementComponent implements OnInit {
       surveyManagementSelector.selectAllSurveys
     );
 
+    this.userPackage$ = this.store.select(userSelector.selectCurrentUserPackages);
     this.userPermissions$ = combineLatest([
       this.store.select(userSelector.selectCurrentUser),
       this.store.select(
@@ -106,8 +109,25 @@ export class SurveyManagementComponent implements OnInit {
   }
   
   navigateToCreateSurvey() {
-    this.store.dispatch(surveyManagementActions.resetSurveyState());
-    this.router.navigate(['/survey-management/survey-method']);
+    this.subscription.add(
+      this.userPackage$!.pipe(
+        map(userPackage => userPackage.servicePackage?.SurveyLimit || Infinity)
+      ).subscribe(surveyLimit => {
+        // Use the most recent surveys count
+        this.subscription.add(
+          this.store.select(surveyManagementSelector.selectAllSurveys).pipe(
+            map(surveys => surveys.length)
+          ).subscribe(surveyCount => {
+            if (surveyCount < surveyLimit) {
+              this.store.dispatch(surveyManagementActions.resetSurveyState());
+              this.router.navigate(['/survey-management/survey-method']);
+            } else {
+              this.toastr.error(`Your package allows only ${surveyLimit} surveys.`);
+            }
+          })
+        );
+      })
+    );
   }
 
   navigateToSurveyDetails(surveyId: number, event: Event, permissions: Permission | undefined): void {
@@ -180,16 +200,17 @@ export class SurveyManagementComponent implements OnInit {
   }
 
   deleteSurvey() {
-    console.log(this.surveyIDToDelete);
     if (this.surveyIDToDelete) {
       this.store.dispatch(
         surveyManagementActions.deleteSurveyRequest({
           surveyId: this.surveyIDToDelete,
         })
       );
+      // Dispatch the action to fetch surveys after deletion
+      this.store.dispatch(surveyManagementActions.fetchSurveysRequest());
       this.modalService.toggle({ show: false, id: 'deleteSurveyModal' });
     }
-  }
+}
 
   toggleApproval(surveyId: number, surveyApproval: string) {
     this.surveyManagementService.getSurveyById(surveyId).subscribe({
@@ -227,5 +248,9 @@ export class SurveyManagementComponent implements OnInit {
       },
       error: (error) => this.toastr.error('Error updating survey', error),
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe(); // Unsubscribe from all subscriptions
   }
 }

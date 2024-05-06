@@ -1,0 +1,104 @@
+.subscription-plans {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1rem;
+  margin-top: 4rem;
+}
+
+.plan__item {
+  background-color: white;
+  border-radius: 4px;
+  padding: 1.5rem; /* Adjusted for better spacing */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add default box shadow */
+}
+
+.plan__item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15); /* Add a stronger shadow on hover */
+}
+
+.plan__header {
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 1rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.plan__body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.plan__price {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0; /* Reset margin for better layout */
+}
+
+li {
+  margin: 0.5rem 0;
+}
+
+.plan__footer {
+  text-align: center;
+  margin-top: 1.5rem; /* Adjusted for better spacing */
+}
+
+.plan__footer button {
+  background-color: #0a66c2;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out; /* Add a transition for smooth hover effect */
+}
+
+.plan__footer button:hover {
+  background-color: #004494;
+}
+
+.plan-basic .plan__header {
+  background-color: #eea726;
+  color: white;
+}
+
+.plan-premium .plan__header {
+  background-color: #459bba;
+  color: white;
+}
+
+.plan-active {
+  border: 2px solid #2287f5;
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Adjusted box shadow for active state */
+}
+
+.plan-active .plan__header  {
+    background-color: #77a87e;
+    color: white;
+  }
+
+.disabled-button {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  color: #666666;
+  pointer-events: none;
+}
+
+.invisible-button {
+    display: none;
+  }

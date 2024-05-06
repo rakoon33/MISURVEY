@@ -1,5 +1,6 @@
+// src/app/store/actions/user.actions.ts
 import { createAction, props, ActionType } from '@ngrx/store';
-import { User, Permission } from '../../models';
+import { User, Permission, UserPackage } from '../../models';
 
 enum UserActionTypes {
   GET_USER_DATA_REQUEST = '[User] Get User Data Request',
@@ -13,11 +14,11 @@ export const getUserDataRequest = createAction(
 
 export const getUserDataSuccess = createAction(
   UserActionTypes.GET_USER_DATA_SUCCESS,
-  props<{ user: User | null, permissions: Permission[] }>()
+  props<{ user: User | null, permissions: Permission[], packages: UserPackage | null }>()
 );
 
 export const getUserDataFailure = createAction(
-  UserActionTypes.GET_USER_DATA_FAILURE,
+  UserActionTypes.GET_USER_DATA_FAILURE
 );
 
 export type UserActions =

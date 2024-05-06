@@ -24,7 +24,6 @@ const createCompanyUserController = async (req, res) => {
       req.user
     );
 
-
     res.status(201).json(result);
   } catch (error) {
     res.status(400).json({
@@ -42,7 +41,7 @@ const deleteCompanyUserController = async (req, res) => {
     );
 
     if (result.status) {
-      res.json({ status: true, message: result.message });
+      res.status(200).json({ status: true, message: result.message });
     } else {
       res.status(400).json({ status: false, message: result.message });
     }
@@ -56,7 +55,11 @@ const getOneCompanyUserController = async (req, res) => {
     const result = await companyUserService.getOneCompanyUser(
       req.params.companyUserId
     );
-    res.json(result);
+    if (result.status) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -65,7 +68,7 @@ const getOneCompanyUserController = async (req, res) => {
 const getAllCompanyUsersController = async (req, res) => {
   try {
     const result = await companyUserService.getAllCompanyUsers();
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

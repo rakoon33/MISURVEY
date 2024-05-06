@@ -12,7 +12,7 @@ import { FeedbackResponse } from 'src/app/core/models';
 import { customerFeedbackActions } from 'src/app/core/store/actions';
 import { SurveyResponseUtil } from 'src/app/core/utils/survey-response.util';
 import { ToastrService } from 'ngx-toastr';
-
+import { SurveyManagementService } from 'src/app/core/services';
 @Component({
   selector: 'app-customer-survey',
   templateUrl: './customer-survey.component.html',
@@ -25,14 +25,17 @@ export class CustomerSurveyComponent {
 
   isSurveyCompleted = false;
   errorMessage: string | null = null;
+  isResponseLimitReached = false;
 
+  responseLimit: number = 0;
   constructor(
     private route: ActivatedRoute,
     private store: Store,
     private router: Router,
     private responseUtil: SurveyResponseUtil,
     private contactDataUtil: ContactDataUtil,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private surveyManagementService: SurveyManagementService
   ) {}
 
   ngOnInit() {
@@ -48,16 +51,33 @@ export class CustomerSurveyComponent {
 
     this.store
       .select(customerSurveySelector.selectSurvey)
+      .pipe(filter((survey) => !!survey))
       .subscribe((survey) => {
-        console.log(survey);
         if (
           survey &&
           survey.Approve === 'Yes' &&
           survey.SurveyStatus === 'Open'
         ) {
           this.survey = survey;
+
+          this.surveyManagementService
+            .getSurveyResponseCount(survey.SurveyID!)
+            .subscribe({
+              next: (response) => {
+                this.responseLimit = response.responseLimit;
+                if (response.count >= this.responseLimit) {
+                  this.errorMessage = `This survey has reached the limit of ${this.responseLimit} responses.`;
+                  this.isResponseLimitReached = true;
+                  this.survey = null;
+                }
+              },
+              error: () =>
+                this.toastrService.error(
+                  'Error checking survey response count.'
+                ),
+            });
+
           if (survey?.SurveyQuestions) {
-            // Create a copy of the SurveyQuestions array
             const sortedQuestions = [...survey.SurveyQuestions].sort((a, b) => {
               const orderA =
                 a.PageOrder !== undefined
@@ -71,7 +91,6 @@ export class CustomerSurveyComponent {
               return orderA - orderB;
             });
 
-            // Assign the sorted array to a new property or modify the existing survey object
             this.survey = {
               ...survey,
               SurveyQuestions: sortedQuestions,
@@ -83,7 +102,6 @@ export class CustomerSurveyComponent {
             this.errorMessage = 'This survey has not been approved yet.';
           }
           if (survey!.SurveyStatus !== 'Open') {
-            console.log(survey!.SurveyStatus);
             this.errorMessage += ' Additionally, the survey is not open.';
           }
           this.survey = null;
@@ -135,28 +153,6 @@ export class CustomerSurveyComponent {
         }
       }
       this.currentQuestionIndex++;
-
-      // // Select the response for the current question from the store
-      // this.store
-      //   .select(
-      //     customerFeedbackSelectors.selectSurveyResponse(
-      //       currentQuestion.QuestionID
-      //     )
-      //   )
-      //   .pipe(
-      //     take(1) // Take 1 to complete the subscription after the first received value
-      //   )
-      //   .subscribe((response) => {
-      //     if (!response || !response.ResponseValue) {
-      //       // Check if response exists and is valid
-      //       this.toastrService.error(
-      //         'Please answer the current question before moving to the next.'
-      //       );
-      //       return;
-      //     } else {
-      //       this.currentQuestionIndex++;
-      //     }
-      //   });
     }
   }
 
@@ -167,61 +163,80 @@ export class CustomerSurveyComponent {
   }
 
   submitSurvey() {
-    // Fetch all responses
-    this.store
-      .select(customerFeedbackSelectors.getSurveyResponses)
-      .pipe(
-        take(1) // Complete the subscription after the first value
-      )
-      .subscribe((responses) => {
-        // Check if at least one question has been answered
-        const hasAnsweredQuestion = responses.some(
-          (response) => response.ResponseValue && response.ResponseValue.trim() !== ''
-        );
-  
-        if (!hasAnsweredQuestion) {
-          this.toastrService.error('Please answer at least one question before submitting the survey.');
-          return;
-        }
-  
-        // Ensure contact info is set
-        this.contactDataUtil.getContactData().subscribe((contactInfo) => {
-          if (contactInfo) {
-            this.store.dispatch(
-              customerFeedbackActions.setContactInfo({ contactInfo })
+    this.surveyManagementService
+      .getSurveyResponseCount(this.survey.SurveyID)
+      .subscribe({
+        next: (response) => {
+          if (response.count >= this.responseLimit) {
+            this.toastrService.error(
+              `This survey has reached the limit of ${this.responseLimit} responses.`
             );
+          } else {
+            this.store
+              .select(customerFeedbackSelectors.getSurveyResponses)
+              .pipe(
+                take(1) // Complete the subscription after the first value
+              )
+              .subscribe((responses) => {
+                // Check if at least one question has been answered
+                const hasAnsweredQuestion = responses.some(
+                  (response) =>
+                    response.ResponseValue &&
+                    response.ResponseValue.trim() !== ''
+                );
+
+                if (!hasAnsweredQuestion) {
+                  this.toastrService.error(
+                    'Please answer at least one question before submitting the survey.'
+                  );
+                  return;
+                }
+
+                // Ensure contact info is set
+                this.contactDataUtil
+                  .getContactData()
+                  .subscribe((contactInfo) => {
+                    if (contactInfo) {
+                      this.store.dispatch(
+                        customerFeedbackActions.setContactInfo({ contactInfo })
+                      );
+                    }
+                  });
+
+                // Fetch contact info and submit the responses and contact info
+                this.store
+                  .select(customerFeedbackSelectors.getContactInfo)
+                  .pipe(
+                    filter((contactInfo) => contactInfo !== null), // Ensure contact info is not null
+                    take(1),
+                    map((contactInfo) => ({ responses, contactInfo })) // Pass the responses and contact info
+                  )
+                  .subscribe(({ responses, contactInfo }) => {
+                    // Ensure that contact info is not null when dispatching
+                    if (contactInfo) {
+                      this.store.dispatch(
+                        customerFeedbackActions.submitSurveyResponses({
+                          contactInfo,
+                          response: responses, // Ensure this matches the action's expected parameter
+                        })
+                      );
+
+                      this.isSurveyCompleted = true;
+                      this.currentQuestionIndex =
+                        this.survey.SurveyQuestions.length + 1; // Move to the thank you message
+                    } else {
+                      // Optionally handle the error state if contact info is missing
+                      console.error('Contact information is missing.');
+                    }
+                  });
+              });
           }
-        });
-  
-        // Fetch contact info and submit the responses and contact info
-        this.store
-          .select(customerFeedbackSelectors.getContactInfo)
-          .pipe(
-            filter((contactInfo) => contactInfo !== null), // Ensure contact info is not null
-            take(1),
-            map((contactInfo) => ({ responses, contactInfo })) // Pass the responses and contact info
-          )
-          .subscribe(({ responses, contactInfo }) => {
-            // Ensure that contact info is not null when dispatching
-            if (contactInfo) {
-              this.store.dispatch(
-                customerFeedbackActions.submitSurveyResponses({
-                  contactInfo,
-                  response: responses // Ensure this matches the action's expected parameter
-                })
-              );
-  
-              this.isSurveyCompleted = true;
-              this.currentQuestionIndex = this.survey.SurveyQuestions.length + 1; // Move to the thank you message
-            } else {
-              // Optionally handle the error state if contact info is missing
-              console.error('Contact information is missing.');
-            }
-          });
+        },
+        error: () =>
+          this.toastrService.error('Error checking survey response count.'),
       });
   }
 
-  
   handleAnswerSelected(response: FeedbackResponse) {
     this.store.dispatch(
       customerFeedbackActions.addSurveyResponse({ response })

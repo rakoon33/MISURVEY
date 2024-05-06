@@ -81,7 +81,6 @@ const deleteModule = async (id, udata) => {
   }
 };
 
-
 const getAllModules = async () => {
   try {
     const modules = await Module.findAll();
@@ -94,11 +93,9 @@ const getAllModules = async () => {
 const getOneModule = async (id) => {
   try {
     const module = await Module.findByPk(id);
-
     if (!module) {
       return { status: false, message: "Module not found" };
     }
-
     return { status: true, message: "Module fetched successfully", module };
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };
