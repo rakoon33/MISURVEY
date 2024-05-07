@@ -30,17 +30,16 @@ const getSurveyCountByDateRangeController = async (req, res) => {
 
 const getSurveyQuestionDataController = async (req, res) => {
     try {
-      const { surveyId } = req.params;
-      const result = await reportService.getSurveyQuestionData(surveyId);
+      const result = await reportService.getSurveyQuestionData(req.params.surveyId);
       if (result.status) {
-        res.status(200).json(result.data);
+        res.status(200).json({ status: true, data: result.data });
       } else {
-        res.status(500).json({ message: result.message });
+        res.status(400).json({ status: false, message: result.message });
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error' + error });
+      res.status(500).json({ status: false, message: 'Internal server error' });
     }
-  };
+};
 
 module.exports = {
     getDashboardDataController,

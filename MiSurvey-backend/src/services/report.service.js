@@ -306,7 +306,6 @@ const getSurveyCountByDateRange = async (startDate, endDate, userData) => {
 };
 
 // report in detail for survey
-
 const getSurveyQuestionData = async (surveyId) => {
   try {
     const survey = await Survey.findOne({
