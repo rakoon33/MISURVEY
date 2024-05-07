@@ -3,6 +3,7 @@ const {
     getActivityOverviewController,
     getSurveyTypeUsageController,
     getSurveyCountByDateRangeController,
+    getSurveyQuestionDataController,
 } = require("../report.controller");
 
 const reportService = require("../../services/report.service");
@@ -11,6 +12,7 @@ jest.mock("../../services/report.service", () => ({
     getSurveyTypeUsage: jest.fn(),
     getActivityOverview: jest.fn(),
     getSurveyCountByDateRange: jest.fn(),
+    getSurveyQuestionData: jest.fn(),
 }));
 
 describe("Report controller: getDashboardDataController", () => {
@@ -423,4 +425,99 @@ describe("Report controller: getSurveyCountByDateRangeController", () => {
         message: "Invalid date format provided.",
       });
     });
+});
+
+describe('Survey controller: getSurveyQuestionDataController', () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
+    });
+  
+    it('should successfully fetch survey question data', async () => {
+      const req = {
+        params: {
+          surveyId: '1'
+        }
+      };
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis()
+      };
+  
+      const mockData = {
+        surveyQuestions: [
+          {
+            questionId: '1',
+            questionText: 'What is your favorite color?',
+            questionType: 'Multiple Choice',
+            data: ['Blue', 'Green', 'Red'],
+            responseRate: '100%'
+          }
+        ],
+        recipientInfo: [
+          {
+            recipientCount: 3,
+            recipients: 'test1@example.com, test2@example.com, test3@example.com'
+          }
+        ]
+      };
+  
+      reportService.getSurveyQuestionData.mockResolvedValue({
+        status: true,
+        data: mockData
+      });
+  
+      await getSurveyQuestionDataController(req, res);
+  
+      expect(reportService.getSurveyQuestionData).toHaveBeenCalledWith('1');
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ status: true, data: mockData });
+    });
+  
+    it('should return 400 and an error message when the survey is not found', async () => {
+      const req = {
+        params: {
+          surveyId: 'nonexistent'
+        }
+      };
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis()
+      };
+  
+      reportService.getSurveyQuestionData.mockResolvedValue({
+        status: false,
+        message: 'Survey not found'
+      });
+  
+      await getSurveyQuestionDataController(req, res);
+
+      expect(reportService.getSurveyQuestionData).toHaveBeenCalledWith('nonexistent');
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ status: false, message: 'Survey not found' });
+    });
+  
+    it('should return 500 and an error message on internal error', async () => {
+        const req = {
+          params: {
+            surveyId: '1',
+          },
+        };
+        const res = {
+          json: jest.fn(),
+          status: jest.fn().mockReturnThis(),
+        };
+      
+        reportService.getSurveyQuestionData.mockImplementation(() => {
+          throw new Error('Internal server error');
+        });
+      
+        await getSurveyQuestionDataController(req, res);
+      
+        expect(reportService.getSurveyQuestionData).toHaveBeenCalledWith('1');
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+          status: false,
+          message: 'Internal server error',
+        });
+    });      
 });
