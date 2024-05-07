@@ -69,9 +69,9 @@ const getUserData = async (userId, userRole) => {
           activePackage.IsActive = false;
           await activePackage.save();
         } else if (!activePackage) {
-          const freePackage = await UserPackage.findOne({
+          let freePackage = await UserPackage.findOne({
             where: {
-              PackageID: 1, // Assuming PackageID 1 is for free packages
+              "$servicePackage.PackageName$": "Free",
               CompanyID: companyUser.CompanyID,
               IsActive: false,
             },
@@ -79,7 +79,23 @@ const getUserData = async (userId, userRole) => {
               { model: ServicePackage, as: "servicePackage", required: true },
             ],
           });
-          console.log(freePackage);
+
+          if (!freePackage) {
+
+            const freeServicePackage = await ServicePackage.findOne({
+              where: {
+                PackageName: "Free"
+              }
+            });
+
+            const freeUserPackage = await UserPackage.create({
+              PackageID: freeServicePackage.PackageID, 
+              StartDate: new Date(),
+              IsActive: true, 
+              CompanyID: companyUser.CompanyID 
+            });
+          }
+
           if (freePackage) {
             freePackage.IsActive = true;
             await freePackage.save();
@@ -118,9 +134,9 @@ const getUserData = async (userId, userRole) => {
           activePackage.IsActive = false;
           await activePackage.save();
         } else if (!activePackage) {
-          const freePackage = await UserPackage.findOne({
+          let freePackage = await UserPackage.findOne({
             where: {
-              PackageID: 1, 
+              "$servicePackage.PackageName$": "Free",
               CompanyID: companyUser.CompanyID,
               IsActive: false,
             },
@@ -129,13 +145,28 @@ const getUserData = async (userId, userRole) => {
             ],
           });
 
+          if (!freePackage) {
+
+            const freeServicePackage = await ServicePackage.findOne({
+              where: {
+                PackageName: "Free"
+              }
+            });
+
+            const freeUserPackage = await UserPackage.create({
+              PackageID: freeServicePackage.PackageID, 
+              StartDate: new Date(),
+              IsActive: true, 
+              CompanyID: companyUser.CompanyID 
+            });
+          }
+
           if (freePackage) {
             freePackage.IsActive = true;
             await freePackage.save();
-            activePackage = freePackage; // Assign the free package as the active package
+            activePackage = freePackage; 
           }
         }
-
         if (activePackage) {
           response.packages = activePackage;
         }

@@ -9,7 +9,7 @@ const {
   SurveyResponse,
   Customer,
   Ticket,
-  SurveyReport
+  SurveyReport,
 } = require("../models");
 const {
   createSurveyQuestion,
@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "propie034@gmail.com", // Địa chỉ email của bạn
-    pass: "ttsq hrvk lvgp aaca" // App Password của bạn
+    pass: "ttsq hrvk lvgp aaca", // App Password của bạn
   },
 });
 
@@ -441,12 +441,20 @@ const getEmoticonsEvaluation = (responses) => {
   const totalRatings = responses.length;
   const positiveRatings =
     (ratingCounts["good"] || 0) + (ratingCounts["very-good"] || 0);
-  const negativeRatings =
-    (ratingCounts["bad"] || 0) + (ratingCounts["very-bad"] || 0);
+  const positivePercentage = (positiveRatings / totalRatings) * 100;
 
-  if (positiveRatings / totalRatings > 0.5) return "Good"; // ví dụ: hơn 50% là phản hồi tích cực
-  if (negativeRatings / totalRatings > 0.5) return "Bad"; // ví dụ: hơn 50% là phản hồi tiêu cực
-  return "Neutral"; // nếu không có tỷ lệ áp đảo nào
+  // Evaluate based on positive percentage
+  if (positivePercentage <= 35) {
+    return "Highly Unsatisfied";
+  } else if (positivePercentage <= 50) {
+    return "Unsatisfied";
+  } else if (positivePercentage <= 65) {
+    return "Quite Satisfied";
+  } else if (positivePercentage <= 80) {
+    return "Satisfied";
+  } else {
+    return "Highly Satisfied";
+  }
 };
 
 const calculateNPS = (responses) => {
@@ -468,24 +476,73 @@ const calculateCSAT = (responses) => {
 };
 
 const getEvaluationForStars = (averageScore) => {
-  if (averageScore <= 2) return "Bad";
-  if (averageScore <= 3) return "Neutral";
-  if (averageScore < 4) return "Good";
-  return "Very Good";
+  if (averageScore <= 1) {
+    return "Very Bad";
+  } else if (averageScore <= 2) {
+    return "Bad";
+  } else if (averageScore <= 3) {
+    return "Neutral";
+  } else if (averageScore < 4.5) {
+    return "Good";
+  } else {
+    return "Excellent";
+  }
 };
 
-const getNPSClassification = (npsScore) => {
-  if (npsScore < 0) return "Bad";
-  if (npsScore <= 50) return "Neutral";
-  if (npsScore <= 70) return "Good";
-  return "Very Good";
+const getNPSClassification = (score) => {
+  if (score < 0) {
+    return "Needs improvement";
+  } else if (score <= 30) {
+    return "Good";
+  } else if (score <= 70) {
+    return "Great";
+  } else {
+    return "Excellent";
+  }
 };
 
-const getCSATClassification = (csatScore) => {
-  if (csatScore < 40) return "Bad";
-  if (csatScore <= 60) return "Neutral";
-  if (csatScore <= 80) return "Good";
-  return "Very Good";
+const getCSATClassification = (score) => {
+  if (score < 35) {
+    return "Highly Unsatisfied";
+  } else if (score <= 50) {
+    return "Unsatisfied";
+  } else if (score <= 65) {
+    return "Quite Satisfied";
+  } else if (score <= 80) {
+    return "Satisfied";
+  } else {
+    return "Highly Satisfied";
+  }
+};
+
+const evaluateThumbs = (responses) => {
+  const thumbsUpCount = responses.filter(
+    ({ ResponseValue }) => ResponseValue === "true"
+  ).length;
+  const thumbsDownCount = responses.filter(
+    ({ ResponseValue }) => ResponseValue === "false"
+  ).length;
+  const totalResponses = thumbsUpCount + thumbsDownCount;
+
+  // Ensure no division by zero
+  if (totalResponses === 0) {
+    return "No Responses";
+  }
+
+  const thumbsUpPercentage = (thumbsUpCount / totalResponses) * 100;
+
+  // Determine the evaluation based on the percentage of thumbs up
+  if (thumbsUpPercentage <= 35) {
+    return "Highly Unsatisfied";
+  } else if (thumbsUpPercentage <= 50) {
+    return "Unsatisfied";
+  } else if (thumbsUpPercentage <= 65) {
+    return "Quite Satisfied";
+  } else if (thumbsUpPercentage <= 80) {
+    return "Satisfied";
+  } else {
+    return "Highly Satisfied";
+  }
 };
 
 const evaluateResponse = (responseValue, surveyType) => {
@@ -586,10 +643,7 @@ const getSurveySummary = async (surveyID) => {
           evaluation = getEmoticonsEvaluation(question.Responses);
           break;
         case "Thumbs":
-          const thumbsUpCount = question.Responses.filter(
-            ({ ResponseValue }) => ResponseValue === "true"
-          ).length;
-          evaluation = thumbsUpCount > countResponses / 2 ? "Good" : "Bad";
+          evaluation = evaluateThumbs(question.Responses);
           break;
         case "NPS":
           averageScore = calculateNPS(question.Responses); // Tính giá trị trung bình NPS
@@ -641,4 +695,7 @@ module.exports = {
   getOneSurveyWithDataByLink,
   sendEmail,
   getSurveySummary,
+  getNPSClassification,
+  getCSATClassification,
+  getEvaluationForStars,
 };

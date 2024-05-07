@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ReportService } from 'src/app/core/services/report.service';
 
 type QuestionType = 'NPS' | 'CSAT' | 'Stars' | 'Thumbs' | 'Emoticons' | 'Text';
@@ -11,38 +12,50 @@ export class SurveyReportDetailComponent implements OnInit {
   surveyQuestionData: any[] = []; // Store survey questions data
   chartSurveyData: any[] = []; // Data for charts
   private isDataLoaded = false;
-  constructor(private reportService: ReportService) {}
+  constructor(
+    private reportService: ReportService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    this.loadSurveyQuestionData(16);
+    const surveyId = this.route.snapshot.params['surveyId'];
+    this.loadSurveyQuestionData(surveyId);
   }
 
   loadSurveyQuestionData(surveyId: number) {
-    if (this.isDataLoaded) return; // Prevent repeated calls
     this.reportService.getSurveyQuestionData(surveyId).subscribe((response) => {
-      this.surveyQuestionData = response.surveyQuestions;
-      this.chartSurveyData = this.surveyQuestionData
-        .map((question) => {
-          if (question.questionType !== 'Text') {
+      if (response.status && response.data) {
+        this.surveyQuestionData = response.data.surveyQuestions || [];
+        this.chartSurveyData = this.surveyQuestionData
+          .map((question) => {
             return {
               questionText: question.questionText,
-              questionType: question.questionType, // Include questionType here
-              responseRate: question.responseRate, // Include response rate here
+              questionType: question.questionType,
+              responseRate: question.responseRate,
               labels: this.getLabels(question),
               type: this.getChartType(question.questionType as QuestionType),
               data: this.getChartData(question),
-              backgroundColor: this.getBackgroundColor(question.questionType as QuestionType),
-              borderColor: this.getBorderColor(question.questionType as QuestionType),
+              backgroundColor: this.getBackgroundColor(
+                question.questionType as QuestionType
+              ),
+              borderColor: this.getBorderColor(
+                question.questionType as QuestionType
+              ),
               label: this.getChartLabel(question.questionType as QuestionType),
-              additionalData: question.data // Include additional data
+              additionalData: question.data, // Include additional data
             };
-          }
-          return null;
-        })
-        .filter((chart) => chart !== null);
-      this.isDataLoaded = true;
+          })
+          .filter((chart) => chart !== null);
+        this.isDataLoaded = true;
+      } else {
+        console.error('Invalid response:', response);
+      }
+    }, (error) => {
+      console.error('Error fetching survey data:', error);
     });
   }
+  
+  
 
   // Create a helper method to extract chart labels
   private getLabels(question: any): string[] {
