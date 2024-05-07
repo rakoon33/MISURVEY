@@ -35,3 +35,171 @@
     display: block;
     margin: auto;
   }
+
+  .text-response-container {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    max-height: 200px; /* Adjust this value to set the height limit */
+    overflow-y: auto; /* Adds vertical scroll for overflow */
+  }
+  
+  .text-response-row {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+
+  .chart-info p {
+    margin-bottom: 12px;
+    margin-right: 10px;
+  }
+
+
+  /* General Modal Styles */
+.modal-body {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.modal-body ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.modal-body li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.modal-body li strong {
+  display: inline-block;
+}
+
+/* Specific Styles for NPS Evaluation Modal */
+#evaluationNPS .nps-info p {
+  margin-bottom: 16px;
+}
+
+#evaluationNPS .nps-info a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+#evaluationNPS .nps-info a:hover {
+  text-decoration: underline;
+}
+
+/* Specific Styles for CSAT Evaluation Modal */
+#evaluationCSAT .csat-info h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+/* Specific Styles for Stars Evaluation Modal */
+#evaluationStars .stars-info p {
+  margin-bottom: 16px;
+}
+
+/* Specific Styles for Emoticons Evaluation Modal */
+#evaluationEmoticons .emoticons-info p {
+  margin-bottom: 16px;
+}
+
+/* Specific Styles for Thumbs Evaluation Modal */
+#evaluationThumbs .thumbs-info p {
+  margin-bottom: 16px;
+}
+
+
+.modal {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2000 !important;
+}
+
+.modal-header {
+  background-color: #f2f2f2;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-title {
+  flex: 1;
+  text-align: center;
+  font-size: 22px;
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+}
+
+
+
+.modal-body {
+  padding: 20px 24px;
+  line-height: 1.6;
+  overflow-y: auto;
+}
+
+.modal-body p {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.modal-footer {
+  background-color: #f2f2f2;
+  padding: 12px 24px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-footer button {
+  padding: 8px 16px;
+  background-color: #0b65c2;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-footer button:hover {
+  background-color: #004494;
+}
+
+.modal-footer .btn-close {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
+
+.modal-body ul {
+  list-style-type: disc; /* Uses circular bullets */
+  margin-left: 20px; /* Indents the entire list */
+}
+
+.modal-body li {
+  margin-left: 20px; /* Indents each list item */
+  padding-left: 5px; /* Adjusts spacing between bullet and text */
+}
+
+i {
+  color:#0b65c2;;
+}
+
+.evaluation p {
+  margin: 0;
+  margin-bottom: 6px;
+}

@@ -14,7 +14,6 @@ import { ShareModule } from './shared/share.module';
 
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
-// Import other modules and components needed
 
 // Import routing module
 import { AppRoutingModule } from './app-routing.module';
@@ -53,6 +52,7 @@ import {
   SidebarModule,
   TabsModule,
   UtilitiesModule,
+  TooltipModule
 } from '@coreui/angular';
 
 import { IconModule, IconSetService } from '@coreui/icons-angular';

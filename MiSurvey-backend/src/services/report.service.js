@@ -12,6 +12,9 @@ const {
 } = require("../models");
 const { Op } = require("sequelize");
 const { sequelize } = require("../config/database");
+const {   getNPSClassification,
+    getCSATClassification,
+    getEvaluationForStars } = require("./survey.service");
 
 const getDashboardData = async (userData) => {
   try {
@@ -427,12 +430,16 @@ const calculateNpsData = (responses) => {
 
   scores.forEach((score) => countByValue[score]++);
 
+  const nps = ((promoters - detractors) / scores.length) * 100;
+  const evaluation = getNPSClassification(nps);
+  const npsPercentage = `${nps.toFixed(0)}%`;
   return {
     promoters,
     passives,
     detractors,
     total: scores.length,
-    nps: ((promoters - detractors) / scores.length) * 100,
+    nps: npsPercentage,
+    evaluation,
     countByValue,
   };
 };
@@ -452,13 +459,17 @@ const calculateCsatData = (responses) => {
   const dissatisfiedCount = scores.filter((score) => score <= 2).length;
 
   scores.forEach((score) => countByValue[score]++);
+  const csat = (satisfiedCount / scores.length) * 100;
+  const evaluation = getCSATClassification(csat);
+  const csatPercentage = `${csat.toFixed(0)}%`;
 
   return {
     satisfied: satisfiedCount,
     neutral: neutralCount,
     dissatisfied: dissatisfiedCount,
     total: scores.length,
-    csat: (satisfiedCount / scores.length) * 100,
+    csat: csatPercentage,
+    evaluation,
     countByValue,
   };
 };
@@ -473,13 +484,15 @@ const calculateStarsData = (responses) => {
     {}
   );
 
-  const averageRating =
-    scores.reduce((acc, score) => acc + score, 0) / scores.length;
-
+  const sumOfAllRating = scores.reduce((acc, score) => acc + score, 0);
+  const averageRating = sumOfAllRating / scores.length;
+  const evaluation = getEvaluationForStars(averageRating);
   scores.forEach((score) => countByValue[score]++);
 
   return {
+    sumOfAllRating,
     averageRating,
+    evaluation,
     total: scores.length,
     countByValue,
   };
@@ -511,11 +524,29 @@ const calculateEmoticonsData = (responses) => {
     counts.good +
     counts.veryGood;
 
+    const positivePercentage = ((counts.veryGood + counts.good) / total) * 100;
+
+    const negativePercentage = ((counts.veryBad + counts.bad) / total) * 100;
+
+    let evaluation;
+    if (positivePercentage <= 35) {
+        evaluation = "Highly Unsatisfied";
+    } else if (positivePercentage <= 50) {
+        evaluation = "Unsatisfied";
+    } else if (positivePercentage <= 65) {
+        evaluation = "Quite Satisfied";
+    } else if (positivePercentage <= 80) {
+        evaluation = "Satisfied";
+    } else {
+        evaluation = "Highly Satisfied";
+    }
+
   return {
     ...counts,
     total,
-    negativePercentage: ((counts.veryBad + counts.bad) / total) * 100,
-    positivePercentage: ((counts.veryGood + counts.good) / total) * 100,
+    negativePercentage: `${negativePercentage.toFixed(0)}%`,
+    positivePercentage: `${positivePercentage.toFixed(0)}%`,
+    evaluation,
   };
 };
 
@@ -530,12 +561,30 @@ const calculateThumbsData = (responses) => {
 
   const total = thumbsUp + thumbsDown;
 
+  const upPercentage = (thumbsUp / total) * 100;
+  const downPercentage = (thumbsDown / total) * 100;
+
+  let evaluation;
+    if (upPercentage <= 35) {
+        evaluation = "Highly Unsatisfied";
+    } else if (upPercentage <= 50) {
+        evaluation = "Unsatisfied";
+    } else if (upPercentage <= 65) {
+        evaluation = "Quite Satisfied";
+    } else if (upPercentage <= 80) {
+        evaluation = "Satisfied";
+    } else {
+        evaluation = "Highly Satisfied";
+    }
+
+
   return {
     thumbsUp,
     thumbsDown,
     total,
-    upPercentage: (thumbsUp / total) * 100,
-    downPercentage: (thumbsDown / total) * 100,
+    upPercentage: `${upPercentage.toFixed(0)}%`,
+    downPercentage: `${downPercentage.toFixed(0)}%`,
+    evaluation
   };
 };
 

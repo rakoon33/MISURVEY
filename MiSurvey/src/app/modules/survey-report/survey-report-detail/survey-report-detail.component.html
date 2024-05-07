@@ -3,40 +3,80 @@
     <c-row>
       <!-- Loop through the chart data and display each chart dynamically -->
       <c-col
-        *ngFor="let chartData of chartSurveyData"
+        *ngFor="let chartData of chartSurveyData; let i = index"
         xs="12"
         lg="12"
         class="mb-4"
       >
         <c-card class="mb-6 custom-card">
-          <c-card-header class="custom-header">{{
-            chartData?.questionText
-          }}</c-card-header>
+          <c-card-header class="custom-header">
+            {{ "Question " + (i + 1) + ": " + chartData?.questionText }}
+          </c-card-header>
           <c-card-body class="custom-body">
             <p><strong>Question Type:</strong> {{ chartData?.questionType }}</p>
             <p><strong>Response Rate:</strong> {{ chartData?.responseRate }}</p>
 
+            <div *ngIf="chartData?.questionType === 'Text'">
+              <p>
+                <strong>Total:</strong> {{ chartData.additionalData.total }}
+              </p>
+              <p><strong>Responses:</strong></p>
+              <div class="text-response-container">
+                <div
+                  *ngFor="let response of chartData.additionalData.responses"
+                  class="text-response-row"
+                >
+                  {{ response }}
+                </div>
+              </div>
+            </div>
+
             <div *ngIf="chartData?.questionType === 'NPS'">
-              <div class="d-flex justify-content-start">
-                <div class="me-4">
-                  <p>
-                    <strong>Promoters:</strong>
-                    {{ chartData.additionalData.promoters }}
-                  </p>
-                  <p>
-                    <strong>Passives:</strong>
-                    {{ chartData.additionalData.passives }}
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <strong>Detractors:</strong>
-                    {{ chartData.additionalData.detractors }}
-                  </p>
-                  <p>
-                    <strong>Total:</strong> {{ chartData.additionalData.total }}
-                  </p>
-                </div>
+              <div
+                class="chart-info d-flex align-items-center"
+                style="align-items: center"
+              >
+                <p
+                  matTooltip="Promoters (9-10): Loyal enthusiasts who will most likely recommend your business to others and help attract new customers."
+                >
+                  <strong>Promoters:</strong>
+                  {{ chartData.additionalData.promoters }}
+                </p>
+                <p
+                  matTooltip="Passives (7-8): Although satisfied, these customers are not devoted to your brand and may easily switch to a competitor if a better offer is on their radar."
+                >
+                  <strong>Passives:</strong>
+                  {{ chartData.additionalData.passives }}
+                </p>
+                <p
+                  matTooltip="Detractors (1-6): Unhappy customers who may affect your business reputation and growth through negative word-of-mouth."
+                >
+                  <strong>Detractors:</strong>
+                  {{ chartData.additionalData.detractors }}
+                </p>
+
+                <p>
+                  <strong>Total:</strong> {{ chartData.additionalData.total }}
+                </p>
+              </div>
+              <p
+                matTooltip="NPS (Net Promoter Score) is a measure of customer loyalty and satisfaction."
+              >
+                <strong>NPS score:</strong> {{ chartData.additionalData.nps }}
+              </p>
+              <div class="d-flex evaluation">
+                <p>
+                  <strong>Evaluation:</strong>
+                  {{ chartData.additionalData.evaluation }}
+                </p>
+                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                  |
+                </p>
+                <p [cModalToggle]="evaluationNPS.id">
+                  <strong
+                    ><i>Click here to see how we're evaluating this NPS</i>
+                  </strong>
+                </p>
               </div>
               <p class="formula">
                 <strong>Formula:</strong> ((promoters - detractors) / total) *
@@ -45,26 +85,46 @@
             </div>
 
             <div *ngIf="chartData?.questionType === 'CSAT'">
-              <div class="d-flex justify-content-start">
-                <div class="me-4">
-                  <p>
-                    <strong>Satisfied:</strong>
-                    {{ chartData.additionalData.satisfied }}
-                  </p>
-                  <p>
-                    <strong>Neutral:</strong>
-                    {{ chartData.additionalData.neutral }}
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <strong>Dissatisfied:</strong>
-                    {{ chartData.additionalData.dissatisfied }}
-                  </p>
-                  <p>
-                    <strong>Total:</strong> {{ chartData.additionalData.total }}
-                  </p>
-                </div>
+              <div class="chart-info d-flex justify-content-start">
+                <p
+                  matTooltip="Customers who are satisfied with the product/service."
+                >
+                  <strong>Satisfied:</strong>
+                  {{ chartData.additionalData.satisfied }}
+                </p>
+                <p
+                  matTooltip="Customers who have a neutral opinion about the product/service."
+                >
+                  <strong>Neutral:</strong>
+                  {{ chartData.additionalData.neutral }}
+                </p>
+                <p
+                  matTooltip="Customers who are dissatisfied with the product/service."
+                >
+                  <strong>Dissatisfied:</strong>
+                  {{ chartData.additionalData.dissatisfied }}
+                </p>
+                <p>
+                  <strong>Total:</strong> {{ chartData.additionalData.total }}
+                </p>
+              </div>
+              <p>
+                <strong>CSAT score:</strong> {{ chartData.additionalData.csat }}
+              </p>
+
+              <div class="d-flex evaluation">
+                <p>
+                  <strong>Evaluation:</strong>
+                  {{ chartData.additionalData.evaluation }}
+                </p>
+                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                  |
+                </p>
+                <p [cModalToggle]="evaluationCSAT.id">
+                  <strong
+                    ><i>Click here to see how we're evaluating this CSAT</i>
+                  </strong>
+                </p>
               </div>
               <p class="formula">
                 <strong>Formula:</strong> (satisfied / total) * 100
@@ -72,35 +132,72 @@
             </div>
 
             <div *ngIf="chartData?.questionType === 'Emoticons'">
-              <div class="d-flex justify-content-start">
-                <div class="me-4">
-                  <p>
-                    <strong>Very Bad:</strong>
-                    {{ chartData.additionalData.veryBad }}
-                  </p>
-                  <p>
-                    <strong>Bad:</strong> {{ chartData.additionalData.bad }}
-                  </p>
-                  <p>
-                    <strong>Neutral:</strong>
-                    {{ chartData.additionalData.neutral }}
-                  </p>
-                </div>
+              <div class="chart-info d-flex justify-content-start">
+                <p
+                  matTooltip="Indicates a very negative experience with significant issues needing immediate attention."
+                >
+                  <strong>Very Bad:</strong>
+                  {{ chartData.additionalData.veryBad }}
+                </p>
+                <p
+                  matTooltip="Indicates a negative experience with notable issues that need to be addressed."
+                >
+                  <strong>Bad:</strong>
+                  {{ chartData.additionalData.bad }}
+                </p>
+                <p
+                  matTooltip="Represents a neutral experience with mixed or average customer satisfaction."
+                >
+                  <strong>Neutral:</strong>
+                  {{ chartData.additionalData.neutral }}
+                </p>
+                <p
+                  matTooltip="Reflects a positive experience, indicating satisfaction with the product or service."
+                >
+                  <strong>Good:</strong>
+                  {{ chartData.additionalData.good }}
+                </p>
+                <p
+                  matTooltip="Represents an excellent experience, indicating high satisfaction and loyalty."
+                >
+                  <strong>Very Good:</strong>
+                  {{ chartData.additionalData.veryGood }}
+                </p>
                 <div>
                   <p>
-                    <strong>Good:</strong> {{ chartData.additionalData.good }}
+                    <strong>Total:</strong>
+                    {{ chartData.additionalData.total }}
                   </p>
-                  <p>
-                    <strong>Very Good:</strong>
-                    {{ chartData.additionalData.veryGood }}
-                  </p>
-                  <div>
-                    <p>
-                      <strong>Total:</strong>
-                      {{ chartData.additionalData.total }}
-                    </p>
-                  </div>
                 </div>
+              </div>
+              <p
+                matTooltip="The percentage of customers who had a positive experience, which includes those who gave 'Good' and 'Very Good' ratings."
+              >
+                <strong>Positive Percentage:</strong>
+                {{ chartData.additionalData.positivePercentage }}
+              </p>
+              <p
+                matTooltip="The percentage of customers who had a negative experience, which includes those who gave 'Very Bad' and 'Bad' ratings."
+              >
+                <strong>Negative Percentage:</strong>
+                {{ chartData.additionalData.negativePercentage }}
+              </p>
+
+              <div class="d-flex evaluation">
+                <p>
+                  <strong>Evaluation:</strong>
+                  {{ chartData.additionalData.evaluation }}
+                </p>
+                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                  |
+                </p>
+                <p [cModalToggle]="evaluationEmoticons.id">
+                  <strong
+                    ><i
+                      >Click here to see how we're evaluating this Emoticons</i
+                    >
+                  </strong>
+                </p>
               </div>
               <p class="formula">
                 <strong>Negative Percentage Formula:</strong> ((veryBad + bad) /
@@ -113,25 +210,52 @@
             </div>
 
             <div *ngIf="chartData?.questionType === 'Thumbs'">
-              <div class="d-flex justify-content-start">
-                <div class="me-4">
-                  <p>
-                    <strong>Thumbs Up:</strong>
-                    {{ chartData.additionalData.thumbsUp }}
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <strong>Thumbs Down:</strong>
-                    {{ chartData.additionalData.thumbsDown }}
-                  </p>
-                </div>
-              </div>
-              <div>
+              <div class="chart-info d-flex justify-content-start">
+                <p
+                  matTooltip="Represents customers who gave a 'Thumbs Up', indicating satisfaction with the product or service."
+                >
+                  <strong>Thumbs Up:</strong>
+                  {{ chartData.additionalData.thumbsUp }}
+                </p>
+
+                <p
+                  matTooltip="Represents customers who gave a 'Thumbs Down', indicating dissatisfaction with the product or service."
+                >
+                  <strong>Thumbs Down:</strong>
+                  {{ chartData.additionalData.thumbsDown }}
+                </p>
+
                 <p>
                   <strong>Total:</strong> {{ chartData.additionalData.total }}
                 </p>
               </div>
+              <p
+                matTooltip="The percentage of customers who gave a 'Thumbs Up', reflecting satisfaction with the product or service."
+              >
+                <strong>Thumb Up Percentage:</strong>
+                {{ chartData.additionalData.upPercentage }}
+              </p>
+              <p
+                matTooltip="The percentage of customers who gave a 'Thumbs Down', reflecting dissatisfaction with the product or service."
+              >
+                <strong>Thumb Down Percentage:</strong>
+                {{ chartData.additionalData.downPercentage }}
+              </p>
+              <div class="d-flex evaluation">
+                <p>
+                  <strong>Evaluation:</strong>
+                  {{ chartData.additionalData.evaluation }}
+                </p>
+                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                  |
+                </p>
+                <p [cModalToggle]="evaluationThumbs.id">
+                  <strong
+                    ><i>Click here to see how we're evaluating this Thumbs</i>
+                  </strong>
+                </p>
+              </div>
+
               <p class="formula">
                 <strong>Up Percentage Formula:</strong> (thumbsUp / total) * 100
               </p>
@@ -143,17 +267,42 @@
 
             <!-- Stars Section -->
             <div *ngIf="chartData?.questionType === 'Stars'">
-              <div>
-                <div class="me-4">
-                  <p>
-                    <strong>Total:</strong> {{ chartData.additionalData.total }}
-                  </p>
-                </div>
-                <p class="formula">
-                  <strong>Average Rating Formula:</strong> (sum of all ratings /
-                  total)
+              <div class="chart-info d-flex">
+                <p
+                  matTooltip="The sum of all ratings provided by the customers."
+                >
+                  <strong>Sum of all Ratings:</strong>
+                  {{ chartData.additionalData.sumOfAllRating }}
+                </p>
+
+                <p>
+                  <strong>Total:</strong> {{ chartData.additionalData.total }}
                 </p>
               </div>
+              <p
+                matTooltip="The average rating based on the sum of all ratings divided by the total number of ratings."
+              >
+                <strong>Average Rating:</strong>
+                {{ chartData.additionalData.averageRating }}
+              </p>
+              <div class="d-flex evaluation">
+                <p>
+                  <strong>Evaluation:</strong>
+                  {{ chartData.additionalData.evaluation }}
+                </p>
+                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                  |
+                </p>
+                <p [cModalToggle]="evaluationStars.id">
+                  <strong
+                    ><i>Click here to see how we're evaluating this Stars</i>
+                  </strong>
+                </p>
+              </div>
+              <p class="formula">
+                <strong>Average Rating Formula:</strong> (sum of all ratings /
+                total)
+              </p>
             </div>
 
             <div
@@ -161,6 +310,7 @@
                 'small-chart':
                   chartData?.type == 'doughnut' || chartData?.type === 'pie'
               }"
+              *ngIf="chartData?.questionType !== 'Text'"
             >
               <c-chart
                 *ngIf="chartData?.type"
@@ -185,3 +335,336 @@
     </c-row>
   </div>
 </div>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #evaluationNPS
+  id="evaluationNPS"
+>
+  <c-modal-header class="modal-header">
+    <h5 cModalTitle>How do we evaluate NPS?</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="evaluationNPS.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="modal-body">
+    <div class="nps-info">
+      <p>
+        A Net Promoter Score (NPS) is a valuable metric that gauges customer
+        loyalty by measuring how likely customers are to recommend a business.
+        Here’s how NPS scores generally break down:
+      </p>
+      <ul>
+        <li>
+          <strong>Below 0:</strong> Indicates significant issues that need
+          immediate attention, as the number of detractors outweighs the
+          promoters. Negative scores reflect widespread customer
+          dissatisfaction.
+        </li>
+        <li>
+          <strong>0 to 30:</strong> A positive range, though not without room
+          for improvement. A score in this range suggests more promoters than
+          detractors, but there's still a substantial number of customers who
+          are not fully satisfied.
+        </li>
+        <li>
+          <strong>31 to 70:</strong> Considered a strong score, indicating that
+          the business is delivering a great customer experience. The number of
+          promoters is significantly higher than detractors, meaning most
+          customers are satisfied and likely to recommend the brand.
+        </li>
+        <li>
+          <strong>Above 70:</strong> Exceptional performance, suggesting that
+          the majority of customers are extremely satisfied and actively
+          promoting the brand. This score implies high customer loyalty and
+          positive word-of-mouth, leading to potential new leads and increased
+          revenue.
+        </li>
+      </ul>
+      <p>
+        A good NPS score, therefore, typically starts above 30, with scores
+        above 70 indicating excellent customer satisfaction and loyalty.
+        However, keeping an eye on trends over time is crucial to ensure
+        sustained performance and identify any shifts in customer sentiment.
+      </p>
+      <p>
+        For more information, visit
+        <a href="https://www.retently.com/blog/good-net-promoter-score/"
+          >this link</a
+        >.
+      </p>
+    </div>
+  </c-modal-body>
+  <c-modal-footer class="modal-footer">
+    <button [cModalToggle]="evaluationNPS.id" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #evaluationCSAT
+  id="evaluationCSAT"
+>
+  <c-modal-header class="modal-header">
+    <h5 cModalTitle>How do we evaluate CSAT?</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="evaluationCSAT.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="modal-body">
+    <div class="csat-info">
+      <p>
+        CSAT, or Customer Satisfaction Score, is a key metric used to measure
+        customer satisfaction. It typically involves a simple survey question
+        where customers rate their satisfaction with a product, service, or
+        experience on a scale, often ranging from 1 to 5 or 1 to 10. The score
+        is then calculated as a percentage by dividing the number of satisfied
+        responses by the total number of responses.
+      </p>
+
+      <h4>CSAT Score Interpretation</h4>
+      <ul>
+        <li>
+          <strong>0-35 (Very Bad/Highly Unsatisfied):</strong> Scores in this
+          range indicate significant dissatisfaction among customers. Businesses
+          receiving such scores need to address major issues quickly to improve
+          their product or service.
+        </li>
+        <li>
+          <strong>35-50 (Poor/Unsatisfied):</strong> A score in this range
+          reflects dissatisfaction, meaning there is significant room for
+          improvement. Companies should focus on understanding and addressing
+          the root causes of dissatisfaction.
+        </li>
+        <li>
+          <strong>50-65 (Average/Quite Satisfied):</strong> This is an average
+          score indicating that while customers are somewhat satisfied, there
+          are notable areas for improvement to enhance the overall customer
+          experience.
+        </li>
+        <li>
+          <strong>65-80 (Good/Satisfied):</strong> A score in this range means
+          that most customers are satisfied. This reflects a good level of
+          customer satisfaction, although there are still opportunities to
+          improve further.
+        </li>
+        <li>
+          <strong>80-100 (Excellent/Highly Satisfied):</strong> A score in this
+          range denotes exceptional customer satisfaction, indicating that the
+          business is providing high-quality products or services and customers
+          are very happy with their experience.
+        </li>
+      </ul>
+      <p>
+        CSAT scores offer valuable insights into customer satisfaction levels,
+        helping businesses understand how well they're meeting customer
+        expectations and identifying areas where they can improve.
+      </p>
+      <p>
+        For more information, visit
+        <a
+          href="https://www.retently.com/blog/customer-satisfaction-score-csat/#:~:text=Companies preferring the popular 1,50-65 average%2Fquite satisfied"
+          >this link</a
+        >.
+      </p>
+    </div>
+  </c-modal-body>
+  <c-modal-footer class="modal-footer">
+    <button [cModalToggle]="evaluationCSAT.id" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #evaluationStars
+  id="evaluationStars"
+>
+  <c-modal-header class="modal-header">
+    <h5 cModalTitle>How do we evaluate Stars?</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="evaluationStars.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="modal-body">
+    <div class="stars-info">
+      <p>
+        The 5-star rating system is widely used to gauge customer satisfaction,
+        providing insight into the overall customer experience. Here is a guide
+        to understanding what each star rating typically represents:
+      </p>
+      <ul>
+        <li>
+          <strong>5 Stars:</strong> Represents an exceptional experience and
+          indicates that the customer is highly satisfied. This is the highest
+          possible rating and generally suggests the customer is likely to
+          return and recommend the brand to others.
+        </li>
+        <li>
+          <strong>4 Stars:</strong> Indicates a positive experience with the
+          product or service, with the customer being generally satisfied. While
+          not perfect, it suggests the customer will likely consider the brand
+          for future purchases but may have experienced some minor issues.
+        </li>
+        <li>
+          <strong>3 Stars:</strong> A neutral rating that reflects an average
+          experience. The customer may have experienced some issues that need to
+          be addressed. This rating can highlight opportunities for improvement.
+        </li>
+        <li>
+          <strong>2 Stars:</strong> Indicates a poor experience. The customer is
+          likely dissatisfied with the product or service and may not return.
+          This rating suggests significant issues that need immediate attention.
+        </li>
+        <li>
+          <strong>1 Star:</strong> The lowest rating, reserved for very negative
+          experiences. This typically signals serious flaws, such as defective
+          products or frustrating customer service. Immediate action is needed
+          to address the issues raised.
+        </li>
+      </ul>
+    </div>
+  </c-modal-body>
+  <c-modal-footer class="modal-footer">
+    <button [cModalToggle]="evaluationStars.id" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #evaluationEmoticons
+  id="evaluationEmoticons"
+>
+  <c-modal-header class="modal-header">
+    <h5 cModalTitle>How do we evaluate Emoticons?</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="evaluationEmoticons.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="modal-body">
+    <div class="emoticons-info">
+      <p>
+        The Emoticons method uses graphical representations (like happy or sad
+        faces) to gauge customer satisfaction. The evaluation is based on the
+        percentage of positive feedback:
+      </p>
+      <ul>
+        <li>
+          <strong>Highly Unsatisfied (≤ 35% Positive):</strong> Indicates that a
+          significant portion of customers had a very negative experience.
+          Immediate action is needed to identify the issues leading to such
+          dissatisfaction.
+        </li>
+        <li>
+          <strong>Unsatisfied (35% to 50% Positive):</strong> Reflects a
+          negative experience, where dissatisfaction is prevalent. There are
+          substantial issues that need to be addressed to improve customer
+          satisfaction.
+        </li>
+        <li>
+          <strong>Quite Satisfied (50% to 65% Positive):</strong> Represents an
+          average experience. Responses are mixed, with a notable proportion of
+          customers feeling indifferent about their experience. The business
+          meets basic expectations but needs improvement.
+        </li>
+        <li>
+          <strong>Satisfied (65% to 80% Positive):</strong> Reflects a positive
+          experience. Most customers provided positive feedback, showing
+          satisfaction with the product or service. However, there is still room
+          for improvement.
+        </li>
+        <li>
+          <strong>Highly Satisfied (> 80% Positive):</strong> Represents an
+          exceptional experience. Most responses are positive, suggesting
+          customers are delighted with the product or service. This rating
+          indicates high satisfaction and loyalty.
+        </li>
+      </ul>
+    </div>
+  </c-modal-body>
+  <c-modal-footer class="modal-footer">
+    <button [cModalToggle]="evaluationEmoticons.id" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #evaluationThumbs
+  id="evaluationThumbs"
+>
+  <c-modal-header class="modal-header">
+    <h5 cModalTitle>How do we evaluate Thumbs?</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="evaluationThumbs.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="modal-body">
+    <div class="thumbs-info">
+      <p>
+        The Thumbs method typically uses a binary response (thumbs-up or
+        thumbs-down) to measure customer satisfaction. The evaluation is based
+        on the percentage of thumbs-up responses:
+      </p>
+      <ul>
+        <li>
+          <strong>Highly Unsatisfied (&lt; 35% Thumbs Up):</strong> Indicates
+          that most customers had a negative experience. The majority of
+          responses were thumbs-down, signaling significant dissatisfaction and
+          a need for immediate action.
+        </li>
+        <li>
+          <strong>Unsatisfied (35% to &lt;50% Thumbs Up):</strong> Reflects
+          dissatisfaction, with a considerable proportion of customers
+          expressing negative sentiment.
+        </li>
+        <li>
+          <strong>Quite Satisfied (50% to &lt;65% Thumbs Up):</strong>
+          Represents mixed sentiment. Responses indicate that the customer
+          experience was average, with room for improvement.
+        </li>
+        <li>
+          <strong>Satisfied (65% to &lt;80% Thumbs Up):</strong> Reflects a
+          positive experience. Most customers are satisfied, but there is still
+          room to enhance the customer experience.
+        </li>
+        <li>
+          <strong>Highly Satisfied (&ge; 80% Thumbs Up):</strong> Indicates that
+          the business provides exceptional customer satisfaction, as most
+          responses were thumbs-up.
+        </li>
+      </ul>
+    </div>
+  </c-modal-body>
+  <c-modal-footer class="modal-footer">
+    <button [cModalToggle]="evaluationThumbs.id" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>

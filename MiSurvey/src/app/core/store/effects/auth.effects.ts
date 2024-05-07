@@ -2,7 +2,15 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { catchError, concatMap, map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  map,
+  startWith,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 import { AuthService } from '../../services';
 import { authActions } from '../actions';
 import { userActions } from '../actions';
@@ -42,65 +50,79 @@ export class AuthEffects {
       )
     )
   );
-  
 
   logout$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(authActions.logoutRequest),
-    switchMap(() =>
-      this.authService.logout().pipe(
-        concatMap((response) => {
-          if (response.status) {
-            this.toastrService.success('Logout successful');
-            return [
-              authActions.logoutSuccess(),
-              userActions.getUserDataSuccess({ user: null, permissions: [], packages: null}),
-              companyActions.getCompanyDataSuccess ({ company: null, permissions: [] }),
-              surveyManagementActions.resetSurveyState(),
-            ];
-          } else {
-            this.toastrService.error(response.message || 'Logout failed');
-            return [authActions.logoutFailure()];
-          }
-        }),
-        catchError((error) => {
-          this.toastrService.error('An error occurred during logout');
-          return of(authActions.logoutFailure());
-        })
+    this.actions$.pipe(
+      ofType(authActions.logoutRequest),
+      switchMap(() =>
+        this.authService.logout().pipe(
+          concatMap((response) => {
+            if (response.status) {
+              this.toastrService.success('Logout successful');
+              return [
+                authActions.logoutSuccess(),
+                userActions.getUserDataSuccess({
+                  user: null,
+                  permissions: [],
+                  packages: null,
+                }),
+                companyActions.getCompanyDataSuccess({
+                  company: null,
+                  permissions: [],
+                }),
+                surveyManagementActions.resetSurveyState(),
+              ];
+            } else {
+              this.toastrService.error(response.message || 'Logout failed');
+              return [authActions.logoutFailure()];
+            }
+          }),
+          catchError((error) => {
+            this.toastrService.error('An error occurred during logout');
+            return of(authActions.logoutFailure());
+          })
+        )
       )
     )
-  )
-);
+  );
 
-
-register$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(authActions.registerRequest),
-    concatMap((action) =>
-      this.authService.register(action.userData).pipe(
-        map((response) => {
-          if (response.status) {
-            this.toastrService.success('Registration successful');
-            this.router.navigate(['/login']);
-            return authActions.registerSuccess();
-          } else {
-            this.toastrService.error(response.message || 'Registration failed');
-            return authActions.registerFailure();
-          }
-        }),
-        catchError((error) => {
-          this.toastrService.error('An error occurred during registration');
-          return of(authActions.registerFailure());
-        })
+  register$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(authActions.registerRequest),
+      concatMap((action) =>
+        this.authService.register(action.userData).pipe(
+          map((response) => {
+            if (response.status) {
+              this.toastrService.success('Registration successful');
+              this.router.navigate(['/login']);
+              return authActions.registerSuccess();
+            } else {
+              this.toastrService.error(
+                response.message || 'Registration failed'
+              );
+              return authActions.registerFailure();
+            }
+          }),
+          catchError((error) => {
+            this.toastrService.error('An error occurred during registration');
+            return of(authActions.registerFailure());
+          })
+        )
       )
     )
-  )
-);
+  );
+
+  loginWithUserDataFailure$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(userActions.getUserDataFailure), 
+      map(() => authActions.loginFailure()) 
+    )
+  );
 
   constructor(
     private actions$: Actions,
     private authService: AuthService,
     private toastrService: ToastrService,
-    private router: Router,
+    private router: Router
   ) {}
 }
