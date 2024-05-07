@@ -1,4 +1,3 @@
-// Ví dụ file cls.js
 const { createNamespace } = require('cls-hooked');
 
 // Tạo một namespace
@@ -20,5 +19,5 @@ const clsMiddleware = (req, res, next) => {
 
 module.exports = {
   clsMiddleware,
-  namespace  // Xuất namespace này nếu bạn cần sử dụng nó ở nơi khác
+  namespace  
 };

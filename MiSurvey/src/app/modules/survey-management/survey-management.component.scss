@@ -519,18 +519,16 @@ canvas {
   font-weight: 500;
 }
 
-.response-row:hover > div:not(.email-icon) {
-  opacity: 0.8; /* Apply opacity only to the non-email-icon divs */
-}
-
-.email-icon {
+div.email-icon {
   visibility: hidden; 
+}
+.email-icon {
+  visibility:visible; 
   justify-content: center;
   align-items: center;
   position: absolute;
   transform: translateY(-80%);
   margin-bottom: 20px;
-  background-color: #0a66c2;
   border-radius: 4px;
   padding: 2px 4px;
   z-index: 10;
@@ -538,7 +536,10 @@ canvas {
 
 .email-icon a {
   text-decoration: none;
-  color: white;
+  color: white; 
+  background-color:#0a66c2;  
+  padding: 5px;
+  border-radius: 4px;
 }
 
 .response-row:hover .email-icon {

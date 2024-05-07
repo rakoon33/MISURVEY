@@ -1,0 +1,28 @@
+<div *ngIf="userPermissions$ | async as permissions">
+  <div class="header">
+    <h1>Surveys Report</h1>
+  </div>
+
+  <div class="survey-container" *ngIf="permissions.CanView">
+    <div
+      class="survey-card invite-method"
+      *ngFor="let survey of surveys$ | async"
+      (click)="navigateToDetail(survey.SurveyID)"
+    >
+      <h3>
+        {{ survey.Title }}
+      </h3>
+      <div class="description-wrapper">
+        <p class="survey-description">
+          {{ survey.SurveyDescription || "No description" }}
+        </p>
+      </div>
+      <div class="status-container">
+        <p class="survey-status">
+          {{ survey.SurveyStatus || "Close" }} |
+          {{ survey.Approve == "Yes" ? "Approve" : "Pending" }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
