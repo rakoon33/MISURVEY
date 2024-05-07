@@ -118,9 +118,16 @@ const routes: Routes = [
           ).then((m) => m.SurveyInfoModule)
       },
       {
-        path: 'charts',
+        path: 'survey-report',
         loadChildren: () =>
-          import('./modules/charts/charts.module').then((m) => m.ChartsModule),
+          import(
+            './modules/survey-report/survey-report.module'
+          ).then((m) => m.SurveyReportModule)
+      },
+      {
+        path: 'survey-report/survey-report-detail/:surveyId',
+        loadChildren: () =>
+          import('./modules/survey-report/survey-report-detail/survey-report-detail.module').then((m) => m.SurveyReportDetailModule) //,
       },
       {
         path: 'subscription-plans',

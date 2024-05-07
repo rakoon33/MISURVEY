@@ -31,6 +31,11 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-spreadsheet' }
   },
   {
+    name: 'Report Management',
+    url: '/survey-report',
+    iconComponent: { name: 'cilChartPie' }
+  },
+  {
     name: 'Question Management',
     url: '/question-template',
     iconComponent: { name: 'cilBriefcase' }

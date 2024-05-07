@@ -43,6 +43,14 @@ export class ReportService {
     );
   }
 
+  // Add the getSurveyQuestionData function here
+  getSurveyQuestionData(surveyId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/survey-report/${surveyId}`, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     return throwError(() => error);
   }

@@ -1,0 +1,37 @@
+.custom-card-container {
+  margin-top: 30px;
+}
+
+.custom-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.custom-card:hover {
+  transform: translateY(-5px);
+}
+
+.custom-header {
+  background-color: #0a66c2;
+  color: white;
+  font-weight: bold;
+}
+
+.custom-body {
+  padding: 20px;
+}
+
+.formula {
+  font-style: italic;
+  color: #555;
+  margin-top: 10px;
+  border-left: 4px solid #0a66c2;
+  padding-left: 10px;
+}
+
+.small-chart c-chart {
+    width: 300px;
+    height: 300px;
+    display: block;
+    margin: auto;
+  }

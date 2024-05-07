@@ -12,7 +12,7 @@ const BACKEND_API = {
     CUSTOMER_SURVEY: '/c/f',
     FEEDBACK_RESPONSE: '/responses',
     QUESTION_TEMPLATE: '/questionTemplate',
-    REPORTS: '/dashboard',
+    REPORTS: '/report',
     SERVICEPACKAGES: '/servicepackages'
 };
 

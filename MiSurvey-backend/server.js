@@ -57,7 +57,7 @@ app.use('/api/responses', surveyResponseRoute);
 app.use('/api/questions', surveyQuestionRoute);
 app.use('/api/customers', customerRoute);
 app.use('/api/questionTemplate', questionTemplateRoute);
-app.use('/api/dashboard', reportRoute);
+app.use('/api/report', reportRoute);
 app.use('/api/useractivitylogs', userActivityLogRoute);
 app.use('/api/servicepackages', servicePackageRoute);
 app.use('/api/userpackages', userPackageRoute);

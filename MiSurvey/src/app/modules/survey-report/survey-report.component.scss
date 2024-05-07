@@ -1,0 +1,138 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 20px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.header h1 {
+  margin: 0;
+  color: #333333;
+  font-size: 20px;
+}
+
+.survey-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between; /* Adjusted for equal spacing */
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.survey-card {
+  flex: 0 0 calc(50% - 10px);
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px 20px 0px 20px;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  max-width: calc(50% - 10px);
+  height: auto;
+}
+
+.survey-card h3 {
+  margin: 0;
+  color: #333333;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.description-wrapper {
+  min-height: 120px;
+  max-height: 120px;
+  text-overflow: ellipsis;
+  white-space: wrap;
+  margin: 10px 0px;
+  overflow: hidden;
+}
+
+.survey-description {
+  color: #878e99;
+  font-size: 15px;
+  margin: 0;
+}
+
+.ellipsis {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  cursor: pointer;
+  font-size: 2em;
+  user-select: none;
+  transform: translateY(-30%);
+  background-color: transparent !important;
+}
+
+.btn-survey {
+  background-color: #fff;
+  border: none;
+}
+
+.btn-survey.ellipsis[cDropdownToggle]::after {
+  content: none;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .survey-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .survey-card {
+    max-width: 100%; /* Adjusts max-width for smaller screens */
+  }
+}
+
+div.survey-card.ng-star-inserted {
+  cursor: pointer;
+}
+
+.copy-link {
+  color: #0a66c2;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.status-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.survey-status {
+  color: #878e99;
+  font-size: 15px;
+  position: relative;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin: 0;
+  display: inline-flex;
+}
+
+.status-container::after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  bottom: 60px;
+  height: 1px;
+  width: 100%;
+  background-color: #ddd;
+}
+
+

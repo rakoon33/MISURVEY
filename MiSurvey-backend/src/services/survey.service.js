@@ -444,8 +444,8 @@ const getEmoticonsEvaluation = (responses) => {
   const negativeRatings =
     (ratingCounts["bad"] || 0) + (ratingCounts["very-bad"] || 0);
 
-  if (positiveRatings / totalRatings > 0.6) return "Good"; // ví dụ: hơn 60% là phản hồi tích cực
-  if (negativeRatings / totalRatings > 0.6) return "Bad"; // ví dụ: hơn 60% là phản hồi tiêu cực
+  if (positiveRatings / totalRatings > 0.5) return "Good"; // ví dụ: hơn 50% là phản hồi tích cực
+  if (negativeRatings / totalRatings > 0.5) return "Bad"; // ví dụ: hơn 50% là phản hồi tiêu cực
   return "Neutral"; // nếu không có tỷ lệ áp đảo nào
 };
 
