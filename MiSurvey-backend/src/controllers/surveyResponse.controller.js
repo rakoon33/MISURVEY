@@ -4,7 +4,11 @@ const createSurveyResponseController = async (req, res) => {
   try {
     const responses = req.body;
     const result = await surveyResponseService.createSurveyResponses(responses);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -15,7 +19,11 @@ const getOneSurveyResponseController = async (req, res) => {
     const result = await surveyResponseService.getOneResponse(
       req.params.responseID
     );
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
