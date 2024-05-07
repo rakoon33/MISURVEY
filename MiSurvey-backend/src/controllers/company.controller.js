@@ -58,8 +58,18 @@ const getAllCompaniesController = async (req, res) => {
 const searchCompanyController = async (req, res) => {
   try {
     const { companyName, adminID } = req.query;
+    if (!companyName && !adminID) {
+      return res.status(400).json({
+        message: "Either companyName or adminID must be provided.",
+      });
+    }
+    
     const result = await companyService.searchCompanies(companyName, adminID);
-    res.status(200).json(result);
+    if (result.status) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

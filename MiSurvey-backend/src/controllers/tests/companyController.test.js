@@ -60,6 +60,23 @@ describe("Company controller: getCompanyDataController", () => {
       },
     });
   });
+
+  it("should return 400 when companyID is missing", async () => {
+    const req = {
+      user: {},
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    await getCompanyDataController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "companyID is required as a query parameter.",
+    });
+  });
 });
 
 describe("Company controller: getCompanyProfileController", () => {
@@ -124,6 +141,29 @@ describe("Company controller: getCompanyProfileController", () => {
     expect(res.json).toHaveBeenCalledWith({
       status: false,
       message: "Company not found",
+    });
+  });
+
+  it("should return 400 and an error message on error", async () => {
+    const req = {
+      user: {
+        companyID: "1",
+      },
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.getOneCompany.mockRejectedValue(
+      new Error("Internal Server Error")
+    );
+
+    await getCompanyProfileController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Internal Server Error",
     });
   });
 });
@@ -199,6 +239,23 @@ describe("Company controller: searchCompanyController", () => {
     });
   });
 
+  it("should return 400 when both search parameters are missing", async () => {
+    const req = {
+      query: {},
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    await searchCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Either companyName or adminID must be provided.",
+    });
+  });
+
   // Test for companies not found
   it("should return a no companies found message if no matches", async () => {
     const req = {
@@ -218,9 +275,8 @@ describe("Company controller: searchCompanyController", () => {
 
     await searchCompanyController(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      status: false,
       message: "No companies found",
     });
   });
@@ -456,6 +512,28 @@ describe("Company controller: createCompany", () => {
       message: "Admin already owns a company",
     });
   });
+
+  it("should return 400 and an error message on error", async () => {
+    const req = {
+      body: { CompanyName: "company", AdminID: "1" },
+      user: { id: "adminID" }
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.createCompany.mockRejectedValue(
+      new Error("Internal Server Error")
+    );
+
+    await createCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Internal Server Error",
+    });
+  });
 });
 
 describe("Company controller: deleteCompany", () => {
@@ -517,6 +595,28 @@ describe("Company controller: deleteCompany", () => {
       message: "Company not found",
     });
   });
+
+  it("should return 400 and an error message on error", async () => {
+    const req = {
+      params: { CompanyID: "1" },
+      user: { id: "adminID" }
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.deleteCompany.mockRejectedValue(
+      new Error("Internal Server Error")
+    );
+
+    await deleteCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Internal Server Error",
+    });
+  });
 });
 
 describe("Company controller: getOneCompany", () => {
@@ -574,6 +674,27 @@ describe("Company controller: getOneCompany", () => {
     expect(res.json).toHaveBeenCalledWith({
       status: false,
       message: "Company not found",
+    });
+  });
+
+  it("should return 400 and an error message on error", async () => {
+    const req = {
+      params: { CompanyID: "1" },
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.getOneCompany.mockRejectedValue(
+      new Error("Internal Server Error")
+    );
+
+    await getOneCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Internal Server Error",
     });
   });
 });
@@ -644,6 +765,29 @@ describe("Company controller: updateCompany", () => {
     expect(res.json).toHaveBeenCalledWith({
       status: false,
       message: "Company not found",
+    });
+  });
+
+  it("should return 400 and an error message on error", async () => {
+    const req = {
+      params: { CompanyID: "1" },
+      body: { CompanyName: "Updated Company" },
+      user: { id: "adminID" }
+    };
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
+
+    companyService.updateCompany.mockRejectedValue(
+      new Error("Internal Server Error")
+    );
+
+    await updateCompanyController(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Internal Server Error",
     });
   });
 });

@@ -24,7 +24,11 @@ const createUserController = async (req, res) => {
   try {
     console.log(req.user);
     const newUser = await userService.createUser(req.body, req.user);
-    res.json(newUser);
+    if (newUser.status) {
+      res.json(newUser);
+    } else {
+      res.status(400).json({ message: newUser.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -33,11 +37,12 @@ const createUserController = async (req, res) => {
 const updateUserController = async (req, res) => {
   console.log("Updating user");
   try {
-    console.log(req.params.UserID);
-    console.log(req.body);
     const result = await userService.updateUser(req.params.UserID, req.body, req.user);
-    console.log(result);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -46,7 +51,11 @@ const updateUserController = async (req, res) => {
 const deleteUserController = async (req, res) => {
   try {
     const result = await userService.deleteUser(req.params.UserID, req.user);
-    res.json(result);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -55,7 +64,11 @@ const deleteUserController = async (req, res) => {
 const getOneUserController = async (req, res) => {
   try {
     const userDetails = await userService.getOneUser(req.params.UserID);
-    res.json(userDetails);
+    if (userDetails.status) {
+      res.json(userDetails);
+    } else {
+      res.status(400).json({ message: userDetails.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -88,7 +101,11 @@ const getAllUsersController = async (req, res) => {
       page,
       pageSize
     );
-    res.json(allUsers);
+    if (allUsers.status) {
+      res.json(allUsers);
+    } else {
+      res.status(400).json({ message: allUsers.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -97,15 +114,18 @@ const getAllUsersController = async (req, res) => {
 const searchUserController = async (req, res) => {
   try {
     const { column, searchTerm } = req.query;
-
     if (!column || !searchTerm) {
       return res.status(400).json({
         message: "Both column and searchTerm are required as query parameters.",
       });
     }
-    const result = await userService.searchUsers(column, searchTerm);
 
-    res.json(result);
+    const result = await userService.searchUsers(column, searchTerm);
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res
       .status(500)
