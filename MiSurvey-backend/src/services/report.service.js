@@ -70,7 +70,7 @@ const getDashboardData = async (userData) => {
   };
   
 
-  const getActivityOverview = async (startDate, endDate, userData) => {
+const getActivityOverview = async (startDate, endDate, userData) => {
     try {
         let startDateParsed = new Date(startDate);
         let endDateParsed = new Date(endDate);

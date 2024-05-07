@@ -27,7 +27,6 @@ const getSurveyCountByDateRangeController = async (req, res) => {
     res.status(result.status ? 200 : 500).json(result);
 };
 
-
 module.exports = {
     getDashboardDataController,
     getActivityOverviewController,
