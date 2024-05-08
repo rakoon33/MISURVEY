@@ -24,6 +24,7 @@ const createUserPackage = async (userpackage) => {
     return { status: false, message: error.message, error: error.toString() };
   }
 };
+
 module.exports = {
     createUserPackage
 };
