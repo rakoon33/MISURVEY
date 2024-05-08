@@ -11,6 +11,7 @@ const createLogActivity = async (userId, action, description, tableName, company
     CompanyID: companyId,
   });
 };
+
 const getAllActivities = async (userData, page = 1, pageSize = 10) => {
   const offset = (page - 1) * pageSize;
   
@@ -39,7 +40,6 @@ const getAllActivities = async (userData, page = 1, pageSize = 10) => {
     return { status: false, message: error.message, error: error.toString() };
   }
 };
-
 
 module.exports = {
     createLogActivity,
