@@ -2,8 +2,8 @@ const {
     createUserPackageController,
 } = require("../userPackage.controller");
   
-  const userPackageService = require("../../services/userPackage.service");
-  jest.mock("../../services/userPackage.service", () => ({
+const userPackageService = require("../../services/userPackage.service");
+jest.mock("../../services/userPackage.service", () => ({
     createUserPackage: jest.fn(),
 }));
 
