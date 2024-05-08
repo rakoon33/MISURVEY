@@ -20,6 +20,6 @@ const getAllServicePackages = async () => {
 };
 
 module.exports = {
-    createServicePackage,
-    getAllServicePackages
+  createServicePackage,
+  getAllServicePackages
 };

@@ -2,8 +2,8 @@ const {
     getAllActivitiesController,
   } = require("../userActivityLog.controller");
   
-  const userActivityLogService = require("../../services/userActivityLog.service");
-  jest.mock("../../services/userActivityLog.service", () => ({
+const userActivityLogService = require("../../services/userActivityLog.service");
+jest.mock("../../services/userActivityLog.service", () => ({
     getAllActivities: jest.fn(),
 }));
 
