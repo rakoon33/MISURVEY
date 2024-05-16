@@ -14,6 +14,7 @@ const userActivityLogService = require("./userActivityLog.service");
 const reportService = require("./report.service");
 const servicePackage = require("./servicePackage.service");
 const userPackage = require("./userPackage.service");
+const imageService = require("./image.service");
 
 module.exports = {
   authService,
@@ -31,6 +32,7 @@ module.exports = {
   userActivityLogService,
   reportService,
   servicePackage,
-  userPackage
+  userPackage,
+  imageService
   // ...other services
 };
