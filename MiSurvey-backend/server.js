@@ -39,6 +39,7 @@ const userActivityLogRoute = require('./src/routes/userActivityLog.route.js');
 const servicePackageRoute = require('./src/routes/servicePackage.route.js');
 const userPackageRoute = require('./src/routes/userPackage.route.js');
 const orderRoute = require('./src/routes/order.route');
+const imageRoute = require('./src/routes/image.route.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -62,6 +63,7 @@ app.use('/api/useractivitylogs', userActivityLogRoute);
 app.use('/api/servicepackages', servicePackageRoute);
 app.use('/api/userpackages', userPackageRoute);
 app.use('/order', orderRoute);
+app.use('/api/image', imageRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
