@@ -7,10 +7,10 @@ const createSurveyResponseController = async (req, res) => {
     if (result.status) {
       res.json(result);
     } else {
-      res.status(400).json({ message: result.message });
+      res.status(400).json({ status: false, message: result.message });
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ status: false, message: error.message });
   }
 };
 
@@ -22,10 +22,10 @@ const getOneSurveyResponseController = async (req, res) => {
     if (result.status) {
       res.json(result);
     } else {
-      res.status(400).json({ message: result.message });
+      res.status(400).json({ status: false, message: result.message });
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ status: false, message: error.message });
   }
 };
 
@@ -36,7 +36,7 @@ const getAllResponseController = async (req, res) => {
     );
     res.json(result);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({status: false, message: error.message });
   }
 };
 
@@ -47,7 +47,7 @@ const deleteSurveyResponseController = async (req, res) => {
 
     res.json({ message: result.message });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({status: false, message: error.message });
   }
 };
 
@@ -56,7 +56,7 @@ const getSurveyResponseCountController = async (req, res) => {
     const result = await surveyResponseService.getSurveyResponseCount(req.params.surveyID);
     res.json(result);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ status: false, message: error.message });
   }
 };
 

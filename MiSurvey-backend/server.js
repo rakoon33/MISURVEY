@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const http = require('http');
 const path = require('path');
 const { database } = require('./src/config');
 const cors = require('cors')
@@ -10,6 +11,10 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const morgan = require('morgan');
 app.use(morgan('dev'));
+
+// socket
+const socketModule = require('./src/config/io');
+
 
 dotenv.config();
 
@@ -38,8 +43,10 @@ const reportRoute = require('./src/routes/report.route.js');
 const userActivityLogRoute = require('./src/routes/userActivityLog.route.js');
 const servicePackageRoute = require('./src/routes/servicePackage.route.js');
 const userPackageRoute = require('./src/routes/userPackage.route.js');
+const notificationRoute = require('./src/routes/notification.route');
 const orderRoute = require('./src/routes/order.route');
 const imageRoute = require('./src/routes/image.route.js');
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -62,8 +69,10 @@ app.use('/api/report', reportRoute);
 app.use('/api/useractivitylogs', userActivityLogRoute);
 app.use('/api/servicepackages', servicePackageRoute);
 app.use('/api/userpackages', userPackageRoute);
+app.use('/api/notification', notificationRoute);
 app.use('/order', orderRoute);
 app.use('/api/image', imageRoute);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -84,10 +93,14 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message || 'Something went wrong!' });
 });
 
+// Create HTTP server
+const httpServer = http.createServer(app);
 
+// Initialize Socket.IO
+const io = socketModule.init(httpServer);
 // Start the server and sync database
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+httpServer.listen(PORT, () => {
+  console.log(`HTTP Server is running on http://localhost:${PORT}`);
   database.sequelize.sync()
     .then(() => {
       console.log('Database synced');
@@ -96,4 +109,3 @@ app.listen(PORT, () => {
       console.error('Database sync failed:', err);
     });
 });
-

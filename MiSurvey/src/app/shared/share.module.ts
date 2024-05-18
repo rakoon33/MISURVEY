@@ -34,7 +34,7 @@ import { MatInputModule } from '@angular/material/input';
     TextSurveyComponent,
     ThankYouMessageComponent,
     CustomerContactComponent,
-    EmailModalComponent
+    EmailModalComponent,
   ],
   imports: [
     CommonModule,

@@ -10,10 +10,13 @@ const selectCurrentCompany = createSelector(
     selectCompanyState,
     selectCompany
 );
-
+const selectCompanyID = createSelector(
+    selectCurrentCompany,
+    (company) => company?.CompanyID
+  );
 const selectIsCompanyLoading = createSelector(
     selectCompanyState,
     selectCompanyLoading
 );
 
-export default { selectCurrentCompany, selectIsCompanyLoading};
+export default { selectCurrentCompany, selectIsCompanyLoading, selectCompanyID};

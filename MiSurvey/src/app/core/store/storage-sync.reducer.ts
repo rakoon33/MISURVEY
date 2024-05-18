@@ -26,6 +26,7 @@ export function storageSyncReducer(reducer: ActionReducer<AppState>): ActionRedu
       { stateKey: 'feature_auth' },
       { stateKey: 'feature_user' },
       { stateKey: 'feature_survey_management' },
+      { stateKey: 'feature_company' },
     ],
     storage: window.localStorage
   });

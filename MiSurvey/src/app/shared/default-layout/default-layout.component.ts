@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { navItems as originalNavItems } from './_nav';
 import { userSelector } from 'src/app/core/store/selectors';
 import { Router } from '@angular/router';
-
+import { NotificationsSidebarComponent } from '../components/notifications-sidebar/notifications-sidebar.component';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './default-layout.component.html',
@@ -11,12 +11,25 @@ import { Router } from '@angular/router';
 })
 export class DefaultLayoutComponent implements OnInit {
   public navItems: any[] | undefined; // Mảng các mục điều hướng
+  userRole = '';
+  @ViewChild(NotificationsSidebarComponent, { static: false })
+  private notificationsSidebar!: NotificationsSidebarComponent;
 
   constructor(private store: Store, private router: Router) {}
+
+  toggleNotificationsSidebar(): void {
+    console.log('Toggling notifications sidebar');
+    if (this.notificationsSidebar) {
+      this.notificationsSidebar.toggleVisibility();
+    }
+  }
 
   ngOnInit(): void {
     this.store.select(userSelector.selectCurrentUser).subscribe((user) => {
       // Fetch user permissions
+      if(user) {
+        this.userRole = user.UserRole;
+      }
       if (user && user.UserRole === 'Supervisor') {
         this.store
           .select(userSelector.selectCurrentUserPermissions)

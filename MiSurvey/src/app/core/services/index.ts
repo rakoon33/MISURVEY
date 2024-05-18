@@ -11,10 +11,12 @@ import { UserService } from './user.service';
 import { CompanyService } from './company.service';
 import { CustomerSurveyService } from './customer-survey.service';
 import { CompanyRolesManagementService } from './company-roles-management.service';
-import {CompanyUserManagementService} from './company-user-management.service';
+import { CompanyUserManagementService } from './company-user-management.service';
 import { IndividualPermissionsService } from './individual-permission-management.service';
 import { ReportService } from './report.service';
-import {ServicePackageService} from './service-package.service'
+import { ServicePackageService } from './service-package.service';
+import { NotificationService } from './notification.service';
+import { SocketService } from './socket.service';
 export {
   UserService,
   AuthService,
@@ -32,5 +34,7 @@ export {
   ReportService,
   CustomerService,
   UserActivityLogService,
-  ServicePackageService
+  ServicePackageService,
+  NotificationService,
+  SocketService
 };

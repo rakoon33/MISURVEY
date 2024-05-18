@@ -28,6 +28,7 @@ export class AuthEffects {
           switchMap((response) => {
             if (response.status) {
               this.toastrService.success('Login successful');
+              this.router.navigate(['/dashboard']);
               // Initiating the user data request and waiting for its success before dispatching login success
               return this.actions$.pipe(
                 ofType(userActions.getUserDataSuccess), // Listening for the getUserDataSuccess action
@@ -60,7 +61,6 @@ export class AuthEffects {
             if (response.status) {
               this.toastrService.success('Logout successful');
               return [
-                authActions.logoutSuccess(),
                 userActions.getUserDataSuccess({
                   user: null,
                   permissions: [],
@@ -71,6 +71,7 @@ export class AuthEffects {
                   permissions: [],
                 }),
                 surveyManagementActions.resetSurveyState(),
+                authActions.logoutSuccess(),  
               ];
             } else {
               this.toastrService.error(response.message || 'Logout failed');
