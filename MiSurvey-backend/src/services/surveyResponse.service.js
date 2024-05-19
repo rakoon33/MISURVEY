@@ -163,7 +163,7 @@ const createNotification = async (insertedResponse) => {
 
     // Create the notification with the destructured CompanyID
     const { CompanyID, Title } = survey;
-    const notificationMessage = `Bad response received in survey "${Title}" on question page ${question.PageOrder}`;
+    const notificationMessage = `Bad response received in survey "${Title}" on question ${question.PageOrder}`;
 
     console.log(insertedResponse);
 

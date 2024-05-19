@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NotificationService } from '../../../core/services';
 import { ToastrService } from 'ngx-toastr';
@@ -16,6 +16,9 @@ export class NotificationsSidebarComponent implements OnInit {
   public isVisible: boolean = false;
   public notifications: any[] = [];
   private companyID: number | null = null;
+
+  @Output() notificationClicked = new EventEmitter<number>();
+
 
   constructor(
     private store: Store<AppState>,
@@ -95,6 +98,13 @@ export class NotificationsSidebarComponent implements OnInit {
       error: (error) => console.error('Error fetching unread notifications count', error)
     });
   }
+
+  onNotificationClick(notification: any): void {
+    if (notification.ReferenceID) {
+      this.notificationClicked.emit(notification.ReferenceID);
+    }
+  }
+
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {

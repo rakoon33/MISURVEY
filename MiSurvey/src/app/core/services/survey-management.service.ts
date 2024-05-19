@@ -100,4 +100,15 @@ export class SurveyManagementService {
       catchError((error: HttpErrorResponse) => throwError(() => error))
     );
   }
+
+
+  getSurveyDetailsByResponseId(responseId: number): Observable<any> {
+    const url = `${this.apiUrl}/summary-response/${responseId}`;
+    return this.http.get<any>(url, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
+  }
 }

@@ -156,6 +156,21 @@ const getSurveySummaryController = async (req, res) => {
   }
 };
 
+const getSurveyDetailsByResponseIdController = async (req, res) => {
+  try {
+    const result = await surveyService.getSurveyDetailsByResponseId(
+      req.params.responseID
+    );
+    if (result.status) {
+      res.json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
 module.exports = {
   createSurveyController,
@@ -168,4 +183,5 @@ module.exports = {
   getOneSurveyWithDataByLinkController,
   sendSurveyEmailController,
   getSurveySummaryController,
+  getSurveyDetailsByResponseIdController
 };

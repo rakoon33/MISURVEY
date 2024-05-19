@@ -621,6 +621,13 @@ router.route('/summary/:surveyID/')
     surveyController.getSurveySummaryController
   );
   
+  router
+  .route("/summary-response/:responseID")
+  .get(
+    authMiddleware.tokenVerification,
+    surveyController.getSurveyDetailsByResponseIdController
+  );
+  
 router
   .route("/:SurveyID")
   .get(

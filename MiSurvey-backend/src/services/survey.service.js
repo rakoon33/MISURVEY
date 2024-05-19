@@ -666,6 +666,7 @@ const getSurveySummary = async (surveyID) => {
         countResponses,
         evaluation,
         responses: question.Responses.map((response) => ({
+          responseID: response.ResponseID,
           customerID: response.Customer.CustomerID,
           customerName: response.Customer.FullName,
           customerEmail: response.Customer.Email,
@@ -684,6 +685,44 @@ const getSurveySummary = async (surveyID) => {
   }
 };
 
+
+const getSurveyDetailsByResponseId = async (responseID) => {
+  try {
+    const response = await SurveyResponse.findByPk(responseID, {
+      include: [
+        {
+          model: Survey,
+          as: "Survey",
+        },
+        {
+          model: SurveyQuestion,
+          as: "SurveyQuestion", 
+        },
+      ],
+    });
+
+    if (!response) {
+      return { status: false, message: "Response not found" };
+    }
+
+    const survey = response.Survey;
+    const question = response.SurveyQuestion;
+
+    if (!survey || !question) {
+      return { status: false, message: "Survey or Question not found" };
+    }
+
+    return {
+      status: true,
+      surveyId: survey.SurveyID,
+      questionIndex: question.PageOrder - 1,
+    };
+  } catch (error) {
+    return { status: false, message: error.message, error: error.toString() };
+  }
+};
+
+
 module.exports = {
   createSurvey,
   getOneSurveyWithData,
@@ -698,4 +737,5 @@ module.exports = {
   getNPSClassification,
   getCSATClassification,
   getEvaluationForStars,
+  getSurveyDetailsByResponseId
 };

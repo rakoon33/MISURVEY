@@ -58,3 +58,30 @@ body {
 }
 
 
+.sidebar {
+  --cui-sidebar-bg: #fff;
+  --cui-sidebar-brand-bg:  #e6e6e7;
+  --cui-sidebar-toggler-bg: #e6e6e7;
+}
+
+.sidebar-nav .nav-link {
+  color: #0d0d0d !important;
+}
+
+
+.sidebar-nav .nav-icon {
+  color:  #0d0d0d !important;
+}
+
+
+.sidebar-nav .nav-title {
+  color:#0d0d0d !important;
+  background-color: #e6e6e7;
+  margin-top: 0;
+}
+
+
+.sidebar-nav .nav-link.active {
+
+  background: #ececec;
+}

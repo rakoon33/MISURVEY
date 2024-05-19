@@ -7,13 +7,13 @@
 >
   <c-sidebar-brand
     [brandFull]="{
-      src: 'assets/images/misurvey_logo_4.png',
-      width: 185,
-      height: 90,
+      src: 'assets/images/misurvey_logo_6.png',
+      width: 190,
+      height: 100,
       alt: 'MiSurvey Logo'
     }"
     [brandNarrow]="{
-      src: 'assets/images/misurvey_logo_4.png',
+      src: 'assets/images/misurvey_logo_6.png',
       width: 46,
       height: 46,
       alt: 'CoreUI Logo'
@@ -22,10 +22,7 @@
   />
 
   <ng-scrollbar pointerEventsMethod="scrollbar">
-    <c-sidebar-nav
-      [navItems]="navItems"
-      dropdownMode="close"
-    />
+    <c-sidebar-nav [navItems]="navItems" dropdownMode="close" />
   </ng-scrollbar>
   <c-sidebar-toggler
     *ngIf="!sidebar.narrow"
@@ -34,24 +31,155 @@
   />
 </c-sidebar>
 
-<app-notifications-sidebar *ngIf="userRole!='SuperAdmin'" #notificationsSidebar></app-notifications-sidebar>
+<app-notifications-sidebar
+  *ngIf="userRole !== 'SuperAdmin'"
+  #notificationsSidebar
+  (notificationClicked)="handleNotificationClick($event)"
+>
+  ></app-notifications-sidebar
+>
+
 <!--main-->
-<div class="wrapper d-flex flex-column min-vh-100" style="background-color: #f9fafb;">
+<div
+  class="wrapper d-flex flex-column min-vh-100"
+  style="background-color: #f9fafb"
+>
   <!--app-header-->
   <app-default-header
     (onToggleNotifications)="toggleNotificationsSidebar()"
     class="mb-4 d-print-none header header-sticky"
     position="sticky"
-    sidebarId="sidebar">
+    sidebarId="sidebar"
+  >
   </app-default-header>
 
   <div class="body flex-grow-1 px-3">
-    
     <c-container breakpoint="lg" class="h-auto">
-      
       <router-outlet />
     </c-container>
   </div>
   <!--app footer-->
   <app-default-footer />
 </div>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #seeResponsesModal
+  id="seeResponsesModal"
+>
+  <c-modal-header *ngIf="selectedSurveyQuestion" class="modal-header">
+    <div>
+      <h5 cModalTitle class="modal-title">
+        Question {{ currentQuestionIndex + 1 }}:
+        {{ selectedSurveyQuestion.question }}
+      </h5>
+      <div class="modal-info">
+        <div class="info-container">
+          <div class="modal-type">
+            <b>Type:</b> {{ selectedSurveyQuestion.type }}
+          </div>
+          <div
+            *ngIf="selectedSurveyQuestion.type != 'Text'"
+            class="question-evaluation"
+          >
+            <b>Evaluation: </b>
+            <span class="evaluation-value">{{
+              selectedSurveyQuestion.evaluation
+            }}</span>
+          </div>
+          <div
+            *ngIf="selectedSurveyQuestion.averageScore !== null"
+            class="modal-score"
+          >
+            <b>Score:</b>
+            <ng-container
+              *ngIf="
+                selectedSurveyQuestion.type === 'Stars';
+                else withPercentage
+              "
+            >
+              {{ selectedSurveyQuestion.averageScore | number : "1.0-2" }}
+            </ng-container>
+            <ng-template #withPercentage>
+              {{ selectedSurveyQuestion.averageScore | number : "1.0-2" }}%
+            </ng-template>
+          </div>
+          <div class="modal-count">
+            <b>Count:</b> {{ selectedSurveyQuestion.countResponses }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <button
+      class="btn-close"
+      (click)="toggleModal('seeResponsesModal', false)"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body *ngIf="selectedSurveyQuestion" class="modal-body">
+    <div
+      *ngIf="
+        !selectedSurveyQuestion.responses ||
+        selectedSurveyQuestion.responses.length === 0
+      "
+      class="no-responses"
+    >
+      <p>No responses yet</p>
+    </div>
+    <div
+      *ngFor="let response of selectedSurveyQuestion.responses"
+      [ngClass]="{
+        'bad-response': response.evaluation === 'Bad',
+        'good-response': response.evaluation === 'Good',
+        'neutral-response': response.evaluation === 'Neutral',
+        'very-good-response': response.evaluation === 'Very Good',
+        'text-response': response.evaluation === 'Received',
+        'highlighted-response': response.responseID === highlightedResponseId
+      }"
+      class="response-row"
+    >
+      <div>{{ response.customerName }}</div>
+      <div class="res-value">{{ response.responseValue }}</div>
+      <div class="email-icon">
+        <a
+          *ngIf="isValidEmail(response.customerEmail)"
+          href="mailto:{{ response.customerEmail }}"
+          title="Send email to {{ response.customerEmail }}"
+        >
+          Send
+          <c-icon name="cil-envelope-closed"></c-icon>
+        </a>
+      </div>
+    </div>
+  </c-modal-body>
+  <c-modal-footer *ngIf="selectedSurveyQuestion" class="modal-footer">
+    <button
+      class="btn-seeResponses-footer"
+      *ngIf="currentQuestionIndex > 0"
+      (click)="previousQuestion()"
+      cButton
+      color="primary"
+    >
+      Back
+    </button>
+    <button
+      class="btn-seeResponses-footer"
+      (click)="toggleModal('seeResponsesModal', false)"
+      cButton
+      color="secondary"
+    >
+      Close
+    </button>
+    <button
+      class="btn-seeResponses-footer"
+      *ngIf="currentQuestionIndex < selectedSurveySummary.length - 1"
+      (click)="nextQuestion()"
+      cButton
+      color="primary"
+    >
+      Next
+    </button>
+  </c-modal-footer>
+</c-modal>

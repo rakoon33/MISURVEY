@@ -53,7 +53,8 @@ import {
   SidebarModule,
   TabsModule,
   UtilitiesModule,
-  TooltipModule
+  TooltipModule,
+  ModalModule
 } from '@coreui/angular';
 
 import { IconModule, IconSetService } from '@coreui/icons-angular';
@@ -165,6 +166,7 @@ const APP_CONTAINERS = [
     MatDialogModule,
     CommonModule,
     ChartjsModule,
+    ModalModule,
     QRCodeModule,
     SocketIoModule.forRoot(config),
     LottieModule.forRoot({ player: playerFactory }),
