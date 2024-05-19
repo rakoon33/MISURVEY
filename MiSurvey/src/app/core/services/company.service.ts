@@ -36,4 +36,29 @@ export class CompanyService {
       })
     );
   }
+
+  updateCompanyLogo(companyId: string, formData: FormData): Observable<any> {
+    const updateLogoUrl = `${apiConstants.BACKEND_API.BASE_API_URL}/image/upload-company-logo/${companyId}`;
+    return this.http.post(updateLogoUrl, formData, {
+      withCredentials: true,
+      reportProgress: true,  // track the upload progress
+      observe: 'events'      // To listen to events like progress
+    }).pipe(
+      map((event) => {
+        // You can handle different events here
+        return event;
+      }),
+      catchError((error) => {
+        console.log(error);
+        let errorMessage = 'Failed to update the company logo.';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.status === 400) {
+          errorMessage = 'Invalid request to update logo.';
+        }
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
 }

@@ -9,61 +9,57 @@ cloudinary.config({
   api_secret: 'WxC4UsI_ZvrmiYcdIfNMIyuB_1E'
 });
 
-const uploadImage = (fileBuffer, fileName) => {
-    return new Promise((resolve, reject) => {
+const uploadImage = (fileBuffer, fileName, uniqueId) => {
+  return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { resource_type: 'image', public_id: fileName },
-        (error, result) => {
-          if (error) {
-            reject(new Error('Failed to upload image to Cloudinary'));
-          } else {
-            resolve(result.secure_url);
+          {
+              resource_type: 'image',
+              public_id: `${uniqueId}-${fileName}`  // Prefix file name with a unique ID
+          },
+          (error, result) => {
+              if (error) {
+                  reject(new Error('Failed to upload image to Cloudinary: ' + error.message));
+              } else {
+                  resolve(result.secure_url);  // Returns the URL of the uploaded image
+              }
           }
-        }
       );
       uploadStream.end(fileBuffer);
-    });
-  };
+  });
+};
+
 
 const saveSurveyImage = async (surveyId, file, udata) => {
-  const transaction = await db.sequelize.transaction();
   try {
-    const imageUrl = await uploadImage(file.buffer, file.originalname);
+    const imageUrl = await uploadImage(file.buffer, file.originalname, 'survey' + surveyId );
     console.log(imageUrl);
-    await Survey.update({ SurveyImages: imageUrl }, { where: { SurveyID: surveyId }, transaction });
-    await createLogActivity(udata.id, 'UPDATE', `Survey image updated for survey ID: ${surveyId}`, 'Surveys', udata.companyID, transaction);
-    await transaction.commit();
+    await Survey.update({ SurveyImages: imageUrl }, { where: { SurveyID: surveyId } });
+    await createLogActivity(udata.id, 'UPDATE', `Survey image updated for survey ID: ${surveyId}`, 'Surveys', udata.companyID);
     return { status: true, message: "Survey image uploaded successfully", imageUrl };
   } catch (error) {
-    await transaction.rollback();
     return { status: false, message: error.message, error: error.toString() };
   }
 };
 
 const saveCompanyLogo = async (companyId, file, udata) => {
-  const transaction = await db.sequelize.transaction();
   try {
-    const imageUrl = await uploadImage(file.buffer, file.originalname);
-    await Company.update({ CompanyLogo: imageUrl }, { where: { CompanyID: companyId }, transaction });
-    await createLogActivity(udata.id, 'UPDATE', `Company logo updated for company ID: ${companyId}`, 'Companies', udata.companyID, transaction);
-    await transaction.commit();
+    const imageUrl = await uploadImage(file.buffer, file.originalname, 'company' + companyId);
+    await Company.update({ CompanyLogo: imageUrl }, { where: { CompanyID: companyId } });
+    await createLogActivity(udata.id, 'UPDATE', `Company logo updated for company ID: ${companyId}`, 'Companies', udata.companyID);
     return { status: true, message: "Company logo uploaded successfully", imageUrl };
   } catch (error) {
-    await transaction.rollback();
     return { status: false, message: error.message, error: error.toString() };
   }
 };
 
 const saveUserAvatar = async (userId, file, udata) => {
-  const transaction = await db.sequelize.transaction();
   try {
-    const imageUrl = await uploadImage(file.buffer, file.originalname);
-    await User.update({ UserAvatar: imageUrl }, { where: { UserID: userId }, transaction });
-    await createLogActivity(udata.id, 'UPDATE', `User avatar updated for user ID: ${userId}`, 'Users', udata.companyID, transaction);
-    await transaction.commit();
+    const imageUrl = await uploadImage(file.buffer, file.originalname, 'userAvt' +userId);
+    await User.update({ UserAvatar: imageUrl }, { where: { UserID: userId } });
+    await createLogActivity(udata.id, 'UPDATE', `User avatar updated for user ID: ${userId}`, 'Users', udata.companyID);
     return { status: true, message: "User avatar uploaded successfully", imageUrl };
   } catch (error) {
-    await transaction.rollback();
+
     return { status: false, message: error.message, error: error.toString() };
   }
 };
