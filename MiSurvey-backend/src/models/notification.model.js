@@ -9,6 +9,14 @@ const Notification = db.sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    CompanyID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Companies', 
+        key: 'CompanyID',
+      }
+    },
     Message: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -33,12 +41,12 @@ const Notification = db.sequelize.define(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
-    CompanyID: {
+    ReferenceID: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
-        model: 'Companies', 
-        key: 'CompanyID',
+        model: 'SurveyResponses',
+        key: 'ResponseID',
       }
     }
   },

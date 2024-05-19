@@ -136,32 +136,28 @@ const insertIntoSurveyResponses = async (response) => {
 
 const createNotification = async (insertedResponse) => {
   try {
+    // Extract properties directly from insertedResponse
+    const { SurveyID, QuestionID, ResponseID } = insertedResponse;
+
     // Find the survey to get the CompanyID and Title using the SurveyID from the response
-    const survey = await Survey.findByPk(insertedResponse.SurveyID, {
+    const survey = await Survey.findByPk(SurveyID, {
       attributes: ["CompanyID", "Title"],
     });
 
     // Handle case where survey is not found
     if (!survey) {
-      console.error(
-        `No survey found for SurveyID: ${insertedResponse.SurveyID}`
-      );
+      console.error(`No survey found for SurveyID: ${SurveyID}`);
       return { status: false, message: "Survey not found." };
     }
 
     // Find the question to get the PageOrder
-    const question = await SurveyQuestion.findByPk(
-      insertedResponse.QuestionID,
-      {
-        attributes: ["PageOrder"],
-      }
-    );
+    const question = await SurveyQuestion.findByPk(QuestionID, {
+      attributes: ["PageOrder"],
+    });
 
     // Handle case where question is not found
     if (!question) {
-      console.error(
-        `No question found for QuestionID: ${insertedResponse.QuestionID}`
-      );
+      console.error(`No question found for QuestionID: ${QuestionID}`);
       return { status: false, message: "Question not found." };
     }
 
@@ -169,13 +165,21 @@ const createNotification = async (insertedResponse) => {
     const { CompanyID, Title } = survey;
     const notificationMessage = `Bad response received in survey "${Title}" on question page ${question.PageOrder}`;
 
+    console.log(insertedResponse);
+
+    // Ensure ResponseID is not null before creating the notification
+    if (!ResponseID) {
+      console.error(`No ResponseID found in insertedResponse: ${insertedResponse}`);
+      return { status: false, message: "ResponseID not found." };
+    }
+
     const notification = await Notification.create({
       CompanyID,
       Message: notificationMessage,
       NotificationType: "Feedback",
       NotificationStatus: "Unread",
       CreatedAt: new Date(),
-      ReferenceID: insertedResponse.ResponseID,
+      ReferenceID: ResponseID, 
     });
 
     const io = getIO();
@@ -192,6 +196,8 @@ const createNotification = async (insertedResponse) => {
     };
   }
 };
+
+
 
 const getOneResponse = async (responseID) => {
   try {
