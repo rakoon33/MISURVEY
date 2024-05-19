@@ -22,6 +22,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 // Import containers
+import { NotificationsSidebarComponent } from './shared/components/notifications-sidebar/notifications-sidebar.component';
 import {
   DefaultFooterComponent,
   DefaultHeaderComponent,
@@ -109,6 +110,11 @@ import { ChartjsModule } from '@coreui/angular-chartjs';
 //qr code
 import { QRCodeModule } from 'angularx-qrcode';
 
+
+//socket 
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const config: SocketIoConfig = { url: environment.BACKEND_BASE_URL, options: {} };
+
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
@@ -119,6 +125,7 @@ const APP_CONTAINERS = [
   RegisterComponent,
   ApiDocumentationsComponent,
   CustomerSurveyComponent,
+  NotificationsSidebarComponent
 ];
 
 @NgModule({
@@ -159,6 +166,7 @@ const APP_CONTAINERS = [
     CommonModule,
     ChartjsModule,
     QRCodeModule,
+    SocketIoModule.forRoot(config),
     LottieModule.forRoot({ player: playerFactory }),
     ToastrModule.forRoot({
       positionClass: 'toast-top-right',

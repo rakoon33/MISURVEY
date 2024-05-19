@@ -15,6 +15,7 @@ const userActivityLogController = require("./userActivityLog.controller");
 const servicePackageController = require("./servicePackage.controller");
 const userPackageController = require("./userPackage.controller");
 const imageController = require("./image.controller");
+const notificationController = require("./notification.controller");
 
 module.exports = {
   authController,
@@ -33,5 +34,6 @@ module.exports = {
   userActivityLogController,
   servicePackageController,
   userPackageController,
-  imageController
+  imageController,
+  notificationController
 };

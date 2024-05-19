@@ -9,31 +9,24 @@ const Notification = db.sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    UserID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "User",
-        key: "UserID",
-      },
-    },
     Message: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    Method: {
+    NotificationType: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      validate: {
-        isIn: [["Email", "SMS"]],
-      },
+      defaultValue: 'Feedback',
     },
-    Status: {
+    NotificationStatus: {
       type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
-        isIn: [["Read", "Unread"]],
-      },
+        isIn: {
+          args: [['Read', 'Unread']],
+          msg: "Status must be either 'Read' or 'Unread'"
+        }
+      }
     },
     CreatedAt: {
       type: DataTypes.DATE,
@@ -42,15 +35,17 @@ const Notification = db.sequelize.define(
     },
     CompanyID: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
-        model: "Company",
-        key: "CompanyID",
-      },
-    },
+        model: 'Companies', 
+        key: 'CompanyID',
+      }
+    }
   },
   {
-    tableName: "Notifications",
+    tableName: 'Notifications',
     timestamps: false,
+    freezeTableName: true
   }
 );
 

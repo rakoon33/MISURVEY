@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, mergeMap } from 'rxjs/operators';
 import { userActions } from '../actions';
 import { UserService } from '../../services';
 import { Router } from '@angular/router';
-
+import { companyActions } from '../actions';
 @Injectable()
 export class UserEffects {
   getUserData$ = createEffect(() =>
@@ -14,16 +14,32 @@ export class UserEffects {
       ofType(userActions.getUserDataRequest),
       switchMap(() =>
         this.userService.getUserData().pipe(
-          map(response => {
+          switchMap(response => {
             if (response.status) {
-              return userActions.getUserDataSuccess({
-                user: response.userDetails,
-                permissions: response.permissions,
-                packages: response.packages
-              });
+              const actions = [
+                userActions.getUserDataSuccess({
+                  user: response.userDetails,
+                  permissions: response.permissions,
+                  packages: response.packages
+                })
+              ];
+
+              if (['Admin', 'Supervisor'].includes(response.userDetails.UserRole)) {
+                return [
+                  ...actions,
+                  companyActions.getCompanyProfileRequest()
+                ];
+              } else {
+                return [
+                  ...actions,
+                  companyActions.getCompanyProfileSuccess({ company: null })
+                ];
+              }
+
+              return actions;
             } else {
               this.toastrService.error(response.message || 'Failed to fetch user data');
-              return userActions.getUserDataFailure();
+              return of(userActions.getUserDataFailure());
             }
           }),
           catchError(error => {

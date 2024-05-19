@@ -7,11 +7,16 @@ const {
   Customer,
   UserPackage,
   ServicePackage,
-  Survey
+  Survey,
+  Notification,
 } = require("../models");
+
+const { getIO } = require("../config/io");
+
 
 const createSurveyResponses = async (data) => {
   try {
+    console.log(data);
     let customerID = null;
 
     // Use 'Anonymous' if FullName is empty or not provided
@@ -65,8 +70,8 @@ const createSurveyResponses = async (data) => {
       // Evaluate the response
       const isBadResponse = await evaluateResponse(insertedResponse);
       if (isBadResponse) {
-        // Create a ticket if the response is bad
-        await createTicket(insertedResponse);
+        // Create a notification if the response is bad
+        await createNotification(insertedResponse);
       }
     }
 
@@ -129,12 +134,63 @@ const insertIntoSurveyResponses = async (response) => {
   return insertedResponse;
 };
 
-const createTicket = async (response) => {
-  return await Ticket.create({
-    TicketStatus: "Open",
-    SurveyID: response.SurveyID,
-    ResponseID: response.ResponseID,
-  });
+const createNotification = async (insertedResponse) => {
+  try {
+    // Find the survey to get the CompanyID and Title using the SurveyID from the response
+    const survey = await Survey.findByPk(insertedResponse.SurveyID, {
+      attributes: ["CompanyID", "Title"],
+    });
+
+    // Handle case where survey is not found
+    if (!survey) {
+      console.error(
+        `No survey found for SurveyID: ${insertedResponse.SurveyID}`
+      );
+      return { status: false, message: "Survey not found." };
+    }
+
+    // Find the question to get the PageOrder
+    const question = await SurveyQuestion.findByPk(
+      insertedResponse.QuestionID,
+      {
+        attributes: ["PageOrder"],
+      }
+    );
+
+    // Handle case where question is not found
+    if (!question) {
+      console.error(
+        `No question found for QuestionID: ${insertedResponse.QuestionID}`
+      );
+      return { status: false, message: "Question not found." };
+    }
+
+    // Create the notification with the destructured CompanyID
+    const { CompanyID, Title } = survey;
+    const notificationMessage = `Bad response received in survey "${Title}" on question page ${question.PageOrder}`;
+
+    const notification = await Notification.create({
+      CompanyID,
+      Message: notificationMessage,
+      NotificationType: "Feedback",
+      NotificationStatus: "Unread",
+      CreatedAt: new Date(),
+      ReferenceID: insertedResponse.ResponseID,
+    });
+
+    const io = getIO();
+    io.to(CompanyID.toString()).emit("newNotification", notification);
+
+    console.log("Notification created successfully:", notification);
+    return { status: true, message: "Notification created successfully." };
+  } catch (error) {
+    console.error("Error in notification creation process:", error);
+    return {
+      status: false,
+      message: "Failed to process notification creation.",
+      error: error.message,
+    };
+  }
 };
 
 const getOneResponse = async (responseID) => {
@@ -160,8 +216,8 @@ const deleteResponse = async (responseID) => {
     const transaction = await db.sequelize.transaction();
     try {
       // First, delete any tickets associated with the response
-      await Ticket.destroy({
-        where: { ResponseID: responseID },
+      await Notification.destroy({
+        where: { ReferenceID: responseID },
         transaction,
       });
 
@@ -292,14 +348,14 @@ const getSurveyResponseCount = async (surveyID) => {
     const responseCount = await SurveyResponse.count({
       where: { SurveyID: surveyID },
       distinct: true,
-      col: 'CustomerID'
+      col: "CustomerID",
     });
 
     // Return both the count and the package information
     return {
       status: true,
       count: responseCount,
-      responseLimit: activePackage.servicePackage.ResponseLimit
+      responseLimit: activePackage.servicePackage.ResponseLimit,
     };
   } catch (error) {
     return { status: false, message: error.message };

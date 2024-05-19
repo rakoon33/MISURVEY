@@ -15,6 +15,7 @@ const reportService = require("./report.service");
 const servicePackage = require("./servicePackage.service");
 const userPackage = require("./userPackage.service");
 const imageService = require("./image.service");
+const notificationService = require("./notification.service");
 
 module.exports = {
   authService,
@@ -33,6 +34,6 @@ module.exports = {
   reportService,
   servicePackage,
   userPackage,
-  imageService
-  // ...other services
+  imageService,
+  notificationService
 };
