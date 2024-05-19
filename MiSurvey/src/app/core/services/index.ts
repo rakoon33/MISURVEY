@@ -17,6 +17,7 @@ import { ReportService } from './report.service';
 import { ServicePackageService } from './service-package.service';
 import { NotificationService } from './notification.service';
 import { SocketService } from './socket.service';
+import { NotificationStateService } from './notification-state.service';
 export {
   UserService,
   AuthService,
@@ -36,5 +37,6 @@ export {
   UserActivityLogService,
   ServicePackageService,
   NotificationService,
-  SocketService
+  SocketService,
+  NotificationStateService
 };
