@@ -540,6 +540,7 @@ const calculateEmoticonsData = (responses) => {
     } else {
         evaluation = "Highly Satisfied";
     }
+    if (responses.length === 0) evaluation = "No Responses";
 
   return {
     ...counts,
@@ -576,6 +577,8 @@ const calculateThumbsData = (responses) => {
     } else {
         evaluation = "Highly Satisfied";
     }
+
+    if (responses.length === 0) evaluation = "No Responses";
 
 
   return {

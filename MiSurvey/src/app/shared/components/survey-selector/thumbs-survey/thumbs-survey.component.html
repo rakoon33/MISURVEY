@@ -1,5 +1,5 @@
 <div class="survey-question-container-thumbs">
-  <p>{{ question }}</p>
+  <p class="question-styles">{{ question }}</p>
   <div class="thumbs-rating" [style.color]="buttonTextColor">
     <div class="thumb-wrapper" [class.selected]="thumbsUpSelected === true" (click)="setScore(true)">
       <c-icon name="cil-thumb-up"></c-icon>

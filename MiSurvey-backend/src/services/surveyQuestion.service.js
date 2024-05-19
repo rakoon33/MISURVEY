@@ -1,4 +1,4 @@
-const { SurveyQuestion, SurveyResponse, Ticket } = require("../models");
+const { SurveyQuestion, SurveyResponse, Notification } = require("../models");
 
 const createSurveyQuestion = async (questionData, transaction) => {
   try {
@@ -50,8 +50,8 @@ const deleteSurveyQuestion = async (questionID, transaction) => {
       transaction,
     });
     for (const response of responses) {
-      await Ticket.destroy({
-        where: { ResponseID: response.ResponseID },
+      await Notification.destroy({
+        where: { ReferenceID: response.ResponseID },
         transaction,
       });
 

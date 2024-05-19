@@ -433,6 +433,8 @@ const searchSurvey = async (column, searchTerm) => {
 };
 
 const getEmoticonsEvaluation = (responses) => {
+  if (responses.length === 0) return "No Responses";
+
   const ratingCounts = responses.reduce((acc, { ResponseValue }) => {
     acc[ResponseValue] = (acc[ResponseValue] || 0) + 1;
     return acc;
@@ -476,6 +478,7 @@ const calculateCSAT = (responses) => {
 };
 
 const getEvaluationForStars = (averageScore) => {
+  if (isNaN(averageScore)) return "No Responses";
   if (averageScore <= 1) {
     return "Very Bad";
   } else if (averageScore <= 2) {
@@ -490,6 +493,7 @@ const getEvaluationForStars = (averageScore) => {
 };
 
 const getNPSClassification = (score) => {
+  if (isNaN(score)) return "No Responses";
   if (score < 0) {
     return "Needs improvement";
   } else if (score <= 30) {
@@ -502,6 +506,7 @@ const getNPSClassification = (score) => {
 };
 
 const getCSATClassification = (score) => {
+  if (isNaN(score)) return "No Responses";
   if (score < 35) {
     return "Highly Unsatisfied";
   } else if (score <= 50) {
@@ -516,6 +521,7 @@ const getCSATClassification = (score) => {
 };
 
 const evaluateThumbs = (responses) => {
+  
   const thumbsUpCount = responses.filter(
     ({ ResponseValue }) => ResponseValue === "true"
   ).length;

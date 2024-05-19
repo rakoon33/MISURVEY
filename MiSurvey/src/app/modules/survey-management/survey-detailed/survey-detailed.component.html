@@ -1,5 +1,5 @@
 <div class="title-container">
-  <p class="survey-title">{{survey?.Title}}</p>
+  <p class="survey-title">{{ survey?.Title }}</p>
 </div>
 <div
   *ngFor="
@@ -37,7 +37,13 @@
     <button class="control-btn edit" (click)="editQuestion(question)">
       &#9998;
     </button>
-    <button class="control-btn delete" [style.visibility]="survey?.SurveyQuestions.length > 1 ? 'visible' : 'hidden'" (click)="openDeleteQuestionModal(question.QuestionID)">
+    <button
+      class="control-btn delete"
+      [style.visibility]="
+        survey?.SurveyQuestions.length > 1 ? 'visible' : 'hidden'
+      "
+      (click)="openDeleteQuestionModal(question.QuestionID)"
+    >
       x
     </button>
   </div>
@@ -51,19 +57,17 @@
   >
   </app-survey-selector>
   <div class="controls">
-    <button class="control-btn invisible">
-      &#9998;
-    </button>
-    </div>
+    <button class="control-btn invisible">&#9998;</button>
+  </div>
 </div>
 <div class="question-container">
   <app-survey-selector
-  [selectedSurveyType]="'thank-message'"
-  [borderTopColor]="survey.Customizations.topBarColor || '#2f3c54'"
-  [title]="'Dear Customer'"
-  [message]="survey.Customizations.thankMessage || ''"
->
-</app-survey-selector>
+    [selectedSurveyType]="'thank-message'"
+    [borderTopColor]="survey.Customizations.topBarColor || '#2f3c54'"
+    [title]="'Dear Customer'"
+    [message]="survey.Customizations.thankMessage || ''"
+  >
+  </app-survey-selector>
 
   <div class="controls">
     <button class="control-btn edit" (click)="editThankMessage()">
@@ -78,9 +82,14 @@
   </button>
 </div>
 
-
 <div class="additional-controls">
-  <button class="send-email" style="margin-top: 0 !important; margin-bottom: 20px !important;" *ngIf="survey?.InvitationMethod === 'Email'" class="send-email" (click)="openEmailModal()">
+  <button
+    class="send-email"
+    style="margin-top: 0 !important; margin-bottom: 20px !important"
+    *ngIf="survey?.InvitationMethod === 'Email'"
+    class="send-email"
+    (click)="openEmailModal()"
+  >
     Send Survey to Email
   </button>
 </div>
@@ -113,8 +122,6 @@
   </c-modal-footer>
 </c-modal>
 
-
-
 <c-modal
   size="lg"
   [scrollable]="true"
@@ -132,7 +139,7 @@
       cButtonClose
     ></button>
   </c-modal-header>
-  <c-modal-body class="modal-delete-body" style="min-height: 180px;">
+  <c-modal-body class="modal-delete-body" style="min-height: 180px">
     <textarea
       [(ngModel)]="thankYouMessage"
       rows="5"
