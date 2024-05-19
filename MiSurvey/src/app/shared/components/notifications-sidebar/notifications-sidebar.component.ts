@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NotificationService } from '../../../core/services';
 import { ToastrService } from 'ngx-toastr';
 import { SocketService } from '../../../core/services/socket.service';
 import { AppState } from '../../../core/store/app.state';
 import { companySelector } from 'src/app/core/store/selectors';
+import { NotificationStateService } from '../../../core/services/notification-state.service';
 
 @Component({
   selector: 'app-notifications-sidebar',
@@ -16,13 +17,17 @@ export class NotificationsSidebarComponent implements OnInit {
   public notifications: any[] = [];
   private companyID: number | null = null;
 
+  @Output() notificationClicked = new EventEmitter<number>();
+
+
   constructor(
     private store: Store<AppState>,
     private notificationService: NotificationService,
     private cdr: ChangeDetectorRef,
     private elRef: ElementRef,
     private toastr: ToastrService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private notificationStateService: NotificationStateService
   ) {}
 
   ngOnInit(): void {
@@ -54,17 +59,11 @@ export class NotificationsSidebarComponent implements OnInit {
   }
 
   addNotification(notification: any): void {
-    // Add the new notification to the top of the list
     this.notifications.unshift(notification);
-
-    // Optionally, sort notifications by CreatedAt if needed
     this.notifications.sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
-
-    // Trigger change detection
     this.cdr.detectChanges();
-
-    // Show toast notification
     this.toastr.info(notification.Message, 'New Notification');
+    this.fetchUnreadCount();
   }
 
   toggleVisibility(): void {
@@ -78,25 +77,40 @@ export class NotificationsSidebarComponent implements OnInit {
 
   markNotificationsAsRead(): void {
     const unreadNotifications = this.notifications.filter(notification => notification.NotificationStatus === 'Unread');
-    unreadNotifications.forEach(notification => {
-      this.notificationService.updateNotificationStatus(notification.NotificationID, 'Read').subscribe({
-        next: () => {
-          notification.NotificationStatus = 'Read';
-          this.cdr.detectChanges();
-        },
-        error: (error) => console.error('Error updating notification status', error)
-      });
+    if (unreadNotifications.length > 0) {
+      const updateObservables = unreadNotifications.map(notification => 
+        this.notificationService.updateNotificationStatus(notification.NotificationID, 'Read')
+      );
+
+      Promise.all(updateObservables.map(obs => obs.toPromise())).then(() => {
+        unreadNotifications.forEach(notification => notification.NotificationStatus = 'Read');
+        this.cdr.detectChanges();
+        this.fetchUnreadCount(); // Fetch unread count after marking notifications as read
+      }).catch((error) => console.error('Error updating notification status', error));
+    }
+  }
+
+  fetchUnreadCount(): void {
+    this.notificationService.getUnreadCount().subscribe({
+      next: (data) => {
+        this.notificationStateService.setUnreadCount(data.count); // Update the shared state
+      },
+      error: (error) => console.error('Error fetching unread notifications count', error)
     });
   }
 
-  // Listen to click events on the document
+  onNotificationClick(notification: any): void {
+    if (notification.ReferenceID) {
+      this.notificationClicked.emit(notification.ReferenceID);
+    }
+  }
+
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    // If clicks are inside the sidebar, do nothing
     if (this.elRef.nativeElement.contains(event.target)) {
       return;
     }
-    // If sidebar is visible and clicks are outside, hide the sidebar
     if (this.isVisible) {
       this.toggleVisibility();
     }

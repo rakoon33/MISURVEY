@@ -58,7 +58,6 @@ export const navItems: INavData[] = [
   {
     title: true,
     name: 'Links',
-    class: 'py-0'
   },
   {
     name: 'FQA',

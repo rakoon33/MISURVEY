@@ -44,6 +44,7 @@ export class UserManagementEffects {
             if (response.status) {
               return userManagementActions.loadUserByIdSuccess({
                 user: response.data,
+                hasCompanyData: response.hasData,
               });
             } else {
               this.toastrService.error('Failed to load user details');

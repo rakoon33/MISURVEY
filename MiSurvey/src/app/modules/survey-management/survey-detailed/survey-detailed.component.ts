@@ -150,59 +150,42 @@ export class SurveyDetailedComponent implements OnInit {
   }
 
   deleteQuestion() {
-    // Call backend service to delete the question
-    this.surveyManagementService
-      .deleteSurveyQuestion(this.questionIDToDelete)
-      .subscribe(
-        (response) => {
-          if (response.status) {
-            // Remove the question from the local survey data
-            const questions = this.survey.SurveyQuestions.filter(
-              (q: { QuestionID: number }) =>
-                q.QuestionID !== this.questionIDToDelete
-            );
-
-            // Optionally re-index the remaining questions for PageOrder
-            questions.forEach((q: { PageOrder: any }, i: number) => {
-              q.PageOrder = i + 1;
-            });
-
-            // Update the local survey object with the updated questions array
-            this.survey = {
-              ...this.survey,
-              SurveyQuestions: questions,
-            };
-
-            // Dispatch an action to update the store
-            this.store.dispatch(
-              surveyManagementActions.updateSurveyRequest({
-                surveyId: this.survey.SurveyID,
-                surveyData: this.survey,
-              })
-            );
-
-            // Display success message
-            this.toastrService.success('Question deleted successfully');
-            this.modalService.toggle({
-              show: false,
-              id: 'deleteQuestionModal',
-            });
-          } else {
-            // Handle error response from backend
-            this.toastrService.error(
-              response.message || 'Failed to delete question'
-            );
-          }
-        },
-        (error) => {
-          // Handle any network errors
-          this.toastrService.error(
-            'An error occurred while deleting the question'
+    this.surveyManagementService.deleteSurveyQuestion(this.questionIDToDelete).subscribe(
+      (response) => {
+        if (response.status) {
+          // Tạo một mảng mới cho các câu hỏi sau khi xóa câu hỏi
+          const updatedQuestions = this.survey.SurveyQuestions.filter(
+            (q: any) => q.QuestionID !== this.questionIDToDelete
+          ).map((q: any, index: any) => ({
+            ...q,
+            PageOrder: index + 1  // Cập nhật PageOrder một cách an toàn
+          }));
+  
+          // Cập nhật đối tượng survey với mảng câu hỏi đã được cập nhật
+          this.survey = {
+            ...this.survey,
+            SurveyQuestions: updatedQuestions
+          };
+  
+          // Gửi yêu cầu cập nhật survey
+          this.store.dispatch(
+            surveyManagementActions.updateSurveyRequest({
+              surveyId: this.survey.SurveyID,
+              surveyData: this.survey
+            })
           );
+  
+          this.modalService.toggle({ show: false, id: 'deleteQuestionModal' });
+        } else {
+          this.toastrService.error(response.message || 'Failed to delete question');
         }
-      );
+      },
+      (error) => {
+        this.toastrService.error('An error occurred while deleting the question');
+      }
+    );
   }
-
+  
   addNewQuestion() {
     this.router.navigate(['/survey-management/question'], {
       queryParams: { add: true, surveyId: this.survey.SurveyID },

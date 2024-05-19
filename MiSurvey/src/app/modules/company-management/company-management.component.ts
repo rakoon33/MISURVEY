@@ -8,6 +8,7 @@ import { companyManagementSelector, companySelector, userSelector } from 'src/ap
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, NavigationStart, Event as RouterEvent, ActivatedRoute } from '@angular/router';
+import { CompanyService } from 'src/app/core/services';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -49,7 +50,8 @@ export class CompanyManagementComponent implements OnInit {
     private toastr: ToastrService,
     private modalService: ModalService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private companyService: CompanyService
   ) {
     this.editCompanyFormGroup = new FormGroup({
       CompanyName: new FormControl('', [Validators.required]),
@@ -267,6 +269,7 @@ export class CompanyManagementComponent implements OnInit {
     if (input?.files?.length) {
       this.selectedLogoFile = input.files[0];
     }
+
   }
 
   
@@ -275,9 +278,22 @@ export class CompanyManagementComponent implements OnInit {
     if (this.editCompanyFormGroup.valid && this.currentUserId) {
       const formValue = {
         ...this.editCompanyFormGroup.value,
-        UpdatedBy: this.currentUserId,
-        CompanyLogo:  this.selectedLogoFile
+        UpdatedBy: this.currentUserId
       };
+
+      if (this.selectedLogoFile) {
+        const formData = new FormData();
+        formData.append('image', this.selectedLogoFile, this.selectedLogoFile.name);
+        this.companyService.updateCompanyLogo(this.currentSelectedCompanyId!.toString(), formData).subscribe({
+          next: (response) => {
+            console.log('Logo updated successfully', response)
+            if(this.currentUserRole==='Admin') {
+              this.store.dispatch(companyActions.getCompanyProfileRequest());
+            }
+          },
+          error: (error) => console.error('Error updating logo', error)
+        });
+      }
 
       this.store.dispatch(
         companyManagementActions.updateCompanyRequest({

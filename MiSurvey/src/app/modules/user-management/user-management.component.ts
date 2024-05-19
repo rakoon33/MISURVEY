@@ -29,6 +29,8 @@ import {
   Validators,
   FormBuilder,
   FormArray,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import {
   Router,
@@ -112,7 +114,7 @@ export class UserManagementComponent implements OnInit {
       Gender: new FormControl(''),
       PhoneNumber: new FormControl(''),
       UserRole: new FormControl(''),
-      IsActive: new FormControl(false), // Default value
+      IsActive: new FormControl(true),
       CreatedAt: new FormControl(''),
       LastLogin: new FormControl(''),
     });
@@ -123,12 +125,12 @@ export class UserManagementComponent implements OnInit {
       LastName: new FormControl('', [Validators.required]),
       Email: new FormControl('', [Validators.required, Validators.email]),
       PhoneNumber: new FormControl(''),
-      UserRole: new FormControl('', [Validators.required]),
+      UserRole: new FormControl('SuperAdmin', [Validators.required]),
       IsActive: new FormControl('', [Validators.required]),
       Gender: new FormControl(''),
-      UserPassword: new FormControl('', [
+      Password: new FormControl('', [
         Validators.required,
-        Validators.minLength(8),
+        this.validatePassword,
       ]),
     });
 
@@ -216,13 +218,13 @@ export class UserManagementComponent implements OnInit {
       .select(userSelector.selectCurrentUser)
       .subscribe((currentUser) => {
         this.currentUserId = currentUser?.UserID;
+
         if (
           currentUser?.UserRole === 'Admin' ||
           currentUser?.UserRole === 'Supervisor'
         ) {
           // Lưu vai trò người dùng hiện tại để sử dụng sau này
           this.currentUserRole = currentUser?.UserRole;
-
           if (
             this.currentUserRole === 'Admin' ||
             this.currentUserRole === 'Supervisor'
@@ -230,13 +232,17 @@ export class UserManagementComponent implements OnInit {
             this.addUserForm.get('UserRole')?.setValue('Supervisor');
             this.addUserForm.get('UserRole')?.disable();
           }
+        } else {
+          this.currentUserRole = currentUser?.UserRole;
         }
       });
     this.store.dispatch(companyRoleManagementActions.loadCompanyRolesRequest());
 
     this.roles$.subscribe((roles) => {
       if (roles && roles.length > 0) {
-        this.companyRoleFormGroup.get('CompanyRoleID')?.setValue(roles[0].CompanyRoleID);
+        this.companyRoleFormGroup
+          .get('CompanyRoleID')
+          ?.setValue(roles[0].CompanyRoleID);
       }
     });
   }
@@ -337,6 +343,10 @@ export class UserManagementComponent implements OnInit {
         UpdatedAt: user.UpdatedAt,
       });
     }
+
+    this.editUserFormGroup
+      .get('UserRole')!
+      .setValue(user.UserRole, { onlySelf: true });
   }
 
   viewUser(UserID: number): void {
@@ -395,8 +405,17 @@ export class UserManagementComponent implements OnInit {
   editUser(UserID: number): void {
     this.currentAction = 'edit';
 
-    this.modalService.toggle({ show: true, id: 'editUserModal' });
     this.store.dispatch(userManagementActions.loadUserByIdRequest({ UserID }));
+    this.store
+      .select(userManagementSelector.selectHasCompanyData)
+      .subscribe((hasCompanyData) => {
+        this.modalService.toggle({ show: true, id: 'editUserModal' });
+        if (hasCompanyData) {
+          this.editUserFormGroup.get('UserRole')?.disable();
+        } else {
+          this.editUserFormGroup.get('UserRole')?.enable();
+        }
+      });
   }
 
   saveChanges() {
@@ -720,6 +739,30 @@ export class UserManagementComponent implements OnInit {
     } else {
       this.toastr.error('User ID is not available');
     }
+  }
+
+  validatePassword(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    const errors: ValidationErrors = {}; // Explicitly type as ValidationErrors
+    let errorMessages = [];
+
+    if (!/\d/.test(value)) {
+      errorMessages.push('include a number');
+    }
+    if (!/[A-Z]/.test(value)) {
+      errorMessages.push('include an uppercase letter');
+    }
+    if (value.length < 6) {
+      errorMessages.push('be at least 6 characters long');
+    }
+
+    if (errorMessages.length > 0) {
+      errors['passwordComplexity'] = `Password must ${errorMessages.join(
+        ', '
+      )}.`;
+    }
+
+    return Object.keys(errors).length > 0 ? errors : null;
   }
 
   ngOnDestroy() {

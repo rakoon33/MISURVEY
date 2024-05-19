@@ -5,4 +5,5 @@ export default interface UserManagementState {
   loading: boolean;
   selectedUser: User | null;
   totalUsers: number;
+  hasCompanyData?: boolean; 
 }

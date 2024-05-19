@@ -106,7 +106,9 @@
               <li
                 *ngIf="
                   permissions.CanViewData &&
-                  user.UserRole !== 'Admin'
+                  user.UserRole !== 'Admin' &&
+                  user.UserRole !== 'SuperAdmin' &&
+                  currentUserRole !== 'SuperAdmin'
                 "
               >
                 <button
@@ -313,7 +315,28 @@
             formControlName="Email"
             placeholder="Email"
           />
+          <div
+            *ngIf="
+              editUserFormGroup.get('Email')?.errors &&
+              (editUserFormGroup.get('Email')?.touched ||
+                editUserFormGroup.get('Email')?.dirty)
+            "
+            [ngClass]="{
+              'text-danger':
+                editUserFormGroup.get('Email')?.invalid &&
+                (editUserFormGroup.get('Email')?.dirty ||
+                  editUserFormGroup.get('Email')?.touched)
+            }"
+          >
+            <div *ngIf="(editUserFormGroup.get('Email')?.errors)!['required']">
+              Email is required.
+            </div>
+            <div *ngIf="(editUserFormGroup.get('Email')?.errors)!['email']">
+              Please enter a valid email address.
+            </div>
+          </div>
         </div>
+
         <div class="mb-3">
           <label for="editGender" class="form-label">Gender</label>
           <input
@@ -340,6 +363,7 @@
             <option selected>Select Role</option>
             <option value="SuperAdmin">SuperAdmin</option>
             <option value="Admin">Admin</option>
+            <option value="Supervisor">Supervisor</option>
           </select>
         </div>
         <div class="mb-3">
@@ -391,7 +415,7 @@
       <button [cModalToggle]="editUserModal.id" cButton color="secondary">
         Cancel
       </button>
-      <button  cButton color="primary" (click)="saveChanges()">
+      <button cButton color="primary" (click)="saveChanges()">
         Save Changes
       </button>
     </c-modal-footer>
@@ -459,9 +483,17 @@
             type="password"
             class="form-control"
             id="userPassword"
-            formControlName="UserPassword"
+            formControlName="Password"
             placeholder="Password"
           />
+          <div *ngIf="addUserForm.get('Password')?.touched">
+            <div
+              *ngIf="addUserForm.get('Password')?.errors?.['passwordComplexity']"
+              class="text-danger"
+            >
+              {{ (addUserForm.get("Password")?.errors)!["passwordComplexity"] }}
+            </div>
+          </div>
         </div>
         <div class="mb-3">
           <label for="firstName" class="form-label">First Name</label>
@@ -484,14 +516,34 @@
           />
         </div>
         <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
+          <label for="userEmail" class="form-label">Email</label>
           <input
             type="email"
             class="form-control"
-            id="email"
+            id="userEmail"
             formControlName="Email"
             placeholder="Email"
           />
+          <div
+            *ngIf="
+              addUserForm.get('Email')?.errors &&
+              (addUserForm.get('Email')?.touched ||
+                addUserForm.get('Email')?.dirty)
+            "
+            [ngClass]="{
+              'text-danger':
+                addUserForm.get('Email')?.invalid &&
+                (addUserForm.get('Email')?.dirty ||
+                  addUserForm.get('Email')?.touched)
+            }"
+          >
+            <div *ngIf="(editUserFormGroup.get('Email')?.errors)!['required']">
+              Email is required.
+            </div>
+            <div *ngIf="(editUserFormGroup.get('Email')?.errors)!['email']">
+              Please enter a valid email address.
+            </div>
+          </div>
         </div>
         <div class="mb-3">
           <label for="phoneNumber" class="form-label"

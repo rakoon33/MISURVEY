@@ -8,9 +8,10 @@ import {
   mergeMap,
   switchMap,
   withLatestFrom,
+  concatMap
 } from 'rxjs/operators';
 import { surveyManagementActions } from '../actions';
-import { SurveyManagementService } from '../../services';
+import { SurveyManagementService, ShareImageService} from '../../services';
 import { Store } from '@ngrx/store';
 import { surveyManagementSelector } from '../selectors';
 import { Router } from '@angular/router';
@@ -20,37 +21,53 @@ export class SurveyManagementEffects {
   createSurvey$ = createEffect(() =>
     this.actions$.pipe(
       ofType(surveyManagementActions.createSurveyRequest),
-      withLatestFrom(
-        this.store.select(surveyManagementSelector.selectSurveyValue)
-      ),
+      withLatestFrom(this.store.select(surveyManagementSelector.selectSurveyValue)),
       switchMap(([action, survey]) =>
         this.surveyService.createSurvey(survey).pipe(
-          map((response) => {
+          concatMap((response) => {
             if (response.status) {
               this.toastrService.success('Survey created successfully');
               this.router.navigate([
                 '/survey-management/survey-detailed',
                 response.survey?.SurveyID,
               ]);
-              return surveyManagementActions.createSurveySuccess();
+              const id = response.survey?.SurveyID;
+              return this.shareImageService.file$.pipe(
+                switchMap(file => {
+                  if (file) {
+                    return this.surveyService.uploadImage(response.survey.SurveyID, file).pipe(
+                      map(() => {
+                        this.toastrService.success('Image uploaded successfully');
+                        this.store.dispatch(
+                          surveyManagementActions.loadSurveyDetailRequest({ id })
+                        );
+                        return surveyManagementActions.createSurveySuccess();
+                      }),
+                      catchError(uploadError => {
+                        console.error('Upload failed', uploadError);
+                        return of(surveyManagementActions.createSurveyFailure());
+                      })
+                    );
+                  } else {
+                    return of(surveyManagementActions.createSurveySuccess());
+                  }
+                })
+              );
             } else {
               console.log(response.message);
               this.toastrService.error('Failed to create survey');
-              return surveyManagementActions.createSurveyFailure();
+              return of(surveyManagementActions.createSurveyFailure());
             }
           }),
-          catchError((error) => {
+          catchError(error => {
             console.log(error.message);
-            this.toastrService.error(
-              'An error occurred during survey creation'
-            );
+            this.toastrService.error('An error occurred during survey creation');
             return of(surveyManagementActions.createSurveyFailure());
           })
         )
       )
     )
   );
-
   fetchSurveys$ = createEffect(() =>
     this.actions$.pipe(
       ofType(surveyManagementActions.fetchSurveysRequest),
@@ -161,6 +178,7 @@ export class SurveyManagementEffects {
     private toastrService: ToastrService,
     private surveyService: SurveyManagementService,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private shareImageService: ShareImageService
   ) {}
 }

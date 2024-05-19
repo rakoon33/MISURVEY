@@ -4,21 +4,35 @@ import { navItems as originalNavItems } from './_nav';
 import { userSelector } from 'src/app/core/store/selectors';
 import { Router } from '@angular/router';
 import { NotificationsSidebarComponent } from '../components/notifications-sidebar/notifications-sidebar.component';
+import { ModalService } from '@coreui/angular';
+import { SurveyManagementService } from 'src/app/core/services';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './default-layout.component.html',
   styleUrls: ['./default-layout.component.scss'],
 })
 export class DefaultLayoutComponent implements OnInit {
-  public navItems: any[] | undefined; // Mảng các mục điều hướng
+  public navItems: any[] | undefined;
   userRole = '';
+  unreadCount = 0;
+
+  selectedSurveySummary: any[] = [];
+  selectedSurveyQuestion: any = {};
+  currentQuestionIndex: number = 0;
+  highlightedResponseId: number | null = null;
+
   @ViewChild(NotificationsSidebarComponent, { static: false })
   private notificationsSidebar!: NotificationsSidebarComponent;
 
-  constructor(private store: Store, private router: Router) {}
+  constructor(
+    private store: Store,
+    private router: Router,
+    private surveyManagementService: SurveyManagementService,
+    private modalService: ModalService
+  ) {}
 
   toggleNotificationsSidebar(): void {
-    console.log('Toggling notifications sidebar');
     if (this.notificationsSidebar) {
       this.notificationsSidebar.toggleVisibility();
     }
@@ -26,8 +40,7 @@ export class DefaultLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.select(userSelector.selectCurrentUser).subscribe((user) => {
-      // Fetch user permissions
-      if(user) {
+      if (user) {
         this.userRole = user.UserRole;
       }
       if (user && user.UserRole === 'Supervisor') {
@@ -38,20 +51,18 @@ export class DefaultLayoutComponent implements OnInit {
               const permission = permissions?.find(
                 (perm) => perm.module.ModuleName === item.name
               );
-              return permission ? permission.CanView : false; // Allow only if CanView is true
+              return permission ? permission.CanView : false;
             });
 
-            // If dashboard is not viewable, navigate to the first item in navItems
             const dashboardPermission = permissions?.find(
               (perm) => perm.module.ModuleName === 'Dashboard'
             );
             if (!dashboardPermission?.CanView) {
-              const firstNavItemPath = this.navItems[0]?.url || '/'; // Default to '/' if no items in navItems
+              const firstNavItemPath = this.navItems[0]?.url || '/';
               this.router.navigate([firstNavItemPath]);
             }
           });
       } else {
-        // Handle other user roles
         if (user && user.UserRole === 'SuperAdmin') {
           this.navItems = originalNavItems.filter(
             (item) =>
@@ -68,5 +79,82 @@ export class DefaultLayoutComponent implements OnInit {
         }
       }
     });
+  }
+
+  handleNotificationClick(responseID: number): void {
+    this.surveyManagementService.getSurveyDetailsByResponseId(responseID).subscribe({
+      next: (data) => {
+        if (data.status) {
+          this.openModal(data.surveyId, data.questionIndex, responseID);
+        }
+      },
+      error: (error) => console.error('Error fetching survey details:', error)
+    });
+  }
+
+  openModal(surveyId: number, questionIndex: number, responseId: number): void {
+    this.surveyManagementService.getSurveySummaryById(surveyId).subscribe({
+      next: (response) => {
+        if (response && response.status) {
+          this.selectedSurveySummary = response.summary;
+          this.currentQuestionIndex = questionIndex;
+          this.highlightedResponseId = responseId;
+
+          // Find the specific response and move it to the top of the list
+          const currentQuestion = this.selectedSurveySummary[this.currentQuestionIndex];
+          const responseIndex = currentQuestion.responses.findIndex((resp: any) => resp.responseID === responseId);
+          
+          if (responseIndex !== -1) {
+            const [specificResponse] = currentQuestion.responses.splice(responseIndex, 1);
+            currentQuestion.responses.unshift(specificResponse);
+          }
+          
+          
+          this.showCurrentQuestion();
+          setTimeout(() => {
+            this.highlightedResponseId = null;
+          }, 4000);
+        }
+      },
+      error: (error) => console.error('Error fetching survey summary:', error),
+    });
+  }
+
+ 
+
+  showCurrentQuestion() {
+    this.selectedSurveyQuestion =
+      this.selectedSurveySummary[this.currentQuestionIndex];
+    this.toggleModal('seeResponsesModal', true);
+  }
+
+  nextQuestion() {
+    if (this.currentQuestionIndex < this.selectedSurveySummary.length - 1) {
+      this.currentQuestionIndex++;
+      this.showCurrentQuestion();
+    } else {
+      this.toggleModal('seeResponsesModal', false);
+    }
+  }
+
+  previousQuestion() {
+    if (this.currentQuestionIndex > 0) {
+      this.currentQuestionIndex--;
+      this.showCurrentQuestion();
+    }
+  }
+
+  toggleModal(modalId: string, show: boolean) {
+    this.modalService.toggle({ id: modalId, show: show });
+  }
+
+
+    
+  isValidEmail(email: string | undefined): boolean {
+    if (!email) {
+      return false;
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
   }
 }

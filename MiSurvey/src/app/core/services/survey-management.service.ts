@@ -34,7 +34,9 @@ export class SurveyManagementService {
 
   updateSurvey(surveyId: number, surveyData: any): Observable<any> {
     return this.http
-      .put<any>(`${this.apiUrl}/${surveyId}`, surveyData, { withCredentials: true })
+      .put<any>(`${this.apiUrl}/${surveyId}`, surveyData, {
+        withCredentials: true,
+      })
       .pipe(
         map((response) => response),
         catchError((error) => {
@@ -66,10 +68,10 @@ export class SurveyManagementService {
   }
 
   sendSurveyEmail(surveyID: string, emailData: string): Observable<any> {
-    const url = `${this.apiUrl}/send`; 
+    const url = `${this.apiUrl}/send`;
     const payload = {
       SurveyID: surveyID,
-      EmailData: emailData
+      EmailData: emailData,
     };
     return this.http.post<any>(url, payload, { withCredentials: true }).pipe(
       map((response) => response),
@@ -78,7 +80,7 @@ export class SurveyManagementService {
       })
     );
   }
-  
+
   getSurveySummaryById(surveyId: number): Observable<any> {
     const url = `${this.apiUrl}/summary/${surveyId}`;
     return this.http.get<any>(url, { withCredentials: true }).pipe(
@@ -90,7 +92,10 @@ export class SurveyManagementService {
   }
 
   deleteSurveyQuestion(questionId: number): Observable<any> {
-    return this.http.delete<any>(`${apiConstants.BACKEND_API.BASE_API_URL}/questions/${questionId}`, { withCredentials: true });
+    return this.http.delete<any>(
+      `${apiConstants.BACKEND_API.BASE_API_URL}/questions/${questionId}`,
+      { withCredentials: true }
+    );
   }
 
   getSurveyResponseCount(surveyId: number): Observable<any> {
@@ -99,5 +104,42 @@ export class SurveyManagementService {
       map((response) => response),
       catchError((error: HttpErrorResponse) => throwError(() => error))
     );
+  }
+
+  getSurveyDetailsByResponseId(responseId: number): Observable<any> {
+    const url = `${this.apiUrl}/summary-response/${responseId}`;
+    return this.http.get<any>(url, { withCredentials: true }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+  checkIfQuestionHasResponses(questionId: number): Observable<boolean> {
+    const url = `${apiConstants.BACKEND_API.BASE_API_URL}/questions/has-responses/${questionId}`;
+    return this.http.get<any>(url, { withCredentials: true }).pipe(
+      map((response) => response.hasResponses),
+      catchError((error) =>
+        throwError(() => new Error('Failed to check question responses'))
+      )
+    );
+  }
+
+  uploadImage(surveyId: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', file, file.name);
+
+    return this.http
+      .post(
+        `${apiConstants.BACKEND_API.BASE_API_URL}/image/upload-survey-image/${surveyId}`,
+        formData,
+        { withCredentials: true }
+      )
+      .pipe(
+        catchError((error) =>
+          throwError(() => new Error('Failed to upload image'))
+        )
+      );
   }
 }

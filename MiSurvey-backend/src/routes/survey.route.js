@@ -342,9 +342,7 @@ router
  */
 router
   .route("/c/f/:SurveyLink")
-  .get(
-    surveyController.getOneSurveyWithDataByLinkController
-  );
+  .get(surveyController.getOneSurveyWithDataByLinkController);
 
 /**
  * @swagger
@@ -615,12 +613,20 @@ router
  *                   example: 'Error occurred while deleting survey'
  */
 
-router.route('/summary/:surveyID/')
+router
+  .route("/summary/:surveyID/")
   .get(
-    authMiddleware.tokenVerification, 
+    authMiddleware.tokenVerification,
     surveyController.getSurveySummaryController
   );
-  
+
+router
+  .route("/summary-response/:responseID")
+  .get(
+    authMiddleware.tokenVerification,
+    surveyController.getSurveyDetailsByResponseIdController
+  );
+
 router
   .route("/:SurveyID")
   .get(

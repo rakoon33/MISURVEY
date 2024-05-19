@@ -13,6 +13,7 @@
         [title]="survey.Title"
         [selectedSurveyType]="getSurveyTypeName(question.QuestionType)"
         [buttonTextColor]="survey?.Customizations?.buttonTextColor || '#2f3c54'"
+        [selectedImage]="survey?.SurveyImages"
         (answerSelected)="handleAnswerSelected($event)"
       ></app-survey-selector>
     </div>

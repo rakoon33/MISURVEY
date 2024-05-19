@@ -29,5 +29,10 @@ const selectCurrentTotalUsers = createSelector(
 );
 
 
+const selectHasCompanyData = createSelector(
+  selectUserManagementState,
+  state => state.hasCompanyData
+);
 
-export default { selectCurrentUsers, selectIsUserManagementLoading, selectCurrentUser, selectCurrentTotalUsers };
+
+export default { selectCurrentUsers, selectIsUserManagementLoading, selectCurrentUser, selectCurrentTotalUsers, selectHasCompanyData };

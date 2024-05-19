@@ -1,18 +1,28 @@
 <div *ngIf="isVisible" class="notification-sidebar">
-  <div *ngFor="let notification of notifications" class="notification-item" [ngClass]="{'notification-item': true, 
-  'unread': notification.NotificationStatus === 'Unread', 
-  'read': notification.NotificationStatus === 'Read'}">
+  <div
+    *ngFor="let notification of notifications"
+    class="notification-item"
+    [ngClass]="{
+      'notification-item': true,
+      unread: notification.NotificationStatus === 'Unread',
+      read: notification.NotificationStatus === 'Read'
+    }"
+    (click)="onNotificationClick(notification)"
+  >
     <div class="notification-icon">
       <div class="eye left"></div>
       <div class="eye right"></div>
       <div class="mouth"></div>
     </div>
     <div class="notification-content">
-      <div class="notification-title">{{ notification.NotificationType }} - {{ notification.NotificationStatus }}</div>
+      <div class="notification-title">
+        {{ notification.NotificationType }} -
+        {{ notification.NotificationStatus }}
+      </div>
       <div class="notification-message">{{ notification.Message }}</div>
-      <div class="notification-date">{{ notification.CreatedAt | date: 'medium' }}</div>
+      <div class="notification-date">
+        {{ notification.CreatedAt | date : "medium" }}
+      </div>
     </div>
   </div>
 </div>
-
-
