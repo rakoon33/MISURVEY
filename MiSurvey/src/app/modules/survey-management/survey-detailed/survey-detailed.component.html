@@ -37,7 +37,9 @@
     <button class="control-btn edit" (click)="editQuestion(question)">
       &#9998;
     </button>
-    <button class="control-btn delete"  (click)="openDeleteQuestionModal(question.QuestionID)">x</button>
+    <button class="control-btn delete" [style.visibility]="survey?.SurveyQuestions.length > 1 ? 'visible' : 'hidden'" (click)="openDeleteQuestionModal(question.QuestionID)">
+      x
+    </button>
   </div>
 </div>
 

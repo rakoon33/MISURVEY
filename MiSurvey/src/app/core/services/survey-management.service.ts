@@ -111,4 +111,12 @@ export class SurveyManagementService {
       })
     );
   }
+
+  checkIfQuestionHasResponses(questionId: number): Observable<boolean> {
+    const url = `${apiConstants.BACKEND_API.BASE_API_URL}/questions/has-responses/${questionId}`;
+    return this.http.get<any>(url, { withCredentials: true }).pipe(
+      map(response => response.hasResponses),
+      catchError(error => throwError(() => new Error('Failed to check question responses')))
+    );
+  }
 }

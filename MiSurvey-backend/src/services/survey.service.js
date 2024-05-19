@@ -737,5 +737,6 @@ module.exports = {
   getNPSClassification,
   getCSATClassification,
   getEvaluationForStars,
-  getSurveyDetailsByResponseId
+  getSurveyDetailsByResponseId,
+
 };

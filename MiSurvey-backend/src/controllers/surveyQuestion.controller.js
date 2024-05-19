@@ -11,6 +11,16 @@ const deleteSurveyQuestionController = async (req, res) => {
   }
 };
 
+const checkQuestionResponsesController = async (req, res) => {
+  try {
+    const hasResponses = await surveyQuestionService.checkQuestionResponses(req.params.questionId);
+    res.json({ hasResponses });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to check question responses", error: error.message });
+  }
+};
+
 module.exports = {
   deleteSurveyQuestionController,
+  checkQuestionResponsesController
 };

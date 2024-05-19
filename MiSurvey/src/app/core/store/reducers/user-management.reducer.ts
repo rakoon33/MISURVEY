@@ -7,6 +7,8 @@ export const initialState: UserManagementState = {
   loading: false,
   selectedUser: null,
   totalUsers: 0,
+  hasCompanyData: false,
+  
 };
 
 export const userManagementReducer = createReducer(
@@ -29,9 +31,10 @@ export const userManagementReducer = createReducer(
     ...state,
     loading: true,
   })),
-  on(userManagementActions.loadUserByIdSuccess, (state, { user }) => ({
+  on(userManagementActions.loadUserByIdSuccess, (state, { user, hasCompanyData }) => ({
     ...state,
     selectedUser: user,
+    hasCompanyData: hasCompanyData, 
     loading: false,
   })),
   on(userManagementActions.loadUserByIdFailure, (state) => ({

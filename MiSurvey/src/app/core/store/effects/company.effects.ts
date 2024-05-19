@@ -41,7 +41,6 @@ export class CompanyEffects {
       switchMap(() =>
         this.companyService.getCompanyProfile().pipe(
           map((response) => {
-            console.log(response);
             return companyActions.getCompanyProfileSuccess({ company: response.data });
           }),
           catchError((error) => {

@@ -183,5 +183,5 @@ module.exports = {
   getOneSurveyWithDataByLinkController,
   sendSurveyEmailController,
   getSurveySummaryController,
-  getSurveyDetailsByResponseIdController
+  getSurveyDetailsByResponseIdController,
 };

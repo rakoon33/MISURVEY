@@ -106,7 +106,7 @@
               <li
                 *ngIf="
                   permissions.CanViewData &&
-                  user.UserRole !== 'Admin'
+                  user.UserRole !== 'Admin' && user.UserRole !== 'SuperAdmin' && currentUserRole !=='SuperAdmin'
                 "
               >
                 <button
@@ -340,6 +340,7 @@
             <option selected>Select Role</option>
             <option value="SuperAdmin">SuperAdmin</option>
             <option value="Admin">Admin</option>
+            <option value="Supervisor">Supervisor</option>
           </select>
         </div>
         <div class="mb-3">

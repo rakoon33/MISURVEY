@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Subscription, filter } from 'rxjs';
 import { surveyManagementActions } from 'src/app/core/store/actions';
 import { surveyManagementSelector } from 'src/app/core/store/selectors';
-
+import { SurveyManagementService } from 'src/app/core/services';
 @Component({
   selector: 'app-question-configure',
   templateUrl: './question-configure.component.html',
@@ -28,10 +28,12 @@ export class QuestionConfigureComponent {
   editingQuestionId: number | null = null;
   addQuestionSurveyId: number | null = null;
   surveyId: number = 0;
+  canEditType = true;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private surveyManagementService: SurveyManagementService
   ) {
     this.subscription.add(
       this.store
@@ -98,6 +100,11 @@ export class QuestionConfigureComponent {
         this.selectedOption = this.mapQuestionTypeToOption(question.QuestionType);
         this.surveyId = question.SurveyID;
       }
+
+      this.surveyManagementService.checkIfQuestionHasResponses(this.editingQuestionId!)
+      .subscribe(hasResponses => {
+        this.canEditType = !hasResponses;
+      });
 
       if (params['add'] === 'true' && params['surveyId']) {
         this.addQuestionSurveyId = params['surveyId'];

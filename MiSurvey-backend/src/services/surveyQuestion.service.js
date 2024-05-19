@@ -78,8 +78,16 @@ const deleteSurveyQuestion = async (questionID, transaction) => {
   }
 };
 
+const checkQuestionResponses = async (questionId) => {
+  const count = await SurveyResponse.count({
+    where: { QuestionID: questionId },
+  });
+  return count > 0; // returns true if responses exist, false otherwise
+};
+
 module.exports = {
   createSurveyQuestion,
   updateSurveyQuestion,
   deleteSurveyQuestion,
+  checkQuestionResponses
 };

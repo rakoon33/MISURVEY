@@ -447,7 +447,17 @@ const getOneUser = async (UserID) => {
       return { status: false, message: "User not found" };
     }
 
-    return { status: true, data: user };
+    if(user.UserRole !='SuperAdmin') {
+      companyUser = await CompanyUser.findOne({
+        where: { UserID: UserID },
+      });
+  
+      if (companyUser) {
+        return { status: true, data: user, hasData: true };
+      }
+    }
+
+    return { status: true, data: user,  hasData: false };
   } catch (error) {
     return {
       status: false,

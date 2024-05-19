@@ -42,7 +42,7 @@ export const loadUserByIdRequest = createAction(
 
 export const loadUserByIdSuccess = createAction(
   UserManagementActionTypes.LOAD_USER_BY_ID_SUCCESS,
-  props<{ user: User }>()
+  props<{ user: User, hasCompanyData: boolean }>()
 );
 
 export const loadUserByIdFailure = createAction(
