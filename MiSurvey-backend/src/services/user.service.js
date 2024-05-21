@@ -219,6 +219,7 @@ const getUserData = async (userId, userRole) => {
 
 const createUser = async (userData, udata) => {
   try {
+    console.log(userData);
     userData.UserPassword = await bcrypt.hash(userData.UserPassword, 10); // Hash password before saving
     const newUser = await User.create(userData);
     await createLogActivity(

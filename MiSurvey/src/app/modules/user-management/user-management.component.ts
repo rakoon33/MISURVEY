@@ -128,7 +128,7 @@ export class UserManagementComponent implements OnInit {
       UserRole: new FormControl('SuperAdmin', [Validators.required]),
       IsActive: new FormControl('', [Validators.required]),
       Gender: new FormControl(''),
-      Password: new FormControl('', [
+      UserPassword: new FormControl('', [
         Validators.required,
         this.validatePassword,
       ]),
@@ -361,6 +361,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   createUser() {
+    console.log(this.addUserForm.value);
     if (this.addUserForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addUserForm.value,
@@ -396,6 +397,7 @@ export class UserManagementComponent implements OnInit {
         this.store.dispatch(
           userManagementActions.createUserRequest({ userData: formData })
         );
+        this.modalService.toggle({ show: false, id: 'addUserModal' });
       }
     } else {
       this.toastr.error('Form is not valid or user ID is not available');
