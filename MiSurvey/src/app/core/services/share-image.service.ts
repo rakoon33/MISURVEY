@@ -11,4 +11,4 @@ export class ShareImageService {
   setFile(file: File | null) {
     this.fileSource.next(file);
   }
-}
+}   

@@ -1,4 +1,4 @@
-const { Customer, SurveyResponse, Survey, Ticket } = require("../models");
+const { Customer, SurveyResponse, Survey } = require("../models");
 const { Op } = require("sequelize");
 const db = require("../config/database");
 
@@ -46,11 +46,6 @@ const deleteCustomer = async (id) => {
       transaction,
     });
     for (const response of responses) {
-      await Ticket.destroy({
-        where: { ResponseID: response.ResponseID },
-        transaction,
-      });
-
       await SurveyResponse.destroy({
         where: { ResponseID: response.ResponseID },
         transaction,

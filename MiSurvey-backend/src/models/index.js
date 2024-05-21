@@ -11,12 +11,10 @@ const SurveyResponse = require("./surveyResponse.model");
 const CompanyRole = require("./companyrole.model");
 const RolePermission = require("./rolePermission.model");
 const Customer = require("./customer.model");
-const Ticket = require("./ticket.model");
 const Notification = require("./notification.model");
 const ServicePackage = require("./servicePackage.model");
 const UserPackage = require("./userPackage.model");
 const UserActivityLog = require("./userActivityLog.model");
-const SurveyReport = require("./surveyReport.model");
 const SurveyType = require("./surveyType.model");
 const QuestionTemplate = require("./questionTemplate.model");
 // Set up the association
@@ -223,12 +221,10 @@ module.exports = {
   SurveyResponse,
   RolePermission,
   Customer,
-  Ticket,
   Notification,
   ServicePackage,
   UserPackage,
   UserActivityLog,
-  SurveyReport,
   SurveyType,
   QuestionTemplate,
   // ...other models

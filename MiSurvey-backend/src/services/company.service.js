@@ -11,10 +11,8 @@ const {
   Module,
   UserActivityLog,
   Notification,
-  SurveyReport,
   UserPackage,
   CompanyRole,
-  Ticket
 } = require("../models");
 const { Op } = require("sequelize");
 const db = require("../config/database");
@@ -156,10 +154,6 @@ const deleteCompany = async (CompanyID, udata) => {
       });
   
       for (const question of questions) {
-        await Ticket.destroy({
-          where: { SurveyID: question.SurveyID },
-          transaction,
-        });
   
         await SurveyResponse.destroy({
           where: { QuestionID: question.QuestionID },
@@ -169,11 +163,6 @@ const deleteCompany = async (CompanyID, udata) => {
       await SurveyQuestion.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction
-      });
-
-      await SurveyReport.destroy({
-        where: { SurveyID: survey.SurveyID },
-        transaction,
       });
 
       await SurveyDetail.destroy({
