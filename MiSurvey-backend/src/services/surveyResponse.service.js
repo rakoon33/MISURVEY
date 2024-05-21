@@ -3,7 +3,6 @@ const {
   SurveyQuestion,
   SurveyType,
   SurveyResponse,
-  Ticket,
   Customer,
   UserPackage,
   ServicePackage,
@@ -221,7 +220,7 @@ const deleteResponse = async (responseID) => {
 
     const transaction = await db.sequelize.transaction();
     try {
-      // First, delete any tickets associated with the response
+      // First, delete any Notification associated with the response
       await Notification.destroy({
         where: { ReferenceID: responseID },
         transaction,
@@ -237,7 +236,7 @@ const deleteResponse = async (responseID) => {
       await transaction.commit();
       return {
         status: true,
-        message: "Survey response and associated tickets deleted successfully",
+        message: "Survey response deleted successfully",
       };
     } catch (error) {
       // If an error occurs, roll back the transaction

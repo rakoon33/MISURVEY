@@ -233,7 +233,7 @@ router
  *         description: The unique identifier of the survey response to be deleted.
  *     responses:
  *       200:
- *         description: Survey response and associated tickets deleted successfully.
+ *         description: Survey response deleted successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -241,7 +241,7 @@ router
  *               properties:
  *                 message:
  *                   type: string
- *                   example: 'Survey response and associated tickets deleted successfully'
+ *                   example: 'Survey response deleted successfully'
  *       400:
  *         description: Bad request, failed to delete the survey response.
  *         content:

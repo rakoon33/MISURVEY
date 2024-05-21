@@ -10,13 +10,11 @@ const {
   UserActivityLog,
   Survey,
   SurveyDetail,
-  SurveyReport,
   UserPackage,
   Notification,
   SurveyQuestion,
   SurveyResponse,
   CompanyRole,
-  Ticket,
   ServicePackage,
 } = require("../models");
 const companyService = require("../services");
@@ -295,12 +293,6 @@ const deleteUser = async (UserID, udata) => {
       transaction,
     });
 
-    // Find and delete all survey reports created by the user
-    await SurveyReport.destroy({
-      where: { UserID: UserID },
-      transaction,
-    });
-
     // Find all surveys created by the user
     const surveys = await Survey.findAll({
       where: { UserID: UserID },
@@ -314,10 +306,6 @@ const deleteUser = async (UserID, udata) => {
         transaction,
       });
       for (const question of questions) {
-        await Ticket.destroy({
-          where: { SurveyID: question.SurveyID },
-          transaction,
-        });
 
         await SurveyResponse.destroy({
           where: { QuestionID: question.QuestionID },
@@ -325,11 +313,6 @@ const deleteUser = async (UserID, udata) => {
         });
       }
       await SurveyQuestion.destroy({
-        where: { SurveyID: survey.SurveyID },
-        transaction,
-      });
-
-      await SurveyReport.destroy({
         where: { SurveyID: survey.SurveyID },
         transaction,
       });
