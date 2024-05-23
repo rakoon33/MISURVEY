@@ -3,26 +3,84 @@
     <h1>Surveys Report</h1>
   </div>
 
-  <div class="survey-container" *ngIf="permissions.CanView">
-    <div
-      class="survey-card invite-method"
-      *ngFor="let survey of surveys$ | async"
-      (click)="navigateToDetail(survey.SurveyID)"
+  
+  <div class="search-filters">
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      placeholder="Search by title..."
+      class="form-control"
+    />
+    <select [(ngModel)]="searchStatus" class="form-control">
+      <option value="">All Statuses</option>
+      <option value="Open">Open</option>
+      <option value="Closed">Closed</option>
+    </select>
+    <select [(ngModel)]="searchApproval" class="form-control">
+      <option value="">All Approvals</option>
+      <option value="Yes">Approved</option>
+      <option value="Pending">Pending</option>
+    </select>
+    <button (click)="applyFilters()" class="btn btn-primary">Apply</button>
+  </div>
+  
+
+  <div *ngIf="filteredSurveys$ | async as filteredSurveys">
+    <div class="survey-container" *ngIf="permissions.CanView">
+      <div
+        class="survey-card invite-method"
+        *ngFor="let survey of filteredSurveys.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)"
+        (click)="navigateToDetail(survey.SurveyID)"
+      >
+      <div
+      class="invite-label"
+      [ngClass]="{
+        'email-invite': survey.InvitationMethod === 'Email',
+        'link-invite': survey.InvitationMethod === 'Link'
+      }"
     >
-      <h3>
-        {{ survey.Title }}
-      </h3>
-      <div class="description-wrapper">
-        <p class="survey-description">
-          {{ survey.SurveyDescription || "No description" }}
-        </p>
-      </div>
-      <div class="status-container">
-        <p class="survey-status">
-          {{ survey.SurveyStatus || "Close" }} |
-          {{ survey.Approve == "Yes" ? "Approve" : "Pending" }}
-        </p>
-      </div>
+      {{ survey.InvitationMethod }}
     </div>
+        <h3>
+          {{ survey.Title }}
+        </h3>
+        <div class="description-wrapper">
+          <p class="survey-description">
+            {{ survey.SurveyDescription || "No description" }}
+          </p>
+        </div>
+        <div class="status-container">
+          <p class="survey-status">
+            {{ survey.SurveyStatus || "Close" }} |
+            {{ survey.Approve == "Yes" ? "Approve" : "Pending" }}
+          </p>
+        </div>
+      </div>
+
+    </div>
+  
+    <div class="pagination-controls">
+      <select [(ngModel)]="itemsPerPage" (ngModelChange)="updatePagination()" class="form-control total-items">
+        <option value="5">5 per page</option>
+        <option value="10">10 per page</option>
+        <option value="20">20 per page</option>
+      </select>      
+    
+      <!-- Pagination controls -->
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="setPage(currentPage - 1); $event.preventDefault()">Previous</button>
+          </li>
+          <li class="page-item" [class.active]="currentPage === page" *ngFor="let page of pages">
+            <button class="page-link" (click)="setPage(page); $event.preventDefault()">{{ page }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === pages.length">
+            <button class="page-link" (click)="setPage(currentPage + 1); $event.preventDefault()">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    
   </div>
 </div>

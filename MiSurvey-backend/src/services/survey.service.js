@@ -121,15 +121,34 @@ const sendEmail = async (surveyID, emailData, companyID, sendBy) => {
     let info = await transporter.sendMail(mailOptions);
 
     // Log the email send action into SurveyDetails
-    const recipientCount = emailData.split(",").length;
-    await SurveyDetail.create({
-      SurveyID: surveyID,
-      SentBy: sendBy,
-      SentAt: new Date(),
-      RecipientCount: recipientCount,
-      Recipients: emailData,
-      CompanyID: companyID,
+    const existingDetails = await SurveyDetail.findOne({
+      where: {
+        SurveyID: surveyID
+      }
     });
+
+    // Filter out already sent emails to avoid duplicates
+    const newEmails = emailData.split(',').filter(email => !existingDetails || !existingDetails.Recipients.includes(email.trim()));
+    const recipientCount = newEmails.length;
+    if (existingDetails && recipientCount > 0) {
+      // Update existing details
+      await existingDetails.update({
+        SentBy: sendBy,
+        SentAt: new Date(),
+        RecipientCount: existingDetails.RecipientCount + recipientCount,
+        Recipients: existingDetails.Recipients ? existingDetails.Recipients + ", " + newEmails.join(", ") : newEmails.join(", "),
+      });
+    } else if (!existingDetails) {
+      // Create new details if no details exist
+      await SurveyDetail.create({
+        SurveyID: surveyID,
+        SentBy: sendBy,
+        SentAt: new Date(),
+        RecipientCount: recipientCount,
+        Recipients: newEmails.join(", "),
+        CompanyID: companyID,
+      });
+    }
 
     return { status: true, message: "Emails sent successfully", info };
   } catch (error) {

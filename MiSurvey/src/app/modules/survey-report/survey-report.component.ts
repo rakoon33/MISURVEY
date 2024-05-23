@@ -3,7 +3,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { surveyManagementActions } from '../../core/store/actions';
 import { surveyManagementSelector, userSelector } from '../../core/store/selectors';
 import { Permission } from '../../core/models';
-import { map, take } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -16,6 +16,17 @@ import { ToastrService } from 'ngx-toastr';
 export class SurveyReportComponent implements OnInit {
   surveys$: Observable<any[]>;
   userPermissions$: Observable<Permission | undefined> | undefined;
+
+  // search
+  filteredSurveys$: Observable<any[]> | undefined;
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalSurveys = 0;
+  pages: number[] = [];
+
+  searchText = '';
+  searchStatus = '';
+  searchApproval = '';
 
   constructor(
     private store: Store,
@@ -52,8 +63,51 @@ export class SurveyReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(surveyManagementActions.fetchSurveysRequest());
+
+    this.filteredSurveys$ = this.surveys$.pipe(
+      tap(surveys => {
+        this.totalSurveys = surveys.length;
+        this.updatePagination();
+      }),
+      map(surveys => {
+        // Apply your filters here if needed, for example:
+        return surveys.filter(survey => {
+          return (!this.searchText || survey.Title.toLowerCase().includes(this.searchText.toLowerCase())) &&
+                 (!this.searchStatus || survey.SurveyStatus === this.searchStatus) &&
+                 (!this.searchApproval || survey.Approve === this.searchApproval);
+        }).slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
+      })
+    );
   }
 
+  applyFilters() {
+    this.filteredSurveys$ = this.surveys$.pipe(
+      map(surveys => {
+        const filtered = surveys.filter(survey =>
+          (this.searchText ? survey.Title.toLowerCase().includes(this.searchText.toLowerCase()) : true) &&
+          (this.searchStatus ? survey.SurveyStatus === this.searchStatus : true) &&
+          (this.searchApproval ? survey.Approve === this.searchApproval : true)
+        );
+        this.totalSurveys = filtered.length;
+        this.updatePagination();
+        return filtered;
+      })
+    );
+  }
+
+  updatePagination() {
+    const pageCount = Math.ceil(this.totalSurveys / this.itemsPerPage);
+    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  }
+
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) {
+      return;
+    }
+    this.currentPage = page;
+  }
+
+  
   navigateToDetail(surveyId: number) {
     this.userPermissions$!.pipe(take(1)).subscribe(permissions => {
       if (permissions?.CanViewData) {

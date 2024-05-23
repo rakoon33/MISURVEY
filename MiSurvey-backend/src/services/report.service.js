@@ -334,7 +334,9 @@ const getSurveyQuestionData = async (surveyId) => {
         {
           model: SurveyDetail,
           as: "SurveyDetails",
-          attributes: ["RecipientCount", "Recipients"], // Remove where clause
+          where: { SurveyID: surveyId }, 
+          attributes: ["RecipientCount", "Recipients"],
+          required: false 
         },
       ],
       attributes: ["InvitationMethod"],
@@ -395,19 +397,16 @@ const getSurveyQuestionData = async (surveyId) => {
 
     // Only include the survey details if InvitationMethod is 'Email'
     let recipientInfo = null;
-    if (
-      survey.InvitationMethod === "Email" &&
-      survey.SurveyDetails.length > 0
-    ) {
+    if (survey.InvitationMethod === "Email" && survey.SurveyDetails.length > 0) {
       recipientInfo = survey.SurveyDetails.map((detail) => ({
         recipientCount: detail.RecipientCount,
-        recipients: detail.Recipients,
+        recipients: detail.Recipients.split(', '),  // Assuming recipients are stored as a single string
       }));
     }
 
     return {
       status: true,
-      data: { surveyQuestions: formattedSurveyQuestions, recipientInfo },
+      data: { surveyQuestions: formattedSurveyQuestions, recipientInfo, invitationMethod: survey.InvitationMethod },
     };
   } catch (error) {
     return { status: false, message: error.message };

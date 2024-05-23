@@ -203,3 +203,44 @@ i {
   margin: 0;
   margin-bottom: 6px;
 }
+
+.fixed-height-modal {
+  height: 500px;  // Set the desired fixed height
+  overflow-y: auto;   // Enable scrolling inside the modal if content exceeds the height
+}
+
+.list-group-email {
+  padding: 0;
+  margin: 0 !important;
+  list-style-type: none; // Removes default list styling
+  width: 100%; // Ensures the list takes full width of the modal body
+
+  li.list-item-email {
+    padding: 0;
+    margin: 0;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc; // Adds a subtle border
+    border-radius: 5px; // Rounds the corners of the list items
+    background-color: #f9f9f9; // A light background for each item
+    transition: background-color 0.3s ease; // Smooth transition for hover effect
+
+
+    color: #000;
+    &:hover {
+      background-color: #e9ecef; // Changes background on hover
+    }
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between; // Spreads content to the sides
+  }
+
+}
+
+
+.btn-link {
+  text-decoration: none;
+  text-decoration: underline;
+  color: #fff;
+}

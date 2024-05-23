@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReportService } from 'src/app/core/services/report.service';
-
+import { ModalService } from '@coreui/angular';
 type QuestionType = 'NPS' | 'CSAT' | 'Stars' | 'Thumbs' | 'Emoticons' | 'Text';
 @Component({
   selector: 'app-survey-report-detail',
@@ -11,10 +11,18 @@ type QuestionType = 'NPS' | 'CSAT' | 'Stars' | 'Thumbs' | 'Emoticons' | 'Text';
 export class SurveyReportDetailComponent implements OnInit {
   surveyQuestionData: any[] = []; // Store survey questions data
   chartSurveyData: any[] = []; // Data for charts
+  recipientInfo: any = null;
+
+  emailFilter: string = '';
+
+  filteredEmails: string[] = [];
+
   private isDataLoaded = false;
+  invitationMethod: any;
   constructor(
     private reportService: ReportService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -22,40 +30,86 @@ export class SurveyReportDetailComponent implements OnInit {
     this.loadSurveyQuestionData(surveyId);
   }
 
-  loadSurveyQuestionData(surveyId: number) {
-    this.reportService.getSurveyQuestionData(surveyId).subscribe((response) => {
-      if (response.status && response.data) {
-        this.surveyQuestionData = response.data.surveyQuestions || [];
-        this.chartSurveyData = this.surveyQuestionData
-          .map((question) => {
-            return {
-              questionText: question.questionText,
-              questionType: question.questionType,
-              responseRate: question.responseRate,
-              labels: this.getLabels(question),
-              type: this.getChartType(question.questionType as QuestionType),
-              data: this.getChartData(question),
-              backgroundColor: this.getBackgroundColor(
-                question.questionType as QuestionType
-              ),
-              borderColor: this.getBorderColor(
-                question.questionType as QuestionType
-              ),
-              label: this.getChartLabel(question.questionType as QuestionType),
-              additionalData: question.data, // Include additional data
-            };
-          })
-          .filter((chart) => chart !== null);
-        this.isDataLoaded = true;
-      } else {
-        console.error('Invalid response:', response);
+  applyFilter() {
+    if (this.recipientInfo && this.recipientInfo[0]?.recipients) {
+      // Check if recipients is a string and needs splitting
+      if (typeof this.recipientInfo[0].recipients === 'string') {
+        this.filteredEmails = this.recipientInfo[0].recipients
+          .split(',')
+          .map((email: string) => email.trim());
+      } else if (Array.isArray(this.recipientInfo[0].recipients)) {
+        // If it's already an array, use it directly
+        this.filteredEmails = this.recipientInfo[0].recipients;
       }
-    }, (error) => {
-      console.error('Error fetching survey data:', error);
-    });
+
+      // Apply the filter, if any
+      if (this.emailFilter) {
+        this.filteredEmails = this.filteredEmails.filter((email: string) =>
+          email.toLowerCase().includes(this.emailFilter.toLowerCase())
+        );
+      }
+    }
   }
-  
-  
+
+  loadSurveyQuestionData(surveyId: number) {
+    this.reportService.getSurveyQuestionData(surveyId).subscribe(
+      (response) => {
+        if (response.status && response.data) {
+          this.surveyQuestionData = response.data.surveyQuestions || [];
+          this.recipientInfo = response.data.recipientInfo;
+          this.invitationMethod = response.data.invitationMethod;
+          if (this.recipientInfo) {
+            // Assuming recipients might be a string or an array
+            if (typeof this.recipientInfo[0].recipients === 'string') {
+              this.recipientInfo[0].recipients =
+                this.recipientInfo[0].recipients.split(', ');
+            }
+            if (typeof this.recipientInfo[0].recipients === 'string') {
+              // It's a string, so we can split it as intended
+              this.filteredEmails =
+                this.recipientInfo[0].recipients.split(', ');
+            } else if (Array.isArray(this.recipientInfo[0].recipients)) {
+              // It's already an array, use it directly
+              this.filteredEmails = this.recipientInfo[0].recipients;
+            } else {
+              // It's neither a string nor an array, or it's undefined
+              console.error('Unexpected data type for recipients');
+              this.filteredEmails = [];
+            }
+          }
+
+          this.chartSurveyData = this.surveyQuestionData
+            .map((question) => {
+              return {
+                questionText: question.questionText,
+                questionType: question.questionType,
+                responseRate: question.responseRate,
+                labels: this.getLabels(question),
+                type: this.getChartType(question.questionType as QuestionType),
+                data: this.getChartData(question),
+                backgroundColor: this.getBackgroundColor(
+                  question.questionType as QuestionType
+                ),
+                borderColor: this.getBorderColor(
+                  question.questionType as QuestionType
+                ),
+                label: this.getChartLabel(
+                  question.questionType as QuestionType
+                ),
+                additionalData: question.data, // Include additional data
+              };
+            })
+            .filter((chart) => chart !== null);
+          this.isDataLoaded = true;
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error) => {
+        console.error('Error fetching survey data:', error);
+      }
+    );
+  }
 
   // Create a helper method to extract chart labels
   private getLabels(question: any): string[] {
@@ -185,5 +239,9 @@ export class SurveyReportDetailComponent implements OnInit {
       default:
         return ''; // Mặc định trả về rỗng nếu không khớp
     }
+  }
+
+  openEmailListModal() {
+    this.modalService.toggle({ id: 'emailListModal', show: true });
   }
 }
