@@ -20,28 +20,34 @@
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>
   </div>
+
   <div *ngIf="permissions.CanView" class="input-group mb-3">
-    <div class="input-group-prepend">
-      <c-dropdown>
-        <button class="btn-management" cButton cDropdownToggle>Filter</button>
-        <ul cDropdownMenu>
-          <li>
-            <button cDropdownItem>Name</button>
-          </li>
-          <li>
-            <button cDropdownItem>Role</button>
-          </li>
-          <li>
-            <button cDropdownItem>Active</button>
-          </li>
-        </ul>
-      </c-dropdown>
-    </div>
-    <form
-      class="form-search-management"
-      onsubmit="event.preventDefault();"
-      role="search"
-    >
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <c-dropdown>
+          <button class="btn-management" cButton cDropdownToggle>
+            Filter By
+          </button>
+          <ul cDropdownMenu>
+            <li>
+              <button cDropdownItem (click)="setFilterType('name')">
+                Name
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem (click)="setFilterType('role')">
+                Role
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem (click)="setFilterType('active')">
+                Active
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem (click)="setFilterType('userID')">
+                UserID
+              </button>
             </li>
           </ul>
         </c-dropdown>
