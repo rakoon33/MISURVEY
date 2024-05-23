@@ -12,24 +12,19 @@ const createQuestionTemplate = async (data, udata) => {
   }
 };
 
-const getAllQuestionTemplates = async (page, pageSize) => {
+const getAllQuestionTemplates = async () => {
   try {
-    // Include Sequelize's "limit" and "offset" options to fetch the paginated data
-    const limit = pageSize ? parseInt(pageSize, 10) : 10; // default page size to 10
-    const offset = page ? (parseInt(page, 10) - 1) * limit : 0; // default page to first
 
-    const { count, rows: templates } = await QuestionTemplate.findAndCountAll({
+    const { rows: templates } = await QuestionTemplate.findAndCountAll({
       include: [
         {
           model: SurveyType,
           as: "SurveyType",
         },
       ],
-      limit,
-      offset,
     });
 
-    return { status: true, templates, total: count };
+    return { status: true, templates };
   } catch (error) {
     return { status: false, message: error.message };
   }

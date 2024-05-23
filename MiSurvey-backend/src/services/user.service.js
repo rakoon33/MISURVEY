@@ -454,12 +454,8 @@ const getOneUser = async (UserID) => {
 const getAllUsers = async (
   requestingUserRole,
   requestingUserCompanyId,
-  page,
-  pageSize
 ) => {
   try {
-    const offset = (page - 1) * pageSize;
-    const limit = pageSize;
 
     let queryOptions = {
       attributes: [
@@ -472,8 +468,6 @@ const getAllUsers = async (
         "UserRole",
         "IsActive",
       ],
-      offset,
-      limit,
     };
 
     if (requestingUserRole !== "SuperAdmin") {
@@ -487,9 +481,9 @@ const getAllUsers = async (
       ];
     }
 
-    const { count, rows: users } = await User.findAndCountAll(queryOptions);
+    const { rows: users } = await User.findAndCountAll(queryOptions);
 
-    return { status: true, data: users, total: count };
+    return { status: true, data: users };
   } catch (error) {
     console.error("Error in getAllUsers service: ", error);
     return {

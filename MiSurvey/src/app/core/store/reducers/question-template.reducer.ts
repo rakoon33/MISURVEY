@@ -4,17 +4,15 @@ import { QuestionTemplateState } from '../states';
 
 export const initialState: QuestionTemplateState = {
   questionTemplates: [],
-  totalTemplates: 0,
   loading: false,
   error: null
 };
 
 export const questionTemplateReducer = createReducer(
   initialState,
-  on(QuestionTemplateActions.loadQuestionTemplatesSuccess, (state, { questionTemplates, totalTemplates }) => ({
+  on(QuestionTemplateActions.loadQuestionTemplatesSuccess, (state, { questionTemplates }) => ({
     ...state,
     questionTemplates: questionTemplates,
-    totalTemplates: totalTemplates,
     loading: false,
     error: null
   })),

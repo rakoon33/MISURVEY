@@ -26,15 +26,9 @@ const selectQuestionTemplatesError = createSelector(
 );
 
 
-const selectTotalTemplates = createSelector(
-    selectQuestionTemplateState,
-    (state) => state.totalTemplates
-  );
-
   
 export default {
   selectQuestionTemplatesError,
   selectQuestionTemplatesLoading,
   selectAllQuestionTemplates,
-  selectTotalTemplates
 };

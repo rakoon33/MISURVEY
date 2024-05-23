@@ -518,10 +518,10 @@ canvas {
 }
 
 div.email-icon {
-  visibility: hidden; 
+  visibility: hidden;
 }
 .email-icon {
-  visibility:visible; 
+  visibility: visible;
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -534,12 +534,85 @@ div.email-icon {
 
 .email-icon a {
   text-decoration: none;
-  color: white; 
-  background-color:#0a66c2;  
+  color: white;
+  background-color: #0a66c2;
   padding: 5px;
   border-radius: 4px;
 }
 
 .response-row:hover .email-icon {
-  visibility: visible; 
+  visibility: visible;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This will create space between select and pagination */
+  margin-bottom: 10px;
+}
+
+.pagination {
+  display: flex;
+  margin: 0; /* Resets margin for ul */
+  padding-left: 0; /* Resets padding for ul */
+}
+
+.page-item {
+  margin-right: 5px; /* Space between pagination buttons */
+}
+
+.page-link {
+  cursor: pointer; /* Ensures it appears clickable */
+  background: #0b65c2;
+  border: 1px solid transparent;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.page-item.disabled .page-link,
+.page-item.active .page-link {
+  background: #5a6268; /* Different background for disabled/active */
+}
+
+.page-link:hover {
+  background: #0056b3; /* Hover state */
+}
+
+.search-filters {
+  display: flex;
+  align-items: center; /* Ensures vertical alignment of all elements */
+  gap: 10px; /* Space between elements */
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Adjusts to full width for better control over children's width */
+}
+
+.search-filters input,
+.search-filters select,
+.search-filters button {
+  flex-grow: 1; /* Allows elements to grow and fill the space */
+  border: 1px solid #ced4da;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 4px;
+}
+
+.search-filters button {
+  flex-grow: 0; /* Prevents the button from growing too large */
+  background-color: #0b65c2;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-filters button:hover {
+  background-color: #0056b3;
+}
+
+.total-items {
+  width: 100px !important;
+  padding: 5px;
 }

@@ -1,4 +1,4 @@
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule} from '@angular/forms';
 import { SurveyReportComponent } from './survey-report.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
@@ -47,6 +47,7 @@ import {
     NavModule,
     UtilitiesModule,
     TabsModule,
+    FormsModule
   ],
 })
 export class SurveyReportModule {}

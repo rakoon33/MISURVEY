@@ -16,47 +16,66 @@
       Export Data
     </button>
   </div>
+  
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>
   </div>
-  <div *ngIf="permissions.CanView" class="input-group mb-3">
-    <div class="input-group-prepend">
-      <c-dropdown>
-        <button class="btn-management" cButton cDropdownToggle>Filter</button>
-        <ul cDropdownMenu>
-          <li>
-            <button cDropdownItem>Name</button>
-          </li>
-          <li>
-            <button cDropdownItem>Role</button>
-          </li>
-          <li>
-            <button cDropdownItem>Active</button>
-          </li>
-        </ul>
-      </c-dropdown>
-    </div>
-    <form
-      class="form-search-management"
-      onsubmit="event.preventDefault();"
-      role="search"
-    >
-      <input
-        class="input-search-management"
-        id="search"
-        type="search"
-        placeholder="Search..."
-        autofocus
-        required
-      />
-    </form>
 
-    <c-button-group class="group-button-management" role="group">
-      <button cButton>Search</button>
-      <button class="btn-border-right btn-borderStyle-left" cButton>
-        Refresh
-      </button>
-    </c-button-group>
+  <div *ngIf="permissions.CanView" class="input-group mb-3">
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <c-dropdown>
+          <button class="btn-management" cButton cDropdownToggle>
+            Filter By
+          </button>
+          <ul cDropdownMenu>
+            <li>
+              <button cDropdownItem (click)="setFilterType('name')">
+                Name
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem (click)="setFilterType('role')">
+                Role
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem (click)="setFilterType('active')">
+                Active
+              </button>
+            </li>
+            <li>
+              <button cDropdownItem (click)="setFilterType('userID')">
+                UserID
+              </button>
+            </li>
+          </ul>
+        </c-dropdown>
+      </div>
+      <input
+        type="search"
+        class="form-control"
+        [(ngModel)]="searchText"
+        placeholder="Enter search text..."
+        (keyup.enter)="applyFilters()"
+      />
+      <c-button-group class="group-button-management" role="group">
+        <button
+          cButton
+          (click)="applyFilters()"
+          class="input-search-management"
+        >
+          Search
+        </button>
+        <button
+          class="btn-border-right btn-borderStyle-left"
+          cButton
+          (click)="refreshData()"
+        >
+          Refresh
+        </button>
+      </c-button-group>
+    </div>
   </div>
 
   <table
@@ -81,7 +100,7 @@
     </thead>
     <tbody>
       <!-- Loop through the users array using the *ngFor directive -->
-      <tr *ngFor="let user of users$ | async; let i = index">
+      <tr *ngFor="let user of filteredUsers$ | async; let i = index">
         <td scope="row">{{ i + 1 }}</td>
         <td>
           <c-avatar
@@ -138,39 +157,52 @@
     </tbody>
   </table>
 
-  <div class="pagination">
-    <button
-      class="pagination-button"
-      (click)="onPageChangePrevious()"
-      [disabled]="currentPage === '1'"
+  <!-- phân trang -->
+  <div class="pagination-controls">
+    <select
+      [(ngModel)]="itemsPerPage"
+      (ngModelChange)="updatePagination()"
+      class="form-control total-items"
     >
-      << Previous
-    </button>
-    <div
-      *ngFor="
-        let page of getPaginationRange(currentPage, totalPages);
-        let i = index
-      "
-      class="page-item"
-    >
-      <button
-        *ngIf="page !== '...'"
-        (click)="onPageChange(page)"
-        [class.active]="currentPage === page.toString()"
-      >
-        {{ page }}
-      </button>
-      <span *ngIf="page === '...'">{{ page }}</span>
-    </div>
-    <button
-      class="pagination-button"
-      (click)="onPageChangeNext()"
-      [disabled]="currentPage === totalPages.toString()"
-    >
-      Next >>
-    </button>
-  </div>
+      <option value="5">5 per page</option>
+      <option value="10">10 per page</option>
+      <option value="20">20 per page</option>
+    </select>
 
+    <!-- Pagination controls -->
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button
+            class="page-link"
+            (click)="setPage(currentPage - 1); $event.preventDefault()"
+          >
+            Previous
+          </button>
+        </li>
+        <li
+          class="page-item"
+          [class.active]="currentPage === page"
+          *ngFor="let page of pages"
+        >
+          <button
+            class="page-link"
+            (click)="setPage(page); $event.preventDefault()"
+          >
+            {{ page }}
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === pages.length">
+          <button
+            class="page-link"
+            (click)="setPage(currentPage + 1); $event.preventDefault()"
+          >
+            Next
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
   <!-- Modal -->
 
   <!-- View User Modal -->

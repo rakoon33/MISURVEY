@@ -65,10 +65,8 @@ const getOneCustomerController = async (req, res) => {
 
 const getAllCustomersController = async (req, res) => {
   try {
-      const page = parseInt(req.query.page) || 1; // Set default page to 1 if not provided
-      const pageSize = parseInt(req.query.pageSize) || 10; // Set default pageSize to 10 if not provided
       console.log(req.user)
-      const result = await customerService.getAllCustomers(page, pageSize, req.user);
+      const result = await customerService.getAllCustomers(req.user);
       if (result.status) {
         res.json(result);
       } else {

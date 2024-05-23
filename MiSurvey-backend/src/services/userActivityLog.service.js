@@ -12,29 +12,24 @@ const createLogActivity = async (userId, action, description, tableName, company
   });
 };
 
-const getAllActivities = async (userData, page = 1, pageSize = 10) => {
-  const offset = (page - 1) * pageSize;
-  
+const getAllActivities = async (userData) => {
+
   try {
     if (userData.role === 'SuperAdmin') {
       // Fetch all activities for SuperAdmin without filtering by CompanyID
       const { count, rows } = await UserActivityLog.findAndCountAll({
-        limit: pageSize,
-        offset: offset,
         order: [['CreatedAt', 'DESC']]
       });
-      return { status: true, message: "Activities fetched successfully", activities: rows, total: count };
+      return { status: true, message: "Activities fetched successfully", activities: rows };
     } else {
       // Fetch activities and count specific to the user's CompanyID
       const { rows } = await UserActivityLog.findAndCountAll({
         where: { CompanyID: userData.companyID },
-        limit: pageSize,
-        offset: offset,
         order: [['CreatedAt', 'DESC']]
       });
       const total = rows.length;
 
-      return { status: true, message: "Activities fetched successfully", activities: rows, total: total };
+      return { status: true, message: "Activities fetched successfully", activities: rows };
     }
   } catch (error) {
     return { status: false, message: error.message, error: error.toString() };

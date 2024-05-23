@@ -13,13 +13,11 @@ export class QuestionTemplateEffects {
         this.actions$.pipe(
           ofType(QuestionTemplateActions.loadQuestionTemplatesRequest),
           switchMap((action) =>
-            this.questionTemplateService.getQuestionTemplates(action.page, action.pageSize).pipe(
+            this.questionTemplateService.getQuestionTemplates().pipe(
               map((response) => {
                 const templates = response.templates; 
-                const totalTemplates = response.total; 
                 return QuestionTemplateActions.loadQuestionTemplatesSuccess({
                   questionTemplates: templates,
-                  totalTemplates: totalTemplates,
                 });
               }),
               catchError((error) => of(QuestionTemplateActions.loadQuestionTemplatesFailure()))

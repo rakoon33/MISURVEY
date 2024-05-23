@@ -1,4 +1,4 @@
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule} from '@angular/forms';
 import { QuestionTemplateManagementRoutingModule } from './question-template-routing.module';
 import { QuestionTemplateManagementComponent } from './question-template.component';
 import { CommonModule } from '@angular/common';
@@ -52,7 +52,7 @@ import {
     NavModule,
     UtilitiesModule,
     TabsModule,
-  
+    FormsModule
   ]
 })
 export class QuestionTemplateModule {}

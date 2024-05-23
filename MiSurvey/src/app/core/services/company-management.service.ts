@@ -12,11 +12,8 @@ export class CompanyManagementService {
   private apiUrl = `${apiConstants.BACKEND_API.BASE_API_URL}${apiConstants.BACKEND_API.COMPANY}`;
   constructor(private http: HttpClient) {}
   
-  getCompanies(page: number, pageSize: number): Observable<any> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString());
-    return this.http.get<any>(this.apiUrl, { params, withCredentials: true });
+  getCompanies(): Observable<any> {
+    return this.http.get<any>(this.apiUrl, { withCredentials: true });
   }
 
   getCompanyById(CompanyID: number): Observable<any> {

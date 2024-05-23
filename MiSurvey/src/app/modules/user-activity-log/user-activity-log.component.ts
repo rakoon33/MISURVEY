@@ -7,7 +7,7 @@ import {
   Router,
   Event as RouterEvent,
 } from '@angular/router';
-import { Observable, combineLatest, filter, map } from 'rxjs';
+import { Observable, combineLatest, filter, map, of, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { userSelector } from 'src/app/core/store/selectors';
@@ -22,23 +22,30 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class UserActivityLogComponent implements OnInit {
   activities: UserActivityLog[] = [];
   isLoading: boolean = true;
-  totalActivities: number = 0;
-  currentPage: number = 1;
-  pageSize: number = 10;
-  totalPages: number = 0;
+
   userPermissions$: Observable<Permission | undefined> | undefined;
-  
+
+  // search
+  filteredActivities$: Observable<UserActivityLog[]> | undefined;
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalActivities = 0;
+  pages: number[] = [];
+  searchText: string = '';
+  filterType: string = 'userID'; 
+
   constructor(
     private userActivityLogService: UserActivityLogService,
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
-    private toastr: ToastrService,
+    private toastr: ToastrService
   ) {
-
     this.userPermissions$ = combineLatest([
       this.store.select(userSelector.selectCurrentUser),
-      this.store.select(userSelector.selectPermissionByModuleName('User Activity Log'))
+      this.store.select(
+        userSelector.selectPermissionByModuleName('User Activity Log')
+      ),
     ]).pipe(
       map(([currentUser, permissions]) => {
         if (currentUser?.UserRole === 'Supervisor') {
@@ -57,109 +64,80 @@ export class UserActivityLogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart))
-      .subscribe((event: RouterEvent) => {
-        if (event instanceof NavigationStart) {
-          if (event.url === '/user-activity') {
-            this.router.navigate(['/user-activity'], {
-              queryParams: { page: 1, pageSize: 10 },
-              replaceUrl: true, // This replaces the current state in history
-            });
-          }
-        }
-      });
-      
-    this.route.queryParams.subscribe((params) => {
-      this.currentPage = parseInt(params['page'], 10) || 1;
-      this.pageSize = parseInt(params['pageSize'], 10) || 10;
-      this.loadActivities();
-    });
+    this.loadActivities();
+  }
+
+  applyFilters(): void {
+    this.filteredActivities$ = of(this.activities).pipe(
+      map(activities => activities.filter(activity => this.filterActivity(activity))),
+      tap(filteredActivities => {
+        this.totalActivities = filteredActivities.length;
+        this.updatePagination();
+      }),
+      map(filteredActivities => {
+        // Calculate the starting index based on the current page and the number of items per page
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        // Return only the slice of data that should be visible on the current page
+        return filteredActivities.slice(startIndex, startIndex + this.itemsPerPage);
+      })
+    );
+  }
+  
+  
+  filterActivity(activity: UserActivityLog): boolean {
+    const searchTextLower = this.searchText.toLowerCase();
+    switch (this.filterType) {
+      case 'userID':
+        return activity.UserID.toString().includes(this.searchText);
+      case 'action':
+        return activity.UserAction.toLowerCase().includes(searchTextLower);
+      case 'description':
+        return activity.ActivityDescription.toLowerCase().includes(searchTextLower);
+      default:
+        return true;
+    }
+  }
+
+  updatePagination() {
+    const pageCount = Math.ceil(this.totalActivities / this.itemsPerPage);
+    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  }
+
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) return;
+    this.currentPage = page;
+    this.applyFilters();
+  }
+
+  refreshData() {
+    this.searchText = '';
+    this.filterType = 'userID';
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  
+  setFilterType(type: string): void {
+    this.filterType = type;
+    this.applyFilters(); // Reapply filters whenever the filter type changes
   }
 
   loadActivities(): void {
-    this.userActivityLogService
-      .getAllActivities(this.currentPage, this.pageSize)
-      .subscribe({
-        next: (data) => {
-          this.activities = data.activities;
-          this.totalPages = Math.ceil(data.total / this.pageSize);
-          this.isLoading = false;
-        },
-        error: () => {
-          this.isLoading = false;
-        },
-      });
-  }
-
-  onPageChange(page: number | string) {
-    const pageNumber = typeof page === 'string' ? parseInt(page, 10) : page;
-    this.router.navigate(['/user-activity'], {
-      queryParams: { page: pageNumber, pageSize: this.pageSize },
-    });
-    this.currentPage = pageNumber;
-    this.loadActivities();
-  }
-
-  onPageChangeNext() {
-    this.router.navigate(['/user-activity'], {
-      queryParams: {
-        page: Number(this.currentPage) + 1,
-        pageSize: this.pageSize,
+    this.userActivityLogService.getAllActivities().subscribe({
+      next: (data) => {
+        this.activities = data.activities;
+        this.isLoading = false;
+        this.applyFilters();
+      },
+      error: () => {
+        this.isLoading = false;
       },
     });
-    this.loadActivities();
-  }
-
-  onPageChangePrevious() {
-    this.router.navigate(['/user-activity'], {
-      queryParams: {
-        page: Number(this.currentPage) - 1,
-        pageSize: this.pageSize,
-      },
-    });
-    this.loadActivities();
-  }
-
-  getPaginationRange(
-    currentPageStr: string,
-    totalPages: number,
-    siblingCount = 1
-  ): Array<number | string> {
-    const currentPage = parseInt(currentPageStr, 10);
-    const range = [];
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
-
-    range.push(1);
-
-    if (shouldShowLeftDots) {
-      range.push('...');
-    }
-
-    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-      if (i !== 1 && i !== totalPages) {
-        range.push(i);
-      }
-    }
-
-    if (shouldShowRightDots) {
-      range.push('...');
-    }
-
-    if (totalPages !== 1) {
-      range.push(totalPages);
-    }
-
-    return range;
   }
 
   exportToPdf() {
     const activitiesToExport = this.activities; // Assuming this.activities contains the data
-  
+
     if (activitiesToExport.length > 0) {
       const documentDefinition = this.getDocumentDefinition(activitiesToExport);
       pdfMake.createPdf(documentDefinition).download('user-activity-log.pdf');
@@ -171,7 +149,7 @@ export class UserActivityLogComponent implements OnInit {
   getDocumentDefinition(activities: UserActivityLog[]) {
     const now = new Date();
     const formattedTime = now.toLocaleString();
-  
+
     return {
       content: [
         {
@@ -233,6 +211,4 @@ export class UserActivityLogComponent implements OnInit {
       layout: 'auto',
     };
   }
-  
-  
 }

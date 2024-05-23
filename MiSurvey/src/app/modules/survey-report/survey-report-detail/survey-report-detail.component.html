@@ -1,5 +1,24 @@
 <div class="d-flex justify-content-center align-items-start">
   <div class="col-md-8 custom-card-container">
+    <c-card
+    *ngIf="invitationMethod === 'Email' && recipientInfo?.length > 0; else noEmailsSent"
+      class="mb-4"
+    >
+      <c-card-body
+        class="custom-header"
+        style="border-radius: calc(0.375rem - 1px)"
+      >
+        Email Recipients ({{ recipientInfo[0]?.recipientCount }})
+        <button class="btn btn-link" (click)="openEmailListModal()">
+          Click to view list
+        </button>
+      </c-card-body>
+    </c-card>
+    <ng-template #noEmailsSent>
+      <c-card class="mb-4" *ngIf="invitationMethod === 'Email'">
+        <c-card-body>No survey has been sent to any email yet.</c-card-body>
+      </c-card>
+    </ng-template>
     <c-row>
       <!-- Loop through the chart data and display each chart dynamically -->
       <c-col
@@ -667,4 +686,40 @@
       Close
     </button>
   </c-modal-footer>
+</c-modal>
+
+<c-modal
+  size="lg"
+  alignment="center"
+  scrollable
+  #emailListModal
+  id="emailListModal"
+>
+  <c-modal-header>
+    <h5 class="modal-title">Email List</h5>
+    <button
+      class="btn-close"
+      [cModalToggle]="emailListModal.id"
+      cButtonClose
+    ></button>
+  </c-modal-header>
+  <c-modal-body class="fixed-height-modal">
+    <input
+      type="text"
+      class="form-control mb-3"
+      placeholder="Search emails..."
+      [(ngModel)]="emailFilter"
+      (ngModelChange)="applyFilter()"
+    />
+    <div *ngIf="filteredEmails.length > 0">
+      <ul class="list-group-email">
+        <li *ngFor="let email of filteredEmails" class="list-item-email">
+          {{ email }}
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="filteredEmails.length === 0" class="alert alert-info">
+      No emails to display or no matches found.
+    </div>
+  </c-modal-body>
 </c-modal>

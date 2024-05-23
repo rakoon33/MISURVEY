@@ -61,11 +61,8 @@ const deleteCustomer = async (id) => {
   }
 };
 
-const getAllCustomers = async (page, pageSize, userData) => {
+const getAllCustomers = async (userData) => {
   try {
-    const offset = (page - 1) * pageSize;
-    const limit = pageSize;
-
     const customers = await Customer.findAll({
       include: [
         {
@@ -81,16 +78,13 @@ const getAllCustomers = async (page, pageSize, userData) => {
         },
       ],
       order: [["CreatedAt", "DESC"]],
-      limit: limit,
-      offset: offset,
+
     });
 
-    customerCount = customers.length;
     return {
       status: true,
       message: "Customers fetched successfully",
       customers,
-      total: customerCount,
     };
   } catch (error) {
     console.error("Error fetching customers: ", error);

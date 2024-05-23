@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable, Subscription, filter, take } from 'rxjs';
+import { Observable, Subscription, filter, map, take, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
@@ -26,10 +26,6 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class QuestionTemplateManagementComponent implements OnInit {
   questionTemplates$: Observable<QuestionTemplate[]>;
   isLoading$: Observable<boolean>;
-  totalTemplates: number = 0;
-  currentPage: number = 1;
-  pageSize: number = 10;
-  totalPages: number = 1;
 
   selectedTemplateId: number = 0;
 
@@ -37,6 +33,14 @@ export class QuestionTemplateManagementComponent implements OnInit {
   editTemplateForm: FormGroup;
   private subscriptions: Subscription = new Subscription();
 
+  filteredTemplates$: Observable<QuestionTemplate[]> | undefined;
+  searchText: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalTemplates: number = 0;
+  filterType = 'text';
+  pages: number[] = [];
+  
   viewTemplateData: any = {};
   
   surveyTypes = [
@@ -80,99 +84,76 @@ export class QuestionTemplateManagementComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart))
-      .subscribe((event: RouterEvent) => {
-        if (event instanceof NavigationStart) {
-          if (event.url === '/question-template') {
-            this.router.navigate(['/question-template'], {
-              queryParams: { page: 1, pageSize: 10 },
-              replaceUrl: true, // This replaces the current state in history
-            });
-          }
-        }
-      });
-
-    this.route.queryParams.subscribe((params) => {
-      this.currentPage = parseInt(params['page']) || 1;
-      this.pageSize = parseInt(params['pageSize']) || 10;
       this.loadQuestionTemplates();
-    });
-
-    this.subscriptions.add(
-      this.store
-        .select(questionTemplateSelectors.selectTotalTemplates)
-        .subscribe((total) => {
-          this.totalTemplates = total;
-          this.totalPages = Math.ceil(this.totalTemplates / this.pageSize);
-        })
-    );
   }
 
   loadQuestionTemplates() {
     this.store.dispatch(
-      questionTemplateActions.loadQuestionTemplatesRequest({
-        page: this.currentPage,
-        pageSize: this.pageSize,
+      questionTemplateActions.loadQuestionTemplatesRequest()
+    );
+    this.applyFilters();
+  }
+
+  setFilterType(type: string) {
+    this.filterType = type;
+    this.applyFilters();
+  }
+  
+  applyFilters() {
+    this.filteredTemplates$ = this.questionTemplates$.pipe(
+      map(templates =>
+        templates.filter(template => {
+          let matchesFilter = true;
+          const searchLower = this.searchText.toLowerCase();
+  
+          switch (this.filterType) {
+            case 'text':
+              matchesFilter = template.TemplateText.toLowerCase().includes(searchLower);
+              break;
+            case 'category':
+              matchesFilter = template.TemplateCategory.toLowerCase().includes(searchLower);
+              break;
+            case 'surveyType':
+              matchesFilter = template.SurveyType.SurveyTypeName.toLowerCase().includes(searchLower);
+              break;
+            default:
+              matchesFilter = true;
+          }
+  
+          return matchesFilter;
+        }),
+      ),
+      tap(filtered => {
+        this.totalTemplates = filtered.length;
+        this.updatePagination();
+      }),
+      map(filtered => {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        return filtered.slice(startIndex, startIndex + this.itemsPerPage);
       })
     );
   }
-
-  onPageChange(page: number | string) {
-    const pageNumber = Number(page);
-    if (
-      !isNaN(pageNumber) &&
-      pageNumber >= 1 &&
-      pageNumber <= this.totalPages
-    ) {
-      this.currentPage = pageNumber;
-      this.router.navigate(['/question-template'], {
-        queryParams: { page: pageNumber, pageSize: this.pageSize },
-      });
-      this.loadQuestionTemplates();
-    }
+  
+  refreshData() {
+    this.searchText = '';
+    this.applyFilters();
   }
 
-  onPageChangePrevious() {
-    if (this.currentPage > 1) {
-      this.onPageChange(this.currentPage - 1);
+
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) {
+      return;
     }
+    this.currentPage = page;
+    this.applyFilters();
   }
 
-  onPageChangeNext() {
-    if (this.currentPage < this.totalPages) {
-      this.onPageChange(this.currentPage + 1);
-    }
+  updatePagination() {
+    const pageCount = Math.ceil(this.totalTemplates / this.itemsPerPage);
+    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+    this.applyFilters();
   }
-
-  getPaginationRange(
-    currentPage: number,
-    totalPages: number,
-    siblingCount = 1
-  ): Array<string | number> {
-    const startPage = Math.max(2, currentPage - siblingCount);
-    const endPage = Math.min(totalPages - 1, currentPage + siblingCount);
-    let pages: Array<number | string> = [];
-
-    if (startPage > 2) {
-      pages.push(1, '...');
-    } else if (startPage === 2) {
-      pages.push(1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    if (endPage < totalPages - 1) {
-      pages.push('...', totalPages);
-    } else if (endPage === totalPages - 1) {
-      pages.push(totalPages);
-    }
-
-    return pages;
-  }
-
+  
   deleteQuestionTemplate() {
     this.store.dispatch(
       questionTemplateActions.deleteQuestionTemplateRequest({ templateId: this.selectedTemplateId })

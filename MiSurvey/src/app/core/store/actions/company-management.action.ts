@@ -24,12 +24,11 @@ enum CompanyManagementActionTypes {
 }
 
 export const loadCompaniesRequest = createAction(
-  CompanyManagementActionTypes.LOAD_COMPANIES_REQUEST,
-  props<{ page: number; pageSize: number }>()
+  CompanyManagementActionTypes.LOAD_COMPANIES_REQUEST
 );
 export const loadCompaniesSuccess = createAction(
   CompanyManagementActionTypes.LOAD_COMPANIES_SUCCESS,
-  props<{ companies: Company[]; totalCompanies: number }>()
+  props<{ companies: Company[]; }>()
 );
 export const loadCompaniesFailure = createAction(
   CompanyManagementActionTypes.LOAD_COMPANIES_FAILURE

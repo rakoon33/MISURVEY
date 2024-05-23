@@ -10,103 +10,180 @@
     </button>
   </div>
 
-  <div class="survey-container" *ngIf="permissions.CanView">
-    <div
-      class="survey-card invite-method"
-      *ngFor="let survey of surveys$ | async"
-    >
+  <div class="search-filters">
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      placeholder="Search by title..."
+      class="form-control"
+    />
+    <select [(ngModel)]="searchStatus" class="form-control">
+      <option value="">All Statuses</option>
+      <option value="Open">Open</option>
+      <option value="Closed">Closed</option>
+    </select>
+    <select [(ngModel)]="searchApproval" class="form-control">
+      <option value="">All Approvals</option>
+      <option value="Yes">Approved</option>
+      <option value="Pending">Pending</option>
+    </select>
+    <button (click)="applyFilters()" class="btn btn-primary">Apply</button>
+  </div>
+
+  <div *ngIf="filteredSurveys$ | async as filteredSurveys">
+    <div class="survey-container" *ngIf="permissions.CanView">
       <div
-        class="invite-label"
-        [ngClass]="{
-          'email-invite': survey.InvitationMethod === 'Email',
-          'link-invite': survey.InvitationMethod === 'Link'
-        }"
+        class="survey-card invite-method"
+        *ngFor="
+          let survey of filteredSurveys.slice(
+            (currentPage - 1) * itemsPerPage,
+            currentPage * itemsPerPage
+          )
+        "
       >
-        {{ survey.InvitationMethod }}
-      </div>
-      <c-dropdown>
-        <button class="btn-survey ellipsis" cButton cDropdownToggle>
-          &#x2026;
-        </button>
-        <ul cDropdownMenu>
-          <li *ngIf="permissions.CanViewData">
-            <button
-              cDropdownItem
-              [cModalToggle]="seeResponsesModal.id"
-              (click)="openModal(survey.SurveyID)"
-            >
-              View Responses
-            </button>
-          </li>
-          <li *ngIf="permissions.CanUpdate">
-            <button cDropdownItem (click)="editSurvey(survey.SurveyID)">
-              Edit
-            </button>
-          </li>
-          <li *ngIf="permissions.CanUpdate">
-            <button
-              cDropdownItem
-              (click)="toggleApproval(survey.SurveyID, survey.Approve)"
-            >
-              {{ survey.Approve === "Yes" ? "Unapprove" : "Approve" }}
-            </button>
-          </li>
-          <li *ngIf="permissions.CanUpdate">
-            <button
-              cDropdownItem
-              (click)="toggleStatus(survey.SurveyID, survey.SurveyStatus)"
-            >
-              {{ survey.SurveyStatus === "Open" ? "Close" : "Open" }}
-            </button>
-          </li>
-          <li *ngIf="permissions.CanDelete">
-            <button cDropdownItem (click)="openDeleteSurvey(survey.SurveyID)">
-              Delete
-            </button>
-          </li>
-        </ul>
-      </c-dropdown>
-      <h3
-        (click)="navigateToSurveyDetails(survey.SurveyID, $event, permissions)"
-      >
-        {{ survey.Title }}
-      </h3>
-      <div
-        class="description-wrapper"
-        (click)="navigateToSurveyDetails(survey.SurveyID, $event, permissions)"
-      >
-        <p class="survey-description">
-          {{ survey.SurveyDescription || "No description" }}
-        </p>
-      </div>
-      <div class="status-container">
-        <p
-          class="survey-status"
+        <div
+          class="invite-label"
+          [ngClass]="{
+            'email-invite': survey.InvitationMethod === 'Email',
+            'link-invite': survey.InvitationMethod === 'Link'
+          }"
+        >
+          {{ survey.InvitationMethod }}
+        </div>
+        <c-dropdown>
+          <button class="btn-survey ellipsis" cButton cDropdownToggle>
+            &#x2026;
+          </button>
+          <ul cDropdownMenu>
+            <li *ngIf="permissions.CanViewData">
+              <button
+                cDropdownItem
+                [cModalToggle]="seeResponsesModal.id"
+                (click)="openModal(survey.SurveyID)"
+              >
+                View Responses
+              </button>
+            </li>
+            <li *ngIf="permissions.CanUpdate">
+              <button cDropdownItem (click)="editSurvey(survey.SurveyID)">
+                Edit
+              </button>
+            </li>
+            <li *ngIf="permissions.CanUpdate">
+              <button
+                cDropdownItem
+                (click)="toggleApproval(survey.SurveyID, survey.Approve)"
+              >
+                {{ survey.Approve === "Yes" ? "Unapprove" : "Approve" }}
+              </button>
+            </li>
+            <li *ngIf="permissions.CanUpdate">
+              <button
+                cDropdownItem
+                (click)="toggleStatus(survey.SurveyID, survey.SurveyStatus)"
+              >
+                {{ survey.SurveyStatus === "Open" ? "Close" : "Open" }}
+              </button>
+            </li>
+            <li *ngIf="permissions.CanDelete">
+              <button cDropdownItem (click)="openDeleteSurvey(survey.SurveyID)">
+                Delete
+              </button>
+            </li>
+          </ul>
+        </c-dropdown>
+        <h3
           (click)="
             navigateToSurveyDetails(survey.SurveyID, $event, permissions)
           "
         >
-          {{ survey.SurveyStatus || "Close" }} |
-          {{ survey.Approve == "Yes" ? "Approve" : "Pending" }}
-        </p>
-        <div class="go-to-link">
-          <a
-            href=""
-            class="copy-link"
-            (click)="copySurveyLink(survey.SurveyLink, $event)"
+          {{ survey.Title }}
+        </h3>
+        <div
+          class="description-wrapper"
+          (click)="
+            navigateToSurveyDetails(survey.SurveyID, $event, permissions)
+          "
+        >
+          <p class="survey-description">
+            {{ survey.SurveyDescription || "No description" }}
+          </p>
+        </div>
+        <div class="status-container">
+          <p
+            class="survey-status"
+            (click)="
+              navigateToSurveyDetails(survey.SurveyID, $event, permissions)
+            "
           >
-            Copy survey's link
-          </a>
-          <p>|</p>
-          <a
-            href=""
-            class="copy-link"
-            (click)="openQRCodeModal(survey.SurveyLink, survey.Title, $event)"
-          >
-            Create QR code
-          </a>
+            {{ survey.SurveyStatus || "Close" }} |
+            {{ survey.Approve == "Yes" ? "Approve" : "Pending" }}
+          </p>
+          <div class="go-to-link">
+            <a
+              href=""
+              class="copy-link"
+              (click)="copySurveyLink(survey.SurveyLink, $event)"
+            >
+              Copy survey's link
+            </a>
+            <p>|</p>
+            <a
+              href=""
+              class="copy-link"
+              (click)="openQRCodeModal(survey.SurveyLink, survey.Title, $event)"
+            >
+              Create QR code
+            </a>
+          </div>
         </div>
       </div>
+    </div>
+
+    <div class="pagination-controls">
+      <select
+        [(ngModel)]="itemsPerPage"
+        (ngModelChange)="updatePagination()"
+        class="form-control total-items"
+      >
+        <option value="5">5 per page</option>
+        <option value="10">10 per page</option>
+        <option value="20">20 per page</option>
+      </select>
+
+      <!-- Pagination controls -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage - 1); $event.preventDefault()"
+            >
+              Previous
+            </button>
+          </li>
+          <li
+            class="page-item"
+            [class.active]="currentPage === page"
+            *ngFor="let page of pages"
+          >
+            <button
+              class="page-link"
+              (click)="setPage(page); $event.preventDefault()"
+            >
+              {{ page }}
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === pages.length">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage + 1); $event.preventDefault()"
+            >
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>
@@ -199,16 +276,15 @@
     >
       <div>{{ response.customerName }}</div>
       <div class="res-value">{{ response.responseValue }}</div>
-      <div  class="email-icon">
-        <a 
-        *ngIf="isValidEmail(response.customerEmail)"
-        href="mailto:{{ response.customerEmail }}"
-       
-        title="Send email to {{ response.customerEmail }}"
-      >
-        Send
-        <c-icon name="cil-envelope-closed"></c-icon>
-      </a>
+      <div class="email-icon">
+        <a
+          *ngIf="isValidEmail(response.customerEmail)"
+          href="mailto:{{ response.customerEmail }}"
+          title="Send email to {{ response.customerEmail }}"
+        >
+          Send
+          <c-icon name="cil-envelope-closed"></c-icon>
+        </a>
       </div>
     </div>
   </c-modal-body>
@@ -284,7 +360,11 @@
   </c-modal-header>
   <c-modal-body class="modal-body">
     <div class="qr-code-wrapper">
-      <qrcode [qrdata]="qrCodeLink!" [allowEmptyString]='true' (qrCodeURL)="onChangeURL($event)"></qrcode>
+      <qrcode
+        [qrdata]="qrCodeLink!"
+        [allowEmptyString]="true"
+        (qrCodeURL)="onChangeURL($event)"
+      ></qrcode>
       <a
         [href]="qrCodeDownloadLink"
         [download]="sanitizedSurveyTitle + '.png'"

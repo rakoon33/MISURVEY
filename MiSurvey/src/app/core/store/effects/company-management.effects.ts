@@ -15,14 +15,13 @@ export class CompanyManagementEffects {
       ofType(companyManagementActions.loadCompaniesRequest),
       switchMap((action) =>
         this.companyManagementService
-          .getCompanies(action.page, action.pageSize)
+          .getCompanies()
           .pipe(
             map((response) => {
               console.log('API response:', response);
               if (response.status) {
                 return companyManagementActions.loadCompaniesSuccess({
                   companies: response.data,
-                  totalCompanies: response.total,
                 });
               } else {
                 this.toastrService.error('Failed to load companies');
@@ -71,84 +70,57 @@ export class CompanyManagementEffects {
     this.actions$.pipe(
       ofType(companyManagementActions.updateCompanyRequest),
       switchMap((action) =>
-        this.store.select(routerSelector.selectCurrentRoute).pipe(
-          take(1),
-          switchMap((route) => {
-            const page = route.root.queryParams['page'] || '1';
-            const pageSize = route.root.queryParams['pageSize'] || '10';
-            return this.companyManagementService
-              .updateCompany(action.CompanyID, action.updatedData)
-              .pipe(
-                map((response) => {
-                  if (response.status) {
-                    this.toastrService.success('Company updated successfully');
-                    this.store.dispatch(
-                      companyManagementActions.loadCompaniesRequest({
-                        page: Number(page),
-                        pageSize: Number(pageSize),
-                      })
-                    );
-                    return companyManagementActions.updateCompanySuccess({
-                      company: response.data,
-                    });
-                  } else {
-                    this.toastrService.error(
-                      response.message || 'Update failed'
-                    );
-                    return companyManagementActions.updateCompanyFailure();
-                  }
-                }),
-                catchError((error) => {
-                  this.toastrService.error('An error occurred');
-                  return of(companyManagementActions.updateCompanyFailure());
-                })
-              );
-          })
-        )
+        this.companyManagementService.updateCompany(action.CompanyID, action.updatedData)
+          .pipe(
+            map((response) => {
+              if (response.status) {
+                this.toastrService.success('Company updated successfully');
+             
+                this.store.dispatch(companyManagementActions.loadCompaniesRequest());
+                return companyManagementActions.updateCompanySuccess({
+                  company: response.data,
+                });
+              } else {
+                this.toastrService.error(response.message || 'Update failed');
+                return companyManagementActions.updateCompanyFailure();
+              }
+            }),
+            catchError((error) => {
+              this.toastrService.error('An error occurred');
+              return of(companyManagementActions.updateCompanyFailure());
+            })
+          )
       )
     )
   );
+
 
   createCompany$ = createEffect(() =>
     this.actions$.pipe(
       ofType(companyManagementActions.createCompanyRequest),
       switchMap((action) =>
-        this.store.select(routerSelector.selectCurrentRoute).pipe(
-          take(1),
-          switchMap((route) => {
-            const page = route.root.queryParams['page'] || '1';
-            const pageSize = route.root.queryParams['pageSize'] || '10';
-
-            return this.companyManagementService
-              .createCompany(action.companyData)
-              .pipe(
-                map((response) => {
-                  if (response.status) {
-                    this.toastrService.success('Company created successfully');
-                    this.store.dispatch(
-                      companyManagementActions.loadCompaniesRequest({
-                        page: Number(page),
-                        pageSize: Number(pageSize),
-                      })
-                    );
-                    return companyManagementActions.createCompanySuccess();
-                  } else {
-                    this.toastrService.error(
-                      response.message || 'Creation failed'
-                    );
-                    return companyManagementActions.createCompanyFailure();
-                  }
-                }),
-                catchError((error) => {
-                  this.toastrService.error('An error occurred');
-                  return of(companyManagementActions.createCompanyFailure());
-                })
-              );
-          })
-        )
+        this.companyManagementService.createCompany(action.companyData)
+          .pipe(
+            map((response) => {
+              if (response.status) {
+                this.toastrService.success('Company created successfully');
+                
+                this.store.dispatch(companyManagementActions.loadCompaniesRequest());
+                return companyManagementActions.createCompanySuccess();
+              } else {
+                this.toastrService.error(response.message || 'Creation failed');
+                return companyManagementActions.createCompanyFailure();
+              }
+            }),
+            catchError((error) => {
+              this.toastrService.error('An error occurred');
+              return of(companyManagementActions.createCompanyFailure());
+            })
+          )
       )
     )
   );
+
 
   deleteCompany$ = createEffect(() =>
     this.actions$.pipe(

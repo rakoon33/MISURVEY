@@ -11,7 +11,7 @@ import { ModalService } from '@coreui/angular';
 import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Permission } from 'src/app/core/models';
-import { Subscription, combineLatest, map } from 'rxjs';
+import { Subscription, combineLatest, map, tap } from 'rxjs';
 
 @Component({
   selector: 'app-survey-management',
@@ -33,6 +33,17 @@ export class SurveyManagementComponent implements OnInit {
   sanitizedSurveyTitle: string = '';
   userPackage$: Observable<any> | undefined;
   
+  // search
+  filteredSurveys$: Observable<any[]> | undefined;
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalSurveys = 0;
+  pages: number[] = [];
+
+  searchText = '';
+  searchStatus = '';
+  searchApproval = '';
+
   subscription: Subscription = new Subscription();
   constructor(
     private router: Router,
@@ -72,6 +83,20 @@ export class SurveyManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(surveyManagementActions.fetchSurveysRequest());
+    this.filteredSurveys$ = this.surveys$.pipe(
+      tap(surveys => {
+        this.totalSurveys = surveys.length;
+        this.updatePagination();
+      }),
+      map(surveys => {
+        // Apply your filters here if needed, for example:
+        return surveys.filter(survey => {
+          return (!this.searchText || survey.Title.toLowerCase().includes(this.searchText.toLowerCase())) &&
+                 (!this.searchStatus || survey.SurveyStatus === this.searchStatus) &&
+                 (!this.searchApproval || survey.Approve === this.searchApproval);
+        }).slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
+      })
+    );
   }
 
   copySurveyLink(link: string, event: MouseEvent) {
@@ -87,6 +112,33 @@ export class SurveyManagementComponent implements OnInit {
         this.toastr.error('Error copying link: ', err);
       }
     );
+  }
+
+  applyFilters() {
+    this.filteredSurveys$ = this.surveys$.pipe(
+      map(surveys => {
+        const filtered = surveys.filter(survey =>
+          (this.searchText ? survey.Title.toLowerCase().includes(this.searchText.toLowerCase()) : true) &&
+          (this.searchStatus ? survey.SurveyStatus === this.searchStatus : true) &&
+          (this.searchApproval ? survey.Approve === this.searchApproval : true)
+        );
+        this.totalSurveys = filtered.length;
+        this.updatePagination();
+        return filtered;
+      })
+    );
+  }
+
+  updatePagination() {
+    const pageCount = Math.ceil(this.totalSurveys / this.itemsPerPage);
+    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  }
+
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) {
+      return;
+    }
+    this.currentPage = page;
   }
 
   openQRCodeModal(link: string, title: string, event: Event) {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Permission, Company, User } from '../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
-import { Observable, Subscription, combineLatest, filter, map, take } from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, map, take, tap } from 'rxjs';
 import { companyManagementActions, companyActions } from 'src/app/core/store/actions';
 import { companyManagementSelector, companySelector, userSelector } from 'src/app/core/store/selectors';
 import { Store } from '@ngrx/store';
@@ -21,10 +21,6 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class CompanyManagementComponent implements OnInit {
   private subscription = new Subscription();
 
-  totalPages: number = 1;
-  totalCompanies: number = 1;
-  pageSize: number = 1;
-  currentPage: string = '1';
   currentAction: 'view' | 'edit' | null = null;
   currentSelectedCompanyId: number | undefined;
   currentUserId: number | undefined;
@@ -33,6 +29,17 @@ export class CompanyManagementComponent implements OnInit {
   editCompanyFormGroup: FormGroup;
   addCompanyForm: FormGroup;
 
+  // search
+  filteredCompanies$: Observable<Company[]> | undefined;
+  searchText = '';
+  filterType = 'name';
+
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalCompanies = 0;
+  pages: number[] = [];
+
+  
   companies$: Observable<Company[]> = this.store.select(
     companyManagementSelector.selectCurrentCompanies
   );
@@ -114,111 +121,71 @@ export class CompanyManagementComponent implements OnInit {
     });
     if (this.currentUserRole === 'Admin' || this.currentUserRole === 'Supervisor') {
       this.store.dispatch(companyActions.getCompanyProfileRequest());
-    }
-    this.router.events
-    .pipe(
-      filter(event => event instanceof NavigationStart)
-    )
-    .subscribe((event: RouterEvent) => {
-      if (event instanceof NavigationStart) {
-        if (event.url === '/company-management') {
-          this.router.navigate(['/company-management'], {
-            queryParams: { page: 1, pageSize: 10 },
-            replaceUrl: true // This replaces the current state in history
-          });
-        }
-      }
-    });
-    this.route.queryParams.subscribe((params) => {
-      this.currentPage = params['page'] || 1;
-      this.pageSize = params['pageSize'] || 10;
+    } else {
       this.loadCompanies();
-    });
-    this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
-   
-  }
-
-  getPaginationRange(
-    currentPageStr: string,
-    totalPages: number,
-    siblingCount = 1
-  ): Array<number | string> {
-    const currentPage = parseInt(currentPageStr, 10);
-    const range = [];
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
-
-    range.push(1);
-
-    if (shouldShowLeftDots) {
-      range.push('...');
+      this.applyFilters();
     }
 
-    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-      if (i !== 1 && i !== totalPages) {
-        range.push(i);
-      }
-    }
-
-    if (shouldShowRightDots) {
-      range.push('...');
-    }
-
-    if (totalPages !== 1) {
-      range.push(totalPages);
-    }
-
-    return range;
   }
 
   loadCompanies() {
     this.store.dispatch(
-      companyManagementActions.loadCompaniesRequest({
-        page: Number(this.currentPage),
-        pageSize: this.pageSize,
+      companyManagementActions.loadCompaniesRequest()
+    );
+  }
+
+  applyFilters() {
+    this.filteredCompanies$ = this.companies$.pipe(
+      map(companies => {
+        // Filter based on searchText and filterType
+        const filtered = companies.filter(company => {
+          if (!this.searchText) return true;
+          const searchLower = this.searchText.toLowerCase();
+          switch (this.filterType) {
+            case 'name':
+              return company.CompanyName.toLowerCase().includes(searchLower);
+            case 'domain':
+              return company.CompanyDomain.toLowerCase().includes(searchLower);
+            default:
+              return true;
+          }
+        });
+        // Calculate total companies after filtering for pagination
+        this.totalCompanies = filtered.length;
+        // Update pages array based on the new total
+        this.updatePagination();
+
+        // Apply pagination
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        return filtered.slice(startIndex, startIndex + this.itemsPerPage);
       })
     );
-
-    this.store
-      .select(companyManagementSelector.selectCurrentTotalCompanies)
-      .subscribe((totalCompanies) => {
-        console.log(`Total companies received: ${totalCompanies}`);
-        this.totalCompanies = totalCompanies;
-        this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
-      });
   }
 
-  onPageChange(page: number | string) {
-    const pageNumber = typeof page === 'string' ? parseInt(page, 10) : page;
-    this.router.navigate(['/company-management'], {
-      queryParams: { page: pageNumber, pageSize: this.pageSize },
-    });
-    this.loadCompanies();
+  refreshData() {
+    this.searchText = '';
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
-  onPageChangeNext() {
-    this.router.navigate(['/company-management'], {
-      queryParams: {
-        page: Number(this.currentPage) + 1,
-        pageSize: this.pageSize,
-      },
-    });
-    this.loadCompanies();
+  setFilterType(type: string) {
+    this.filterType = type;
+    this.applyFilters();
   }
 
-  onPageChangePrevious() {
-    this.router.navigate(['/company-management'], {
-      queryParams: {
-        page: Number(this.currentPage) - 1,
-        pageSize: this.pageSize,
-      },
-    });
-    this.loadCompanies();
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) {
+      return;
+    }
+    this.currentPage = page;
+    this.applyFilters();
   }
 
+  updatePagination() {
+    const pageCount = Math.ceil(this.totalCompanies / this.itemsPerPage);
+    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  }
+  
   private loadCompanyDataIntoForm(company: Company) {
     if (this.currentAction === 'edit') {
       this.editCompanyFormGroup.patchValue({
