@@ -41,10 +41,7 @@ export class QuestionToAskComponent {
 
     // Dispatch an action to load questions if needed
     this.store.dispatch(
-      questionTemplateActions.loadQuestionTemplatesRequest({
-        page: 1,
-        pageSize: 100,
-      })
+      questionTemplateActions.loadQuestionTemplatesRequest()
     );
     this.filteredQuestionTemplates$ = this.questionTemplates$;
 

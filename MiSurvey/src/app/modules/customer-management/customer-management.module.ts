@@ -1,4 +1,4 @@
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CustomerManagementRoutingModule } from './customer-management-routing.module';
 import { CustomerManagementComponent } from './customer-management.component';
 import { CommonModule } from '@angular/common';
@@ -50,6 +50,7 @@ import {
     NavModule,
     UtilitiesModule,
     TabsModule,
+    FormsModule
   
   ]
 })

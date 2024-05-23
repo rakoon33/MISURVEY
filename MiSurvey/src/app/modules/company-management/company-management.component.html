@@ -1,5 +1,5 @@
 <app-loading *ngIf="isLoading$ | async"></app-loading>
-<div  *ngIf="currentUserRole === 'SuperAdmin'">
+<div *ngIf="currentUserRole === 'SuperAdmin'">
   <div *ngIf="userPermissions$ | async as permissions">
     <div class="d-flex justify-content-start">
       <button
@@ -26,40 +26,43 @@
           <button class="btn-management" cButton cDropdownToggle>Filter</button>
           <ul cDropdownMenu>
             <li>
-              <button cDropdownItem>Name</button>
+              <button cDropdownItem (click)="setFilterType('name')">
+                Name
+              </button>
             </li>
             <li>
-              <button cDropdownItem>Role</button>
-            </li>
-            <li>
-              <button cDropdownItem>Active</button>
+              <button cDropdownItem (click)="setFilterType('domain')">
+                Domain
+              </button>
             </li>
           </ul>
         </c-dropdown>
       </div>
-      <form
-        class="form-search-management"
-        onsubmit="event.preventDefault();"
-        role="search"
-      >
-        <input
-          class="input-search-management"
-          id="search"
-          type="search"
-          placeholder="Search..."
-          autofocus
-          required
-        />
-      </form>
-  
+      <input
+        type="search"
+        class="form-control"
+        [(ngModel)]="searchText"
+        placeholder="Enter search text..."
+        (keyup.enter)="applyFilters()"
+      />
       <c-button-group class="group-button-management" role="group">
-        <button cButton>Search</button>
-        <button class="btn-border-right btn-borderStyle-left" cButton>
+        <button
+          cButton
+          (click)="applyFilters()"
+          class="input-search-management"
+        >
+          Search
+        </button>
+        <button
+          class="btn-border-right btn-borderStyle-left"
+          cButton
+          (click)="refreshData()"
+        >
           Refresh
         </button>
       </c-button-group>
     </div>
-  
+
     <table
       class="table"
       [hover]="true"
@@ -76,19 +79,24 @@
           <th scope="col">Company Name</th>
           <th scope="col">Company Domain</th>
           <th scope="col">AdminID</th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
         <!-- Loop through the companies array using the *ngFor directive -->
-        <tr *ngFor="let company of companies$ | async; let i = index">
+        <tr *ngFor="let company of filteredCompanies$ | async; let i = index">
           <td scope="row">{{ i + 1 }}</td>
           <td>
             <c-avatar
               size="md"
-              [src]="company.CompanyLogo != null ? company.CompanyLogo : './assets/images/company_avt_default.png'"
+              [src]="
+                company.CompanyLogo != null
+                  ? company.CompanyLogo
+                  : './assets/images/company_avt_default.png'
+              "
             ></c-avatar>
           </td>
-  
+
           <td>{{ company.CompanyName }}</td>
           <td>{{ company.CompanyDomain }}</td>
           <td>{{ company.AdminID }}</td>
@@ -101,19 +109,30 @@
                     company.CompanyID !== undefined && permissions.CanViewData
                   "
                 >
-                  <button cDropdownItem (click)="viewCompany(company.CompanyID)">
+                  <button
+                    cDropdownItem
+                    (click)="viewCompany(company.CompanyID)"
+                  >
                     View
                   </button>
                 </li>
                 <li
-                  *ngIf="company.CompanyID !== undefined && permissions.CanUpdate"
+                  *ngIf="
+                    company.CompanyID !== undefined && permissions.CanUpdate
+                  "
                 >
-                  <button cDropdownItem (click)="editCompany(company.CompanyID)">
+                  <button
+                    cDropdownItem
+                    (click)="editCompany(company.CompanyID)"
+                  >
                     Edit
                   </button>
                 </li>
                 <li *ngIf="permissions.CanDelete">
-                  <button cDropdownItem  (click)="openDeleteCompanyModal(company.CompanyID)">
+                  <button
+                    cDropdownItem
+                    (click)="openDeleteCompanyModal(company.CompanyID)"
+                  >
                     Delete
                   </button>
                 </li>
@@ -123,41 +142,54 @@
         </tr>
       </tbody>
     </table>
-  
-    <div class="pagination">
-      <button
-        class="pagination-button"
-        (click)="onPageChangePrevious()"
-        [disabled]="currentPage === '1'"
+
+    <!-- phân trang -->
+    <div class="pagination-controls">
+      <select
+        [(ngModel)]="itemsPerPage"
+        (ngModelChange)="updatePagination()"
+        class="form-control total-items"
       >
-        << Previous
-      </button>
-      <div
-        *ngFor="
-          let page of getPaginationRange(currentPage, totalPages);
-          let i = index
-        "
-        class="page-item"
-      >
-        <button
-          *ngIf="page !== '...'"
-          (click)="onPageChange(page)"
-          [class.active]="currentPage === page.toString()"
-        >
-          {{ page }}
-        </button>
-        <span *ngIf="page === '...'">{{ page }}</span>
-      </div>
-      <button
-        class="pagination-button"
-        (click)="onPageChangeNext()"
-        [disabled]="currentPage === totalPages.toString()"
-      >
-        Next >>
-      </button>
+        <option value="5">5 per page</option>
+        <option value="10">10 per page</option>
+        <option value="20">20 per page</option>
+      </select>
+
+      <!-- Pagination controls -->
+      <nav  *ngIf="currentUserRole === 'SuperAdmin'" aria-label="Page navigation" >
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage - 1); $event.preventDefault()"
+            >
+              Previous
+            </button>
+          </li>
+          <li
+            class="page-item"
+            [class.active]="currentPage === page"
+            *ngFor="let page of pages"
+          >
+            <button
+              class="page-link"
+              (click)="setPage(page); $event.preventDefault()"
+            >
+              {{ page }}
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === pages.length">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage + 1); $event.preventDefault()"
+            >
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
-  
-</div>
+  </div>
   <!-- Modal -->
 
   <!-- View Company Modal -->
@@ -299,21 +331,38 @@
   </c-modal>
 </div>
 
-
 <div class="admin-company" *ngIf="userPermissions$ | async as permissions">
   <div style="flex: 1" *ngIf="!permissions.CanView">
     <p>You not has permissions to view anything!</p>
   </div>
-  <div *ngIf="currentUserRole === 'Admin' || currentUserRole === 'Supervisor'" class="admin-company-container">
-    <div class="admin-company-content" *ngIf="adminCompany$ | async as adminCompany">
+  <div
+    *ngIf="currentUserRole === 'Admin' || currentUserRole === 'Supervisor'"
+    class="admin-company-container"
+  >
+    <div
+      class="admin-company-content"
+      *ngIf="adminCompany$ | async as adminCompany"
+    >
       <div class="admin-company-info">
         <p><strong>Company Name:</strong> {{ adminCompany.CompanyName }}</p>
         <p><strong>Company Domain:</strong> {{ adminCompany.CompanyDomain }}</p>
         <p><strong>Admin ID:</strong> {{ adminCompany.AdminID }}</p>
-        <button class="update-btn" (click)="editCompany(adminCompany.CompanyID!)">Update company's information</button>
+        <button
+          class="update-btn"
+          (click)="editCompany(adminCompany.CompanyID!)"
+        >
+          Update company's information
+        </button>
       </div>
       <div class="admin-company-header">
-        <img class="company-logo" [src]="(adminCompany$ | async)?.CompanyLogo || './assets/images/company_avt_default.png'" alt="Company Logo">
+        <img
+          class="company-logo"
+          [src]="
+            (adminCompany$ | async)?.CompanyLogo ||
+            './assets/images/company_avt_default.png'
+          "
+          alt="Company Logo"
+        />
       </div>
     </div>
   </div>
@@ -349,9 +398,7 @@
         />
       </div>
       <div class="mb-3">
-        <label for="editCompanyDomain" class="form-label"
-          >Company Domain</label
-        >
+        <label for="editCompanyDomain" class="form-label">Company Domain</label>
         <input
           type="text"
           class="form-control"
@@ -380,4 +427,3 @@
     </button>
   </c-modal-footer>
 </c-modal>
-

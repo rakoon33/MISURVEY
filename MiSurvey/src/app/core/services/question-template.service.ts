@@ -12,11 +12,9 @@ export class QuestionTemplateService {
 
   constructor(private http: HttpClient) {}
 
-  getQuestionTemplates(page: number, pageSize: number): Observable<any> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString());
-    return this.http.get<any>(this.apiUrl, { params, withCredentials: true });
+  getQuestionTemplates(): Observable<any> {
+
+    return this.http.get<any>(this.apiUrl, { withCredentials: true });
   }
   getQuestionTemplateById(templateId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${templateId}`, { withCredentials: true });

@@ -20,7 +20,7 @@ export class CompanyUserManagementEffects {
             if (response.status) {
               this.toastrService.success(response.message);
               // Gọi action loadUsersRequest ngay sau khi tạo user thành công
-              this.store.dispatch(userManagementActions.loadUsersRequest({ page: 1, pageSize: 10 }));
+              this.store.dispatch(userManagementActions.loadUsersRequest());
               return companyUserManagementActions.createCompanyUserSuccess();
             } else {
               this.toastrService.error(response.message);

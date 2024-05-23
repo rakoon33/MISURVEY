@@ -1,12 +1,22 @@
 import { CustomerService } from './../../core/services/customer-management.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable, Subscription, combineLatest, filter, map, take } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  filter,
+  map,
+  take,
+} from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { Customer, Permission } from '../../core/models';
-import { customerManagementSelectors, userSelector } from '../../core/store/selectors';
+import {
+  customerManagementSelectors,
+  userSelector,
+} from '../../core/store/selectors';
 import { customerManagementActions } from '../../core/store/actions';
 import {
   ActivatedRoute,
@@ -19,20 +29,14 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-
 @Component({
   selector: 'app-customer-management',
   templateUrl: './customer-management.component.html',
   styleUrls: ['./customer-management.component.scss'],
 })
-
 export class CustomerManagementComponent implements OnInit {
   customers$: Observable<Customer[]>;
   isLoading$: Observable<boolean>;
-  totalCustomers: number = 0;
-  currentPage: number = 1;
-  pageSize: number = 10;
-  totalPages: number = 0;
 
   selectedCustomerId: number = 0;
   editCustomerForm: FormGroup;
@@ -43,6 +47,15 @@ export class CustomerManagementComponent implements OnInit {
 
   private subscriptions: Subscription = new Subscription();
 
+  //search
+  filteredCustomers$: Observable<Customer[]> | undefined;
+  totalCustomers: number = 10;
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  pages: number[] = [];
+  searchText: string = '';
+  filterType: string = 'FullName'; // Default filter type
+
   constructor(
     private store: Store,
     private toastr: ToastrService,
@@ -51,12 +64,18 @@ export class CustomerManagementComponent implements OnInit {
     private route: ActivatedRoute,
     private customerService: CustomerService
   ) {
-    this.customers$ = this.store.select(customerManagementSelectors.selectAllCustomers);
-    this.isLoading$ = this.store.select(customerManagementSelectors.selectCustomerLoading);
+    this.customers$ = this.store.select(
+      customerManagementSelectors.selectAllCustomers
+    );
+    this.isLoading$ = this.store.select(
+      customerManagementSelectors.selectCustomerLoading
+    );
 
     this.userPermissions$ = combineLatest([
       this.store.select(userSelector.selectCurrentUser),
-      this.store.select(userSelector.selectPermissionByModuleName('Customer Management'))
+      this.store.select(
+        userSelector.selectPermissionByModuleName('Customer Management')
+      ),
     ]).pipe(
       map(([currentUser, permissions]) => {
         if (currentUser?.UserRole === 'Supervisor') {
@@ -73,7 +92,6 @@ export class CustomerManagementComponent implements OnInit {
       })
     );
 
-    
     this.editCustomerForm = new FormGroup({
       FullName: new FormControl('', Validators.required),
       Email: new FormControl('', [Validators.required, Validators.email]),
@@ -82,112 +100,64 @@ export class CustomerManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(customerManagementActions.loadCustomers());
+    this.applyFilters();
+  }
 
-    this.router.events
-    .pipe(
-      filter(event => event instanceof NavigationStart)
-    )
-    .subscribe((event: RouterEvent) => {
-      if (event instanceof NavigationStart) {
-        if (event.url === '/customer-management') {
-          this.router.navigate(['/customer-management'], {
-            queryParams: { page: 1, pageSize: 10 },
-            replaceUrl: true 
-          });
+  setFilterType(type: string): void {
+    this.filterType = type;
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    this.filteredCustomers$ = this.customers$.pipe(
+      map(customers => customers.filter(customer => {
+        const searchTextLower = this.searchText.toLowerCase();
+        switch (this.filterType) {
+          case 'FullName':
+            return customer.FullName.toLowerCase().includes(searchTextLower);
+          case 'Email':
+            return customer.Email.toLowerCase().includes(searchTextLower);
+          case 'PhoneNumber':
+            return customer.PhoneNumber!.toLowerCase().includes(searchTextLower);
+          default:
+            return true;
         }
-      }
-    });
-
-    this.route.queryParams.subscribe(params => {
-      this.currentPage = parseInt(params['page'], 10) || 1;
-      this.pageSize = parseInt(params['pageSize'], 10) || 10;
-      this.loadCustomers();
-    });
-
-    this.subscriptions.add(
-      this.store.select(customerManagementSelectors.selectTotalCustomers).subscribe(
-        total => {
-          this.totalCustomers = total;
-          this.totalPages = Math.ceil(this.totalCustomers / this.pageSize);
-        }
-      )
+      })),
+      map(customers => {
+        // Calculate total number of pages based on the filtered customers
+        this.totalCustomers = customers.length;
+        this.pages = Array.from({length: Math.ceil(this.totalCustomers / this.itemsPerPage)}, (_, i) => i + 1);
+  
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        return customers.slice(startIndex, endIndex);
+      })
     );
   }
 
+  updatePagination(): void {
+    const pageCount = Math.ceil(this.totalCustomers / this.itemsPerPage);
+    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  }
+
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) {
+      return;
+    }
+    this.currentPage = page;
+    this.applyFilters();
+  }
+
+  refreshData(): void {
+    this.searchText = '';
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
   loadCustomers(): void {
-    this.store.dispatch(customerManagementActions.loadCustomers({
-      page: this.currentPage,
-      pageSize: this.pageSize
-    }));
+    this.store.dispatch(customerManagementActions.loadCustomers());
   }
-
-
-  onPageChange(page: number | string) {
-    const pageNumber = typeof page === 'string' ? parseInt(page, 10) : page;
-    this.router.navigate(['/customer-management'], {
-      queryParams: { page: pageNumber, pageSize: this.pageSize },
-    });
-    this.currentPage = pageNumber;
-    this.loadCustomers()
-  }
-
-  onPageChangeNext() {
-    this.router.navigate(['/customer-management'], {
-      queryParams: {
-        page: Number(this.currentPage) + 1,
-        pageSize: this.pageSize,
-      },
-    });
-    this.loadCustomers()
-  }
-
-  onPageChangePrevious() {
-    this.router.navigate(['/customer-management'], {
-      queryParams: {
-        page: Number(this.currentPage) - 1,
-        pageSize: this.pageSize,
-      },
-    });
-    this.loadCustomers()
-  }
-
-
-  getPaginationRange(
-    currentPageStr: string,
-    totalPages: number,
-    siblingCount = 1
-  ): Array<number | string> {
-    const currentPage = parseInt(currentPageStr, 10);
-    const range = [];
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
-
-    range.push(1);
-
-    if (shouldShowLeftDots) {
-      range.push('...');
-    }
-
-    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-      if (i !== 1 && i !== totalPages) {
-        range.push(i);
-      }
-    }
-
-    if (shouldShowRightDots) {
-      range.push('...');
-    }
-
-    if (totalPages !== 1) {
-      range.push(totalPages);
-    }
-
-    return range;
-  }
-  
 
   openEditModal(customerId: number): void {
     this.selectedCustomerId = customerId;
@@ -198,30 +168,34 @@ export class CustomerManagementComponent implements OnInit {
           this.editCustomerForm.patchValue({
             FullName: customer.FullName,
             Email: customer.Email,
-            PhoneNumber: customer.PhoneNumber
+            PhoneNumber: customer.PhoneNumber,
           });
 
           // Open the modal window
           this.modalService.toggle({ show: true, id: 'editCustomerModal' });
         } else {
-          this.toastr.error(response.message || 'Failed to fetch customer details');
+          this.toastr.error(
+            response.message || 'Failed to fetch customer details'
+          );
         }
       },
       error: (err) => {
         this.toastr.error('Error fetching customer details');
         console.error(err);
-      }
+      },
     });
   }
 
   saveCustomerChanges(): void {
     if (this.editCustomerForm.valid) {
       const updatedCustomer = this.editCustomerForm.value;
-      this.store.dispatch(customerManagementActions.updateCustomer({
-        customerID: this.selectedCustomerId,
-        update: updatedCustomer
-      }));
-      this.loadCustomers(); 
+      this.store.dispatch(
+        customerManagementActions.updateCustomer({
+          customerID: this.selectedCustomerId,
+          update: updatedCustomer,
+        })
+      );
+      this.loadCustomers();
       this.modalService.toggle({ show: false, id: 'editCustomerModal' });
     } else {
       this.toastr.error('Please check the form fields.');
@@ -235,12 +209,14 @@ export class CustomerManagementComponent implements OnInit {
           this.viewedCustomer = response.customer;
           this.modalService.toggle({ show: true, id: 'viewCustomerModal' });
         } else {
-          this.toastr.error(response.message || 'Failed to fetch customer details');
+          this.toastr.error(
+            response.message || 'Failed to fetch customer details'
+          );
         }
       },
       error: (err) => {
         this.toastr.error('Failed to fetch customer details');
-      }
+      },
     });
   }
 
@@ -250,8 +226,12 @@ export class CustomerManagementComponent implements OnInit {
   }
 
   deleteCustomer(): void {
-    this.store.dispatch(customerManagementActions.deleteCustomer({ customerID: this.selectedCustomerId }));
-    this.loadCustomers(); 
+    this.store.dispatch(
+      customerManagementActions.deleteCustomer({
+        customerID: this.selectedCustomerId,
+      })
+    );
+    this.loadCustomers();
     this.modalService.toggle({ show: false, id: 'deleteCustomerModal' });
   }
 
@@ -320,16 +300,17 @@ export class CustomerManagementComponent implements OnInit {
             customer.FullName || '',
             customer.Email || '',
             customer.PhoneNumber || '',
-            customer.CreatedAt ? new Date(customer.CreatedAt).toLocaleDateString() : '',
+            customer.CreatedAt
+              ? new Date(customer.CreatedAt).toLocaleDateString()
+              : '',
           ]),
         ],
       },
       layout: 'auto',
     };
   }
-  
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
-
 }

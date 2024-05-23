@@ -35,8 +35,6 @@ const getAllCompaniesController = async (req, res) => {
   try {
     const requestingUserRole = req.user.role;
     let requestingUserCompanyId = null;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
 
     // Chỉ thiết lập CompanyID nếu người dùng không phải là SuperAdmin
     if (requestingUserRole !== "SuperAdmin") {
@@ -46,8 +44,6 @@ const getAllCompaniesController = async (req, res) => {
     const allCompanies = await companyService.getAllCompanies(
       requestingUserRole,
       requestingUserCompanyId,
-      page,
-      pageSize
     );
     res.status(200).json(allCompanies);
   } catch (error) {

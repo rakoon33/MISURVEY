@@ -4,7 +4,6 @@ import { customerManagementActions } from '../actions';
 
 export const initialState: CustomerManagementState = {
   customers: [],
-  totalCustomers: 0,
   loading: false,
   error: undefined
 };
@@ -12,10 +11,9 @@ export const initialState: CustomerManagementState = {
 export const customerManagementReducer = createReducer(
   initialState,
   on(customerManagementActions.loadCustomers, state => ({ ...state, loading: true })),
-  on(customerManagementActions.loadCustomersSuccess, (state, { customers, total }) => ({
+  on(customerManagementActions.loadCustomersSuccess, (state, { customers }) => ({
     ...state,
     customers,
-    totalCustomers: total,
     loading: false
   })),
   on(customerManagementActions.loadCustomersFailure, (state, { error }) => ({

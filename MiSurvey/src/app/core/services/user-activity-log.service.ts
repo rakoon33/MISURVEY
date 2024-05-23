@@ -11,10 +11,7 @@ export class UserActivityLogService {
 
   constructor(private http: HttpClient) {}
 
-  getAllActivities(page: number, pageSize: number): Observable<any> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString());
-    return this.http.get<any>(`${this.apiUrl}`, { params,withCredentials: true });
+  getAllActivities(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}`, { withCredentials: true });
   }
 }

@@ -10,9 +10,8 @@ const createQuestionTemplateController = async (req, res) => {
 };
 
 const getAllQuestionTemplatesController = async (req, res) => {
-  const { page, pageSize } = req.query;
   try {
-    const result = await questionTemplateService.getAllQuestionTemplates(page, pageSize);
+    const result = await questionTemplateService.getAllQuestionTemplates();
     res.status(result.status ? 200 : 400).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });

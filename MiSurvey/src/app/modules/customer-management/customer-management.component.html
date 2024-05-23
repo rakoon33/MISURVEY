@@ -2,17 +2,52 @@
 
 <div *ngIf="userPermissions$ | async as permissions">
   <div *ngIf="permissions.CanView">
-
     <div style="flex: 1" *ngIf="!permissions.CanView">
       <p>You not has permissions to view anything!</p>
     </div>
     <div class="d-flex justify-content-start">
-      <button *ngIf="permissions.CanExport" class="btn-action" (click)="exportToPdf()">
+      <button
+        *ngIf="permissions.CanExport"
+        class="btn-action"
+        (click)="exportToPdf()"
+      >
         Export Data
       </button>
     </div>
 
-    <table *ngIf="permissions.CanView" class="table table-hover table-striped responsive">
+    <div *ngIf="permissions.CanView" class="input-group mb-3">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <c-dropdown>
+            <button class="btn-management" cButton cDropdownToggle>
+              Filter By
+            </button>
+            <ul cDropdownMenu>
+              <li><button cDropdownItem (click)="setFilterType('FullName')">Full Name</button></li>
+              <li><button cDropdownItem (click)="setFilterType('Email')">Email</button></li>
+              <li><button cDropdownItem (click)="setFilterType('PhoneNumber')">Phone Number</button></li>
+            </ul>
+          </c-dropdown>
+        </div>
+        <input
+          type="search"
+          class="form-control"
+          [(ngModel)]="searchText"
+          placeholder="Enter search text..."
+          (keyup.enter)="applyFilters()"
+        />
+        <c-button-group class="group-button-management" role="group">
+          <button cButton (click)="applyFilters()" class="input-search-management">Search</button>
+          <button cButton (click)="refreshData()" class="btn-border-right btn-borderStyle-left">Refresh</button>
+        </c-button-group>
+      </div>
+      
+    </div>
+
+    <table
+      *ngIf="permissions.CanView"
+      class="table table-hover table-striped responsive"    
+    >
       <thead>
         <tr>
           <th>NO</th>
@@ -24,7 +59,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let customer of customers$ | async; let i = index">
+        <tr *ngFor="let customer of filteredCustomers$ | async; let i = index" >
           <td>{{ i + 1 }}</td>
           <td>{{ customer.FullName }}</td>
           <td>{{ customer.Email }}</td>
@@ -65,37 +100,51 @@
       </tbody>
     </table>
 
-    <div class="pagination">
-      <button
-        class="pagination-button"
-        (click)="onPageChangePrevious()"
-        [disabled]="currentPage === 1"
+    <!-- phân trang -->
+    <div class="pagination-controls">
+      <select
+        [(ngModel)]="itemsPerPage"
+        (ngModelChange)="updatePagination()"
+        class="form-control total-items"
       >
-        &lt;&lt; Previous
-      </button>
-      <div
-        *ngFor="
-          let page of getPaginationRange(currentPage.toString(), totalPages);
-          let i = index
-        "
-        class="page-item"
-      >
-        <button
-          *ngIf="page !== '...'"
-          (click)="onPageChange(page)"
-          [class.active]="currentPage === page"
-        >
-          {{ page }}
-        </button>
-        <span *ngIf="page === '...'">{{ page }}</span>
-      </div>
-      <button
-        class="pagination-button"
-        (click)="onPageChangeNext()"
-        [disabled]="currentPage === totalPages"
-      >
-        Next &gt;&gt;
-      </button>
+        <option value="5">5 per page</option>
+        <option value="10">10 per page</option>
+        <option value="20">20 per page</option>
+      </select>
+
+      <!-- Pagination controls -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage - 1); $event.preventDefault()"
+            >
+              Previous
+            </button>
+          </li>
+          <li
+            class="page-item"
+            [class.active]="currentPage === page"
+            *ngFor="let page of pages"
+          >
+            <button
+              class="page-link"
+              (click)="setPage(page); $event.preventDefault()"
+            >
+              {{ page }}
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === pages.length">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage + 1); $event.preventDefault()"
+            >
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>

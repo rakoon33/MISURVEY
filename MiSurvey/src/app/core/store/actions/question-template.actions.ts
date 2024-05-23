@@ -2,13 +2,12 @@ import { createAction, props } from '@ngrx/store';
 import { QuestionTemplate } from '../../models';
 
 export const loadQuestionTemplatesRequest = createAction(
-  '[Question Template] Load Question Templates Request',
-  props<{ page: number; pageSize: number }>()
+  '[Question Template] Load Question Templates Request'
 );
 
 export const loadQuestionTemplatesSuccess = createAction(
   '[Question Template] Load Question Templates Success',
-  props<{ questionTemplates: QuestionTemplate[]; totalTemplates: number }>()
+  props<{ questionTemplates: QuestionTemplate[]; }>()
 );
 
 export const loadQuestionTemplatesFailure = createAction(

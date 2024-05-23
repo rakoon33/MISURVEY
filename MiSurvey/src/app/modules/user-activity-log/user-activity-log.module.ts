@@ -1,4 +1,4 @@
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UserActivityLogRoutingModule } from './user-activity-log-routing.module';
 import { UserActivityLogComponent } from './user-activity-log.component';
 import { CommonModule } from '@angular/common';
@@ -48,6 +48,7 @@ import {
     NavModule,
     UtilitiesModule,
     TabsModule,
+    FormsModule,
   ],
 })
 export class UserActivityLogModule {}

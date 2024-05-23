@@ -16,13 +16,12 @@ export enum CustomerActionTypes {
 }
 
 export const loadCustomers = createAction(
-    CustomerActionTypes.LOAD_CUSTOMERS,
-    props<{ page: number, pageSize: number }>()
+    CustomerActionTypes.LOAD_CUSTOMERS
 );
 
 export const loadCustomersSuccess = createAction(
     CustomerActionTypes.LOAD_CUSTOMERS_SUCCESS,
-    props<{ customers: Customer[], total: number }>() 
+    props<{ customers: Customer[] }>() 
 );
 
 export const loadCustomersFailure = createAction(

@@ -11,11 +11,8 @@ export class CustomerService {
 
   constructor(private http: HttpClient) {}
 
-  getAllCustomers(page: number, pageSize: number): Observable<{ customers: Customer[], total: number }> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString());
-    return this.http.get<{ customers: Customer[], total: number }>(this.apiUrl, { params, withCredentials: true });
+  getAllCustomers(): Observable<{ customers: Customer[], total: number }> {
+    return this.http.get<{ customers: Customer[], total: number }>(this.apiUrl, { withCredentials: true });
   }
 
   getCustomerById(customerId: number): Observable<any> {

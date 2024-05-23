@@ -11,7 +11,11 @@
       >
         Create a new role
       </button>
-      <button *ngIf="permissions.CanExport" class="btn-action" (click)="exportToPdf()">
+      <button
+        *ngIf="permissions.CanExport"
+        class="btn-action"
+        (click)="exportToPdf()"
+      >
         Export Data
       </button>
     </div>
@@ -21,41 +25,42 @@
           <button class="btn-management" cButton cDropdownToggle>Filter</button>
           <ul cDropdownMenu>
             <li>
-              <button cDropdownItem>Role Name</button>
+              <button cDropdownItem (click)="setFilterType('name')">
+                Role Name
+              </button>
             </li>
             <li>
-              <button cDropdownItem>Description</button>
-            </li>
-            <li>
-              <button cDropdownItem>Created At</button>
+              <button cDropdownItem (click)="setFilterType('id')">ID</button>
             </li>
           </ul>
         </c-dropdown>
       </div>
-      <form
-        class="form-search-management"
-        onsubmit="event.preventDefault();"
-        role="search"
-      >
-        <input
-          class="input-search-management"
-          id="search"
-          type="search"
-          placeholder="Search..."
-          autofocus
-          required
-        />
-      </form>
-  
+      <input
+        type="search"
+        class="form-control"
+        [(ngModel)]="searchText"
+        placeholder="Enter search text..."
+        (keyup.enter)="applyFilters()"
+      />
       <c-button-group class="group-button-management" role="group">
-        <button cButton>Search</button>
-        <button class="btn-border-right btn-borderStyle-left" cButton>
+        <button
+          cButton
+          (click)="applyFilters()"
+          class="input-search-management"
+        >
+          Search
+        </button>
+        <button
+          class="btn-border-right btn-borderStyle-left"
+          cButton
+          (click)="refreshData()"
+        >
           Refresh
         </button>
       </c-button-group>
     </div>
-  
-    <table 
+
+    <table
       class="table"
       [hover]="true"
       [responsive]="true"
@@ -74,7 +79,7 @@
       </thead>
       <tbody>
         <!-- Loop through the users array using the *ngFor directive -->
-        <tr *ngFor="let role of roles$ | async; let i = index">
+        <tr *ngFor="let role of filteredRoles$ | async; let i = index">
           <td scope="row">{{ i + 1 }}</td>
           <td>{{ role.CompanyRoleName }}</td>
           <td>{{ role.CompanyRoleDescription }}</td>
@@ -84,10 +89,7 @@
               <span class="action-management" cButton cDropdownToggle> </span>
               <ul cDropdownMenu>
                 <li *ngIf="permissions.CanViewData">
-                  <button
-                    cDropdownItem
-                    (click)="viewRole(role.CompanyRoleID)"
-                  >
+                  <button cDropdownItem (click)="viewRole(role.CompanyRoleID)">
                     View
                   </button>
                 </li>
@@ -100,7 +102,12 @@
                   </button>
                 </li>
                 <li *ngIf="permissions.CanDelete">
-                  <button cDropdownItem (click)="deleteRole(role.CompanyRoleID)">Delete</button>
+                  <button
+                    cDropdownItem
+                    (click)="deleteRole(role.CompanyRoleID)"
+                  >
+                    Delete
+                  </button>
                 </li>
               </ul>
             </c-dropdown>
@@ -108,20 +115,89 @@
         </tr>
       </tbody>
     </table>
-</div>
+    <div class="pagination-controls">
+      <select
+        [(ngModel)]="itemsPerPage"
+        (ngModelChange)="updatePagination()"
+        class="form-control total-items"
+      >
+        <option value="5">5 per page</option>
+        <option value="10">10 per page</option>
+        <option value="20">20 per page</option>
+      </select>
 
-  <c-modal size="lg" [scrollable]="true" alignment="center" #addRoleModal id="addRoleModal">
+      <!-- Pagination controls -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage - 1); $event.preventDefault()"
+            >
+              Previous
+            </button>
+          </li>
+          <li
+            class="page-item"
+            [class.active]="currentPage === page"
+            *ngFor="let page of pages"
+          >
+            <button
+              class="page-link"
+              (click)="setPage(page); $event.preventDefault()"
+            >
+              {{ page }}
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === pages.length">
+            <button
+              class="page-link"
+              (click)="setPage(currentPage + 1); $event.preventDefault()"
+            >
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+
+  <c-modal
+    size="lg"
+    [scrollable]="true"
+    alignment="center"
+    #addRoleModal
+    id="addRoleModal"
+  >
     <c-modal-header>
       <h5 cModalTitle>Add New Role</h5>
-      <button class="btn-close" type="button" cButtonClose [cModalToggle]="addRoleModal.id"></button>
+      <button
+        class="btn-close"
+        type="button"
+        cButtonClose
+        [cModalToggle]="addRoleModal.id"
+      ></button>
     </c-modal-header>
     <c-modal-body>
       <form [formGroup]="roleForm" (ngSubmit)="submitRole()">
         <div class="mb-3" formGroupName="roleData">
           <label for="roleName">Role Name</label>
-          <input type="text" class="form-control" id="roleName" formControlName="CompanyRoleName" placeholder="Role Name" />
+          <input
+            type="text"
+            class="form-control"
+            id="roleName"
+            formControlName="CompanyRoleName"
+            placeholder="Role Name"
+          />
           <label for="roleDescription">Role Description</label>
-          <input type="text" class="form-control" id="roleDescription" formControlName="CompanyRoleDescription" placeholder="Role Description" />
+          <input
+            type="text"
+            class="form-control"
+            id="roleDescription"
+            formControlName="CompanyRoleDescription"
+            placeholder="Role Description"
+          />
         </div>
         <div *ngIf="modules$ | async as modules">
           <table class="table">
@@ -137,8 +213,20 @@
               </tr>
             </thead>
             <tbody formArrayName="permissionsData">
-              <tr *ngFor="let permissionControl of permissionsData.controls; let i = index" [formGroupName]="i">
-                <td>{{ modules && modules.length > i ? modules[i].name : 'Loading...' }}</td>
+              <tr
+                *ngFor="
+                  let permissionControl of permissionsData.controls;
+                  let i = index
+                "
+                [formGroupName]="i"
+              >
+                <td>
+                  {{
+                    modules && modules.length > i
+                      ? modules[i].name
+                      : "Loading..."
+                  }}
+                </td>
                 <td><input type="checkbox" formControlName="CanView" /></td>
                 <td><input type="checkbox" formControlName="CanAdd" /></td>
                 <td><input type="checkbox" formControlName="CanUpdate" /></td>
@@ -152,15 +240,27 @@
       </form>
     </c-modal-body>
     <c-modal-footer>
-      <button type="button" cButton [cModalToggle]="addRoleModal.id">Close</button>
+      <button type="button" cButton [cModalToggle]="addRoleModal.id">
+        Close
+      </button>
       <button type="button" cButton (click)="submitRole()">Save Role</button>
     </c-modal-footer>
   </c-modal>
 
-  <c-modal size="lg" [scrollable]="true" alignment="center" #deleteRoleModal id="deleteRoleModal">
+  <c-modal
+    size="lg"
+    [scrollable]="true"
+    alignment="center"
+    #deleteRoleModal
+    id="deleteRoleModal"
+  >
     <c-modal-header>
       <h5 cModalTitle>Confirm Role Deletion</h5>
-      <button class="btn-close" [cModalToggle]="deleteRoleModal.id" cButtonClose></button>
+      <button
+        class="btn-close"
+        [cModalToggle]="deleteRoleModal.id"
+        cButtonClose
+      ></button>
     </c-modal-header>
     <c-modal-body>
       Are you sure you want to delete this role? This action cannot be undone.
@@ -169,26 +269,142 @@
       <button [cModalToggle]="deleteRoleModal.id" cButton color="secondary">
         Cancel
       </button>
-      <button cButton color="danger" (click)="confirmDeleteRole()">Delete</button>
+      <button cButton color="danger" (click)="confirmDeleteRole()">
+        Delete
+      </button>
     </c-modal-footer>
   </c-modal>
-  
 
-<c-modal size="lg" [scrollable]="true" alignment="center" #editRoleModal id="editRoleModal">
-  <c-modal-header>
-    <h5 cModalTitle>Edit Role</h5>
-    <button class="btn-close" type="button" cButtonClose [cModalToggle]="editRoleModal.id"></button>
-  </c-modal-header>
-  <c-modal-body>
-    <form [formGroup]="roleFormEdit">
-      <div formGroupName="roleData" class="mb-3">
-        <label for="roleName">Role Name</label>
-        <input type="text" class="form-control" id="roleName" formControlName="CompanyRoleName" placeholder="Role Name" required />
-        <label for="roleDescription">Role Description</label>
-        <input type="text" class="form-control" id="roleDescription" formControlName="CompanyRoleDescription" placeholder="Role Description" />
-      </div>
-      <div *ngIf="modules$ | async as modules">
-        <table class="table permissions-table">
+  <c-modal
+    size="lg"
+    [scrollable]="true"
+    alignment="center"
+    #editRoleModal
+    id="editRoleModal"
+  >
+    <c-modal-header>
+      <h5 cModalTitle>Edit Role</h5>
+      <button
+        class="btn-close"
+        type="button"
+        cButtonClose
+        [cModalToggle]="editRoleModal.id"
+      ></button>
+    </c-modal-header>
+    <c-modal-body>
+      <form [formGroup]="roleFormEdit">
+        <div formGroupName="roleData" class="mb-3">
+          <label for="roleName">Role Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="roleName"
+            formControlName="CompanyRoleName"
+            placeholder="Role Name"
+            required
+          />
+          <label for="roleDescription">Role Description</label>
+          <input
+            type="text"
+            class="form-control"
+            id="roleDescription"
+            formControlName="CompanyRoleDescription"
+            placeholder="Role Description"
+          />
+        </div>
+        <div *ngIf="modules$ | async as modules">
+          <table class="table permissions-table">
+            <thead>
+              <tr>
+                <th>Module</th>
+                <th>Can View</th>
+                <th>Can Add</th>
+                <th>Can Update</th>
+                <th>Can Delete</th>
+                <th>Can Export</th>
+                <th>Can View Data</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="permissionsDataEdit">
+              <tr
+                *ngFor="
+                  let permissionControl of permissionsDataEdit.controls;
+                  let i = index
+                "
+                [formGroupName]="i"
+              >
+                <td>
+                  {{
+                    modules && modules.length > i
+                      ? modules[i].name
+                      : "Loading..."
+                  }}
+                </td>
+                <td><input type="checkbox" formControlName="CanView" /></td>
+                <td><input type="checkbox" formControlName="CanAdd" /></td>
+                <td><input type="checkbox" formControlName="CanUpdate" /></td>
+                <td><input type="checkbox" formControlName="CanDelete" /></td>
+                <td><input type="checkbox" formControlName="CanExport" /></td>
+                <td><input type="checkbox" formControlName="CanViewData" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </c-modal-body>
+    <c-modal-footer>
+      <button type="button" cButton [cModalToggle]="editRoleModal.id">
+        Close
+      </button>
+      <button type="button" cButton (click)="submitEditRole()">
+        Update Role
+      </button>
+    </c-modal-footer>
+  </c-modal>
+
+  <!-- View Role Modal -->
+  <c-modal
+    size="lg"
+    [scrollable]="true"
+    alignment="center"
+    #viewRoleModal
+    id="viewRoleModal"
+  >
+    <c-modal-header>
+      <h5 cModalTitle>View Role</h5>
+      <button
+        class="btn-close"
+        type="button"
+        cButtonClose
+        [cModalToggle]="viewRoleModal.id"
+      ></button>
+    </c-modal-header>
+    <c-modal-body>
+      <form [formGroup]="roleFormView">
+        <div formGroupName="roleData" class="mb-3">
+          <label for="roleName">Role Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="roleName"
+            formControlName="CompanyRoleName"
+            placeholder="Role Name"
+            [disabled]="true"
+          />
+          <label for="roleDescription">Role Description</label>
+          <input
+            type="text"
+            class="form-control"
+            id="roleDescription"
+            formControlName="CompanyRoleDescription"
+            placeholder="Role Description"
+            [disabled]="true"
+          />
+        </div>
+        <table
+          class="table permissions-table"
+          *ngIf="modules$ | async as modules"
+        >
           <thead>
             <tr>
               <th>Module</th>
@@ -200,68 +416,70 @@
               <th>Can View Data</th>
             </tr>
           </thead>
-          <tbody formArrayName="permissionsDataEdit">
-            <tr *ngFor="let permissionControl of permissionsDataEdit.controls; let i = index" [formGroupName]="i">
-              <td>{{ modules && modules.length > i ? modules[i].name : 'Loading...' }}</td>
-              <td><input type="checkbox" formControlName="CanView" /></td>
-              <td><input type="checkbox" formControlName="CanAdd" /></td>
-              <td><input type="checkbox" formControlName="CanUpdate" /></td>
-              <td><input type="checkbox" formControlName="CanDelete" /></td>
-              <td><input type="checkbox" formControlName="CanExport" /></td>
-              <td><input type="checkbox" formControlName="CanViewData" /></td>
+          <tbody formArrayName="permissionsDataView">
+            <tr
+              *ngFor="
+                let permissionControl of permissionsDataView.controls;
+                let i = index
+              "
+              [formGroupName]="i"
+            >
+              <td>
+                {{
+                  modules && modules.length > i ? modules[i].name : "Loading..."
+                }}
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  formControlName="CanView"
+                  [disabled]="true"
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  formControlName="CanAdd"
+                  [disabled]="true"
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  formControlName="CanUpdate"
+                  [disabled]="true"
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  formControlName="CanDelete"
+                  [disabled]="true"
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  formControlName="CanExport"
+                  [disabled]="true"
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  formControlName="CanViewData"
+                  [disabled]="true"
+                />
+              </td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </form>
-  </c-modal-body>
-  <c-modal-footer>
-    <button type="button" cButton [cModalToggle]="editRoleModal.id">Close</button>
-    <button type="button" cButton (click)="submitEditRole()">Update Role</button>
-  </c-modal-footer>
-</c-modal>
-
-<!-- View Role Modal -->
-<c-modal size="lg" [scrollable]="true" alignment="center" #viewRoleModal id="viewRoleModal">
-  <c-modal-header>
-    <h5 cModalTitle>View Role</h5>
-    <button class="btn-close" type="button" cButtonClose [cModalToggle]="viewRoleModal.id"></button>
-  </c-modal-header>
-  <c-modal-body>
-    <form [formGroup]="roleFormView"> 
-      <div formGroupName="roleData" class="mb-3">
-        <label for="roleName">Role Name</label>
-        <input type="text" class="form-control" id="roleName" formControlName="CompanyRoleName" placeholder="Role Name" [disabled]="true" />
-        <label for="roleDescription">Role Description</label>
-        <input type="text" class="form-control" id="roleDescription" formControlName="CompanyRoleDescription" placeholder="Role Description" [disabled]="true" />
-      </div>
-      <table class="table permissions-table"  *ngIf="modules$ | async as modules">
-        <thead>
-          <tr>
-            <th>Module</th>
-            <th>Can View</th>
-            <th>Can Add</th>
-            <th>Can Update</th>
-            <th>Can Delete</th>
-            <th>Can Export</th>
-            <th>Can View Data</th>
-          </tr>
-        </thead>
-        <tbody formArrayName="permissionsDataView">
-          <tr *ngFor="let permissionControl of permissionsDataView.controls; let i = index" [formGroupName]="i">
-            <td>{{ modules && modules.length > i ? modules[i].name : 'Loading...' }}</td>
-            <td><input type="checkbox" formControlName="CanView" [disabled]="true"/></td>
-            <td><input type="checkbox" formControlName="CanAdd" [disabled]="true"/></td>
-            <td><input type="checkbox" formControlName="CanUpdate" [disabled]="true"/></td>
-            <td><input type="checkbox" formControlName="CanDelete" [disabled]="true"/></td>
-            <td><input type="checkbox" formControlName="CanExport" [disabled]="true"/></td>
-            <td><input type="checkbox" formControlName="CanViewData" [disabled]="true"/></td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-  </c-modal-body>
-  <c-modal-footer>
-    <button type="button" cButton [cModalToggle]="viewRoleModal.id">Close</button>
-  </c-modal-footer>
-</c-modal>
+      </form>
+    </c-modal-body>
+    <c-modal-footer>
+      <button type="button" cButton [cModalToggle]="viewRoleModal.id">
+        Close
+      </button>
+    </c-modal-footer>
+  </c-modal>
+</div>

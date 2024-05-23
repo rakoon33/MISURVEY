@@ -19,11 +19,10 @@ export class CustomerManagementEffects {
     this.actions$.pipe(
       ofType(customerManagementActions.loadCustomers),
       mergeMap((action) =>
-        this.customerService.getAllCustomers(action.page, action.pageSize).pipe(
+        this.customerService.getAllCustomers().pipe(
           map((data) =>
             customerManagementActions.loadCustomersSuccess({
-              customers: data.customers,
-              total: data.total,
+              customers: data.customers
             })
           ),
           catchError((error) =>

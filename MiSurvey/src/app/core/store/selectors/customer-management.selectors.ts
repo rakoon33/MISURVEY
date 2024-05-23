@@ -12,11 +12,6 @@ const selectAllCustomers = createSelector(
     (state: CustomerManagementState) => state.customers
 );
 
-const selectTotalCustomers = createSelector(
-    selectCustomerFeature,
-    (state: CustomerManagementState) => state.totalCustomers
-);
-
 const selectCustomerLoading = createSelector(
     selectCustomerFeature,
     (state: CustomerManagementState) => state.loading
@@ -27,4 +22,4 @@ const selectCustomerError = createSelector(
     (state: CustomerManagementState) => state.error
 );
 
-export default  {selectAllCustomers, selectTotalCustomers, selectCustomerLoading, selectCustomerError }
+export default  {selectAllCustomers, selectCustomerLoading, selectCustomerError }

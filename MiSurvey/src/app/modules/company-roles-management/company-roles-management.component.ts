@@ -55,6 +55,15 @@ export class CompanyRolesManagementComponent implements OnInit {
   roleFormView: FormGroup;
   private subscriptions: Subscription = new Subscription();
 
+  //search
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalRoles = 0;
+  pages: number[] = [];
+  filterType: string = 'name'; // default filter type
+  searchText: string = '';
+  filteredRoles$: Observable<CompanyRole[]> | undefined;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -172,6 +181,9 @@ export class CompanyRolesManagementComponent implements OnInit {
       });
     });
     this.subscriptions.add(subscription2);
+
+    this.applyFilters();
+    
   }
 
   submitRole() {
@@ -185,6 +197,52 @@ export class CompanyRolesManagementComponent implements OnInit {
     }
   }
 
+  setFilterType(type: string): void {
+    this.filterType = type;
+    this.applyFilters();
+  }
+
+  refreshData(): void {
+    this.searchText = ''; 
+    this.currentPage = 1; 
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    this.filteredRoles$ = this.roles$.pipe(
+      map(roles => {
+        const filtered = roles.filter(role => {
+          if (!this.searchText) return true;
+          const searchTextLower = this.searchText.toLowerCase();
+          if (this.filterType === 'name') {
+            return role.CompanyRoleName.toLowerCase().includes(searchTextLower);
+          } else if (this.filterType === 'id') {
+            return role.CompanyRoleID!.toString() === this.searchText.trim(); // assuming 'id' is the property name
+          }
+          return true;
+        });
+        this.totalRoles = filtered.length;
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        this.updatePagination();
+        return filtered.slice(startIndex, startIndex + this.itemsPerPage);
+      })
+    );
+
+  }
+
+  updatePagination(): void {
+    const pageCount = Math.ceil(this.totalRoles / this.itemsPerPage);
+    this.pages = Array.from({length: pageCount}, (_, i) => i + 1);
+  }
+
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) {
+      return;
+    }
+    this.currentPage = page;
+    this.applyFilters();
+  }
+  
   openEditModal(roleId: number | undefined) {
     if (typeof roleId !== 'number') {
       this.toastr.error('Invalid role ID');

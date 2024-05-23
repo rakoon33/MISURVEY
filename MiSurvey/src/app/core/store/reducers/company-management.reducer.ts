@@ -6,7 +6,6 @@ export const initialState: CompanyManagementState = {
   companies: [],
   loading: false,
   selectedCompany: null,
-  totalCompanies: 0,
 };
 
 export const companyManagementReducer = createReducer(
@@ -15,13 +14,11 @@ export const companyManagementReducer = createReducer(
     ...state,
     loading: true,
   })),
-  on(companyManagementActions.loadCompaniesSuccess, (state, { companies, totalCompanies }) => {
-    console.log('LOAD_COMPANIES_SUCCESS action received', companies, totalCompanies);
+  on(companyManagementActions.loadCompaniesSuccess, (state, { companies }) => {
     return {
       ...state,
       companies: companies,
       loading: false,
-      totalCompanies: totalCompanies,
     };
   }),
   on(companyManagementActions.loadCompaniesFailure, (state) => ({

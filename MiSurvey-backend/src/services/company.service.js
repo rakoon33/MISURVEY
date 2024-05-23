@@ -269,12 +269,8 @@ const deleteCompany = async (CompanyID, udata) => {
 const getAllCompanies = async (
   requestingUserRole,
   requestingUserCompanyId,
-  page,
-  pageSize
 ) => {
   try {
-    const offset = (page - 1) * pageSize;
-    const limit = pageSize;
 
     let queryOptions = {
       attributes: [
@@ -284,8 +280,6 @@ const getAllCompanies = async (
         "CompanyDomain",
         "AdminID",
       ],
-      offset,
-      limit,
     };
 
     // Apply filtering based on CompanyID only when the user is not a SuperAdmin
@@ -300,11 +294,10 @@ const getAllCompanies = async (
       ];
     }
 
-    const { count, rows: companies } = await Company.findAndCountAll(
+    const {rows: companies } = await Company.findAndCountAll(
       queryOptions
     );
-
-    return { status: true, data: companies, total: count };
+    return { status: true, data: companies };
   } catch (error) {
     console.error("Error in getAllCompanies service: ", error);
     return {

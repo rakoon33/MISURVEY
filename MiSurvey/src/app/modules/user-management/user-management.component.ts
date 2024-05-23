@@ -11,6 +11,7 @@ import {
   map,
   of,
   take,
+  tap,
 } from 'rxjs';
 import {
   companyRoleManagementActions,
@@ -54,11 +55,6 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class UserManagementComponent implements OnInit {
   private subscription = new Subscription();
 
-  totalPages: number = 1;
-  totalUsers: number = 1;
-  pageSize: number = 1;
-  currentPage: string = '1';
-
   currentAction: 'view' | 'edit' | null = null;
   // to get the user id you select to update/delete
   currentSelectedUserId: number | undefined;
@@ -91,6 +87,16 @@ export class UserManagementComponent implements OnInit {
 
   IndividualPermissions$: Observable<any[]> | undefined;
   currentCompanyUserId: any;
+
+  // search
+  filteredUsers$: Observable<User[]> | undefined;
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalUsers = 0;
+  pages: number[] = [];
+
+  filterType = 'name'; // Default filter type
+  searchText = '';
 
   constructor(
     private store: Store,
@@ -191,25 +197,10 @@ export class UserManagementComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart))
-      .subscribe((event: RouterEvent) => {
-        if (event instanceof NavigationStart) {
-          if (event.url === '/user-management') {
-            this.router.navigate(['/user-management'], {
-              queryParams: { page: 1, pageSize: 10 },
-              replaceUrl: true, // This replaces the current state in history
-            });
-          }
-        }
-      });
+    this.loadUsers();
 
-    this.route.queryParams.subscribe((params) => {
-      this.currentPage = params['page'] || 1;
-      this.pageSize = params['pageSize'] || 10;
-      this.loadUsers();
-    });
-    this.totalPages = Math.ceil(this.totalUsers / this.pageSize);
+    this.applyFilters();
+
     this.store
       .select(userSelector.selectCurrentUser)
       .subscribe((id) => (this.currentUserId = id?.UserID));
@@ -247,84 +238,71 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
-  getPaginationRange(
-    currentPageStr: string,
-    totalPages: number,
-    siblingCount = 1
-  ): Array<number | string> {
-    const currentPage = parseInt(currentPageStr, 10);
-    const range = [];
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+  applyFilters() {
+    this.filteredUsers$ = this.users$.pipe(
+      map(users => users.filter(user => {
+        let matchesFilter = true;
+  
+        switch (this.filterType) {
+          case 'name':
+            matchesFilter = this.searchText ? (user.FirstName + ' ' + user.LastName).toLowerCase().includes(this.searchText.toLowerCase()) : true;
+            break;
+          case 'role':
+            matchesFilter = this.searchText ? user.UserRole.toLowerCase().includes(this.searchText.toLowerCase()) : true;
+            break;
+          case 'active':
+            matchesFilter = this.searchText ? (user.IsActive ? 'active' : 'inactive').includes(this.searchText.toLowerCase()) : true;
+            break;
+          case 'userID':
+            matchesFilter = this.searchText ? user.UserID!.toString() === this.searchText.trim() : true;
+            break;
+          default:
+            matchesFilter = true;
+        }
+  
+        return matchesFilter;
+      })),
+      tap(filteredUsers => {
+        this.totalUsers = filteredUsers.length;
+        this.updatePagination();
+        
+      }),
+      map(filteredUsers => {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        return filteredUsers.slice(startIndex, startIndex + this.itemsPerPage);
+      })
+    );
+  }
+  
+  
 
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
+  refreshData() {
+    this.searchText = ''; // Reset the search text
+    this.currentPage = 1; // Reset pagination to the first page
+    this.loadUsers(); // Reload the user data
+    this.applyFilters(); // Reapply filters to refresh the view
+  }
 
-    range.push(1);
+  setFilterType(type: string) {
+    this.filterType = type;
+  }
 
-    if (shouldShowLeftDots) {
-      range.push('...');
+  setPage(page: number): void {
+    if (page < 1 || page > this.pages.length) {
+      return;
     }
+    this.currentPage = page;
+    this.applyFilters();
+  }
 
-    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-      if (i !== 1 && i !== totalPages) {
-        range.push(i);
-      }
-    }
-
-    if (shouldShowRightDots) {
-      range.push('...');
-    }
-
-    if (totalPages !== 1) {
-      range.push(totalPages);
-    }
-
-    return range;
+  updatePagination() {
+    const pageCount = Math.ceil(this.totalUsers / this.itemsPerPage);
+    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+    this.applyFilters();
   }
 
   loadUsers() {
-    this.store.dispatch(
-      userManagementActions.loadUsersRequest({
-        page: Number(this.currentPage),
-        pageSize: this.pageSize,
-      })
-    );
-
-    this.store
-      .select(userManagementSelector.selectCurrentTotalUsers)
-      .subscribe((totalUsers) => {
-        this.totalUsers = totalUsers;
-        this.totalPages = Math.ceil(this.totalUsers / this.pageSize);
-      });
-  }
-
-  onPageChange(page: number | string) {
-    const pageNumber = typeof page === 'string' ? parseInt(page, 10) : page;
-    this.router.navigate(['/user-management'], {
-      queryParams: { page: pageNumber, pageSize: this.pageSize },
-    });
-    this.loadUsers();
-  }
-
-  onPageChangeNext() {
-    this.router.navigate(['/user-management'], {
-      queryParams: {
-        page: Number(this.currentPage) + 1,
-        pageSize: this.pageSize,
-      },
-    });
-    this.loadUsers();
-  }
-
-  onPageChangePrevious() {
-    this.router.navigate(['/user-management'], {
-      queryParams: {
-        page: Number(this.currentPage) - 1,
-        pageSize: this.pageSize,
-      },
-    });
-    this.loadUsers();
+    this.store.dispatch(userManagementActions.loadUsersRequest());
   }
 
   private loadUserDataIntoForm(user: User) {
