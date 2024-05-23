@@ -256,9 +256,6 @@ const updateUser = async (UserID, userData, udata) => {
     const [updatedRows] = await User.update(userData, {
       where: { UserID: UserID },
     });
-    if (updatedRows === 0) {
-      return { status: false, message: "No rows updated" };
-    }
 
     const updatedUser = await User.findOne({ where: { UserID: UserID } });
     await createLogActivity(

@@ -1,0 +1,55 @@
+<div *ngIf="user$ | async as user" class="user-profile-container">
+ <div class="user-container">
+    <div class="user-avatar">
+        <img [src]="user?.UserAvatar" alt="User Avatar" />
+      </div>
+      <div class="user-details">
+        <p><strong>Username:</strong> {{ user?.Username }}</p>
+        <p><strong>First Name:</strong> {{ user?.FirstName }}</p>
+        <p><strong>Last Name:</strong> {{ user?.LastName }}</p>
+        <p><strong>Gender:</strong> {{ user?.Gender }}</p>
+        <p><strong>Email:</strong> {{ user?.Email }}</p>
+        <p><strong>Phone Number:</strong> {{ user?.PhoneNumber }}</p>
+        <p><strong>User Role:</strong> {{ user?.UserRole }}</p>
+        <button class="update-btn" (click)="openEditModal()">Update Profile</button>
+      </div>
+ </div>
+</div>
+<c-modal size="lg" [scrollable]="true" alignment="center" #editUserProfileModal id="editUserProfileModal">
+    <c-modal-header>
+      <h5 cModalTitle>Edit User Profile</h5>
+      <button class="btn-close" [cModalToggle]="editUserProfileModal.id" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+      <form [formGroup]="editUserProfileForm">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" formControlName="Username" placeholder="Username">
+        </div>
+        <div class="mb-3">
+          <label for="firstName" class="form-label">First Name</label>
+          <input type="text" class="form-control" id="firstName" formControlName="FirstName" placeholder="First Name">
+        </div>
+        <div class="mb-3">
+          <label for="lastName" class="form-label">Last Name</label>
+          <input type="text" class="form-control" id="lastName" formControlName="LastName" placeholder="Last Name">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" formControlName="Email" placeholder="Email">
+        </div>
+        <div class="mb-3">
+          <label for="phoneNumber" class="form-label">Phone Number</label>
+          <input type="text" class="form-control" id="phoneNumber" formControlName="PhoneNumber" placeholder="Phone Number">
+        </div>
+        <div class="mb-3">
+          <label for="userAvatar" class="form-label">User Avatar</label>
+          <input type="file" class="form-control" id="userAvatar" (change)="onFileChange($event)">
+        </div>
+      </form>
+    </c-modal-body>
+    <c-modal-footer>
+      <button [cModalToggle]="editUserProfileModal.id" cButton color="secondary">Cancel</button>
+      <button cButton color="primary" (click)="saveUserProfile()">Save Changes</button>
+    </c-modal-footer>
+  </c-modal>

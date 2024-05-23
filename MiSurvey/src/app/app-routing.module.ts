@@ -133,6 +133,11 @@ const routes: Routes = [
         path: 'subscription-plans',
         loadChildren: () =>
           import('./modules/subscription-plans/subscription-plans.module').then((m) => m.SubscriptionPlansModule)
+      },
+      {
+        path: 'user-profile',
+        loadChildren: () =>
+          import('./modules/user-profile/user-profile.module').then((m) => m.UserProfileModule)
       }
     ],
   },

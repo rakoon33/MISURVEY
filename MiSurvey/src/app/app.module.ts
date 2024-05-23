@@ -114,6 +114,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 
 //socket 
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
 const config: SocketIoConfig = { url: environment.BACKEND_BASE_URL, options: {} };
 
 const APP_CONTAINERS = [
@@ -126,7 +127,7 @@ const APP_CONTAINERS = [
   RegisterComponent,
   ApiDocumentationsComponent,
   CustomerSurveyComponent,
-  NotificationsSidebarComponent
+  NotificationsSidebarComponent,
 ];
 
 @NgModule({
