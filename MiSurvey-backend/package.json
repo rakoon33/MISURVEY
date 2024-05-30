@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:integration": "mocha './test/integration/**/*' --recursive --timeout 5000",
     "dev": "nodemon server.js"
   },
   "keywords": [],
@@ -42,5 +43,11 @@
     "socket.io": "^4.7.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "jest": "^29.7.0",
+    "mocha": "^10.4.0",
+    "supertest": "^7.0.0"
   }
 }
