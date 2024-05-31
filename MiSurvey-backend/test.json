@@ -1,0 +1,12 @@
+{
+    "database": {
+      "host": "localhost",
+      "port": 3306,
+      "username": "root",
+      "password": "nhuphan1602@",
+      "database": "MiSurvey"
+    },
+    "server": {
+      "port": 3001
+    }
+}
