@@ -54,7 +54,6 @@ describe('Authentication Routes', function() {
             .send(userData)
             .expect(201)
             .end(function(err, res) {
-                console.log('aloo' + res.body);
                 expect(res.body).to.have.property('status', true);
                 expect(res.body).to.have.property('message', 'Registration successful');
                 done(err);
