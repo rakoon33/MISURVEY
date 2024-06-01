@@ -7,7 +7,11 @@ const loginController = async (req, res) => {
       req.body.username,
       req.body.password
     );
-    res.status(200).json(result);
+    if (result.status) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json({ message: result.message });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

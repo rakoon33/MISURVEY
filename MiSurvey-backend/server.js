@@ -15,7 +15,6 @@ app.use(morgan('dev'));
 // socket
 const socketModule = require('./src/config/io');
 
-
 dotenv.config();
 
 app.use(cookieParser());
