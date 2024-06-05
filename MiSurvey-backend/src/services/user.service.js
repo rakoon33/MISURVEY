@@ -285,11 +285,6 @@ const updateUser = async (UserID, userData, udata) => {
 const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
   try {
-    // Find and delete all notifications for the user
-    await Notification.destroy({
-      where: { UserID: UserID },
-      transaction,
-    });
 
     // Find all surveys created by the user
     const surveys = await Survey.findAll({
@@ -325,12 +320,6 @@ const deleteUser = async (UserID, udata) => {
         transaction,
       });
     }
-
-    // Find and delete all user packages
-    await UserPackage.destroy({
-      where: { UserID: UserID },
-      transaction,
-    });
 
     // Find all company user records associated with the user
     const companyUsers = await CompanyUser.findAll({
@@ -375,7 +364,17 @@ const deleteUser = async (UserID, udata) => {
           await RolePermission.destroy({
             where: { CompanyRoleID: companyrole.CompanyRoleID },
           });
+
+          await CompanyUser.destroy({
+            where: {
+              CompanyRoleID: companyrole.CompanyRoleID
+            },
+            transaction
+          });
         }
+
+
+
         await CompanyRole.destroy({ where: { CompanyID: companyID } });
         await Company.destroy({
           where: { AdminID: UserID },
@@ -412,7 +411,7 @@ const deleteUser = async (UserID, udata) => {
     await transaction.rollback();
     return {
       status: false,
-      message: "Failed to delete user and related data.",
+      message:error.toString(),
       error: error.toString(),
     };
   }
