@@ -1,5 +1,5 @@
 <div class="title-container">
-  <p class="survey-title">{{ survey?.Title }}</p>
+  <p matTooltip="Click to copy survey's link" class="survey-title" (click)="copySurveyLink(survey?.SurveyLink)">{{ survey?.Title }}</p>
 </div>
 <div
   *ngFor="

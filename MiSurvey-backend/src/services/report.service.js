@@ -118,8 +118,8 @@ const getActivityOverview = async (startDate, endDate, userData) => {
         ],
         where: whereCondition,
         attributes: [
-          [sequelize.fn("date", sequelize.col("User.CreatedAt")), "date"], // Specify the table alias in the function
-          [sequelize.fn("COUNT", sequelize.col("User.UserID")), "count"], // Specify the table alias here too
+          [sequelize.fn("date", sequelize.col("User.CreatedAt")), "date"], 
+          [sequelize.fn("COUNT", sequelize.col("User.UserID")), "count"], 
         ],
         group: ["date"],
         raw: true,
@@ -353,6 +353,13 @@ const getSurveyQuestionData = async (surveyId) => {
       col: "CustomerID",
     });
 
+    const uniqueResponseCount = await SurveyResponse.count({
+      where: { SurveyID: surveyId },
+      distinct: true,
+      col: 'ResponseID', 
+      group: ['CustomerID', 'QuestionID']
+    });
+
     const formattedSurveyQuestions = survey.SurveyQuestions.map((question) => {
       let formattedData;
       switch (question.SurveyType.SurveyTypeName) {
@@ -380,11 +387,23 @@ const getSurveyQuestionData = async (surveyId) => {
       }
 
       // Calculate response rate
+
+      const maxResponsesPerCustomer = uniqueResponseCount.reduce((acc, item) => {
+        if (!acc[item.CustomerID] || acc[item.CustomerID] < item.count) {
+          acc[item.CustomerID] = item.count; // Cập nhật nếu không có hoặc nhỏ hơn count hiện tại
+        }
+        return acc;
+      }, {});
+      
+      // Tính tổng các giá trị count lớn nhất của mỗi khách hàng
+      const totalMaxResponses = Object.values(maxResponsesPerCustomer).reduce((total, maxCount) => total + maxCount, 0);
+      
+      
       const totalResponses = question.Responses.length;
       const responseRate =
-        totalParticipants === 0
+      totalMaxResponses === 0
           ? "0%"
-          : `${((totalResponses / totalParticipants) * 100).toFixed(2)}%`;
+          : `${((totalResponses / totalMaxResponses) * 100).toFixed(2)}%`;
 
       return {
         questionId: question.QuestionID,
@@ -400,7 +419,7 @@ const getSurveyQuestionData = async (surveyId) => {
     if (survey.InvitationMethod === "Email" && survey.SurveyDetails.length > 0) {
       recipientInfo = survey.SurveyDetails.map((detail) => ({
         recipientCount: detail.RecipientCount,
-        recipients: detail.Recipients.split(', '),  // Assuming recipients are stored as a single string
+        recipients: detail.Recipients.split(', '), 
       }));
     }
 
@@ -417,7 +436,6 @@ const getSurveyQuestionData = async (surveyId) => {
 const calculateNpsData = (responses) => {
   const scores = responses.map((res) => parseInt(res.ResponseValue, 10));
 
-  // Initialize counts with all possible values (0 to 10) set to 0
   const countByValue = Array.from({ length: 10 }, (_, i) => i + 1).reduce(
     (acc, score) => ({ ...acc, [score]: 0 }),
     {}
@@ -447,7 +465,6 @@ const calculateNpsData = (responses) => {
 const calculateCsatData = (responses) => {
   const scores = responses.map((res) => parseInt(res.ResponseValue, 10));
 
-  // Initialize counts with all possible values (1 to 5) set to 0
   const countByValue = Array.from({ length: 5 }, (_, i) => i + 1).reduce(
     (acc, score) => ({ ...acc, [score]: 0 }),
     {}
@@ -477,7 +494,6 @@ const calculateCsatData = (responses) => {
 const calculateStarsData = (responses) => {
   const scores = responses.map((res) => parseInt(res.ResponseValue, 10));
 
-  // Initialize counts with all possible values (1 to 5) set to 0
   const countByValue = Array.from({ length: 5 }, (_, i) => i + 1).reduce(
     (acc, score) => ({ ...acc, [score]: 0 }),
     {}

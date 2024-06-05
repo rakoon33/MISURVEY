@@ -27,6 +27,7 @@
         lg="12"
         class="mb-4"
       >
+
         <c-card class="mb-6 custom-card">
           <c-card-header class="custom-header">
             {{ "Question " + (i + 1) + ": " + chartData?.questionText }}
@@ -34,319 +35,321 @@
           <c-card-body class="custom-body">
             <p><strong>Question Type:</strong> {{ chartData?.questionType }}</p>
             <p><strong>Response Rate:</strong> {{ chartData?.responseRate }}</p>
-
-            <div *ngIf="chartData?.questionType === 'Text'">
-              <p>
-                <strong>Total:</strong> {{ chartData.additionalData.total }}
-              </p>
-              <p><strong>Responses:</strong></p>
-              <div class="text-response-container">
-                <div
-                  *ngFor="let response of chartData.additionalData.responses"
-                  class="text-response-row"
-                >
-                  {{ response }}
+            <p *ngIf="chartData?.responseRate=='0%'"><strong>No responses yet</strong></p>
+            <div *ngIf="chartData?.responseRate!='0%'">
+              <div *ngIf="chartData?.questionType === 'Text'">
+                <p>
+                  <strong>Total:</strong> {{ chartData.additionalData.total }}
+                </p>
+                <p><strong>Responses:</strong></p>
+                <div class="text-response-container">
+                  <div
+                    *ngFor="let response of chartData.additionalData.responses"
+                    class="text-response-row"
+                  >
+                    {{ response }}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div *ngIf="chartData?.questionType === 'NPS'">
-              <div
-                class="chart-info d-flex align-items-center"
-                style="align-items: center"
-              >
-                <p
-                  matTooltip="Promoters (9-10): Loyal enthusiasts who will most likely recommend your business to others and help attract new customers."
+  
+              <div *ngIf="chartData?.questionType === 'NPS'">
+                <div
+                  class="chart-info d-flex align-items-center"
+                  style="align-items: center"
                 >
-                  <strong>Promoters:</strong>
-                  {{ chartData.additionalData.promoters }}
-                </p>
-                <p
-                  matTooltip="Passives (7-8): Although satisfied, these customers are not devoted to your brand and may easily switch to a competitor if a better offer is on their radar."
-                >
-                  <strong>Passives:</strong>
-                  {{ chartData.additionalData.passives }}
-                </p>
-                <p
-                  matTooltip="Detractors (1-6): Unhappy customers who may affect your business reputation and growth through negative word-of-mouth."
-                >
-                  <strong>Detractors:</strong>
-                  {{ chartData.additionalData.detractors }}
-                </p>
-
-                <p>
-                  <strong>Total:</strong> {{ chartData.additionalData.total }}
-                </p>
-              </div>
-              <p
-                matTooltip="NPS (Net Promoter Score) is a measure of customer loyalty and satisfaction."
-              >
-                <strong>NPS score:</strong> {{ chartData.additionalData.nps }}
-              </p>
-              <div class="d-flex evaluation">
-                <p>
-                  <strong>Evaluation:</strong>
-                  {{ chartData.additionalData.evaluation }}
-                </p>
-                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
-                  |
-                </p>
-                <p [cModalToggle]="evaluationNPS.id">
-                  <strong
-                    ><i>Click here to see how we're evaluating this NPS</i>
-                  </strong>
-                </p>
-              </div>
-              <p class="formula">
-                <strong>Formula:</strong> ((promoters - detractors) / total) *
-                100
-              </p>
-            </div>
-
-            <div *ngIf="chartData?.questionType === 'CSAT'">
-              <div class="chart-info d-flex justify-content-start">
-                <p
-                  matTooltip="Customers who are satisfied with the product/service."
-                >
-                  <strong>Satisfied:</strong>
-                  {{ chartData.additionalData.satisfied }}
-                </p>
-                <p
-                  matTooltip="Customers who have a neutral opinion about the product/service."
-                >
-                  <strong>Neutral:</strong>
-                  {{ chartData.additionalData.neutral }}
-                </p>
-                <p
-                  matTooltip="Customers who are dissatisfied with the product/service."
-                >
-                  <strong>Dissatisfied:</strong>
-                  {{ chartData.additionalData.dissatisfied }}
-                </p>
-                <p>
-                  <strong>Total:</strong> {{ chartData.additionalData.total }}
-                </p>
-              </div>
-              <p>
-                <strong>CSAT score:</strong> {{ chartData.additionalData.csat }}
-              </p>
-
-              <div class="d-flex evaluation">
-                <p>
-                  <strong>Evaluation:</strong>
-                  {{ chartData.additionalData.evaluation }}
-                </p>
-                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
-                  |
-                </p>
-                <p [cModalToggle]="evaluationCSAT.id">
-                  <strong
-                    ><i>Click here to see how we're evaluating this CSAT</i>
-                  </strong>
-                </p>
-              </div>
-              <p class="formula">
-                <strong>Formula:</strong> (satisfied / total) * 100
-              </p>
-            </div>
-
-            <div *ngIf="chartData?.questionType === 'Emoticons'">
-              <div class="chart-info d-flex justify-content-start">
-                <p
-                  matTooltip="Indicates a very negative experience with significant issues needing immediate attention."
-                >
-                  <strong>Very Bad:</strong>
-                  {{ chartData.additionalData.veryBad }}
-                </p>
-                <p
-                  matTooltip="Indicates a negative experience with notable issues that need to be addressed."
-                >
-                  <strong>Bad:</strong>
-                  {{ chartData.additionalData.bad }}
-                </p>
-                <p
-                  matTooltip="Represents a neutral experience with mixed or average customer satisfaction."
-                >
-                  <strong>Neutral:</strong>
-                  {{ chartData.additionalData.neutral }}
-                </p>
-                <p
-                  matTooltip="Reflects a positive experience, indicating satisfaction with the product or service."
-                >
-                  <strong>Good:</strong>
-                  {{ chartData.additionalData.good }}
-                </p>
-                <p
-                  matTooltip="Represents an excellent experience, indicating high satisfaction and loyalty."
-                >
-                  <strong>Very Good:</strong>
-                  {{ chartData.additionalData.veryGood }}
-                </p>
-                <div>
+                  <p
+                    matTooltip="Promoters (9-10): Loyal enthusiasts who will most likely recommend your business to others and help attract new customers."
+                  >
+                    <strong>Promoters:</strong>
+                    {{ chartData.additionalData.promoters }}
+                  </p>
+                  <p
+                    matTooltip="Passives (7-8): Although satisfied, these customers are not devoted to your brand and may easily switch to a competitor if a better offer is on their radar."
+                  >
+                    <strong>Passives:</strong>
+                    {{ chartData.additionalData.passives }}
+                  </p>
+                  <p
+                    matTooltip="Detractors (1-6): Unhappy customers who may affect your business reputation and growth through negative word-of-mouth."
+                  >
+                    <strong>Detractors:</strong>
+                    {{ chartData.additionalData.detractors }}
+                  </p>
+  
                   <p>
-                    <strong>Total:</strong>
-                    {{ chartData.additionalData.total }}
+                    <strong>Total:</strong> {{ chartData.additionalData.total }}
                   </p>
                 </div>
-              </div>
-              <p
-                matTooltip="The percentage of customers who had a positive experience, which includes those who gave 'Good' and 'Very Good' ratings."
-              >
-                <strong>Positive Percentage:</strong>
-                {{ chartData.additionalData.positivePercentage }}
-              </p>
-              <p
-                matTooltip="The percentage of customers who had a negative experience, which includes those who gave 'Very Bad' and 'Bad' ratings."
-              >
-                <strong>Negative Percentage:</strong>
-                {{ chartData.additionalData.negativePercentage }}
-              </p>
-
-              <div class="d-flex evaluation">
-                <p>
-                  <strong>Evaluation:</strong>
-                  {{ chartData.additionalData.evaluation }}
-                </p>
-                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
-                  |
-                </p>
-                <p [cModalToggle]="evaluationEmoticons.id">
-                  <strong
-                    ><i
-                      >Click here to see how we're evaluating this Emoticons</i
-                    >
-                  </strong>
-                </p>
-              </div>
-              <p class="formula">
-                <strong>Negative Percentage Formula:</strong> ((veryBad + bad) /
-                total) * 100
-              </p>
-              <p class="formula">
-                <strong>Positive Percentage Formula:</strong> ((veryGood + good)
-                / total) * 100
-              </p>
-            </div>
-
-            <div *ngIf="chartData?.questionType === 'Thumbs'">
-              <div class="chart-info d-flex justify-content-start">
                 <p
-                  matTooltip="Represents customers who gave a 'Thumbs Up', indicating satisfaction with the product or service."
+                  matTooltip="NPS (Net Promoter Score) is a measure of customer loyalty and satisfaction."
                 >
-                  <strong>Thumbs Up:</strong>
-                  {{ chartData.additionalData.thumbsUp }}
+                  <strong>NPS score:</strong> {{ chartData.additionalData.nps }}
                 </p>
-
+                <div class="d-flex evaluation">
+                  <p>
+                    <strong>Evaluation:</strong>
+                    {{ chartData.additionalData.evaluation }}
+                  </p>
+                  <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                    |
+                  </p>
+                  <p [cModalToggle]="evaluationNPS.id">
+                    <strong
+                      ><i>Click here to see how we're evaluating this NPS</i>
+                    </strong>
+                  </p>
+                </div>
+                <p class="formula">
+                  <strong>Formula:</strong> ((promoters - detractors) / total) *
+                  100
+                </p>
+              </div>
+  
+              <div *ngIf="chartData?.questionType === 'CSAT'">
+                <div class="chart-info d-flex justify-content-start">
+                  <p
+                    matTooltip="Customers who are satisfied with the product/service."
+                  >
+                    <strong>Satisfied:</strong>
+                    {{ chartData.additionalData.satisfied }}
+                  </p>
+                  <p
+                    matTooltip="Customers who have a neutral opinion about the product/service."
+                  >
+                    <strong>Neutral:</strong>
+                    {{ chartData.additionalData.neutral }}
+                  </p>
+                  <p
+                    matTooltip="Customers who are dissatisfied with the product/service."
+                  >
+                    <strong>Dissatisfied:</strong>
+                    {{ chartData.additionalData.dissatisfied }}
+                  </p>
+                  <p>
+                    <strong>Total:</strong> {{ chartData.additionalData.total }}
+                  </p>
+                </div>
+                <p>
+                  <strong>CSAT score:</strong> {{ chartData.additionalData.csat }}
+                </p>
+  
+                <div class="d-flex evaluation">
+                  <p>
+                    <strong>Evaluation:</strong>
+                    {{ chartData.additionalData.evaluation }}
+                  </p>
+                  <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                    |
+                  </p>
+                  <p [cModalToggle]="evaluationCSAT.id">
+                    <strong
+                      ><i>Click here to see how we're evaluating this CSAT</i>
+                    </strong>
+                  </p>
+                </div>
+                <p class="formula">
+                  <strong>Formula:</strong> (satisfied / total) * 100
+                </p>
+              </div>
+  
+              <div *ngIf="chartData?.questionType === 'Emoticons'">
+                <div class="chart-info d-flex justify-content-start">
+                  <p
+                    matTooltip="Indicates a very negative experience with significant issues needing immediate attention."
+                  >
+                    <strong>Very Bad:</strong>
+                    {{ chartData.additionalData.veryBad }}
+                  </p>
+                  <p
+                    matTooltip="Indicates a negative experience with notable issues that need to be addressed."
+                  >
+                    <strong>Bad:</strong>
+                    {{ chartData.additionalData.bad }}
+                  </p>
+                  <p
+                    matTooltip="Represents a neutral experience with mixed or average customer satisfaction."
+                  >
+                    <strong>Neutral:</strong>
+                    {{ chartData.additionalData.neutral }}
+                  </p>
+                  <p
+                    matTooltip="Reflects a positive experience, indicating satisfaction with the product or service."
+                  >
+                    <strong>Good:</strong>
+                    {{ chartData.additionalData.good }}
+                  </p>
+                  <p
+                    matTooltip="Represents an excellent experience, indicating high satisfaction and loyalty."
+                  >
+                    <strong>Very Good:</strong>
+                    {{ chartData.additionalData.veryGood }}
+                  </p>
+                  <div>
+                    <p>
+                      <strong>Total:</strong>
+                      {{ chartData.additionalData.total }}
+                    </p>
+                  </div>
+                </div>
                 <p
-                  matTooltip="Represents customers who gave a 'Thumbs Down', indicating dissatisfaction with the product or service."
+                  matTooltip="The percentage of customers who had a positive experience, which includes those who gave 'Good' and 'Very Good' ratings."
                 >
-                  <strong>Thumbs Down:</strong>
-                  {{ chartData.additionalData.thumbsDown }}
+                  <strong>Positive Percentage:</strong>
+                  {{ chartData.additionalData.positivePercentage }}
                 </p>
-
-                <p>
-                  <strong>Total:</strong> {{ chartData.additionalData.total }}
-                </p>
-              </div>
-              <p
-                matTooltip="The percentage of customers who gave a 'Thumbs Up', reflecting satisfaction with the product or service."
-              >
-                <strong>Thumb Up Percentage:</strong>
-                {{ chartData.additionalData.upPercentage }}
-              </p>
-              <p
-                matTooltip="The percentage of customers who gave a 'Thumbs Down', reflecting dissatisfaction with the product or service."
-              >
-                <strong>Thumb Down Percentage:</strong>
-                {{ chartData.additionalData.downPercentage }}
-              </p>
-              <div class="d-flex evaluation">
-                <p>
-                  <strong>Evaluation:</strong>
-                  {{ chartData.additionalData.evaluation }}
-                </p>
-                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
-                  |
-                </p>
-                <p [cModalToggle]="evaluationThumbs.id">
-                  <strong
-                    ><i>Click here to see how we're evaluating this Thumbs</i>
-                  </strong>
-                </p>
-              </div>
-
-              <p class="formula">
-                <strong>Up Percentage Formula:</strong> (thumbsUp / total) * 100
-              </p>
-              <p class="formula">
-                <strong>Down Percentage Formula:</strong> (thumbsDown / total) *
-                100
-              </p>
-            </div>
-
-            <!-- Stars Section -->
-            <div *ngIf="chartData?.questionType === 'Stars'">
-              <div class="chart-info d-flex">
                 <p
-                  matTooltip="The sum of all ratings provided by the customers."
+                  matTooltip="The percentage of customers who had a negative experience, which includes those who gave 'Very Bad' and 'Bad' ratings."
                 >
-                  <strong>Sum of all Ratings:</strong>
-                  {{ chartData.additionalData.sumOfAllRating }}
+                  <strong>Negative Percentage:</strong>
+                  {{ chartData.additionalData.negativePercentage }}
                 </p>
-
-                <p>
-                  <strong>Total:</strong> {{ chartData.additionalData.total }}
+  
+                <div class="d-flex evaluation">
+                  <p>
+                    <strong>Evaluation:</strong>
+                    {{ chartData.additionalData.evaluation }}
+                  </p>
+                  <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                    |
+                  </p>
+                  <p [cModalToggle]="evaluationEmoticons.id">
+                    <strong
+                      ><i
+                        >Click here to see how we're evaluating this Emoticons</i
+                      >
+                    </strong>
+                  </p>
+                </div>
+                <p class="formula">
+                  <strong>Negative Percentage Formula:</strong> ((veryBad + bad) /
+                  total) * 100
+                </p>
+                <p class="formula">
+                  <strong>Positive Percentage Formula:</strong> ((veryGood + good)
+                  / total) * 100
                 </p>
               </div>
-              <p
-                matTooltip="The average rating based on the sum of all ratings divided by the total number of ratings."
-              >
-                <strong>Average Rating:</strong>
-                {{ chartData.additionalData.averageRating }}
-              </p>
-              <div class="d-flex evaluation">
-                <p>
-                  <strong>Evaluation:</strong>
-                  {{ chartData.additionalData.evaluation }}
+  
+              <div *ngIf="chartData?.questionType === 'Thumbs'">
+                <div class="chart-info d-flex justify-content-start">
+                  <p
+                    matTooltip="Represents customers who gave a 'Thumbs Up', indicating satisfaction with the product or service."
+                  >
+                    <strong>Thumbs Up:</strong>
+                    {{ chartData.additionalData.thumbsUp }}
+                  </p>
+  
+                  <p
+                    matTooltip="Represents customers who gave a 'Thumbs Down', indicating dissatisfaction with the product or service."
+                  >
+                    <strong>Thumbs Down:</strong>
+                    {{ chartData.additionalData.thumbsDown }}
+                  </p>
+  
+                  <p>
+                    <strong>Total:</strong> {{ chartData.additionalData.total }}
+                  </p>
+                </div>
+                <p
+                  matTooltip="The percentage of customers who gave a 'Thumbs Up', reflecting satisfaction with the product or service."
+                >
+                  <strong>Thumb Up Percentage:</strong>
+                  {{ chartData.additionalData.upPercentage }}
                 </p>
-                <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
-                  |
+                <p
+                  matTooltip="The percentage of customers who gave a 'Thumbs Down', reflecting dissatisfaction with the product or service."
+                >
+                  <strong>Thumb Down Percentage:</strong>
+                  {{ chartData.additionalData.downPercentage }}
                 </p>
-                <p [cModalToggle]="evaluationStars.id">
-                  <strong
-                    ><i>Click here to see how we're evaluating this Stars</i>
-                  </strong>
+                <div class="d-flex evaluation">
+                  <p>
+                    <strong>Evaluation:</strong>
+                    {{ chartData.additionalData.evaluation }}
+                  </p>
+                  <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                    |
+                  </p>
+                  <p [cModalToggle]="evaluationThumbs.id">
+                    <strong
+                      ><i>Click here to see how we're evaluating this Thumbs</i>
+                    </strong>
+                  </p>
+                </div>
+  
+                <p class="formula">
+                  <strong>Up Percentage Formula:</strong> (thumbsUp / total) * 100
+                </p>
+                <p class="formula">
+                  <strong>Down Percentage Formula:</strong> (thumbsDown / total) *
+                  100
                 </p>
               </div>
-              <p class="formula">
-                <strong>Average Rating Formula:</strong> (sum of all ratings /
-                total)
-              </p>
-            </div>
-
-            <div
-              [ngClass]="{
-                'small-chart':
-                  chartData?.type == 'doughnut' || chartData?.type === 'pie'
-              }"
-              *ngIf="chartData?.questionType !== 'Text'"
-            >
-              <c-chart
-                *ngIf="chartData?.type"
-                [type]="chartData?.type"
-                [data]="{
-                  labels: chartData.labels,
-                  datasets: [
-                    {
-                      label: chartData.label,
-                      data: chartData.data,
-                      backgroundColor: chartData.backgroundColor,
-                      borderColor: chartData.borderColor
-                    }
-                  ]
+  
+              <!-- Stars Section -->
+              <div *ngIf="chartData?.questionType === 'Stars'">
+                <div class="chart-info d-flex">
+                  <p
+                    matTooltip="The sum of all ratings provided by the customers."
+                  >
+                    <strong>Sum of all Ratings:</strong>
+                    {{ chartData.additionalData.sumOfAllRating }}
+                  </p>
+  
+                  <p>
+                    <strong>Total:</strong> {{ chartData.additionalData.total }}
+                  </p>
+                </div>
+                <p
+                  matTooltip="The average rating based on the sum of all ratings divided by the total number of ratings."
+                >
+                  <strong>Average Rating:</strong>
+                  {{ chartData.additionalData.averageRating }}
+                </p>
+                <div class="d-flex evaluation">
+                  <p>
+                    <strong>Evaluation:</strong>
+                    {{ chartData.additionalData.evaluation }}
+                  </p>
+                  <p style="margin-left: 5px; margin-right: 5px; font-size: 14px">
+                    |
+                  </p>
+                  <p [cModalToggle]="evaluationStars.id">
+                    <strong
+                      ><i>Click here to see how we're evaluating this Stars</i>
+                    </strong>
+                  </p>
+                </div>
+                <p class="formula">
+                  <strong>Average Rating Formula:</strong> (sum of all ratings /
+                  total)
+                </p>
+              </div>
+  
+              <div
+                [ngClass]="{
+                  'small-chart':
+                    chartData?.type == 'doughnut' || chartData?.type === 'pie'
                 }"
+                *ngIf="chartData?.questionType !== 'Text'"
               >
-              </c-chart>
+                <c-chart
+                  *ngIf="chartData?.type"
+                  [type]="chartData?.type"
+                  [data]="{
+                    labels: chartData.labels,
+                    datasets: [
+                      {
+                        label: chartData.label,
+                        data: chartData.data,
+                        backgroundColor: chartData.backgroundColor,
+                        borderColor: chartData.borderColor
+                      }
+                    ]
+                  }"
+                >
+                </c-chart>
+              </div>
             </div>
           </c-card-body>
         </c-card>

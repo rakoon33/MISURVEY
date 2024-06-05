@@ -44,7 +44,6 @@ router.post("/create_payment", authMiddleware.tokenVerification, async function 
     }
 
     const amount = servicePackage.Price;
-    process.env.TZ = "Asia/Ho_Chi_Minh";
     const date = new Date();
     const createDate = moment(date).format("YYYYMMDDHHmmss");
     const ipAddr =
@@ -154,16 +153,13 @@ router.get("/vnpay_return", async (req, res) => { // Add middleware here
         };
 
         const userPackage = await UserPackage.create(newUserPackage);
-        res.redirect("http://localhost:8082/#/subscription-plans");
-        //res.sendFile(path.join(__dirname, 'public/html', 'success.html'));
+        res.redirect(`${process.env.FRONTEND_URL}/#/subscription-plans`);
       } else {
-        //res.sendFile(path.join(__dirname, 'public/html', 'failure.html'));
-        res.redirect("http://localhost:8082/#/subscription-plans");
+        res.redirect(`${process.env.FRONTEND_URL}/#/subscription-plans`);
       }
     } else {
       console.error("Xác minh thất bại do không trùng khớp mã băm");
       res.sendFile(path.join(__dirname, 'public/html', 'failure.html'));
-      //res.redirect("http://localhost:8082/#/subscription-plans");
     }
   } catch (error) {
     console.error("Lỗi xử lý phản hồi từ VNPAY:", error.message);

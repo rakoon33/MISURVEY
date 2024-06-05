@@ -1,3 +1,4 @@
+import { ResetPasswordComponent } from './modules/auth/reset-password/reset-password.component';
 import { UserActivityLogRoutingModule } from './modules/user-activity-log/user-activity-log-routing.module';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -11,6 +12,7 @@ import { ApiDocumentationsComponent } from '@docs-components/api-documentations/
 import { CustomerSurveyComponent } from './modules/customer-survey/customer-survey.component';
 
 import { AuthGuard } from './core/guards/auth.guard';
+import { ForgetPasswordComponent } from './modules/auth/forget-password/forget-password.component';
 
 const routes: Routes = [
   {
@@ -174,6 +176,20 @@ const routes: Routes = [
     component: RegisterComponent,
     data: {
       title: 'Register Page',
+    },
+  },
+  {
+    path: 'forget-password',
+    component: ForgetPasswordComponent,
+    data: {
+      title: 'Forget Password Page',
+    },
+  },
+  {
+    path: 'reset-password/:token',
+    component: ResetPasswordComponent,
+    data: {
+      title: 'Reset Password Page',
     },
   },
   { path: 'api-docs', component: ApiDocumentationsComponent },

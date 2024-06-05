@@ -37,7 +37,7 @@ export class CompanyManagementComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 10;
   totalCompanies = 0;
-  pages: number[] = [];
+  pages: (string | number)[] = [];
 
   
   companies$: Observable<Company[]> = this.store.select(
@@ -134,6 +134,11 @@ export class CompanyManagementComponent implements OnInit {
     );
   }
 
+  clickToApplyFilters(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
   applyFilters() {
     this.filteredCompanies$ = this.companies$.pipe(
       map(companies => {
@@ -173,17 +178,54 @@ export class CompanyManagementComponent implements OnInit {
     this.applyFilters();
   }
 
-  setPage(page: number): void {
-    if (page < 1 || page > this.pages.length) {
-      return;
+  updatePagination() {
+    const totalPageCount = Math.ceil(this.totalCompanies / this.itemsPerPage);
+    const maxPagesToShow = 3; 
+    let pages: (string | number)[] = [];
+
+    // Compute the range of pages to show
+    let rangeStart = Math.max(
+      this.currentPage - Math.floor(maxPagesToShow / 2),
+      1
+    );
+    let rangeEnd = Math.min(rangeStart + maxPagesToShow - 1, totalPageCount);
+
+    // Adjust the range start if we're at the end of the page list
+    if (rangeEnd === totalPageCount) {
+      rangeStart = Math.max(totalPageCount - maxPagesToShow + 1, 1);
     }
-    this.currentPage = page;
-    this.applyFilters();
+
+    // Always add the first page and possibly an ellipsis
+    if (rangeStart > 1) {
+      pages.push(1);
+      if (rangeStart > 2) {
+        pages.push('...');
+      }
+    }
+
+    // Add the calculated range of pages
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      pages.push(i);
+    }
+
+    // Add an ellipsis and the last page if needed
+    if (rangeEnd < totalPageCount) {
+      if (rangeEnd < totalPageCount - 1) {
+        pages.push('...');
+      }
+      pages.push(totalPageCount);
+    }
+
+    this.pages = pages;
   }
 
-  updatePagination() {
-    const pageCount = Math.ceil(this.totalCompanies / this.itemsPerPage);
-    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  setPage(page: string | number): void {
+    if (typeof page === 'number') {
+      if (page !== this.currentPage) {
+        this.currentPage = page;
+        this.applyFilters(); 
+      }
+    }
   }
   
   private loadCompanyDataIntoForm(company: Company) {

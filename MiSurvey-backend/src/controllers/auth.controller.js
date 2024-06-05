@@ -2,7 +2,7 @@ const { authService } = require("../services");
 
 const loginController = async (req, res) => {
   try {
-    const result = await authService.loginUser(
+    let result = await authService.loginUser(
       res,
       req.body.username,
       req.body.password
@@ -10,10 +10,10 @@ const loginController = async (req, res) => {
     if (result.status) {
       res.status(200).json(result);
     } else {
-      res.status(400).json({ message: result.message });
+      res.json(result);
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json(result);
   }
 };
 
@@ -61,9 +61,39 @@ const getPermissionsController = async (req, res) => {
   }
 };
 
+
+const forgotPasswordController = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const { resetToken, email: userEmail } = await authService.generatePasswordResetToken(email);
+    let sendMail = await authService.sendPasswordResetEmail(userEmail, resetToken);
+    if(sendMail.status) {
+      res.status(200).json(sendMail);
+    }
+  } catch (error) {
+    res.status(200).json(sendMail);
+  }
+};
+
+const resetPasswordController = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  try {
+    let resetPass = await authService.resetUserPassword(token, password);
+    console.log(resetPass);
+    if(resetPass.status) {
+      res.status(200).json(resetPass);
+    }
+  } catch (error) {
+    res.status(200).json(resetPass);
+  }
+};
+
 module.exports = {
   loginController,
   logoutController,
   registerUserController,
   getPermissionsController,
+  forgotPasswordController, 
+  resetPasswordController
 };

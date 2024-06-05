@@ -32,6 +32,8 @@ import { Page404Component } from './shared/page404/page404.component';
 import { Page500Component } from './shared/page500/page500.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
+import { ForgetPasswordComponent } from './modules/auth/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './modules/auth/reset-password/reset-password.component';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -128,6 +130,8 @@ const APP_CONTAINERS = [
   ApiDocumentationsComponent,
   CustomerSurveyComponent,
   NotificationsSidebarComponent,
+  ForgetPasswordComponent,
+  ResetPasswordComponent
 ];
 
 @NgModule({

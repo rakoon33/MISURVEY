@@ -68,3 +68,77 @@
     transition: background-color 0.3s;
   }
   
+
+/* General modal styling */
+.modal {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2000 !important;
+}
+
+/* Modal header styling */
+.modal-header {
+  background-color: #f2f2f2;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between; /* This will place the elements on each end */
+  align-items: center; /* This centers the items vertically */
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-title {
+  flex: 1; /* This will allow the title to take up the available space */
+  text-align: center;
+  font-size: 20px;
+  color: #333;
+  margin: 0; /* Removes default margins that could affect alignment */
+}
+
+.button-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0; /* Removes default margins that could affect alignment */
+  padding: 8px; /* Adds some space for easier clicking */
+}
+
+/* Add this if the button is not already a flex item */
+.button-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal body styling */
+.modal-body {
+  padding: 20px;
+  line-height: 1.6;
+}
+
+/* User detail paragraphs */
+.modal-body p {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Modal footer styling */
+.modal-footer {
+  background-color: #f2f2f2;
+  padding: 12px 16px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* Buttons in the footer */
+.modal-footer button {
+  padding: 8px 16px;
+  background-color: #0A66C2;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-footer button:hover {
+  background-color: #004494;
+}

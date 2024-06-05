@@ -230,4 +230,9 @@ router.get(
   authController.getPermissionsController
 );
 
+
+router.post('/forgot-password', authController.forgotPasswordController);
+
+router.post('/reset-password/:token', authController.resetPasswordController);
+
 module.exports = router;

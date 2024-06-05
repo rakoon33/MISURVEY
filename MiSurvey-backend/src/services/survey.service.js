@@ -81,8 +81,6 @@ const createSurvey = async (data, udata) => {
 };
 
 const sendEmail = async (surveyID, emailData, companyID, sendBy) => {
-  console.log(surveyID);
-  console.log(emailData);
   try {
     const survey = await Survey.findOne({
       where: { CompanyID: companyID },
@@ -102,20 +100,24 @@ const sendEmail = async (surveyID, emailData, companyID, sendBy) => {
       where: { SurveyID: surveyID },
     });
 
-    const surveyLink = `http://localhost:8082/#/c/f/${surveylink.SurveyLink}`;
+    const surveyLink = `${process.env.FRONTEND_URL}/#/c/f/${surveylink.SurveyLink}`;
     const surveyCreator = survey.Company.CompanyName;
     const mailOptions = {
       from: "propie034@gmail.com",
       to: emailData,
       subject: "Survey from MiSurvey",
-      text: `Hello 👬,
-    
-      A survey has been created by ${surveyCreator}. 🌈🌈🌈
-    
-      Please participate using the following link: ${surveyLink} 🔗🔗🔗
-    
-      Sincerely, 
-      The MiSurvey Team`,
+      html: `
+      <html>
+        <body style="font-family: 'Arial', sans-serif; background-color: #f7fafc; margin: 0; padding: 20px;">
+          <div style="max-width: 600px; margin: auto; background: url('https://example.com/email-background.jpg') no-repeat center center / cover; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <h1 style="color: #5a67d8;">Hello,</h1>
+            <p style="font-size: 16px; color: black;">A survey has been created by <strong>${surveyCreator}</strong>. We value your feedback and would love to hear from you!</p>
+            <p><a href="${surveyLink}" style="color: #4299e1; text-decoration: none; font-weight: bold;">Click here to access the survey</a></p>
+            <p style="color: #777;">Sincerely,<br>The MiSurvey Team</p>
+          </div>
+        </body>
+      </html>
+      `,
     };
 
     let info = await transporter.sendMail(mailOptions);

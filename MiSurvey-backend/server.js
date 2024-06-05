@@ -19,7 +19,7 @@ dotenv.config();
 
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:8082',
+  origin: process.env.FRONTEND_URL,
   credentials: true, 
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"]

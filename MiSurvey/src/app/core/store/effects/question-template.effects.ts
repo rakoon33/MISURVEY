@@ -5,10 +5,11 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { QuestionTemplateService } from '../../services';
 import * as QuestionTemplateActions from '../actions/question-template.actions';
+import { questionTemplateActions } from '../actions';
+import { Store } from '@ngrx/store';
 
 @Injectable()
-export class QuestionTemplateEffects {
-  
+export class QuestionTemplateEffects { 
     loadQuestionTemplates$ = createEffect(() =>
         this.actions$.pipe(
           ofType(QuestionTemplateActions.loadQuestionTemplatesRequest),
@@ -62,6 +63,9 @@ export class QuestionTemplateEffects {
           map((response) => {
             if (response.status) {
               this.toastrService.success(response.message || 'Template created successfully');
+              this.store.dispatch(
+                questionTemplateActions.loadQuestionTemplatesRequest()
+              );
               return QuestionTemplateActions.createQuestionTemplateSuccess({ questionTemplate: response.template });
             } else {
               this.toastrService.error(response.message || 'Failed to create template');
@@ -85,6 +89,9 @@ export class QuestionTemplateEffects {
           map((response) => {
             if (response.status) {
               this.toastrService.success(response.message || 'Template updated successfully');
+              this.store.dispatch(
+                questionTemplateActions.loadQuestionTemplatesRequest()
+              );
               return QuestionTemplateActions.updateQuestionTemplateSuccess();
             } else {
               this.toastrService.error(response.message || 'Failed to update template');
@@ -108,6 +115,9 @@ export class QuestionTemplateEffects {
           map((response) => {
             if (response.status) {
               this.toastrService.success(response.message || 'Template deleted successfully');
+              this.store.dispatch(
+                questionTemplateActions.loadQuestionTemplatesRequest()
+              );
               return QuestionTemplateActions.deleteQuestionTemplateSuccess();
             } else {
               this.toastrService.error(response.message || 'Failed to delete template');
@@ -126,6 +136,7 @@ export class QuestionTemplateEffects {
   constructor(
     private actions$: Actions,
     private questionTemplateService: QuestionTemplateService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private store: Store
   ) {}
 }

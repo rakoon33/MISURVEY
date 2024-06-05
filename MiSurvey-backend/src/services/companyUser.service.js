@@ -40,34 +40,34 @@ const createCompanyUser = async (companyUserData, userData, udata) => {
     // Cấu hình và gửi email
     const mailOptions = {
       from: "propie034@gmail.com",
-      to: userData.Email, // Email người dùng mới
-      subject: "Chào mừng bạn đến với MiSurvey!",
-      text: `Xin chào,
-
-      Cảm ơn bạn đã đăng ký tài khoản MiSurvey! Chúng tôi rất vui mừng được chào đón bạn đến với cộng đồng người dùng ngày càng phát triển của chúng tôi.
-      
-      Email này cung cấp thông tin đăng nhập cho tài khoản MiSurvey của bạn:
-      
-      Tên người dùng: ${userData.Username}
-      Mật khẩu: ${anotherstore}
-      
-      Vui lòng truy cập trang web MiSurvey tại [....] và đăng nhập bằng thông tin đăng nhập được cung cấp ở trên.
-      
-      Tại MiSurvey, bạn có thể:
-      
-        - Tạo khảo sát: Thiết kế khảo sát trực tuyến một cách dễ dàng với nhiều loại câu hỏi, logic nhánh và tùy chỉnh giao diện.
-        - Thu thập dữ liệu: Phân phối khảo sát của bạn qua nhiều kênh khác nhau và thu thập phản hồi từ đối tượng mục tiêu của bạn.
-        - Phân tích dữ liệu: Xem xét kết quả khảo sát của bạn một cách chi tiết với các biểu đồ, bảng biểu và công cụ phân tích chuyên sâu.
-        - Xuất báo cáo: Tạo báo cáo tùy chỉnh để chia sẻ thông tin chi tiết của bạn với các bên liên quan.
-        - MiSurvey cung cấp nhiều tính năng và nguồn lực để giúp bạn tạo và phân tích khảo sát một cách hiệu quả. 
-      
-      Nếu bạn gặp bất kỳ vấn đề nào khi đăng nhập hoặc sử dụng MiSurvey, vui lòng liên hệ với bộ phận hỗ trợ khách hàng của chúng tôi qua email hoặc qua điện thoại.
-      
-      Chúng tôi rất mong nhận được phản hồi của bạn và giúp bạn tận dụng tối đa MiSurvey!
-      
-      Trân trọng,
-      
-      Đội ngũ MiSurvey`,
+      to: userData.Email,
+      subject: "Welcome to MiSurvey!",
+      html: `
+      <html>
+        <body style="font-family: 'Arial', sans-serif; background-color: #f7fafc; margin: 0; padding: 20px;">
+          <div style="max-width: 600px; margin: auto; background: url('https://example.com/email-background.jpg') no-repeat center center / cover; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <h1 style="color: #5a67d8;">Hello,</h1>
+            <p style="font-size: 16px; color: black;">Thank you for registering at MiSurvey! We are excited to have you join our growing community.</p>
+            <p style="font-size: 16px; color: black;">Your login details for MiSurvey are as follows:</p>
+            <ul style="list-style: none; padding: 0;">
+              <li>- Username: ${userData.Username}</li>
+              <li>- Password: ${anotherstore}</li>
+            </ul>
+            <p style="color: black;">Please visit the MiSurvey website at <a href="${process.env.FRONTEND_URL}">(click here)</a> and log in using the credentials provided above.</p>
+            <p style="font-size: 16px; color: black;">At MiSurvey, you can:</p>
+            <ul style="list-style: none; padding: 0;">
+              <li style="color: black;>- Create surveys: Easily design online surveys with various question types, branching logic, and custom interfaces.</li>
+              <li style="color: black;>- Gather data: Distribute your surveys across multiple channels and collect responses from your target audience.</li>
+              <li style="color: black;>- Analyze data: Review your survey results in detail with charts, tables, and in-depth analytics tools.</li>
+              <li style="color: black;>- Export reports: Create custom reports to share your insights with stakeholders.</li>
+            </ul>
+            <p style="color: black;">If you encounter any issues logging in or using MiSurvey, please contact our customer support by email or phone.</p>
+            <p style="color: black;">We look forward to your feedback and helping you make the most of MiSurvey!</p>
+            <p style="color: black;">Regards,</p>
+            <p style="color: black;">The MiSurvey Team</p>
+          </div>
+        </body>
+      </html>`,
     };
 
     await transporter.sendMail(mailOptions);

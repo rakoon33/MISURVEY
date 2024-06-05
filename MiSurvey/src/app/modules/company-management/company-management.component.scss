@@ -222,7 +222,9 @@ c-modal-footer button {
   font-size: 14px;
   border-left: none;
   border-right: none;
+  border-bottom-left-radius: 0 !important;
 }
+
 input[type="search"].input-search-management {
   width: 100%;
   background: var(--color-light);
@@ -499,3 +501,8 @@ button:active {
   padding: 5px;
 }
 
+
+
+.input-search-management {
+  border-radius: none !important;
+}

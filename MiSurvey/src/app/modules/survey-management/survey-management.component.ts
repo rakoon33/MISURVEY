@@ -11,8 +11,8 @@ import { ModalService } from '@coreui/angular';
 import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Permission } from 'src/app/core/models';
-import { Subscription, combineLatest, map, tap } from 'rxjs';
-
+import { Subscription, combineLatest, map, take, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-survey-management',
   templateUrl: './survey-management.component.html',
@@ -101,7 +101,8 @@ export class SurveyManagementComponent implements OnInit {
 
   copySurveyLink(link: string, event: MouseEvent) {
     event.preventDefault();
-    link = 'http://localhost:8082/#/c/f/' + link;
+
+    link = `${environment.FRONTEND_BASE_URL}/c/f/` + link;
     navigator.clipboard.writeText(link).then(
       () => {
         console.log('Link copied to clipboard!');
@@ -143,7 +144,7 @@ export class SurveyManagementComponent implements OnInit {
 
   openQRCodeModal(link: string, title: string, event: Event) {
     event.preventDefault(); 
-    this.qrCodeLink = 'http://localhost:8082/#/c/f/' + link; 
+    this.qrCodeLink = `${environment.FRONTEND_BASE_URL}/c/f/` + link;
     this.sanitizedSurveyTitle = this.sanitizeFileName(title);
     this.modalService.toggle({ id: 'qrCodeModal', show: true });
   }
@@ -161,25 +162,23 @@ export class SurveyManagementComponent implements OnInit {
   }
   
   navigateToCreateSurvey() {
-    this.subscription.add(
-      this.userPackage$!.pipe(
-        map(userPackage => userPackage.servicePackage?.SurveyLimit || Infinity)
-      ).subscribe(surveyLimit => {
-        // Use the most recent surveys count
-        this.subscription.add(
-          this.store.select(surveyManagementSelector.selectAllSurveys).pipe(
-            map(surveys => surveys.length)
-          ).subscribe(surveyCount => {
-            if (surveyCount < surveyLimit) {
-              this.store.dispatch(surveyManagementActions.resetSurveyState());
-              this.router.navigate(['/survey-management/survey-method']);
-            } else {
-              this.toastr.error(`Your package allows only ${surveyLimit} surveys.`);
-            }
-          })
-        );
-      })
-    );
+    const subscription = this.userPackage$!.pipe(
+      map(userPackage => userPackage.servicePackage?.SurveyLimit || Infinity),
+      take(1)  // Ensures that only one item is emitted
+    ).subscribe(surveyLimit => {
+      this.store.select(surveyManagementSelector.selectAllSurveys).pipe(
+        map(surveys => surveys.length),
+        take(1)  // Ensures that only one item is emitted
+      ).subscribe(surveyCount => {
+        if (surveyCount < surveyLimit) {
+          this.store.dispatch(surveyManagementActions.resetSurveyState());
+          this.router.navigate(['/survey-management/survey-method']);
+        } else {
+          this.toastr.error(`Your package allows only ${surveyLimit} surveys.`);
+        }
+        // No need to unsubscribe because `take(1)` completes the observable
+      });
+    });
   }
 
   navigateToSurveyDetails(surveyId: number, event: Event, permissions: Permission | undefined): void {

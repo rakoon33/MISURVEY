@@ -93,7 +93,7 @@ export class UserManagementComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 10;
   totalUsers = 0;
-  pages: number[] = [];
+  pages: (string | number)[] = [];
 
   filterType = 'name'; // Default filter type
   searchText = '';
@@ -277,28 +277,64 @@ export class UserManagementComponent implements OnInit {
   
 
   refreshData() {
-    this.searchText = ''; // Reset the search text
-    this.currentPage = 1; // Reset pagination to the first page
-    this.loadUsers(); // Reload the user data
-    this.applyFilters(); // Reapply filters to refresh the view
+    this.searchText = '';
+    this.currentPage = 1; 
+    this.loadUsers(); 
+    this.applyFilters(); 
   }
 
   setFilterType(type: string) {
     this.filterType = type;
   }
 
-  setPage(page: number): void {
-    if (page < 1 || page > this.pages.length) {
-      return;
+  updatePagination() {
+    const totalPageCount = Math.ceil(this.totalUsers / this.itemsPerPage);
+    const maxPagesToShow = 3; 
+    let pages: (string | number)[] = [];
+
+    // Compute the range of pages to show
+    let rangeStart = Math.max(
+      this.currentPage - Math.floor(maxPagesToShow / 2),
+      1
+    );
+    let rangeEnd = Math.min(rangeStart + maxPagesToShow - 1, totalPageCount);
+
+    // Adjust the range start if we're at the end of the page list
+    if (rangeEnd === totalPageCount) {
+      rangeStart = Math.max(totalPageCount - maxPagesToShow + 1, 1);
     }
-    this.currentPage = page;
-    this.applyFilters();
+
+    // Always add the first page and possibly an ellipsis
+    if (rangeStart > 1) {
+      pages.push(1);
+      if (rangeStart > 2) {
+        pages.push('...');
+      }
+    }
+
+    // Add the calculated range of pages
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      pages.push(i);
+    }
+
+    // Add an ellipsis and the last page if needed
+    if (rangeEnd < totalPageCount) {
+      if (rangeEnd < totalPageCount - 1) {
+        pages.push('...');
+      }
+      pages.push(totalPageCount);
+    }
+
+    this.pages = pages;
   }
 
-  updatePagination() {
-    const pageCount = Math.ceil(this.totalUsers / this.itemsPerPage);
-    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
-    this.applyFilters();
+  setPage(page: string | number): void {
+    if (typeof page === 'number') {
+      if (page !== this.currentPage) {
+        this.currentPage = page;
+        this.applyFilters(); 
+      }
+    }
   }
 
   loadUsers() {
@@ -339,7 +375,6 @@ export class UserManagementComponent implements OnInit {
   }
 
   createUser() {
-    console.log(this.addUserForm.value);
     if (this.addUserForm.valid && this.currentUserId != null) {
       const formData = {
         ...this.addUserForm.value,
@@ -366,10 +401,10 @@ export class UserManagementComponent implements OnInit {
             userData: formData,
           })
         );
-
+        this.modalService.toggle({ show: false, id: 'addUserModal' });
         this.addUserForm.reset();
 
-        this.modalService.toggle({ show: false, id: 'addUserModal' });
+
       } else {
         // Xử lý cho các vai trò người dùng khác
         this.store.dispatch(
@@ -380,6 +415,11 @@ export class UserManagementComponent implements OnInit {
     } else {
       this.toastr.error('Form is not valid or user ID is not available');
     }
+  }
+
+  clickToApplyFilters(): void {
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
   editUser(UserID: number): void {

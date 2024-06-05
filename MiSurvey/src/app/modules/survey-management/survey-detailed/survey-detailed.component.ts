@@ -9,6 +9,7 @@ import { EmailModalComponent } from 'src/app/shared/components/email-modal/email
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '@coreui/angular';
 import { SurveyManagementService } from './../../../core/services/survey-management.service';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-survey-detailed',
   templateUrl: './survey-detailed.component.html',
@@ -242,4 +243,14 @@ export class SurveyDetailedComponent implements OnInit {
       });
     }
   }
+
+  copySurveyLink(surveyLink: string) {
+    const link = `${environment.FRONTEND_BASE_URL}/c/f/` + surveyLink;
+    navigator.clipboard.writeText(link).then(() => {
+      this.toastrService.success('Survey link copied to clipboard!');
+    }).catch(err => {
+      this.toastrService.error('Failed to copy: ', err);
+    });
+  }
+
 }
