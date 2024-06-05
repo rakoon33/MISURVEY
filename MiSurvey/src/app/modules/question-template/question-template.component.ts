@@ -39,7 +39,7 @@ export class QuestionTemplateManagementComponent implements OnInit {
   itemsPerPage: number = 10;
   totalTemplates: number = 0;
   filterType = 'text';
-  pages: number[] = [];
+  pages: (string | number)[] = [];
   
   viewTemplateData: any = {};
   
@@ -99,6 +99,11 @@ export class QuestionTemplateManagementComponent implements OnInit {
     this.applyFilters();
   }
   
+  clickToApplyFilters(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
   applyFilters() {
     this.filteredTemplates$ = this.questionTemplates$.pipe(
       map(templates =>
@@ -140,18 +145,54 @@ export class QuestionTemplateManagementComponent implements OnInit {
   }
 
 
-  setPage(page: number): void {
-    if (page < 1 || page > this.pages.length) {
-      return;
+  updatePagination() {
+    const totalPageCount = Math.ceil(this.totalTemplates / this.itemsPerPage);
+    const maxPagesToShow = 3; 
+    let pages: (string | number)[] = [];
+
+    // Compute the range of pages to show
+    let rangeStart = Math.max(
+      this.currentPage - Math.floor(maxPagesToShow / 2),
+      1
+    );
+    let rangeEnd = Math.min(rangeStart + maxPagesToShow - 1, totalPageCount);
+
+    // Adjust the range start if we're at the end of the page list
+    if (rangeEnd === totalPageCount) {
+      rangeStart = Math.max(totalPageCount - maxPagesToShow + 1, 1);
     }
-    this.currentPage = page;
-    this.applyFilters();
+
+    // Always add the first page and possibly an ellipsis
+    if (rangeStart > 1) {
+      pages.push(1);
+      if (rangeStart > 2) {
+        pages.push('...');
+      }
+    }
+
+    // Add the calculated range of pages
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      pages.push(i);
+    }
+
+    // Add an ellipsis and the last page if needed
+    if (rangeEnd < totalPageCount) {
+      if (rangeEnd < totalPageCount - 1) {
+        pages.push('...');
+      }
+      pages.push(totalPageCount);
+    }
+
+    this.pages = pages;
   }
 
-  updatePagination() {
-    const pageCount = Math.ceil(this.totalTemplates / this.itemsPerPage);
-    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
-    this.applyFilters();
+  setPage(page: string | number): void {
+    if (typeof page === 'number') {
+      if (page !== this.currentPage) {
+        this.currentPage = page;
+        this.applyFilters(); // This should also call updatePagination
+      }
+    }
   }
   
   deleteQuestionTemplate() {

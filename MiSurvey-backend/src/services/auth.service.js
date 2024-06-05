@@ -7,15 +7,33 @@ const {
   RolePermission,
   Module,
   ServicePackage,
-  UserPackage
+  UserPackage,
 } = require("../models");
 const { tokenFunctions } = require("../utils");
 const db = require("../config/database");
-const {createLogActivity} = require ("./userActivityLog.service");
+const { createLogActivity } = require("./userActivityLog.service");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const { Op } = require("sequelize");
 
 const loginUser = async (res, username, password) => {
   try {
     const user = await User.findOne({ where: { Username: username } });
+
+    if (user && user.UserRole != "SuperAdmin") {
+      companyUser = await CompanyUser.findOne({
+        where: { UserID: user.UserID },
+      });
+
+      if (!companyUser) {
+        return { status: false, message: "The user does not belong to any company." };
+      }
+    }
+
+    if(!user.IsActive) {
+      return { status: false, message: "The user has been deactivated." };
+    }
+
     let token;
     if (user) {
       const isPasswordVerified = await bcrypt.compare(
@@ -52,7 +70,6 @@ const loginUser = async (res, username, password) => {
 
         await user.update({ LastLogin: new Date() });
 
-        
         return {
           status: true,
           message: "User login successful",
@@ -60,13 +77,13 @@ const loginUser = async (res, username, password) => {
       } else {
         return {
           status: false,
-          message: "Incorrect password",
+          message: "Incorrect username or password",
         };
       }
     } else {
       return {
         status: false,
-        message: "No user found",
+        message: "Incorrect username or password",
       };
     }
   } catch (error) {
@@ -80,8 +97,6 @@ const loginUser = async (res, username, password) => {
 };
 
 const registerUser = async (userData) => {
-  console.log("Received userData:", userData);
-
   const transaction = await db.sequelize.transaction();
 
   try {
@@ -122,30 +137,37 @@ const registerUser = async (userData) => {
     await CompanyUser.create(
       {
         UserID: newUser.UserID,
-        CompanyID: newCompany.CompanyID
+        CompanyID: newCompany.CompanyID,
       },
       { transaction }
     );
 
-     // Tạo gói dịch vụ miễn phí cho công ty
-     const freeServicePackage = await ServicePackage.findOne({ where: { PackageName: 'Free' } });
-     if (!freeServicePackage) {
-       throw new Error("Free service package not found");
-     }
- 
-     await UserPackage.create(
-       {
-         UserID: newUser.UserID,
-         PackageID: freeServicePackage.PackageID,
-         StartDate: new Date(),
-         CompanyID: newCompany.CompanyID,
-       },
-       { transaction }
-     );
+    // Tạo gói dịch vụ miễn phí cho công ty
+    const freeServicePackage = await ServicePackage.findOne({
+      where: { PackageName: "Free" },
+    });
+    if (!freeServicePackage) {
+      throw new Error("Free service package not found");
+    }
 
-     
+    await UserPackage.create(
+      {
+        UserID: newUser.UserID,
+        PackageID: freeServicePackage.PackageID,
+        StartDate: new Date(),
+        CompanyID: newCompany.CompanyID,
+      },
+      { transaction }
+    );
+
     await transaction.commit();
-    await createLogActivity(newUser.UserID, 'INSERT', `A new user has been created`, 'Users', newCompany.CompanyID);
+    await createLogActivity(
+      newUser.UserID,
+      "INSERT",
+      `A new user has been created`,
+      "Users",
+      newCompany.CompanyID
+    );
     return {
       status: true,
       message: "Registration successful",
@@ -176,10 +198,8 @@ const logoutUser = (res) => {
   };
 };
 
-
 const getUserPermissions = async (userId) => {
   try {
-
     const companyUser = await CompanyUser.findOne({
       where: { UserID: userId },
     });
@@ -219,7 +239,9 @@ const getUserPermissions = async (userId) => {
       });
     }
 
-    const mergedPermissions = Object.values(permissionsMap).sort((a, b) => a.module.ModuleID - b.module.ModuleID);
+    const mergedPermissions = Object.values(permissionsMap).sort(
+      (a, b) => a.module.ModuleID - b.module.ModuleID
+    );
 
     return {
       companyUserId: companyUser.CompanyUserID,
@@ -230,9 +252,101 @@ const getUserPermissions = async (userId) => {
   }
 };
 
+const generatePasswordResetToken = async (email) => {
+  try {
+    const user = await User.findOne({ where: { Email: email } });
+    if (!user) {
+      return {
+        status: false,
+        message: "No account with that email address exists.",
+      };
+    }
+
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.ResetPasswordToken = resetToken;
+    user.ResetPasswordExpires = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+    return { status: true, resetToken, email: user.Email };
+  } catch (error) {
+    return {
+      status: false,
+      message: error,
+    };
+  }
+};
+
+const sendPasswordResetEmail = async (email, resetToken) => {
+  try {
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "propie034@gmail.com", // Địa chỉ email của bạn
+        pass: "ttsq hrvk lvgp aaca", // App Password của bạn
+      },
+    });
+
+    const resetURL = `${process.env.FRONTEND_URL}/#/reset-password/${resetToken}`;
+    let mailOptions = {
+      to: email,
+      from: "propie034@gmail.com",
+      subject: "Password Reset",
+      text:
+        `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
+        `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
+        `${resetURL}\n\n` +
+        `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return {
+      status: true,
+      message: '"Your password has been updated.',
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error,
+    };
+  }
+};
+
+const resetUserPassword = async (token, newPassword) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        ResetPasswordToken: token,
+        ResetPasswordExpires: { [Op.gt]: Date.now() },
+      },
+    });
+
+    if (!user) {
+      throw new Error("Password reset token is invalid or has expired.");
+    }
+
+    user.UserPassword = await bcrypt.hash(newPassword, 10);
+    user.ResetPasswordToken = null;
+    user.ResetPasswordExpires = null;
+    await user.save();
+    return {
+      status: true,
+      message: "Reset password successfully",
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error,
+    };
+  }
+};
+
 module.exports = {
   loginUser,
   logoutUser,
   registerUser,
   getUserPermissions,
+  generatePasswordResetToken,
+  sendPasswordResetEmail,
+  resetUserPassword,
 };

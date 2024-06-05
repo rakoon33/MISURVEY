@@ -6,13 +6,15 @@ import { ToastrService } from 'ngx-toastr';
 
 import { CustomerService } from '../../services';
 import { customerManagementActions } from '../actions';
+import { Store } from '@ngrx/store';
 
 @Injectable()
 export class CustomerManagementEffects {
   constructor(
     private actions$: Actions,
     private customerService: CustomerService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private store: Store
   ) {}
 
   loadCustomers$ = createEffect(() =>
@@ -65,6 +67,7 @@ export class CustomerManagementEffects {
             map((response) => {
               if (response.status) {
                 this.toastr.success('Customer updated successfully');
+                this.store.dispatch(customerManagementActions.loadCustomers());
                 return customerManagementActions.updateCustomerSuccess({
                   customer: response.customer,
                 });
@@ -94,6 +97,7 @@ export class CustomerManagementEffects {
           map((response) => {
             if (response.status) {
               this.toastr.success('Customer deleted successfully');
+              this.store.dispatch(customerManagementActions.loadCustomers());
               return customerManagementActions.deleteCustomerSuccess({
                 customerID: action.customerID,
               });

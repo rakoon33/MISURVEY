@@ -30,9 +30,10 @@ export class UserActivityLogComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 10;
   totalActivities = 0;
-  pages: number[] = [];
+  pages: (string | number)[] = [];
   searchText: string = '';
-  filterType: string = 'userID'; 
+  filterType: string = 'userID';
+  currentUserRole: string = '';
 
   constructor(
     private userActivityLogService: UserActivityLogService,
@@ -49,6 +50,7 @@ export class UserActivityLogComponent implements OnInit {
     ]).pipe(
       map(([currentUser, permissions]) => {
         if (currentUser?.UserRole === 'Supervisor') {
+          this.currentUserRole = currentUser?.UserRole;
           return permissions;
         }
         return {
@@ -67,23 +69,32 @@ export class UserActivityLogComponent implements OnInit {
     this.loadActivities();
   }
 
+  clickToApplyFilters(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
   applyFilters(): void {
     this.filteredActivities$ = of(this.activities).pipe(
-      map(activities => activities.filter(activity => this.filterActivity(activity))),
-      tap(filteredActivities => {
+      map((activities) =>
+        activities.filter((activity) => this.filterActivity(activity))
+      ),
+      tap((filteredActivities) => {
         this.totalActivities = filteredActivities.length;
         this.updatePagination();
       }),
-      map(filteredActivities => {
+      map((filteredActivities) => {
         // Calculate the starting index based on the current page and the number of items per page
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         // Return only the slice of data that should be visible on the current page
-        return filteredActivities.slice(startIndex, startIndex + this.itemsPerPage);
+        return filteredActivities.slice(
+          startIndex,
+          startIndex + this.itemsPerPage
+        );
       })
     );
   }
-  
-  
+
   filterActivity(activity: UserActivityLog): boolean {
     const searchTextLower = this.searchText.toLowerCase();
     switch (this.filterType) {
@@ -92,21 +103,62 @@ export class UserActivityLogComponent implements OnInit {
       case 'action':
         return activity.UserAction.toLowerCase().includes(searchTextLower);
       case 'description':
-        return activity.ActivityDescription.toLowerCase().includes(searchTextLower);
+        return activity.ActivityDescription.toLowerCase().includes(
+          searchTextLower
+        );
       default:
         return true;
     }
   }
 
   updatePagination() {
-    const pageCount = Math.ceil(this.totalActivities / this.itemsPerPage);
-    this.pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+    const totalPageCount = Math.ceil(this.totalActivities / this.itemsPerPage);
+    const maxPagesToShow = 3; 
+    let pages: (string | number)[] = [];
+
+    // Compute the range of pages to show
+    let rangeStart = Math.max(
+      this.currentPage - Math.floor(maxPagesToShow / 2),
+      1
+    );
+    let rangeEnd = Math.min(rangeStart + maxPagesToShow - 1, totalPageCount);
+
+    // Adjust the range start if we're at the end of the page list
+    if (rangeEnd === totalPageCount) {
+      rangeStart = Math.max(totalPageCount - maxPagesToShow + 1, 1);
+    }
+
+    // Always add the first page and possibly an ellipsis
+    if (rangeStart > 1) {
+      pages.push(1);
+      if (rangeStart > 2) {
+        pages.push('...');
+      }
+    }
+
+    // Add the calculated range of pages
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      pages.push(i);
+    }
+
+    // Add an ellipsis and the last page if needed
+    if (rangeEnd < totalPageCount) {
+      if (rangeEnd < totalPageCount - 1) {
+        pages.push('...');
+      }
+      pages.push(totalPageCount);
+    }
+
+    this.pages = pages;
   }
 
-  setPage(page: number): void {
-    if (page < 1 || page > this.pages.length) return;
-    this.currentPage = page;
-    this.applyFilters();
+  setPage(page: string | number): void {
+    if (typeof page === 'number') {
+      if (page !== this.currentPage) {
+        this.currentPage = page;
+        this.applyFilters(); 
+      }
+    }
   }
 
   refreshData() {
@@ -116,7 +168,6 @@ export class UserActivityLogComponent implements OnInit {
     this.applyFilters();
   }
 
-  
   setFilterType(type: string): void {
     this.filterType = type;
     this.applyFilters(); // Reapply filters whenever the filter type changes

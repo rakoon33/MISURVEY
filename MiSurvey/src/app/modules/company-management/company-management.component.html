@@ -43,12 +43,12 @@
         class="form-control"
         [(ngModel)]="searchText"
         placeholder="Enter search text..."
-        (keyup.enter)="applyFilters()"
+        (keyup.enter)="clickToApplyFilters()"
       />
       <c-button-group class="group-button-management" role="group">
         <button
           cButton
-          (click)="applyFilters()"
+          (click)="clickToApplyFilters()"
           class="input-search-management"
         >
           Search
@@ -85,7 +85,7 @@
       <tbody>
         <!-- Loop through the companies array using the *ngFor directive -->
         <tr *ngFor="let company of filteredCompanies$ | async; let i = index">
-          <td scope="row">{{ i + 1 }}</td>
+          <td scope="row">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
           <td>
             <c-avatar
               size="md"
@@ -142,51 +142,27 @@
         </tr>
       </tbody>
     </table>
-
+    <div style="padding: 20px; background-color: white;" *ngIf="(filteredCompanies$ | async)?.length === 0">
+      <p style="margin: 0;">No activities found matching your search criteria.</p>
+    </div>
     <!-- phân trang -->
     <div class="pagination-controls">
-      <select
-        [(ngModel)]="itemsPerPage"
-        (ngModelChange)="updatePagination()"
-        class="form-control total-items"
-      >
-        <option value="5">5 per page</option>
-        <option value="10">10 per page</option>
-        <option value="20">20 per page</option>
-      </select>
+      <div></div>
 
       <!-- Pagination controls -->
       <nav  *ngIf="currentUserRole === 'SuperAdmin'" aria-label="Page navigation" >
         <ul class="pagination">
           <li class="page-item" [class.disabled]="currentPage === 1">
-            <button
-              class="page-link"
-              (click)="setPage(currentPage - 1); $event.preventDefault()"
-            >
-              Previous
-            </button>
+              <button class="page-link" (click)="setPage(currentPage - 1)">Previous</button>
           </li>
-          <li
-            class="page-item"
-            [class.active]="currentPage === page"
-            *ngFor="let page of pages"
-          >
-            <button
-              class="page-link"
-              (click)="setPage(page); $event.preventDefault()"
-            >
-              {{ page }}
-            </button>
+          <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage === page" [class.disabled]="page === '...'">
+              <button class="page-link" *ngIf="page !== '...'" (click)="setPage(page)">{{ page }}</button>
+              <span class="page-link" *ngIf="page === '...'">{{ page }}</span>
           </li>
-          <li class="page-item" [class.disabled]="currentPage === pages.length">
-            <button
-              class="page-link"
-              (click)="setPage(currentPage + 1); $event.preventDefault()"
-            >
-              Next
-            </button>
+          <li class="page-item" [class.disabled]="currentPage === pages[pages.length - 1] || pages[pages.length - 1] === '...'">
+              <button class="page-link" (click)="setPage(currentPage + 1)">Next</button>
           </li>
-        </ul>
+      </ul>
       </nav>
     </div>
   </div>
@@ -216,26 +192,11 @@
       >
         <div class="company-details">
           <ng-container>
-            <p>Company Name: {{ selectedCompany.CompanyName }}</p>
-            <p>Company Domain: {{ selectedCompany.CompanyDomain }}</p>
-            <p>Admin ID: {{ selectedCompany.AdminID }}</p>
+            <p><strong>Company Name:</strong> {{ selectedCompany.CompanyName }}</p>
+            <p><strong>Company Domain:</strong> {{ selectedCompany.CompanyDomain }}</p>
+            <p><strong>Admin ID:</strong> {{ selectedCompany.AdminID }}</p>
+            <p><strong>Created At:</strong> {{ selectedCompany.CreatedAt | date : 'yyyy-MM-dd' }}</p>
           </ng-container>
-        </div>
-        <div class="date-details">
-          <mat-form-field appearance="fill">
-            <mat-label>Created At</mat-label>
-            <input
-              matInput
-              [matDatepicker]="createdAtPicker"
-              [value]="selectedCompany.CreatedAt | date : 'yyyy-MM-dd'"
-              disabled
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="createdAtPicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #createdAtPicker disabled></mat-datepicker>
-          </mat-form-field>
         </div>
       </div>
     </c-modal-body>

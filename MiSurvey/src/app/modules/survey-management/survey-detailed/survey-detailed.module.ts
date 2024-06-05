@@ -21,7 +21,7 @@ import {
 } from '@coreui/angular';
 
 import { IconModule } from '@coreui/icons-angular';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
   declarations: [
     SurveyDetailedComponent
@@ -44,6 +44,7 @@ import { IconModule } from '@coreui/icons-angular';
     UtilitiesModule,
     TabsModule,
     FormsModule,
+    MatTooltipModule
   ]
 })
 export class SurveyDetailedModule { }

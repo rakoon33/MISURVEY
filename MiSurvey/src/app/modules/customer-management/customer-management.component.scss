@@ -425,4 +425,6 @@ button:active {
   padding: 5px;
 }
 
-
+.btn {
+  --cui-btn-border-radius: 0 !important;
+}

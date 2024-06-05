@@ -57,12 +57,12 @@
         class="form-control"
         [(ngModel)]="searchText"
         placeholder="Enter search text..."
-        (keyup.enter)="applyFilters()"
+        (keyup.enter)="clickToApplyFilters()"
       />
       <c-button-group class="group-button-management" role="group">
         <button
           cButton
-          (click)="applyFilters()"
+          (click)="clickToApplyFilters()"
           class="input-search-management"
         >
           Search
@@ -101,7 +101,7 @@
     <tbody>
       <!-- Loop through the users array using the *ngFor directive -->
       <tr *ngFor="let user of filteredUsers$ | async; let i = index">
-        <td scope="row">{{ i + 1 }}</td>
+        <td scope="row">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
         <td>
           <c-avatar
             size="md"
@@ -156,51 +156,26 @@
       </tr>
     </tbody>
   </table>
-
+  <div style="padding: 20px; background-color: white;" *ngIf="(filteredUsers$ | async)?.length === 0">
+    <p style="margin: 0;">No users found matching your search criteria.</p>
+  </div>
   <!-- phân trang -->
   <div class="pagination-controls">
-    <select
-      [(ngModel)]="itemsPerPage"
-      (ngModelChange)="updatePagination()"
-      class="form-control total-items"
-    >
-      <option value="5">5 per page</option>
-      <option value="10">10 per page</option>
-      <option value="20">20 per page</option>
-    </select>
-
+   <div></div>
     <!-- Pagination controls -->
     <nav aria-label="Page navigation">
       <ul class="pagination">
         <li class="page-item" [class.disabled]="currentPage === 1">
-          <button
-            class="page-link"
-            (click)="setPage(currentPage - 1); $event.preventDefault()"
-          >
-            Previous
-          </button>
+            <button class="page-link" (click)="setPage(currentPage - 1)">Previous</button>
         </li>
-        <li
-          class="page-item"
-          [class.active]="currentPage === page"
-          *ngFor="let page of pages"
-        >
-          <button
-            class="page-link"
-            (click)="setPage(page); $event.preventDefault()"
-          >
-            {{ page }}
-          </button>
+        <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage === page" [class.disabled]="page === '...'">
+            <button class="page-link" *ngIf="page !== '...'" (click)="setPage(page)">{{ page }}</button>
+            <span class="page-link" *ngIf="page === '...'">{{ page }}</span>
         </li>
-        <li class="page-item" [class.disabled]="currentPage === pages.length">
-          <button
-            class="page-link"
-            (click)="setPage(currentPage + 1); $event.preventDefault()"
-          >
-            Next
-          </button>
+        <li class="page-item" [class.disabled]="currentPage === pages[pages.length - 1] || pages[pages.length - 1] === '...'">
+            <button class="page-link" (click)="setPage(currentPage + 1)">Next</button>
         </li>
-      </ul>
+    </ul>
     </nav>
   </div>
   <!-- Modal -->
@@ -229,61 +204,22 @@
       >
         <div class="user-details">
           <ng-container>
-            <p>Username: {{ selectedUser.Username }}</p>
-            <p>First Name: {{ selectedUser.FirstName }}</p>
-            <p>Last Name: {{ selectedUser.LastName }}</p>
-            <p>Email: {{ selectedUser.Email }}</p>
-            <p>Role: {{ selectedUser.UserRole }}</p>
-            <p>Gender: {{ selectedUser.Gender }}</p>
-            <p>Phone Number: {{ selectedUser.PhoneNumber }}</p>
-            <p>Active: {{ selectedUser.IsActive ? "Yes" : "No" }}</p>
+            <p><b>First Name:</b> {{ selectedUser.FirstName }}</p>
+            <p><b>Last Name:</b> {{ selectedUser.LastName }}</p>
+            <p><b>Username:</b> {{ selectedUser.Username }}</p>
+            <p><b>Email:</b> {{ selectedUser.Email }}</p>
+            <p><b>Role:</b> {{ selectedUser.UserRole }}</p>
+            <p><b>Gender:</b> {{ selectedUser.Gender }}</p>
+            <p><b>Phone Number:</b> {{ selectedUser.PhoneNumber }}</p>
           </ng-container>
         </div>
         <div class="date-details">
-          <p>Created By: {{ selectedUser.CreatedBy || "N/A" }}</p>
-          <p>Updated By: {{ selectedUser.UpdatedBy || "N/A" }}</p>
-          <mat-form-field appearance="fill">
-            <mat-label>Created At</mat-label>
-            <input
-              matInput
-              [matDatepicker]="createdAtPicker"
-              [value]="selectedUser.CreatedAt | date : 'yyyy-MM-dd'"
-              disabled
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="createdAtPicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #createdAtPicker disabled></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Last Login</mat-label>
-            <input
-              matInput
-              [matDatepicker]="lastLoginPicker"
-              [value]="selectedUser.LastLogin | date : 'yyyy-MM-dd'"
-              disabled
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="lastLoginPicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #lastLoginPicker disabled></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Updated At</mat-label>
-            <input
-              matInput
-              [matDatepicker]="updatedAtPicker"
-              [value]="selectedUser.UpdatedAt | date : 'yyyy-MM-dd'"
-              disabled
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="updatedAtPicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #updatedAtPicker disabled></mat-datepicker>
-          </mat-form-field>
+          <p><b>Active:</b> {{ selectedUser.IsActive ? "Yes" : "No" }}</p>
+          <p><b>Created By:</b> {{ selectedUser.CreatedBy | date : "medium" || "N/A" }}</p>
+          <p><b>Updated By:</b> {{ selectedUser.UpdatedBy | date : "medium" || "N/A" }}</p>
+          <p><b>Created At:</b> {{ selectedUser.CreatedAt | date : "medium" || "N/A" }}</p>
+          <p><b>Last Login:</b> {{ selectedUser.LastLogin | date : "medium" || "N/A" }}</p>
+          <p><b>Updated At:</b> {{ selectedUser.UpdatedAt | date : "medium" || "N/A" }}</p>
         </div>
       </div>
     </c-modal-body>
@@ -410,37 +346,7 @@
           </select>
         </div>
 
-        <!-- Date Fields -->
-        <div class="mb-3">
-          <mat-form-field appearance="fill">
-            <mat-label>Created At</mat-label>
-            <input
-              matInput
-              [matDatepicker]="editCreatedAtPicker"
-              formControlName="CreatedAt"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="editCreatedAtPicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #editCreatedAtPicker></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <div class="mb-3">
-          <mat-form-field appearance="fill">
-            <mat-label>Last Login</mat-label>
-            <input
-              matInput
-              [matDatepicker]="editLastLoginPicker"
-              formControlName="LastLogin"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="editLastLoginPicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #editLastLoginPicker></mat-datepicker>
-          </mat-form-field>
-        </div>
+       
       </form>
     </c-modal-body>
     <c-modal-footer>

@@ -17,10 +17,8 @@ export class AuthService {
       .post<any>(loginUrl, { username, password }, { withCredentials: true })
       .pipe(
         map((response) => {
-          if (response.status) {
+          if (response) {
             return response;
-          } else {
-            throw new Error(response.message);
           }
         }),
         catchError((error) => {
@@ -37,7 +35,14 @@ export class AuthService {
       .pipe(catchError((error) => throwError(() => error)));
   }
 
-  register(userData: { firstName: string; lastName: string; companyName: string; email: string; username: string; password: string }): Observable<any> {
+  register(userData: {
+    firstName: string;
+    lastName: string;
+    companyName: string;
+    email: string;
+    username: string;
+    password: string;
+  }): Observable<any> {
     const registerUrl = `${apiConstants.BACKEND_API.BASE_API_URL}/register`;
     return this.http
       .post<any>(registerUrl, userData, { withCredentials: true })
@@ -45,9 +50,7 @@ export class AuthService {
         map((response) => {
           if (response.status) {
             return response;
-          } else {
-            throw new Error(response.message);
-          }
+          } 
         }),
         catchError((error) => {
           console.error('Error during registration:', error);
@@ -57,11 +60,36 @@ export class AuthService {
   }
 
   getPermissions(userId: number): Observable<any> {
-    return this.http.get(`${apiConstants.BACKEND_API.BASE_API_URL}/getPermissions/${userId}`, { withCredentials: true }).pipe(
-      catchError((error) => {
-        console.error('Error during registration:', error);
-        return throwError(() => error);
-      })
+    return this.http
+      .get(
+        `${apiConstants.BACKEND_API.BASE_API_URL}/getPermissions/${userId}`,
+        { withCredentials: true }
+      )
+      .pipe(
+        catchError((error) => {
+          console.error('Error during registration:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    const forgotPasswordUrl = `${apiConstants.BACKEND_API.BASE_API_URL}/forgot-password`;
+    return this.http
+      .post<any>(forgotPasswordUrl, { email }, { withCredentials: true })
+      .pipe(
+        catchError((error) => {
+          console.error('Error during password reset request:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  resetPassword(token: string, password: string): Observable<any> {
+    return this.http.post(
+      `${apiConstants.BACKEND_API.BASE_API_URL}/reset-password/${token}`,
+      { password },
+      { withCredentials: true }
     );
   }
 }

@@ -1,6 +1,8 @@
 // src/app/components/subscription-plans/subscription-plans.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable, combineLatest, map } from 'rxjs';
+import { Permission } from 'src/app/core/models';
 import { ServicePackageService } from 'src/app/core/services';
 import { userSelector } from 'src/app/core/store/selectors';
 @Component({
@@ -11,11 +13,33 @@ import { userSelector } from 'src/app/core/store/selectors';
 export class SubscriptionPlansComponent implements OnInit {
   plans: any[] = [];
   activePackage: any;
+  userPermissions$: Observable<Permission | undefined> | undefined;
 
   constructor(
     private servicePackageService: ServicePackageService,
     private store: Store
-  ) {}
+  ) {
+
+    this.userPermissions$ = combineLatest([
+      this.store.select(userSelector.selectCurrentUser),
+      this.store.select(userSelector.selectPermissionByModuleName('Subscription Plans'))
+    ]).pipe(
+      map(([currentUser, permissions]) => {
+        if (currentUser?.UserRole === 'Supervisor') {
+          return permissions;
+        }
+        return {
+          CanView: true,
+          CanAdd: true,
+          CanUpdate: true,
+          CanDelete: true,
+          CanExport: true,
+          CanViewData: true,
+        } as Permission;
+      })
+    );
+
+  }
 
   ngOnInit(): void {
     // Load all service packages

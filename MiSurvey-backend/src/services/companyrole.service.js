@@ -46,21 +46,6 @@ const updateCompanyRole = async (id, roleData, permissionsData, udata) => {
       };
     }
 
-    // Check if another role with the same name exists and has a different ID
-    const existingRole = await CompanyRole.findOne({
-      where: {
-        CompanyRoleName: roleData.CompanyRoleName,
-        CompanyRoleID: { [Op.ne]: id } // Exclude the current record
-      }
-    });
-
-    if (existingRole) {
-      return {
-        status: false,
-        message: `Another role with the name ${roleData.CompanyRoleName} already exists. Please choose a different name.`,
-      };
-    }
-
     // Update company role
     await CompanyRole.update(roleData, {
       where: { CompanyRoleID: id }

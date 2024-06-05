@@ -59,7 +59,7 @@ export class CompanyRolesManagementComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 10;
   totalRoles = 0;
-  pages: number[] = [];
+  pages: (string | number)[] = [];
   filterType: string = 'name'; // default filter type
   searchText: string = '';
   filteredRoles$: Observable<CompanyRole[]> | undefined;
@@ -186,12 +186,20 @@ export class CompanyRolesManagementComponent implements OnInit {
     
   }
 
+  clickToApplyFilters(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
   submitRole() {
     if (this.roleForm.valid) {
       const formData = this.roleForm.getRawValue();
       this.store.dispatch(
         companyRoleManagementActions.createCompanyRoleRequest(formData)
       );
+
+      this.toggleModal(false, 'addRoleModal');
+     
     } else {
       this.toastr.error('Please fill all required fields.');
     }
@@ -230,17 +238,54 @@ export class CompanyRolesManagementComponent implements OnInit {
 
   }
 
-  updatePagination(): void {
-    const pageCount = Math.ceil(this.totalRoles / this.itemsPerPage);
-    this.pages = Array.from({length: pageCount}, (_, i) => i + 1);
+  updatePagination() {
+    const totalPageCount = Math.ceil(this.totalRoles / this.itemsPerPage);
+    const maxPagesToShow = 3; 
+    let pages: (string | number)[] = [];
+
+    // Compute the range of pages to show
+    let rangeStart = Math.max(
+      this.currentPage - Math.floor(maxPagesToShow / 2),
+      1
+    );
+    let rangeEnd = Math.min(rangeStart + maxPagesToShow - 1, totalPageCount);
+
+    // Adjust the range start if we're at the end of the page list
+    if (rangeEnd === totalPageCount) {
+      rangeStart = Math.max(totalPageCount - maxPagesToShow + 1, 1);
+    }
+
+    // Always add the first page and possibly an ellipsis
+    if (rangeStart > 1) {
+      pages.push(1);
+      if (rangeStart > 2) {
+        pages.push('...');
+      }
+    }
+
+    // Add the calculated range of pages
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      pages.push(i);
+    }
+
+    // Add an ellipsis and the last page if needed
+    if (rangeEnd < totalPageCount) {
+      if (rangeEnd < totalPageCount - 1) {
+        pages.push('...');
+      }
+      pages.push(totalPageCount);
+    }
+
+    this.pages = pages;
   }
 
-  setPage(page: number): void {
-    if (page < 1 || page > this.pages.length) {
-      return;
+  setPage(page: string | number): void {
+    if (typeof page === 'number') {
+      if (page !== this.currentPage) {
+        this.currentPage = page;
+        this.applyFilters(); 
+      }
     }
-    this.currentPage = page;
-    this.applyFilters();
   }
   
   openEditModal(roleId: number | undefined) {

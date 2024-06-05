@@ -1,4 +1,5 @@
-<div class="subscription-plans">
+<div *ngIf="userPermissions$ | async as permissions">
+  <div *ngIf="permissions.CanView" class="subscription-plans">
     <div
       *ngFor="let plan of plans"
       [ngClass]="{
@@ -23,6 +24,7 @@
       </div>
       <div class="plan__footer">
         <button
+          *ngIf="permissions.CanUpdate"
           [disabled]="isActivePlan(plan.id)"
           [ngClass]="{
             'disabled-button': isActivePlan(plan.id),
@@ -35,3 +37,4 @@
       </div>
     </div>
   </div>
+</div>

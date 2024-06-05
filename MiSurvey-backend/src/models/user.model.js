@@ -73,6 +73,12 @@ const User = db.sequelize.define(
     UpdatedBy: {
       type: DataTypes.INTEGER,
     },
+    ResetPasswordToken: {
+      type: DataTypes.STRING(100),
+    },
+    ResetPasswordExpires: {
+      type: DataTypes.DATE,
+    },
   },
   {
     tableName: "Users",
