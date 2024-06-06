@@ -285,11 +285,6 @@ const updateUser = async (UserID, userData, udata) => {
 const deleteUser = async (UserID, udata) => {
   const transaction = await db.sequelize.transaction();
   try {
-    // Find and delete all notifications for the user
-    await Notification.destroy({
-      where: { UserID: UserID },
-      transaction,
-    });
 
     // Find all surveys created by the user
     const surveys = await Survey.findAll({
@@ -326,12 +321,6 @@ const deleteUser = async (UserID, udata) => {
       });
     }
 
-    // Find and delete all user packages
-    await UserPackage.destroy({
-      where: { UserID: UserID },
-      transaction,
-    });
-
     // Find all company user records associated with the user
     const companyUsers = await CompanyUser.findAll({
       where: { UserID: UserID },
@@ -343,7 +332,6 @@ const deleteUser = async (UserID, udata) => {
       where: { UserID: UserID },
       transaction,
     });
-
     for (const companyUser of companyUsers) {
       const companyID = companyUser.CompanyID;
       const companyUserID = companyUser.CompanyUserID;
@@ -371,12 +359,49 @@ const deleteUser = async (UserID, udata) => {
         const companyroles = await CompanyRole.findAll({
           where: { CompanyID: companyID },
         });
+
+        const companyUsers2 = await CompanyUser.findAll({
+          where: { CompanyID: companyID },
+          transaction,
+        });
+
+        for (const companyUser of companyUsers2) {
+          const companyID = companyUser.CompanyID;
+          const companyUserID = companyUser.CompanyUserID;
+    
+    
+          // Delete related records in IndividualPermission
+          await IndividualPermission.destroy({
+            where: { CompanyUserID: companyUserID },
+            
+          });
+
+        }
         for (const companyrole of companyroles) {
           await RolePermission.destroy({
             where: { CompanyRoleID: companyrole.CompanyRoleID },
           });
+
+          await CompanyUser.destroy({
+            where: {
+              CompanyRoleID: companyrole.CompanyRoleID
+            },
+            transaction
+          });
         }
+
         await CompanyRole.destroy({ where: { CompanyID: companyID } });
+
+        await Notification.destroy({
+          where: { CompanyID: companyID},
+          transaction
+        });
+
+        await UserPackage.destroy({
+          where: { CompanyID: companyID },
+          transaction
+        });
+
         await Company.destroy({
           where: { AdminID: UserID },
           transaction,
@@ -412,7 +437,7 @@ const deleteUser = async (UserID, udata) => {
     await transaction.rollback();
     return {
       status: false,
-      message: "Failed to delete user and related data.",
+      message:error.toString(),
       error: error.toString(),
     };
   }

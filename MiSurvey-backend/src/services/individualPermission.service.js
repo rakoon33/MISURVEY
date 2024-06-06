@@ -3,7 +3,6 @@ const { IndividualPermission } = require("../models");
 const createIndividualPermission = async (permissionData) => {
   try {
 
-    console.log(permissionData);
     // Check if the permission already exists
     const existingPermission = await IndividualPermission.findOne({
       where: {
@@ -39,9 +38,6 @@ const updateIndividualPermission = async (
 ) => {
   try {
 
-    console.log(companyUserId);
-    console.log(moduleId);
-    console.log(permissionData);
     const existingPermission = await IndividualPermission.findOne({
       where: {
         CompanyUserID: companyUserId,

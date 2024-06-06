@@ -106,3 +106,14 @@ h1 {
 .graphic-card:hover img.img-fluid {
     transform: translate(-50%, -50%) scale(1.05);  /* Gentle zoom on hover for illustration */
 }
+
+
+.btn-link {
+    color: #0056b3;
+    text-decoration: underline;
+    padding: 0;
+    margin: 0;
+    &:hover {
+        color: #004095;
+    }
+}
