@@ -6,6 +6,6 @@ export const environment = {
     production: false,
     // Add any other properties you need
     BACKEND_BASE_URL: 'http://localhost:3000',
-    FRONTEND_BASE_URL: 'http://localhost:8082/#'
+    FRONTEND_BASE_URL: 'https://misurvey-git-dev-rakoons-projects.vercel.app/#'
 };
   
