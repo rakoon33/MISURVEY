@@ -18,13 +18,14 @@ export class AuthGuard implements CanActivate {
   canActivate(): boolean {
     const token = localStorage.getItem('token');
 
-    if (token != '') {
-      
+    if (token && token != '') {
+      console.log('co token' + token);
+      console.log(token);
       var d = new Date();
       d.setTime(d.getTime() + (60 * 60 * 1000));
       var expires = 'expires=' + d.toUTCString();
   
-      document.cookie = 'jwt' + `=${token};path=/;` + expires;
+      document.cookie = "jwt=" + token + ";path=/;" + expires + ";SameSite=None;Secure";
 
       this.store.dispatch(userActions.getUserDataRequest());
 

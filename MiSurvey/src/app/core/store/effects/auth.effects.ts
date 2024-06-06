@@ -34,7 +34,7 @@ export class AuthEffects {
               d.setTime(d.getTime() + (60 * 60 * 1000));
               var expires = "expires=" + d.toUTCString();
           
-              document.cookie = 'jwt' + `=${response.token};path=/;` + expires;
+              document.cookie = "jwt=" + response.token + ";path=/;" + expires + ";SameSite=None;Secure";
 
               this.toastrService.success('Login successful');
               this.router.navigate(['/dashboard']);

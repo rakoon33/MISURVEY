@@ -17,7 +17,7 @@ const tokenVerification = (req, res, next) => {
   );
   try {
     const token = req.cookies.jwt;
-
+    console.log(token);
     if (!token) {
       return res.status(401).json({
         status: false,
