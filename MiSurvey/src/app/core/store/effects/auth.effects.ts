@@ -27,6 +27,15 @@ export class AuthEffects {
         this.authService.login(action.username, action.password).pipe(
           switchMap((response) => {
             if (response.status) {
+              // Set the token into LocalStorage
+              localStorage.setItem('token', response.token);
+
+              var d = new Date();
+              d.setTime(d.getTime() + (60 * 60 * 1000));
+              var expires = "expires=" + d.toUTCString();
+          
+              document.cookie = 'jwt' + `=${response.token};path=/;` + expires;
+
               this.toastrService.success('Login successful');
               this.router.navigate(['/dashboard']);
               // Initiating the user data request and waiting for its success before dispatching login success
@@ -59,6 +68,8 @@ export class AuthEffects {
         this.authService.logout().pipe(
           concatMap((response) => {
             if (response.status) {
+              localStorage.setItem('token', '');
+
               this.toastrService.success('Logout successful');
               return [
                 userActions.getUserDataSuccess({

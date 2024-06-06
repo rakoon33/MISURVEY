@@ -11,9 +11,9 @@ const getUserDataController = async (req, res) => {
     }
 
     const result = await userService.getUserData(userID, req.user.role);
-
     res.json(result);
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ message: error.message || "Failed to retrieve user data." });
