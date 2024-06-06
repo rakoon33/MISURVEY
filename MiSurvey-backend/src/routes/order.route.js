@@ -8,7 +8,6 @@ const config = require("config");
 const { UserPackage, ServicePackage } = require("../models");
 const jwt = require("jsonwebtoken");
 const { authMiddleware } = require("../middlewares");
-
 const path = require('path');
 
 // Kiểm tra dữ liệu đầu vào
@@ -32,11 +31,7 @@ function sortObject(obj) {
 router.post("/create_payment", authMiddleware.tokenVerification, async function (req, res) {
   try {
     const { packageId, bankCode, language } = req.body;
-    res.cookie("packageId", packageId, { maxAge: 900000, httpOnly: true });
     const companyID = req.user ? req.user.companyID : null;
-    if (companyID) {
-      res.cookie("companyID", companyID, { maxAge: 900000, httpOnly: true });
-    }
 
     const servicePackage = await ServicePackage.findByPk(packageId);
     if (!servicePackage) {
@@ -59,6 +54,13 @@ router.post("/create_payment", authMiddleware.tokenVerification, async function 
     const locale = language || "vn";
     const currCode = "VND";
 
+    // Construct order information with conditional companyID
+    let orderInfo = `Thanh toan cho ma GD: ${orderId}`;
+    orderInfo += ` voi packageId: ${packageId}`;
+    if (companyID) {
+      orderInfo += ` và companyId: ${companyID}`;
+    }
+
     let vnp_Params = {
       vnp_Version: "2.1.0",
       vnp_Command: "pay",
@@ -66,7 +68,7 @@ router.post("/create_payment", authMiddleware.tokenVerification, async function 
       vnp_Locale: locale,
       vnp_CurrCode: currCode,
       vnp_TxnRef: orderId,
-      vnp_OrderInfo: `Thanh toan cho ma GD: ${orderId}`,
+      vnp_OrderInfo: orderInfo,
       vnp_OrderType: "other",
       vnp_Amount: Math.round(amount * 100),
       vnp_ReturnUrl: returnUrl,
@@ -118,11 +120,17 @@ router.get("/vnpay_return", async (req, res) => { // Add middleware here
         vnp_Amount,
         vnp_ResponseCode,
         vnp_TransactionStatus,
+        vnp_OrderInfo
       } = sortedParams;
 
+      // Parsing vnp_OrderInfo to extract packageId and companyId
+      const orderInfo = decodeURIComponent(vnp_Params["vnp_OrderInfo"]);
+      const details = parseOrderInfo(orderInfo);
+      
+      console.log(details);
       if (vnp_ResponseCode === "00" && vnp_TransactionStatus === "00") {
-        const packageId = req.cookies.packageId;
-        const companyID = req.cookies.companyID;
+        const packageId = details.packageId;
+        const companyID = details.companyId;
 
         const servicePackage = await ServicePackage.findByPk(packageId);
         if (!servicePackage) {
@@ -166,5 +174,19 @@ router.get("/vnpay_return", async (req, res) => { // Add middleware here
     res.status(500).json({ message: error.message });
   }
 });
+
+function parseOrderInfo(orderInfo) {
+  const details = {};
+  // Use a regular expression to match patterns like "key: value"
+  const pattern = /(\w+):\s*([^\s]+)/g;
+  let match;
+
+  // Loop over the orderInfo string to find all matches of the pattern
+  while ((match = pattern.exec(orderInfo)) !== null) {
+    details[match[1]] = match[2];
+  }
+
+  return details;
+}
 
 module.exports = router;
