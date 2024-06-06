@@ -90,8 +90,9 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnDestroy
   }
 
   logout(): void {
+    localStorage.setItem('token', '');
+    this.store.dispatch(authActions.logoutSuccess());
     this.store.dispatch(authActions.logoutRequest());
-    window.location.reload();
   }
 
   ngOnDestroy() {

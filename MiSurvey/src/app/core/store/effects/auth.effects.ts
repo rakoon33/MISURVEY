@@ -68,8 +68,6 @@ export class AuthEffects {
         this.authService.logout().pipe(
           concatMap((response) => {
             if (response.status) {
-              localStorage.setItem('token', '');
-
               this.toastrService.success('Logout successful');
               return [
                 userActions.getUserDataSuccess({
