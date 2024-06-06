@@ -332,7 +332,6 @@ const deleteUser = async (UserID, udata) => {
       where: { UserID: UserID },
       transaction,
     });
-
     for (const companyUser of companyUsers) {
       const companyID = companyUser.CompanyID;
       const companyUserID = companyUser.CompanyUserID;
@@ -360,6 +359,24 @@ const deleteUser = async (UserID, udata) => {
         const companyroles = await CompanyRole.findAll({
           where: { CompanyID: companyID },
         });
+
+        const companyUsers2 = await CompanyUser.findAll({
+          where: { CompanyID: companyID },
+          transaction,
+        });
+
+        for (const companyUser of companyUsers2) {
+          const companyID = companyUser.CompanyID;
+          const companyUserID = companyUser.CompanyUserID;
+    
+    
+          // Delete related records in IndividualPermission
+          await IndividualPermission.destroy({
+            where: { CompanyUserID: companyUserID },
+            
+          });
+
+        }
         for (const companyrole of companyroles) {
           await RolePermission.destroy({
             where: { CompanyRoleID: companyrole.CompanyRoleID },
@@ -373,9 +390,18 @@ const deleteUser = async (UserID, udata) => {
           });
         }
 
-
-
         await CompanyRole.destroy({ where: { CompanyID: companyID } });
+
+        await Notification.destroy({
+          where: { CompanyID: companyID},
+          transaction
+        });
+
+        await UserPackage.destroy({
+          where: { CompanyID: companyID },
+          transaction
+        });
+
         await Company.destroy({
           where: { AdminID: UserID },
           transaction,

@@ -2,6 +2,7 @@ const { CompanyRole, RolePermission, CompanyUser, User } = require("../models");
 const { sequelize } = require("../config/database");
 const { Op } = require("sequelize");
 const {createLogActivity} = require ("./userActivityLog.service");
+const { deleteUser } = require("./user.service");
 
 const createCompanyRole = async (roleData, permissionsData, companyID, udata) => {
   roleData.CompanyID = companyID;
@@ -120,6 +121,7 @@ const deleteCompanyRole = async (roleId, udata) => {
       };
     }
 
+    
     // Delete Role Permissions associated with this role
     await RolePermission.destroy({
       where: { CompanyRoleID: roleId },
@@ -135,10 +137,7 @@ const deleteCompanyRole = async (roleId, udata) => {
     // Delete all CompanyUser entries associated with this role
     for (const companyUser of companyUsers) {
       // Optionally, delete the user records as well from User table
-      await User.destroy({
-        where: { UserID: companyUser.UserID },
-        transaction
-      });
+      deleteUser(companyUser.UserID );
 
       await CompanyUser.destroy({
         where: { CompanyUserID: companyUser.CompanyUserID },

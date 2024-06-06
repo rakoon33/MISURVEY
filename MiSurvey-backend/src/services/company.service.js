@@ -135,7 +135,7 @@ const deleteCompany = async (CompanyID, udata) => {
   try {
     // Find and delete all notifications for the user
     await Notification.destroy({
-      where: { UserID: adminID },
+      where: { CompanyID: company.CompanyID},
       transaction
     });
 
@@ -178,7 +178,7 @@ const deleteCompany = async (CompanyID, udata) => {
 
     // Find and delete all user packages
     await UserPackage.destroy({
-      where: { UserID: adminID },
+      where: { CompanyID: company.CompanyID },
       transaction
     });
 
@@ -216,6 +216,12 @@ const deleteCompany = async (CompanyID, udata) => {
            await RolePermission.destroy({
              where: { CompanyRoleID: companyrole.CompanyRoleID },
            });
+
+           await CompanyUser.destroy({
+            where: {
+              CompanyRoleID: companyrole.CompanyRoleID
+            }
+          });
         }
       await CompanyRole.destroy({ where: { CompanyID: companyID } });
     }

@@ -204,16 +204,17 @@
       >
         <div class="user-details">
           <ng-container>
+            <p><b>ID:</b> {{ selectedUser.UserID }}</p>
             <p><b>First Name:</b> {{ selectedUser.FirstName }}</p>
             <p><b>Last Name:</b> {{ selectedUser.LastName }}</p>
             <p><b>Username:</b> {{ selectedUser.Username }}</p>
             <p><b>Email:</b> {{ selectedUser.Email }}</p>
             <p><b>Role:</b> {{ selectedUser.UserRole }}</p>
             <p><b>Gender:</b> {{ selectedUser.Gender }}</p>
-            <p><b>Phone Number:</b> {{ selectedUser.PhoneNumber }}</p>
           </ng-container>
         </div>
         <div class="date-details">
+          <p><b>Phone Number:</b> {{ selectedUser.PhoneNumber }}</p>
           <p><b>Active:</b> {{ selectedUser.IsActive ? "Yes" : "No" }}</p>
           <p><b>Created By:</b> {{ selectedUser.CreatedBy | date : "medium" || "N/A" }}</p>
           <p><b>Updated By:</b> {{ selectedUser.UpdatedBy | date : "medium" || "N/A" }}</p>

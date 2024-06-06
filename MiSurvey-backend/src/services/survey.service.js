@@ -8,6 +8,7 @@ const {
   SurveyDetail,
   SurveyResponse,
   Customer,
+  Notification
 } = require("../models");
 const {
   createSurveyQuestion,
@@ -328,6 +329,19 @@ const deleteSurvey = async (surveyID, udata) => {
     });
 
     for (const question of questions) {
+
+      const responses = await SurveyResponse.findAll({
+        where: { QuestionID: question.QuestionID },
+        transaction,
+      });
+
+      for (const response of responses) {
+        await Notification.destroy({
+          where: { ReferenceID: response.ResponseID },
+          transaction,
+        });
+      }
+
       await SurveyResponse.destroy({
         where: { QuestionID: question.QuestionID },
         transaction,
