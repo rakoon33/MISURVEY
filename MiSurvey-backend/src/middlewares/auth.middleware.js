@@ -16,15 +16,16 @@ const tokenVerification = (req, res, next) => {
     `authentication.middleware | tokenVerification | ${req?.originalUrl}`
   );
   try {
-    const token = req.cookies.jwt;
-    console.log(token);
-    if (!token) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         status: false,
-        message: "Token is missing",
-        error: "Token is missing",
+        message: "Token is missing or improperly formatted",
+        error: "Token is missing or improperly formatted",
       });
     }
+
+    const token = authHeader.split(' ')[1]; // Split 'Bearer' from the toke
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err && err.name === "TokenExpiredError") {

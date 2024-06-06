@@ -119,6 +119,11 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 const config: SocketIoConfig = { url: environment.BACKEND_BASE_URL, options: {} };
 
+
+
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './core/interceptor/auth.interceptor';
+
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
@@ -218,8 +223,14 @@ const APP_CONTAINERS = [
       provide: LocationStrategy,
       useClass: HashLocationStrategy,
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     IconSetService,
-    Title
+    Title,
+    
   ],
   bootstrap: [AppComponent],
 })
