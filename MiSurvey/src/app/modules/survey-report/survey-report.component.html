@@ -30,7 +30,7 @@
       <div
         class="survey-card invite-method"
         *ngFor="let survey of filteredSurveys.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)"
-        (click)="navigateToDetail(survey.SurveyID)"
+        (click)="navigateToDetail(survey.SurveyID, $event)"
       >
       <div
       class="invite-label"

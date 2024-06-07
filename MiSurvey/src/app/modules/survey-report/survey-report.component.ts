@@ -108,7 +108,8 @@ export class SurveyReportComponent implements OnInit {
   }
 
   
-  navigateToDetail(surveyId: number) {
+  navigateToDetail(surveyId: number, event : Event): void {
+    event.stopPropagation();
     this.userPermissions$!.pipe(take(1)).subscribe(permissions => {
       if (permissions?.CanViewData) {
         console.log('Navigating to survey ID:', surveyId);
